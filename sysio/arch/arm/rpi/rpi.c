@@ -7,7 +7,7 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include "rpi.h"
+#include <sysio/rpi.h>
 
 /* -----------------------------------------------------------------------------
   $ cat /proc/cpuinfo

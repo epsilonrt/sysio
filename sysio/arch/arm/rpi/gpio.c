@@ -13,7 +13,7 @@
 #include <sysio/delay.h>
 #include <sysio/iomap.h>
 #include <sysio/gpio.h>
-#include "rpi.h"
+#include <sysio/rpi.h>
 
 /* constants ================================================================ */
 // Register offsets

@@ -14,7 +14,7 @@
 #include <sysio/delay.h>
 #include <sysio/iomap.h>
 #include <sysio/pwm.h>
-#include "rpi.h"
+#include <sysio/rpi.h>
 
 /* constants ================================================================ */
 #define CLK_DIVISOR_DEFAULT 32
