@@ -22,7 +22,7 @@ __BEGIN_C_DECLS
  *  Allumage de leds
  *  @example gpio/read/read.c
  *  Lecture de boutons poussoirs
- *  @example gpio/mode/mode.c
+ *  @example gpio/getmode/getmode.c
  *  Lecture du mode de toutes les broches du GPIO
  */
 
