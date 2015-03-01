@@ -129,10 +129,10 @@ xDinOpen (const xDin * pins, unsigned size) {
 
   for (unsigned i = 0; i < size; i++) {
 
-    if (iGpioMode (pins[i].num, eModeInput, port->gpio) != 0) {
+    if (iGpioSetMode (pins[i].num, eModeInput, port->gpio) != 0) {
       goto xDinGpioError;
     }
-    if (iGpioPull (pins[i].num, pins[i].pull, port->gpio) != 0) {
+    if (iGpioSetPull (pins[i].num, pins[i].pull, port->gpio) != 0) {
       goto xDinGpioError;
     }
   }

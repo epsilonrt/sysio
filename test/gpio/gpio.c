@@ -42,16 +42,16 @@ main (int argc, char **argv) {
 
   gpio = xGpioOpen(NULL);
   assert (gpio != 0);
-  assert (iGpioMode (LED1, eModeOutput, gpio) == 0);
-  assert (iGpioMode (LED2, eModeOutput, gpio) == 0);
-  assert (iGpioMode (LED3, eModeOutput, gpio) == 0);
+  assert (iGpioSetMode (LED1, eModeOutput, gpio) == 0);
+  assert (iGpioSetMode (LED2, eModeOutput, gpio) == 0);
+  assert (iGpioSetMode (LED3, eModeOutput, gpio) == 0);
 
-  assert (iGpioMode (SW1, eModeInput, gpio) == 0);
-  assert (iGpioMode (SW2, eModeInput, gpio) == 0);
-  assert (iGpioMode (SW3, eModeInput, gpio) == 0);
-  assert (iGpioPull (SW1, ePullUp, gpio) == 0);
-  assert (iGpioPull (SW2, ePullUp, gpio) == 0);
-  assert (iGpioPull (SW3, ePullUp, gpio) == 0);
+  assert (iGpioSetMode (SW1, eModeInput, gpio) == 0);
+  assert (iGpioSetMode (SW2, eModeInput, gpio) == 0);
+  assert (iGpioSetMode (SW3, eModeInput, gpio) == 0);
+  assert (iGpioSetPull (SW1, ePullUp, gpio) == 0);
+  assert (iGpioSetPull (SW2, ePullUp, gpio) == 0);
+  assert (iGpioSetPull (SW3, ePullUp, gpio) == 0);
   assert (iGpioRead (SW1, gpio) == true);
   assert (iGpioRead (SW2, gpio) == true);
   assert (iGpioRead (SW3, gpio) == true);

@@ -247,6 +247,17 @@ iToggle (int p) {
   return iWrite (p, true);
 }
 
+// -----------------------------------------------------------------------------
+static eGpioMode
+eGpioGetMode (int p) {
+  if ((!bIsOpen()) || (p >= gpio.size)){
+
+    return eModeError;
+  }
+
+  return GPIO_MODE(gpio.pin[p]);
+}
+
 /* internal public functions ================================================ */
 
 // -----------------------------------------------------------------------------
@@ -281,7 +292,6 @@ xGpioOpen (UNUSED_VAR(void *, setup)) {
       if ((gpio.pinmode) && (gpio.pinmode_release)) {
 
         memset (gpio.pinmode_release, -1, gpio.size * sizeof(int));
-
         // Lecture des modes actuels
         for (int p = 0; p < gpio.size; p++) {
 
@@ -334,7 +344,7 @@ iGpioSetReleaseOnClose (bool enable, UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 bool
-bGpioReleaseOnClose (UNUSED_VAR(xGpio *, unused)) {
+bGpioGetReleaseOnClose (UNUSED_VAR(xGpio *, unused)) {
   return gpio.roc;
 }
 
@@ -347,9 +357,16 @@ bGpioIsOpen (UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioMode (int p, eGpioMode eMode, UNUSED_VAR(xGpio *, unused)) {
+iGpioSetMode (int p, eGpioMode eMode, UNUSED_VAR(xGpio *, unused)) {
 
   return iSetMode (p, eMode);
+}
+
+// -----------------------------------------------------------------------------
+eGpioMode
+eGpioGetMode (int p, UNUSED_VAR(xGpio *, unused)) {
+
+  return iGetMode (p);
 }
 
 // -----------------------------------------------------------------------------
@@ -361,7 +378,7 @@ iGpioRelease (int p, UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioPull (int p, eGpioPull ePull, UNUSED_VAR(xGpio *, unused)) {
+iGpioSetPull (int p, eGpioPull ePull, UNUSED_VAR(xGpio *, unused)) {
 
   return iSetPull (p, ePull);
 }

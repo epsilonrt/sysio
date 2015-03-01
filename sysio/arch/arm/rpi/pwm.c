@@ -79,7 +79,7 @@ xPwmOpen (int pin) {
     return 0;
   }
 
-  if (iGpioMode (pin, eModePwm, pwm.gpio) != 0) {
+  if (iGpioSetMode (pin, eModePwm, pwm.gpio) != 0) {
 
     PERROR ("This pin can not operate in PWM mode");
     (void) iGpioClose (pwm.gpio);

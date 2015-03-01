@@ -37,7 +37,7 @@ xDoutOpen (const xDout * pins, unsigned size) {
 
   for (unsigned i = 0; i < size; i++) {
 
-    if (iGpioMode (pins[i].num, eModeOutput, port->gpio) != 0) {
+    if (iGpioSetMode (pins[i].num, eModeOutput, port->gpio) != 0) {
       goto xDoutOpenError;
     }
     if (pins[i].act) {

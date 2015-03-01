@@ -35,7 +35,8 @@ typedef enum  {
   eModeAlt3   = 7,  /**< fonction auxiliaire n° 3 (dépend de l'architecture */
   eModeAlt4   = 3,  /**< fonction auxiliaire n° 4 (dépend de l'architecture */
   eModeAlt5   = 2,  /**< fonction auxiliaire n° 5 (dépend de l'architecture */
-  eModePwm    = 0x8002  /**< sortie PWM */
+  eModePwm    = 0x8002,  /**< sortie PWM */
+  eModeError  = -1
 } eGpioMode;
 
 /**
@@ -77,29 +78,6 @@ xGpio * xGpioOpen (void * setup);
 int iGpioClose (xGpio * gpio);
 
 /**
- * @brief Modifie la libération des broches à la fermeture
- *
- * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
- * iGpioClose(). Cette fonction permet de modifier ce comportement.
- *
- * @param enable true active la libération, false la désactive.
- * @param gpio le pointeur sur le GPIO
- * @return 0, -1 si erreur
- */
-int iGpioSetReleaseOnClose (bool enable, xGpio * gpio);
-
-/**
- * @brief Lecture la libération des broches à la fermeture
- *
- * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
- * iGpioClose(). Cette fonction permet de lire l'état de cette directive
- *
- * @param gpio le pointeur sur le GPIO
- * @return true si validé, false sinon
- */
-bool bGpioReleaseOnClose (xGpio * gpio);
-
-/**
  * @brief Indique si le GPIO est ouvert
  *
  * @param gpio le pointeur sur le GPIO
@@ -118,19 +96,20 @@ bool bGpioIsOpen (xGpio * gpio);
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
-int iGpioMode (int iPin, eGpioMode eMode, xGpio * gpio);
+int iGpioSetMode (int iPin, eGpioMode eMode, xGpio * gpio);
 
 /**
- * @brief Libère une broche de son utilisation
+ * @brief Lecture du type actuel d'une broche
  *
- * La broche correspondante est remise dans son état de repos qui
+ * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
  * dépend de l'architecture matérielle.
  *
  * @param iPin le numéro de la broche
  * @param gpio pointeur sur le GPIO
- * @return 0, -1 si erreur
+ * @return le type, eModeError si erreur
  */
-int iGpioRelease (int iPin, xGpio * gpio);
+eGpioMode eGpioGetMode (int iPin, xGpio * gpio);
+
 
 /**
  * @brief Active ou désactive la résistance d'une broche
@@ -143,7 +122,7 @@ int iGpioRelease (int iPin, xGpio * gpio);
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
-int iGpioPull (int iPin, eGpioPull ePull, xGpio * gpio);
+int iGpioSetPull (int iPin, eGpioPull ePull, xGpio * gpio);
 
 /**
  * @brief Modification de l'état binaire d'une sortie
@@ -177,7 +156,6 @@ int iGpioToggle (int iPin, xGpio * gpio);
  * @return 0, -1 si erreur
  */
 int iGpioWriteAll (int iMask, bool bValue, xGpio * gpio);
-
 
 /**
  * @brief Bascule de l'état binaire de plusieurs sorties
@@ -219,6 +197,43 @@ int iGpioRead (int iPin, xGpio * gpio);
  * correspondante (bit 0 pour la broche 0, bit 1 pour la broche 1 ...)
  */
 int iGpioReadAll (int iMask, xGpio * gpio);
+
+/**
+ * @brief Modifie la libération des broches à la fermeture
+ *
+ * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+ * iGpioClose(). Cette fonction permet de modifier ce comportement.
+ *
+ * @param enable true active la libération, false la désactive.
+ * @param gpio le pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+int iGpioSetReleaseOnClose (bool enable, xGpio * gpio);
+
+/**
+ * @brief Lecture la libération des broches à la fermeture
+ *
+ * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+ * iGpioClose(). Cette fonction permet de lire l'état de cette directive
+ *
+ * @param gpio le pointeur sur le GPIO
+ * @return true si validé, false sinon
+ */
+bool bGpioGetReleaseOnClose (xGpio * gpio);
+
+/**
+ * @brief Libère une broche de son utilisation
+ *
+ * La broche correspondante est remise dans son état initial. Seule une broche
+ * dont le type a été modifié depuis l'ouverture du port par iGpioOpen() sera
+ * restaurée. Si le type de broche n'a pas été modifié depuis l'ouverture, cette
+ * fonction ne fait rien et renvoie 0.
+ *
+ * @param iPin le numéro de la broche
+ * @param gpio pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+int iGpioRelease (int iPin, xGpio * gpio);
 
 /**
  * @}
