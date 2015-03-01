@@ -249,7 +249,7 @@ iToggle (int p) {
 
 // -----------------------------------------------------------------------------
 static eGpioMode
-eGpioGetMode (int p) {
+eGetMode (int p) {
   if ((!bIsOpen()) || (p >= gpio.size)){
 
     return eModeError;
@@ -366,7 +366,18 @@ iGpioSetMode (int p, eGpioMode eMode, UNUSED_VAR(xGpio *, unused)) {
 eGpioMode
 eGpioGetMode (int p, UNUSED_VAR(xGpio *, unused)) {
 
-  return iGetMode (p);
+  return eGetMode (p);
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioGetSize (UNUSED_VAR(xGpio *, unused)) {
+
+  if (!bIsOpen()) {
+
+    return -1;
+  }
+  return gpio.size;
 }
 
 // -----------------------------------------------------------------------------

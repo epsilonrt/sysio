@@ -18,7 +18,12 @@ __BEGIN_C_DECLS
  *  Ce module fournit les fonctions permettant de contrôler les broches
  *  d'entrées-sorties à usage général.
  *  @{
- *  @example gpio/gpio.c
+ *  @example gpio/write/write.c
+ *  Allumage de leds
+ *  @example gpio/read/read.c
+ *  Lecture de boutons poussoirs
+ *  @example gpio/mode/mode.c
+ *  Lecture du mode de toutes les broches du GPIO
  */
 
 /* constants ================================================================ */
@@ -110,6 +115,13 @@ int iGpioSetMode (int iPin, eGpioMode eMode, xGpio * gpio);
  */
 eGpioMode eGpioGetMode (int iPin, xGpio * gpio);
 
+/**
+ * @brief Lecture du nombre de broches du port GPIO
+ *
+ * @param gpio pointeur sur le GPIO
+ * @return nombre de broches, -1 si erreur
+ */
+int iGpioGetSize (xGpio * gpio);
 
 /**
  * @brief Active ou désactive la résistance d'une broche

@@ -1,5 +1,5 @@
 /*
- * gpio.c
+ * test/gpio/write/write.c
  * @brief
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
@@ -18,10 +18,6 @@
 #define LED2        1
 #define LED3        2
 #define LED_ALL     ((1 << LED1) | (1 << LED2) | (1 << LED3))
-#define SW1         3
-#define SW2         4
-#define SW3         5
-#define SW_ALL      ((1 << SW1) | (1 << SW2) | (1 << SW3))
 
 /* private variables ======================================================== */
 static xGpio * gpio;
@@ -45,17 +41,6 @@ main (int argc, char **argv) {
   assert (iGpioSetMode (LED1, eModeOutput, gpio) == 0);
   assert (iGpioSetMode (LED2, eModeOutput, gpio) == 0);
   assert (iGpioSetMode (LED3, eModeOutput, gpio) == 0);
-
-  assert (iGpioSetMode (SW1, eModeInput, gpio) == 0);
-  assert (iGpioSetMode (SW2, eModeInput, gpio) == 0);
-  assert (iGpioSetMode (SW3, eModeInput, gpio) == 0);
-  assert (iGpioSetPull (SW1, ePullUp, gpio) == 0);
-  assert (iGpioSetPull (SW2, ePullUp, gpio) == 0);
-  assert (iGpioSetPull (SW3, ePullUp, gpio) == 0);
-  assert (iGpioRead (SW1, gpio) == true);
-  assert (iGpioRead (SW2, gpio) == true);
-  assert (iGpioRead (SW3, gpio) == true);
-  assert (iGpioReadAll (SW_ALL, gpio) == SW_ALL);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal(SIGINT, vSigIntHandler);
