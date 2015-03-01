@@ -41,13 +41,16 @@ typedef struct xGpio {
   const int * pin;
   int size;
   int * pinmode;
+  int * pinmode_release;
   int link;
+  bool roc; // release on close
 } xGpio;
 
 /* macros =================================================================== */
 #define GPIO_INP(g)   *(pIo(gpio.map, (g)/10)) &= ~(7<<(((g)%10)*3))
 #define GPIO_OUT(g)   *(pIo(gpio.map, (g)/10)) |=  (1<<(((g)%10)*3))
 #define GPIO_ALT(g,a) *(pIo(gpio.map, (g)/10)) |=  ((a)<<(((g)%10)*3))
+#define GPIO_MODE(g)  (((*(pIo(gpio.map, (g)/10))) >> (((g)%10)*3)) & 7)
 
 /* private variables ========================================================= */
 static xGpio gpio;
@@ -128,6 +131,7 @@ iSetMode (int p, eGpioMode eMode) {
     default:
       return -1;
   }
+  gpio.pinmode_release[p] = gpio.pinmode[p];
   gpio.pinmode[p] = eMode;
   return i;
 }
@@ -165,12 +169,12 @@ iRelease (int p) {
   if ((bIsOpen()) && (p < gpio.size)){
 
     i = 0;
-    if (gpio.pinmode[p] != -1) {
+    if (gpio.pinmode_release[p] != -1) {
 
-      i = iSetMode (p, eModeInput);
-      if (i == 0) {
+      i = iSetMode (p, gpio.pinmode_release[p]);
+      if ((i == 0) && (gpio.pinmode_release[p] == eModeInput)) {
         i = iSetPull (p, ePullDown);
-        gpio.pinmode[p] = -1;
+        gpio.pinmode_release[p] = -1;
       }
     }
   }
@@ -261,22 +265,30 @@ xGpioOpen (UNUSED_VAR(void *, setup)) {
     if (iRev <= 3) {
 
       gpio.pin = iPinsPcbRev1;
-      gpio.size = sizeof(iPinsPcbRev1);
+      gpio.size = sizeof(iPinsPcbRev1) / sizeof(int);
     }
     else {
 
       gpio.pin = iPinsPcbRev2;
-      gpio.size = sizeof(iPinsPcbRev2);
+      gpio.size = sizeof(iPinsPcbRev2) / sizeof(int);
     }
 
     gpio.map = xIoMapOpen (BCM2708_GPIO_BASE, BCM2708_BLOCK_SIZE);
     if (gpio.map) {
 
       gpio.pinmode = malloc (gpio.size * sizeof(int));
-      if (gpio.pinmode) {
+      gpio.pinmode_release = malloc (gpio.size * sizeof(int));
+      if ((gpio.pinmode) && (gpio.pinmode_release)) {
 
-        memset (gpio.pinmode, -1, gpio.size * sizeof(int));
+        memset (gpio.pinmode_release, -1, gpio.size * sizeof(int));
+
+        // Lecture des modes actuels
+        for (int p = 0; p < gpio.size; p++) {
+
+          gpio.pinmode[p] = GPIO_MODE(gpio.pin[p]);
+        }
         gpio.link = 1;
+        gpio.roc = true;
         return &gpio;
       }
       (void) iIoMapClose (gpio.map);
@@ -297,10 +309,12 @@ iGpioClose (UNUSED_VAR(xGpio *, unused)) {
     if (gpio.link <= 0) {
       int error = 0;
 
-      // Fermeture effective lorsque le nombre  de liens est 0
-      for (int i = 0; i < gpio.size; i++) {
-        // Release all used pins
-          (void)iRelease (i);
+      if (gpio.roc) {
+        // Fermeture effective lorsque le nombre  de liens est 0, si roc true
+        for (int i = 0; i < gpio.size; i++) {
+          // Release all used pins
+            (void)iRelease (i);
+        }
       }
       error = iIoMapClose (gpio.map);
       free (gpio.pinmode);
@@ -311,6 +325,18 @@ iGpioClose (UNUSED_VAR(xGpio *, unused)) {
   return 0;
 }
 
+// -----------------------------------------------------------------------------
+int
+iGpioSetReleaseOnClose (bool enable, UNUSED_VAR(xGpio *, unused)) {
+  gpio.roc = enable;
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+bool
+bGpioReleaseOnClose (UNUSED_VAR(xGpio *, unused)) {
+  return gpio.roc;
+}
 
 // -----------------------------------------------------------------------------
 bool
@@ -367,6 +393,7 @@ iGpioReadAll (int iMask, UNUSED_VAR(xGpio *, unused)) {
 
   if (bIsOpen()) {
     int iValue = 0;
+    int iBit = 1;
     int p = 0;
 
     if (iMask == 0) {
@@ -374,19 +401,19 @@ iGpioReadAll (int iMask, UNUSED_VAR(xGpio *, unused)) {
     }
     while ((iMask) && (p < gpio.size)) {
 
-      if (iMask & 1) {
+      if (iMask & iBit) {
         switch (iRead (p)) {
           case true:
-            iValue |= 1;
+            iValue |= iBit;
             break;
           case false:
             break;
           default:
             return -1;
         }
+        iMask &= ~iBit; // bit lu
       }
-      iMask  >>= 1;
-      iValue <<= 1;
+      iBit <<= 1;
       p++;
     }
     return iValue;
@@ -405,8 +432,9 @@ iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR(xGpio *, unused)) {
 
       if ((iMask & 1) && (gpio.pinmode[p] == eModeOutput)) {
 
-        (void) iWrite (p++, bValue);
+        (void) iWrite (p, bValue);
       }
+      p++;
       iMask >>= 1;
     }
     return 0;

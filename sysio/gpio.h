@@ -77,6 +77,29 @@ xGpio * xGpioOpen (void * setup);
 int iGpioClose (xGpio * gpio);
 
 /**
+ * @brief Modifie la libération des broches à la fermeture
+ *
+ * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+ * iGpioClose(). Cette fonction permet de modifier ce comportement.
+ *
+ * @param enable true active la libération, false la désactive.
+ * @param gpio le pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+int iGpioSetReleaseOnClose (bool enable, xGpio * gpio);
+
+/**
+ * @brief Lecture la libération des broches à la fermeture
+ *
+ * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+ * iGpioClose(). Cette fonction permet de lire l'état de cette directive
+ *
+ * @param gpio le pointeur sur le GPIO
+ * @return true si validé, false sinon
+ */
+bool bGpioReleaseOnClose (xGpio * gpio);
+
+/**
  * @brief Indique si le GPIO est ouvert
  *
  * @param gpio le pointeur sur le GPIO

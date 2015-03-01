@@ -14,8 +14,14 @@
 #include <sysio/delay.h>
 
 /* constants ================================================================ */
-#define LED 0
-#define SW  3
+#define LED1        0
+#define LED2        1
+#define LED3        2
+#define LED_ALL     ((1 << LED1) | (1 << LED2) | (1 << LED3))
+#define SW1         3
+#define SW2         4
+#define SW3         5
+#define SW_ALL      ((1 << SW1) | (1 << SW2) | (1 << SW3))
 
 /* private variables ======================================================== */
 static xGpio * gpio;
@@ -36,11 +42,20 @@ main (int argc, char **argv) {
 
   gpio = xGpioOpen(NULL);
   assert (gpio != 0);
-  assert (iGpioMode (LED, eModeOutput, gpio) == 0);
+  assert (iGpioMode (LED1, eModeOutput, gpio) == 0);
+  assert (iGpioMode (LED2, eModeOutput, gpio) == 0);
+  assert (iGpioMode (LED3, eModeOutput, gpio) == 0);
 
-  assert (iGpioMode (SW, eModeInput, gpio) == 0);
-  assert (iGpioPull (SW, ePullUp, gpio) == 0);
-  assert (iGpioRead (SW, gpio) == true);
+  assert (iGpioMode (SW1, eModeInput, gpio) == 0);
+  assert (iGpioMode (SW2, eModeInput, gpio) == 0);
+  assert (iGpioMode (SW3, eModeInput, gpio) == 0);
+  assert (iGpioPull (SW1, ePullUp, gpio) == 0);
+  assert (iGpioPull (SW2, ePullUp, gpio) == 0);
+  assert (iGpioPull (SW3, ePullUp, gpio) == 0);
+  assert (iGpioRead (SW1, gpio) == true);
+  assert (iGpioRead (SW2, gpio) == true);
+  assert (iGpioRead (SW3, gpio) == true);
+  assert (iGpioReadAll (SW_ALL, gpio) == SW_ALL);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal(SIGINT, vSigIntHandler);
@@ -48,9 +63,42 @@ main (int argc, char **argv) {
 
   for (;;) {
 
-    assert (iGpioToggle (LED, gpio) == 0);
-    //delay_us(75);
-    delay_ms(100);
+    for (int i = 0; i < 3; i++) {
+      assert (iGpioWrite (i, true, gpio) == 0);
+      delay_ms(200);
+    }
+    delay_ms(1000);
+
+    for (int i = 0; i < 3; i++) {
+      assert (iGpioWrite (i, false, gpio) == 0);
+      delay_ms(200);
+    }
+    delay_ms(1000);
+
+    for (int i = 0; i < 3; i++) {
+      assert (iGpioToggle (i, gpio) == 0);
+      delay_ms(200);
+      assert (iGpioToggle (i, gpio) == 0);
+      delay_ms(200);
+    }
+    delay_ms(1000);
+
+    for (int i = 0; i < 8; i++) {
+      assert (iGpioWriteAll (LED_ALL, true, gpio) == 0);
+      delay_ms(200);
+      assert (iGpioWriteAll (LED_ALL, false, gpio) == 0);
+      delay_ms(200);
+    }
+    delay_ms(1000);
+
+    for (int i = 0; i < 80; i++) {
+      assert (iGpioToggleAll (LED_ALL, gpio) == 0);
+      delay_ms(20);
+      assert (iGpioToggleAll (LED_ALL, gpio) == 0);
+      delay_ms(20);
+    }
+    delay_ms(1000);
+
   }
   return 0;
 }
