@@ -24,26 +24,25 @@ __BEGIN_C_DECLS
   @brief Retourne la revision du raspberry
   @return la révision matérielle, 0 si le système n'est pas un rpi ou -1
   en cas d'erreur. \n
-  Board Revision History: \n
+  Board Revision History (from <A HREF="http://elinux.org/RPi_HardwareHistory">elinux.org</A>) : \n
   <hr>
-  <table>
-  <th><td>Revision</td><td>Release Date</td><td>Model</td><td>PCB Revision</td><td>Memory</td><td>Notes</td></th>
-  <tr><td>Beta</td><td>Q1 2012</td><td>B (Beta)</td><td>?</td><td>256MB</td><td>Beta Board</td></tr>
-  <tr><td>0002</td><td>Q1 2012</td><td>B</td><td>1.0</td><td>256MB</td><td></td></tr>
-  <tr><td>0003</td><td>Q3 2012</td><td>B (ECN0001)</td><td>1.0</td><td>256MB</td><td>Fuses mod and D14 removed</td></tr>
-  <tr><td>0004</td><td>Q3 2012</td><td>B</td><td>2.0</td><td>256MB</td><td>Mfg by Sony</td></tr>
-  <tr><td>0005</td><td>Q4 2012</td><td>B</td><td>2.0</td><td>256MB</td><td>Mfg by Qisda</td></tr>
-  <tr><td>0006</td><td>Q4 2012</td><td>B</td><td>2.0</td><td>256MB</td><td>Mfg by Egoman</td></tr>
-  <tr><td>0007</td><td>Q1 2013</td><td>A</td><td>2.0</td><td>256MB</td><td>Mfg by Egoman</td></tr>
-  <tr><td>0008</td><td>Q1 2013</td><td>A</td><td>2.0</td><td>256MB</td><td>Mfg by Sony</td></tr>
-  <tr><td>0009</td><td>Q1 2013</td><td>A</td><td>2.0</td><td>256MB</td><td>Mfg by Qisda</td></tr>
-  <tr><td>000d</td><td>Q4 2012</td><td>B</td><td>2.0</td><td>512MB</td><td>Mfg by Egoman</td></tr>
-  <tr><td>000e</td><td>Q4 2012</td><td>B</td><td>2.0</td><td>512MB</td><td>Mfg by Sony</td></tr>
-  <tr><td>000f</td><td>Q4 2012</td><td>B</td><td>2.0</td><td>512MB</td><td>Mfg by Qisda</td></tr>
-  <tr><td>0010</td><td>Q3 2014</td><td>B+</td><td>1.0</td><td>512MB</td><td>Mfg by Sony</td></tr>
-  <tr><td>0011</td><td>Q2 2014</td><td>Compute Module 1.0</td><td>512MB</td><td>Mfg by Sony</td></tr>
-  <tr><td>0012</td><td>Q4 2014</td><td>A+</td><td>1.0</td><td>256MB</td><td>Mfg by Sony</td></tr>
-  </table>
+  | Revision | Release Date | Model          | PCB Revision | Memory | Notes                     |
+  | :------- | :----------- | :------------- | :----------- | :----- | :------------------------ |
+  | Beta     | Q1 2012      | B (Beta)       | ?            | 256MB  | Beta Board                |
+  | 0002     | Q1 2012      | B              | 1.0          | 256MB  |                           |
+  | 0003     | Q3 2012      | B (ECN0001)    | 1.0          | 256MB  | Fuses mod and D14 removed |
+  | 0004     | Q3 2012      | B              | 2.0          | 256MB  | Mfg by Sony               |
+  | 0005     | Q4 2012      | B              | 2.0          | 256MB  | Mfg by Qisda              |
+  | 0006     | Q4 2012      | B              | 2.0          | 256MB  | Mfg by Egoman             |
+  | 0007     | Q1 2013      | A              | 2.0          | 256MB  | Mfg by Egoman             |
+  | 0008     | Q1 2013      | A              | 2.0          | 256MB  | Mfg by Sony               |
+  | 0009     | Q1 2013      | A              | 2.0          | 256MB  | Mfg by Qisda              |
+  | 000d     | Q4 2012      | B              | 2.0          | 512MB  | Mfg by Egoman             |
+  | 000e     | Q4 2012      | B              | 2.0          | 512MB  | Mfg by Sony               |
+  | 000f     | Q4 2012      | B              | 2.0          | 512MB  | Mfg by Qisda              |
+  | 0010     | Q3 2014      | B+             | 1.0          | 512MB  | Mfg by Sony               |
+  | 0011     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Sony               |
+  | 0012     | Q4 2014      | A+             | 1.0          | 256MB  | Mfg by Sony               |
  */
 int iRpiRev (void);
 
