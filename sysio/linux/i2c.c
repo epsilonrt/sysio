@@ -31,7 +31,7 @@ iI2cOpen (const char * device, int i2caddr) {
       return fd;
     }
   }
-  PDEBUG ("%s", strerror(errno));
+  PERROR ("%s", strerror(errno));
   return -1;
 }
 
@@ -41,7 +41,7 @@ iI2cClose (int fd) {
 
   if (close (fd) != 0) {
 
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
     return -1;
   }
   return 0;
@@ -52,7 +52,7 @@ iI2cRead (int fd) {
   int i = i2c_smbus_read_byte (fd);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -63,7 +63,7 @@ iI2cReadReg8 (int fd, uint8_t reg) {
   int i = i2c_smbus_read_byte_data (fd, reg);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -74,7 +74,7 @@ iI2cReadReg16 (int fd, uint8_t reg) {
   int i = i2c_smbus_read_word_data (fd, reg);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -85,7 +85,7 @@ iI2cReadRegBlock (int fd, uint8_t reg, uint8_t *values, uint8_t len) {
   int i = i2c_smbus_read_i2c_block_data (fd, reg, len, values);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -96,7 +96,7 @@ iI2cWrite (int fd, uint8_t data) {
   int i = i2c_smbus_write_byte (fd, data);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -107,7 +107,7 @@ iI2cWriteReg8 (int fd, uint8_t reg, uint8_t value) {
   int i = i2c_smbus_write_byte_data (fd, reg, value);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -118,7 +118,7 @@ iI2cWriteReg16 (int fd, uint8_t reg, uint16_t value) {
   int i = i2c_smbus_write_word_data (fd, reg, value);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -129,7 +129,7 @@ iI2cWriteRegBlock (int fd, uint8_t reg, const uint8_t * values, uint8_t len) {
   int i = i2c_smbus_write_i2c_block_data (fd, reg, len, values);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -141,7 +141,7 @@ iI2cReadBlock (int fd, uint8_t * block, int len) {
   int i = read (fd, block, len);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }
@@ -151,7 +151,7 @@ int iI2cWriteBlock (int fd, const uint8_t * block, int len) {
   int i = write (fd, block, len);
 
   if (i < 0) {
-    PDEBUG ("%s", strerror(errno));
+    PERROR ("%s", strerror(errno));
   }
   return i;
 }

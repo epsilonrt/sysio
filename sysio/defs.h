@@ -117,8 +117,13 @@ const char * sSysIoGitCommit (void);
 #define  LSB(x) ((uint8_t) (x & 0xFF))
 #endif
 
+#define PERROR(fmt,...) fprintf(stderr, "%s:%d: %s: Error: " fmt "\n", \
+                              __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define PWARNING(fmt,...) fprintf(stderr, "%s:%d: %s: Warning: " fmt "\n", \
+                              __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+
 #ifdef DEBUG
-#define PDEBUG(fmt,...) fprintf(stderr, "%s:%d: %s: Error: " fmt "\n", \
+#define PDEBUG(fmt,...) printf("%s:%d: %s: Debug: " fmt "\n", \
                               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define PDEBUG(format,...)

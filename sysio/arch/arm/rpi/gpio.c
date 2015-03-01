@@ -258,7 +258,7 @@ xGpioOpen (UNUSED_VAR(void *, setup)) {
 
     if (iRev <= 0) {
 
-      PDEBUG ("It seems that this system is not a raspberry pi !\n");
+      PERROR ("It seems that this system is not a raspberry pi !\n");
       return 0;
     }
 

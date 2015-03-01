@@ -81,7 +81,7 @@ xPwmOpen (int pin) {
 
   if (iGpioMode (pin, eModePwm, pwm.gpio) != 0) {
 
-    PDEBUG ("This pin can not operate in PWM mode");
+    PERROR ("This pin can not operate in PWM mode");
     (void) iGpioClose (pwm.gpio);
     return 0;
   }
@@ -257,12 +257,12 @@ iPwmSetClockDiv (int div) {
 
   if (div < CLK_DIVISOR_MIN) {
     div = CLK_DIVISOR_MIN;
-    PDEBUG ("The clock divider is out of bounds, it was increased to %d", CLK_DIVISOR_MIN);
+    PERROR ("The clock divider is out of bounds, it was increased to %d", CLK_DIVISOR_MIN);
   }
   else {
     if (div > CLK_DIVISOR_MAX) {
       div = CLK_DIVISOR_MAX;
-      PDEBUG ("The clock divider is out of bounds, it was reduced to %d", CLK_DIVISOR_MAX);
+      PERROR ("The clock divider is out of bounds, it was reduced to %d", CLK_DIVISOR_MAX);
     }
   }
 
