@@ -44,11 +44,11 @@ iCallback (unsigned values, unsigned p, void * udata) {
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  const char msg[] = "Hello !";
+  char msg[] = "Hello !";
 
   sw = xDinOpen (xMySwitches, 3);
   assert (sw);
-  assert (iSwitchSetCallback (iCallback, sw, msg) == 0);
+  assert (iSwitchSetCallback (iCallback, msg, sw) == 0);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);
