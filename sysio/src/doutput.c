@@ -13,7 +13,7 @@
 /* structures =============================================================== */
 typedef struct xDoutPort {
   xGpio * gpio;
-  const xDout * pins;
+  xDout * pins;
   unsigned size;
   int set_mask;
   int clr_mask;
@@ -23,17 +23,25 @@ typedef struct xDoutPort {
 // -----------------------------------------------------------------------------
 xDoutPort *
 xDoutOpen (const xDout * pins, unsigned size) {
-
+  assert(pins);
+  
+  if (size == 0) {
+    return 0;
+  }
+  
   xDoutPort * port = malloc (sizeof(xDoutPort));
   assert(port);
   memset (port, 0, sizeof(xDoutPort));
+
+  port->pins = calloc (size, sizeof(xDout));
+  assert(port->pins);
+  memcpy (port->pins, pins, size * sizeof(xDout));
+  port->size = size;
 
   port->gpio = xGpioOpen (NULL);
   if (!port->gpio) {
     goto xDoutGpioError;
   }
-  port->pins = pins;
-  port->size = size;
 
   for (unsigned i = 0; i < size; i++) {
 
@@ -66,6 +74,7 @@ iDoutClose (xDoutPort * port) {
   assert(port);
   int i = iGpioClose (port->gpio);
 
+  free (port->pins);
   free (port);
   return i;
 }
