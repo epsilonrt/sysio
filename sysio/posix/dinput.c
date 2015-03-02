@@ -14,6 +14,8 @@
 
 /* constants ================================================================ */
 #define DINPUT_POLL_DELAY 20
+static const char sErrorRange[] = "the pin number is out of range";
+static const char sGroupRange[] = "this pin is grouped";
 
 /* structures =============================================================== */
 
@@ -36,24 +38,81 @@ typedef struct xDinPort {
   xDinCbContext * ctx;
   int prev_values;
   bool run;      /* indique au thread de continuer */
+  bool grouped;  /* indique que la gestion est groupée */
   pthread_t thread;
 } xDinPort;
 
-/* private variables ======================================================== */
 // -----------------------------------------------------------------------------
+typedef struct xDinGrpData {
+  iDinGrpCallback callback;
+  void * udata;
+  xDinPort * port;
+} xDinGrpData;
+
+// -----------------------------------------------------------------------------
+typedef struct xDinPinData {
+  unsigned pin;
+  xDinGrpData * grp;
+} xDinPinData;
+
+/* private functions ======================================================== */
+// -----------------------------------------------------------------------------
+static void
+vSetCallback (unsigned p, eDinEdge edge, iDinCallback callback, void *udata, xDinPort * port) {
+
+  pthread_mutex_lock (&port->ctx[p].write_mutex);
+  port->ctx[p].callback = callback;
+  port->ctx[p].udata = udata;
+  port->ctx[p].edge = edge;
+  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+}
+
+// -----------------------------------------------------------------------------
+static void
+vClearCallback (unsigned p, xDinPort *port) {
+
+  pthread_mutex_lock (&port->ctx[p].write_mutex);
+  port->ctx[p].callback = NULL;
+  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+}
+
+// -----------------------------------------------------------------------------
+static void
+vSetEdge (unsigned p, eDinEdge edge, xDinPort * port) {
+
+  pthread_mutex_lock (&port->ctx[p].write_mutex);
+  port->ctx[p].edge = edge;
+  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+}
+
+// -----------------------------------------------------------------------------
+static int
+iDinGrpHandler (eDinEdge edge, void *pdata) {
+  xDinPinData * d = (xDinPinData *) pdata;
+
+  if (d->grp->callback) {
+
+    return d->grp->callback ( (unsigned) iDinReadAll (d->grp->port),
+                              d->pin, edge, d->grp->udata);
+  }
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+// Thread de surveillance des entrées du port
 static void *
 pvDinPoll (void * xContext) {
 
   xDinPort *port = (xDinPort *) xContext;
 
   while (port->run) {
-    int values = iDinReadAll(port);
+    int values = iDinReadAll (port);
 
     if (values != port->prev_values) {
       // l'état des entrées a changé ?
 
       delay_ms (DINPUT_POLL_DELAY); // Anti-rebond
-      if (values == iDinReadAll(port)) {
+      if (values == iDinReadAll (port)) {
         // le changement est confirmé
         int mask = 1;
         int diff = values ^ port->prev_values;
@@ -80,17 +139,17 @@ pvDinPoll (void * xContext) {
             diff &= ~mask;  // clear du bit traité
 
             pthread_mutex_lock (&port->ctx[p].read_mutex);
-              port->ctx[p].edge_occurred = edge & port->ctx[p].edge;
+            port->ctx[p].edge_occurred = edge & port->ctx[p].edge;
             pthread_mutex_unlock (&port->ctx[p].read_mutex);
 
             pthread_mutex_lock (&port->ctx[p].write_mutex);
-              if ((port->ctx[p].edge & edge) && (port->ctx[p].callback)) {
-                // Le front est valide et le callback est présent
-                ret = port->ctx[p].callback (edge, port->ctx[p].udata);
-              }
-              else {
-                ret = 0;
-              }
+            if ( (port->ctx[p].edge & edge) && (port->ctx[p].callback)) {
+              // Le front est valide et le callback est présent
+              ret = port->ctx[p].callback (edge, port->ctx[p].udata);
+            }
+            else {
+              ret = 0;
+            }
             pthread_mutex_unlock (&port->ctx[p].write_mutex);
 
             if (ret != 0) {
@@ -116,9 +175,9 @@ pvDinPoll (void * xContext) {
 xDinPort *
 xDinOpen (const xDin * pins, unsigned size) {
 
-  xDinPort * port = malloc (sizeof(xDinPort));
-  assert(port);
-  memset (port, 0, sizeof(xDinPort));
+  xDinPort * port = malloc (sizeof (xDinPort));
+  assert (port);
+  memset (port, 0, sizeof (xDinPort));
 
   port->gpio = xGpioOpen (NULL);
   if (!port->gpio) {
@@ -139,7 +198,7 @@ xDinOpen (const xDin * pins, unsigned size) {
 
   port->ctx = calloc (size, sizeof (xDinCbContext));
   assert (port->ctx);
-  memset (port->ctx, 0, sizeof(xDinCbContext) * size);
+  memset (port->ctx, 0, sizeof (xDinCbContext) * size);
 
   port->run = true;
   if (pthread_create (&port->thread, NULL, pvDinPoll, port) != 0) {
@@ -179,7 +238,7 @@ iDinReadAll (xDinPort *port) {
 
     switch (iDinRead (i, port)) {
       case true:
-        mask |= _BV(i);
+        mask |= _BV (i);
         break;
       case false:
         break;
@@ -193,7 +252,7 @@ iDinReadAll (xDinPort *port) {
 // -----------------------------------------------------------------------------
 int
 iDinPortSize (xDinPort * port) {
-  assert(port);
+  assert (port);
 
   return port->size;
 }
@@ -201,7 +260,7 @@ iDinPortSize (xDinPort * port) {
 // -----------------------------------------------------------------------------
 int
 iDinClose (xDinPort * port) {
-  assert(port);
+  assert (port);
 
   port->run = false;
   pthread_join (port->thread, NULL);
@@ -216,15 +275,12 @@ int
 iDinSetCallback (unsigned p, eDinEdge edge, iDinCallback callback, void *udata, xDinPort * port) {
   assert (port);
 
-  if (p >= port->size) {
+  if ( (p >= port->size) || (port->grouped)) {
+    PERROR ("%s or %s", sErrorRange, sGroupRange);
     return -1;
   }
 
-  pthread_mutex_lock   (&port->ctx[p].write_mutex);
-    port->ctx[p].callback = callback;
-    port->ctx[p].udata = udata;
-    port->ctx[p].edge = edge;
-  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+  vSetCallback (p, edge, callback, udata, port);
   return 0;
 }
 
@@ -233,13 +289,12 @@ int
 iDinClearCallback (unsigned p, xDinPort *port) {
   assert (port);
 
-  if (p >= port->size) {
+  if ( (p >= port->size) || (port->grouped)) {
+    PERROR ("%s or %s", sErrorRange, sGroupRange);
     return -1;
   }
 
-  pthread_mutex_lock   (&port->ctx[p].write_mutex);
-    port->ctx[p].callback = NULL;
-  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+  vClearCallback (p, port);
   return 0;
 }
 
@@ -249,6 +304,7 @@ eDinGetEdge (unsigned p, xDinPort *port) {
   assert (port);
 
   if (p >= port->size) {
+    PERROR ("%s", sErrorRange);
     return eEdgeNone;
   }
   return port->ctx[p].edge;
@@ -260,12 +316,17 @@ iDinSetEdge (unsigned p, eDinEdge edge, xDinPort * port) {
   assert (port);
 
   if (p >= port->size) {
+    PERROR ("%s", sErrorRange);
     return -1;
   }
-
-  pthread_mutex_lock   (&port->ctx[p].write_mutex);
-    port->ctx[p].edge = edge;
-  pthread_mutex_unlock (&port->ctx[p].write_mutex);
+  if (port->grouped) {
+    for (p = 0; p < port->size; p++) {
+      vSetEdge (p, edge, port);
+    }
+  }
+  else {
+    vSetEdge (p, edge, port);
+  }
   return 0;
 }
 
@@ -278,11 +339,12 @@ iDinEdgeOccured (unsigned p, xDinPort *port) {
     int ret;
 
     pthread_mutex_lock (&port->ctx[p].read_mutex);
-      ret = port->ctx[p].edge_occurred;
-      port->ctx[p].edge_occurred = eEdgeNone;
+    ret = port->ctx[p].edge_occurred;
+    port->ctx[p].edge_occurred = eEdgeNone;
     pthread_mutex_unlock (&port->ctx[p].read_mutex);
     return ret;
   }
+  PERROR ("%s", sErrorRange);
   return -1;
 }
 
@@ -292,9 +354,17 @@ pDinCallbackData (unsigned p, xDinPort *port) {
   assert (port);
 
   if (p >= port->size) {
+
+    PERROR ("%s", sErrorRange);
     return NULL;
   }
-  return port->ctx[p].udata;
+  void * udata = port->ctx[p].udata;
+
+  if (port->grouped) {
+    xDinPinData * d = (xDinPinData *) udata;
+    udata = d->grp->udata;
+  }
+  return udata;
 }
 
 // -----------------------------------------------------------------------------
@@ -303,9 +373,59 @@ iDinCallbackInstalled (unsigned p, xDinPort *port) {
   assert (port);
 
   if (p >= port->size) {
+    PERROR ("%s", sErrorRange);
     return -1;
   }
   return port->ctx[p].callback != NULL;
+}
+
+// -----------------------------------------------------------------------------
+int
+iDinSetGrpCallback (eDinEdge edge, iDinGrpCallback callback, void *udata, xDinPort * port) {
+  assert (port);
+
+  if (port->grouped) {
+
+    (void) iDinClearGrpCallback (port);
+  }
+  xDinGrpData * grp = malloc (sizeof (xDinGrpData));
+  assert (grp);
+  grp->callback = callback;
+  grp->port = port;
+  grp->udata = udata;
+
+  for (unsigned pin = 0; pin < port->size; pin++) {
+
+    xDinPinData * pdata = malloc (sizeof (xDinPinData));
+    assert (pdata);
+    pdata->grp = grp;
+    pdata->pin = pin;
+    vSetCallback (pin, edge, iDinGrpHandler, pdata, port);
+  }
+  port->grouped = true;
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+int
+iDinClearGrpCallback (xDinPort * port) {
+  assert (port);
+
+  if (port->grouped) {
+    xDinGrpData * grp = 0;
+
+    for (unsigned pin = 0; pin < port->size; pin++) {
+
+      xDinPinData * d = (xDinPinData *) port->ctx[pin].udata;
+      grp = d->grp;
+      vClearCallback (pin, port);
+      free (d);
+    }
+    free (grp);
+    port->grouped = false;
+    return 0;
+  }
+  return -1;
 }
 
 /* ========================================================================== */

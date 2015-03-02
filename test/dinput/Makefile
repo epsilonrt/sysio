@@ -4,7 +4,7 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 # $Id$
-SUBDIRS = poll callback
+SUBDIRS = poll callback group
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

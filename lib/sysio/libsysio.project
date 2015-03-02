@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libsysio" InternalType="">
-  <VirtualDirectory Name="gpio">
-    <VirtualDirectory Name="read">
-      <File Name="../../test/gpio/read/read.c"/>
-      <File Name="../../test/gpio/read/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="getmode">
-      <File Name="../../test/gpio/getmode/getmode.c"/>
-      <File Name="../../test/gpio/getmode/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="write">
-      <File Name="../../test/gpio/write/Makefile"/>
-      <File Name="../../test/gpio/write/write.c"/>
-    </VirtualDirectory>
-    <File Name="../../test/gpio/Makefile"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="dinput">
+    <VirtualDirectory Name="group">
+      <File Name="../../test/dinput/group/group.c"/>
+      <File Name="../../test/dinput/group/Makefile"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="poll">
       <File Name="../../test/dinput/poll/poll.c"/>
       <File Name="../../test/dinput/poll/Makefile"/>
@@ -52,6 +41,21 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="gpio">
+    <VirtualDirectory Name="read">
+      <File Name="../../test/gpio/read/read.c"/>
+      <File Name="../../test/gpio/read/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="getmode">
+      <File Name="../../test/gpio/getmode/getmode.c"/>
+      <File Name="../../test/gpio/getmode/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="write">
+      <File Name="../../test/gpio/write/Makefile"/>
+      <File Name="../../test/gpio/write/write.c"/>
+    </VirtualDirectory>
+    <File Name="../../test/gpio/Makefile"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="arch">
     <VirtualDirectory Name="arm">
       <VirtualDirectory Name="rpi">
@@ -166,7 +170,6 @@
     <File Name="../../sysio/gpio.h"/>
     <File Name="../../sysio/dinput.h"/>
     <File Name="../../sysio/iomap.h"/>
-    <File Name="../../sysio/switch.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="linux">
     <File Name="../../sysio/linux/dev-interface"/>
@@ -180,7 +183,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <File Name="../../sysio/src/doutput.c"/>
-    <File Name="../../sysio/src/switch.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="../../test/Makefile"/>
@@ -192,9 +194,5 @@
   <VirtualDirectory Name="pwm">
     <File Name="../../test/pwm/Makefile"/>
     <File Name="../../test/pwm/pwm.c"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="switch">
-    <File Name="../../test/switch/switch.c"/>
-    <File Name="../../test/switch/Makefile"/>
   </VirtualDirectory>
 </CodeLite_Project>

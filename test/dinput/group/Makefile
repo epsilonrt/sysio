@@ -6,7 +6,7 @@
 # $Id$
 
 # Target Name (without extension).
-TARGET = switch
+TARGET = group
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -14,7 +14,7 @@ INSTALL_BINDIR=$(prefix)/bin
 VERSION=1.0.0
 
 # Relative path of the project's root directory
-PROJECT_ROOT = ../..
+PROJECT_ROOT = ../../..
 
 # Optimization Level =  [0, 1, 2, 3, s].
 #     0 = Reduce compilation time and make debugging produce the expected

@@ -1,6 +1,6 @@
 /*
- * test/switch/switch.c
- * @brief Test de callback
+ * test/dinput/group/group.c
+ * @brief Test d'entrées groupées
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <assert.h>
 #include <sysio/delay.h>
-#include <sysio/switch.h>
+#include <sysio/dinput.h>
 
 /* private variables ======================================================== */
 static const xDin xMySwitches[] = {
@@ -34,10 +34,11 @@ vSigIntHandler (int sig) {
 
 // -----------------------------------------------------------------------------
 int
-iCallback (unsigned values, unsigned p, void * udata) {
+iCallback (unsigned values, unsigned p, eDinEdge edge, void * udata) {
   static int counter;
 
-  printf ("%03d - %s SW: 0x%X (%d)\n", counter++, (const char *) udata, values, p);
+  printf ("%03d - %s SW: 0x%X (%c%d)\n", counter++, (const char *) udata,
+          values, (edge == eEdgeRising) ? 'P' : 'R', p);
   return 0;
 }
 
@@ -48,7 +49,7 @@ main (int argc, char **argv) {
 
   sw = xDinOpen (xMySwitches, 3);
   assert (sw);
-  assert (iSwitchSetCallback (iCallback, msg, sw) == 0);
+  assert (iDinSetGrpCallback (eEdgeBoth, iCallback, msg, sw) == 0);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);

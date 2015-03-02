@@ -6,6 +6,7 @@
 # $Id$
 CDEFS += -D_REENTRANT
 EXTRA_LIBS += pthread rt
+LDFLAGS += -pthread
 
 # Conditionals
 ifeq ($(SYSIO_LIB_ENABLE),ON)

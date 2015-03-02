@@ -78,6 +78,20 @@ typedef struct xDinPort xDinPort;
  */
 typedef int (*iDinCallback) (eDinEdge edge, void *udata);
 
+/**
+ * Gestionnaire d'événement d'un groupe d'entrées
+ *
+ * Déclenché sur modification de niveau d'une entrée.
+ * Seuls les fronts valides déclenchent un traitement.
+ *
+ * @param uInputMask valeur des entrées (bit 0 pour entrée 0, ...)
+ * @param uInputNumber le numéro de l'entrée qui a changée
+ * @param edge  front déclenchant
+ * @param udata pointeur sur les données utilisateur défini lors de l'appel à iDinSetGrpCallback()
+ * @return doit retourner 0 si l'événement a été traité, -1 sinon.
+ */
+typedef int (*iDinGrpCallback) (unsigned uInputMask, unsigned uInputNumber, eDinEdge edge, void *udata);
+
 /* internal public functions ================================================ */
 
 /**
@@ -185,6 +199,17 @@ int iDinEdgeOccured (unsigned input, xDinPort * port);
 int iDinSetCallback (unsigned input, eDinEdge edge, iDinCallback callback, void *udata, xDinPort * port);
 
 /**
+ * @brief Installation d'un gestionnaire de groupe d'entrées
+ *
+ * @param callback nom du gestionnaire (fonction définie par l'utilisateur)
+ * @param udata pointeur sur des données qui seront passées lors de l'exécution
+ *         du gestionnaire (NULL si inutilisé)
+ * @param port le port d'entrée
+ * @return 0, -1 si erreur
+ */
+int iDinSetGrpCallback (eDinEdge edge, iDinGrpCallback callback, void *udata, xDinPort * port);
+
+/**
  * @brief Désinstallation d'un gestionnaire d'interruption utilisateur
  *
  * @param input le numéro logique de l'entrée concernée
@@ -192,6 +217,14 @@ int iDinSetCallback (unsigned input, eDinEdge edge, iDinCallback callback, void 
  * @return 0, -1 si erreur
  */
 int iDinClearCallback (unsigned input, xDinPort * port);
+
+/**
+ * @brief Désinstallation d'un gestionnaire de groupe d'entrées
+ *
+ * @param port le port d'entrée
+ * @return 0, -1 si erreur
+ */
+int iDinClearGrpCallback (xDinPort * port);
 
 /**
  * @brief Indique si un gestionnaire d'interruption utilisateur est installé
