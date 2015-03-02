@@ -33,6 +33,8 @@ __BEGIN_C_DECLS
  *  Utilisation en scrutation
  *  @example dinput/callback/callback.c
  *  Utilisation en "interruption"
+ *  @example dinput/group/group.c
+ *  Utilisation en "interruption" groupée
  */
 
 /* constants ================================================================ */
