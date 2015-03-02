@@ -72,7 +72,7 @@ iDoutClose (xDoutPort * port) {
 
 // -----------------------------------------------------------------------------
 int
-iDoutMapSize (xDoutPort * port) {
+iDoutPortSize (xDoutPort * port) {
   assert(port);
 
   return port->size;

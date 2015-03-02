@@ -67,7 +67,7 @@ int iDoutClose (xDoutPort * port);
  * @param port le port de sortie
  * @return le nombre de broches, -1 si erreur
  */
-int iDoutMapSize (xDoutPort * port);
+int iDoutPortSize (xDoutPort * port);
 
 /**
  * @brief Désactive une sortie

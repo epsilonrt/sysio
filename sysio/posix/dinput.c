@@ -192,7 +192,7 @@ iDinReadAll (xDinPort *port) {
 
 // -----------------------------------------------------------------------------
 int
-iDinMapSize (xDinPort * port) {
+iDinPortSize (xDinPort * port) {
   assert(port);
 
   return port->size;

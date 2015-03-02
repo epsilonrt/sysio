@@ -1,5 +1,5 @@
 /*
- * lib/lib.c
+ * lib/sysio.c
  * @brief
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
@@ -10,7 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include "version.h"
+
+/* constants ================================================================ */
+#define ERROR_BUFFER_SIZE 256
+
+/* private variables ======================================================== */
+static char sError[ERROR_BUFFER_SIZE];
 
 /* private functions ======================================================== */
 
@@ -20,7 +27,7 @@ iGetInt (const char * str) {
   char * endptr;
   int i = -1;
 
-  long val = strtol(str, &endptr, 0);
+  long val = strtol (str, &endptr, 0);
   if (endptr > str) {
     i = val;
   }
@@ -42,13 +49,13 @@ const char * sSysIoGitCommit (void) {
 }
 
 // -----------------------------------------------------------------------------
-int iSysIoMajor(void) {
+int iSysIoMajor (void) {
 
   return iGetInt (VERSION);
 }
 
 // -----------------------------------------------------------------------------
-int iSysIoMinor(void) {
+int iSysIoMinor (void) {
   const char * p = strchr (VERSION, '.');
   if (p) {
     return iGetInt (++p);
@@ -57,12 +64,30 @@ int iSysIoMinor(void) {
 }
 
 // -----------------------------------------------------------------------------
-int iSysIoBuild(void) {
+int iSysIoBuild (void) {
   const char * p = strchr (VERSION, '-');
   if (p) {
     return iGetInt (++p);
   }
   return 0;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sSysIoStrError (void) {
+  return sError;
+}
+
+// -----------------------------------------------------------------------------
+int
+iSysIoError (const char *format, ...) {
+  va_list va;
+  int size;
+
+  va_start (va, format);
+  size = vsnprintf (sError, ERROR_BUFFER_SIZE - 1, format, va);
+  va_end (va);
+  return size;
 }
 
 /* ========================================================================== */

@@ -104,7 +104,7 @@ int iDinClose (xDinPort * port);
  * @param port le port d'entrée
  * @return le nombre de broches, -1 si erreur
  */
-int iDinMapSize (xDinPort * port);
+int iDinPortSize (xDinPort * port);
 
 /**
  * @brief Lecture de l'état d'une entrée

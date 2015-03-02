@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="libsysio" InternalType="">
+  <VirtualDirectory Name="gpio">
+    <VirtualDirectory Name="read">
+      <File Name="../../test/gpio/read/read.c"/>
+      <File Name="../../test/gpio/read/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="getmode">
+      <File Name="../../test/gpio/getmode/getmode.c"/>
+      <File Name="../../test/gpio/getmode/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="write">
+      <File Name="../../test/gpio/write/Makefile"/>
+      <File Name="../../test/gpio/write/write.c"/>
+    </VirtualDirectory>
+    <File Name="../../test/gpio/Makefile"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="dinput">
+    <VirtualDirectory Name="poll">
+      <File Name="../../test/dinput/poll/poll.c"/>
+      <File Name="../../test/dinput/poll/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="callback">
+      <File Name="../../test/dinput/callback/Makefile"/>
+      <File Name="../../test/dinput/callback/callback.c"/>
+    </VirtualDirectory>
+    <File Name="../../test/dinput/Makefile"/>
+  </VirtualDirectory>
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="arch">
+    <VirtualDirectory Name="arm">
+      <VirtualDirectory Name="rpi">
+        <File Name="../../sysio/arch/arm/rpi/rpi.c"/>
+        <File Name="../../sysio/arch/arm/rpi/gpio.c"/>
+        <File Name="../../sysio/arch/arm/rpi/pwm.c"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="libsysio" IntermediateDirectory="." Command="libsysio" CommandArguments="-dfaS" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="DistClean">make distclean</Target>
+        <RebuildCommand>make rebuild DEBUG=dwarf-2</RebuildCommand>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make all DEBUG=dwarf-2</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand>make $(CurrentFileName).o DEBUG=dwarf-2</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(ProjectPath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="libsysio" IntermediateDirectory="." Command="libsysio" CommandArguments="-dfaS" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="DistClean">make distclean</Target>
+        <RebuildCommand>make rebuild</RebuildCommand>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand>make $(CurrentFileName).o</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(ProjectPath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <VirtualDirectory Name="sysio">
+    <File Name="sysio.c"/>
+    <File Name="Makefile"/>
+    <File Name="../../sysio/delay.h"/>
+    <File Name="../../sysio/doutput.h"/>
+    <File Name="../../sysio/defs.h"/>
+    <File Name="../../sysio/rpi.h"/>
+    <File Name="../../sysio/i2c.h"/>
+    <File Name="../../sysio/pwm.h"/>
+    <File Name="../../sysio/gpio.h"/>
+    <File Name="../../sysio/dinput.h"/>
+    <File Name="../../sysio/iomap.h"/>
+    <File Name="../../sysio/switch.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="linux">
+    <File Name="../../sysio/linux/dev-interface"/>
+    <File Name="../../sysio/linux/i2c.c"/>
+    <File Name="../../sysio/linux/i2c-dev.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="posix">
+    <File Name="../../sysio/posix/iomap.c"/>
+    <File Name="../../sysio/posix/dinput.c"/>
+    <File Name="../../sysio/posix/delay.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <File Name="../../sysio/src/doutput.c"/>
+    <File Name="../../sysio/src/switch.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="test">
+    <File Name="../../test/Makefile"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="doutput">
+    <File Name="../../test/doutput/doutput.c"/>
+    <File Name="../../test/doutput/Makefile"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="pwm">
+    <File Name="../../test/pwm/Makefile"/>
+    <File Name="../../test/pwm/pwm.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="switch">
+    <File Name="../../test/switch/switch.c"/>
+    <File Name="../../test/switch/Makefile"/>
+  </VirtualDirectory>
+</CodeLite_Project>

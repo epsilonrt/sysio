@@ -32,13 +32,9 @@
 
 #ifndef __ASSEMBLER__
 __BEGIN_C_DECLS
-  /* ==========================Partie Langage C============================== */
-
-#if defined(__DOXYGEN__)
-// -----------------------------------------------------------------------------
-
+/* ==========================Partie Langage C============================== */
 /**
- *  @defgroup sysio_version Version de la bibilothèque
+ *  @defgroup sysio_static Erreurs et versions
  * @{
  */
 
@@ -55,21 +51,21 @@ const char * sSysIoVersion (void);
  *
  * @return le numéro de majeur ou -1 en cas d'erreur interne
  */
-int iSysIoMajor(void);
+int iSysIoMajor (void);
 
 /**
  * @brief Renvoie le mineur de la version de la bibliothèque
  *
  * @return le numéro de mineur ou -1 en cas d'erreur interne
  */
-int iSysIoMinor(void);
+int iSysIoMinor (void);
 
 /**
  * @brief Renvoie le numéro de build de la version de la bibliothèque
  *
  * @return le numéro de build ou -1 en cas d'erreur interne
  */
-int iSysIoBuild(void);
+int iSysIoBuild (void);
 
 /**
  * @brief Renvoie l'identifiant de commit git de la bibliothèque
@@ -79,11 +75,15 @@ int iSysIoBuild(void);
 const char * sSysIoGitCommit (void);
 
 /**
+ * @brief Renvoie le message de la dernière erreur
+ */
+const char * sSysIoStrError (void);
+
+/**
  * @}
  */
 
-// -----------------------------------------------------------------------------
-#else // !defined(__DOXYGEN__)
+#if !defined(__DOXYGEN__)
 // -----------------------------------------------------------------------------
 // Partie non documentée
 #ifndef __need_NULL
@@ -95,6 +95,12 @@ const char * sSysIoGitCommit (void);
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+
+/* internal public functions ================================================ */
+/*
+ * Modifie le message de la dernière erreur
+ */
+int iSysIoError (const char *format, ...);
 
 /* macros =================================================================== */
 #ifndef _BV
@@ -117,16 +123,28 @@ const char * sSysIoGitCommit (void);
 #define  LSB(x) ((uint8_t) (x & 0xFF))
 #endif
 
-#define PERROR(fmt,...) fprintf(stderr, "%s:%d: %s: Error: " fmt "\n", \
-                              __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#define PWARNING(fmt,...) fprintf(stderr, "%s:%d: %s: Warning: " fmt "\n", \
-                              __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
 #ifdef DEBUG
+#define PERROR(fmt,...) do { \
+  fprintf (stderr, "%s:%d: %s: Error: " fmt "\n", \
+           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  iSysIoError ("%s:%d: %s: Error: " fmt "\n", \
+               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+} while (0)
+#define PWARNING(fmt,...) do { \
+  fprintf (stderr, "%s:%d: %s: Warning: " fmt "\n", \
+           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  iSysIoError ("%s:%d: %s: Warning: " fmt "\n", \
+               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+} while (0)
 #define PDEBUG(fmt,...) printf("%s:%d: %s: Debug: " fmt "\n", \
-                              __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+                               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define PDEBUG(format,...)
+#define PERROR(fmt,...) iSysIoError("%s:%d: %s: Error: " fmt "\n", \
+                                    __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define PWARNING(fmt,...) iSysIoError("%s:%d: %s: Warning: " fmt "\n", \
+                                      __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #endif
 
 #ifdef __unix__
@@ -136,7 +154,7 @@ const char * sSysIoGitCommit (void);
 # endif
 #endif /*  __unix__ defined */
 
-/* GCC attributes */
+  /* GCC attributes */
 #define FORMAT(type,fmt,first)  __attribute__((__format__(type, fmt, first)))
 #define NORETURN                __attribute__((__noreturn__))
 #define UNUSED_ARG(type,arg)    __attribute__((__unused__)) type arg
@@ -158,8 +176,8 @@ const char * sSysIoGitCommit (void);
 // -----------------------------------------------------------------------------
 #endif /* !defined(__DOXYGEN__) */
 
-/* =========================Fin Partie Langage C============================= */
-__END_C_DECLS
+  /* =========================Fin Partie Langage C============================= */
+  __END_C_DECLS
 #endif /* __ASSEMBLER__ not defined */
 
 

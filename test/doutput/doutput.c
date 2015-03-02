@@ -45,7 +45,7 @@ main (int argc, char **argv) {
     printf("Press Ctrl+C to abort ...\n");
 
     printf("iDoutSet() test... "); fflush(stdout);
-    for (unsigned led = 0; led < iDoutMapSize(port); led++) {
+    for (unsigned led = 0; led < iDoutPortSize(port); led++) {
 
       assert (iDoutSet (led, port) == 0);
       delay_ms (500);
@@ -54,7 +54,7 @@ main (int argc, char **argv) {
     delay_ms (1000);
 
     printf("iDoutClear() test... "); fflush(stdout);
-    for (unsigned led = 0; led < iDoutMapSize(port); led++) {
+    for (unsigned led = 0; led < iDoutPortSize(port); led++) {
 
       assert (iDoutClear (led, port) == 0);
       delay_ms (500);
@@ -63,12 +63,12 @@ main (int argc, char **argv) {
     delay_ms (1000);
 
     printf("iDoutToggle() test... "); fflush(stdout);
-    for (unsigned led = 0; led < iDoutMapSize(port); led++) {
+    for (unsigned led = 0; led < iDoutPortSize(port); led++) {
 
       assert (iDoutToggle (led, port) == 0);
       delay_ms (500);
     }
-    for (unsigned led = 0; led < iDoutMapSize(port); led++) {
+    for (unsigned led = 0; led < iDoutPortSize(port); led++) {
 
       assert (iDoutToggle (led, port) == 0);
       delay_ms (500);

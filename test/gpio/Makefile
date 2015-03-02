@@ -4,7 +4,7 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 # $Id$
-SUBDIRS = write read mode
+SUBDIRS = write read getmode
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

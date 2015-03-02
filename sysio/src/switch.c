@@ -44,7 +44,7 @@ iSwitchSetCallback (iSwitchCallback callback, xDinPort * sw) {
   ctx->callback = callback;
   ctx->sw = sw;
 
-  for (unsigned pin = 0; pin < iDinMapSize (sw); pin++) {
+  for (unsigned pin = 0; pin < iDinPortSize (sw); pin++) {
 
     xSwitchData * udata = malloc (sizeof(xSwitchData));
     assert (udata);
@@ -66,7 +66,7 @@ iSwitchClearCallback (xDinPort * sw) {
   if (pDinCallbackData (0, sw) != NULL) {
     xSwitchContext * ctx = 0;
 
-    for (unsigned pin = 0; pin < iDinMapSize (sw); pin++) {
+    for (unsigned pin = 0; pin < iDinPortSize (sw); pin++) {
 
       xSwitchData * d = (xSwitchData *) pDinCallbackData (pin, sw);
       ctx = d->ctx;
