@@ -64,6 +64,7 @@ xDoutOpen (const xDout * pins, unsigned size) {
 xDoutOpenError:
   (void) iGpioClose (port->gpio);
 xDoutGpioError:
+  free(port->pins);
   free (port);
   return 0;
 }

@@ -32,7 +32,7 @@ typedef struct xDinCbContext {
 // -----------------------------------------------------------------------------
 typedef struct xDinPort {
   xGpio * gpio;
-  const xDin * pins;
+  xDin * pins;
   unsigned size;
 
   xDinCbContext * ctx;
@@ -174,17 +174,25 @@ pvDinPoll (void * xContext) {
 // -----------------------------------------------------------------------------
 xDinPort *
 xDinOpen (const xDin * pins, unsigned size) {
+  assert(pins);
+  
+  if (size == 0) {
+    return 0;
+  }
 
   xDinPort * port = malloc (sizeof (xDinPort));
   assert (port);
   memset (port, 0, sizeof (xDinPort));
+  
+  port->pins = calloc (size, sizeof(xDin));
+  assert(port->pins);
+  memcpy (port->pins, pins, size * sizeof(xDin));
+  port->size = size;
 
   port->gpio = xGpioOpen (NULL);
   if (!port->gpio) {
     goto xDinOpenError;
   }
-  port->pins = pins;
-  port->size = size;
 
   for (unsigned i = 0; i < size; i++) {
 
@@ -213,8 +221,24 @@ xDinTheadError:   // Erreur lors de la création du thread
 xDinGpioError:    // Erreur lors de l'accès au gpio
   (void) iGpioClose (port->gpio);
 xDinOpenError:    // Erreur lors de l'ouverture du gpio
+  free (port->pins);
   free (port);
   return 0;
+}
+
+// -----------------------------------------------------------------------------
+int
+iDinClose (xDinPort * port) {
+  assert (port);
+
+  port->run = false;
+  (void) iDinClearGrpCallback (port);
+  pthread_join (port->thread, NULL);
+  int i = iGpioClose (port->gpio);
+
+  free (port->pins);
+  free (port);
+  return i;
 }
 
 // -----------------------------------------------------------------------------
@@ -255,20 +279,6 @@ iDinPortSize (xDinPort * port) {
   assert (port);
 
   return port->size;
-}
-
-// -----------------------------------------------------------------------------
-int
-iDinClose (xDinPort * port) {
-  assert (port);
-
-  port->run = false;
-  (void) iDinClearGrpCallback (port);
-  pthread_join (port->thread, NULL);
-  int i = iGpioClose (port->gpio);
-
-  free (port);
-  return i;
 }
 
 // -----------------------------------------------------------------------------

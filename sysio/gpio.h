@@ -66,11 +66,11 @@ typedef struct xGpio xGpio;
 /**
  * @brief Ouverture d'un GPIO
  *
- * @param setup pointeur sur une variable de configuration dépendant de l'architecture,
- *        NULL si inutilisée
+ * @param args pointeur sur une variable de configuration dépendant de 
+ *        l'architecture, mettre à NULL si inutilisée
  * @return le pointeur sur le GPIO, NULL en cas d'erreur
  */
-xGpio * xGpioOpen (void * setup);
+xGpio * xGpioOpen (void * args);
 
 /**
  * @brief Fermeture d'un GPIO
