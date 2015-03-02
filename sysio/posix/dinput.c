@@ -263,6 +263,7 @@ iDinClose (xDinPort * port) {
   assert (port);
 
   port->run = false;
+  (void) iDinClearGrpCallback (port);
   pthread_join (port->thread, NULL);
   int i = iGpioClose (port->gpio);
 
