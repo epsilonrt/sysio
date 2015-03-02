@@ -35,9 +35,10 @@ __BEGIN_C_DECLS
  *
  * @param values valeur des switchs (bit 0 pour switch 0, ...)
  * @param sw_changed le numéro du switch qui a changé
+ * @param udata pointeur sur les données utilisateur défini lors de l'appel à iSwitchSetCallback()
  * @return doit retourner 0 si l'événement a été traité, -1 sinon.
  */
-typedef int (*iSwitchCallback) (unsigned values, unsigned sw_changed);
+typedef int (*iSwitchCallback) (unsigned values, unsigned sw_changed, void *udata);
 
 /* internal public functions ================================================ */
 
@@ -45,10 +46,12 @@ typedef int (*iSwitchCallback) (unsigned values, unsigned sw_changed);
  * @brief Installation d'un gestionnaire d'interruption utilisateur
  *
  * @param callback nom du gestionnaire (fonction définie par l'utilisateur)
+ * @param udata pointeur sur des données qui seront passées lors de l'exécution
+ *         du gestionnaire (NULL si inutilisé)
  * @param port le port d'entrée
  * @return 0, -1 si erreur
  */
-int iSwitchSetCallback (iSwitchCallback callback, xDinPort * sw);
+int iSwitchSetCallback (iSwitchCallback callback, void *udata, xDinPort * sw);
 
 /**
  * @brief Désinstallation d'un gestionnaire d'interruption utilisateur

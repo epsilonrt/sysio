@@ -17,7 +17,8 @@
 static const xDin xMySwitches[] = {
   { .num = 3, .act = false, .pull = ePullUp },
   { .num = 4, .act = false, .pull = ePullUp },
-  { .num = 5, .act = false, .pull = ePullUp }};
+  { .num = 5, .act = false, .pull = ePullUp }
+};
 
 xDinPort * sw;
 
@@ -27,30 +28,31 @@ static void
 vSigIntHandler (int sig) {
 
   assert (iDinClose (sw) == 0);
-  printf("\neverything was closed.\nHave a nice day !\n");
-  exit(EXIT_SUCCESS);
+  printf ("\neverything was closed.\nHave a nice day !\n");
+  exit (EXIT_SUCCESS);
 }
 
 // -----------------------------------------------------------------------------
 int
-iCallback (unsigned values, unsigned p) {
+iCallback (unsigned values, unsigned p, void * udata) {
   static int counter;
 
-  printf ("%03d - SW: 0x%X (%d)\n", counter++, values, p);
+  printf ("%03d - %s SW: 0x%X (%d)\n", counter++, (const char *) udata, values, p);
   return 0;
 }
 
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
+  const char msg[] = "Hello !";
 
   sw = xDinOpen (xMySwitches, 3);
-  assert(sw);
-  assert (iSwitchSetCallback (iCallback, sw) == 0);
+  assert (sw);
+  assert (iSwitchSetCallback (iCallback, sw, msg) == 0);
 
   // vSigIntHandler() intercepte le CTRL+C
-  signal(SIGINT, vSigIntHandler);
-  printf("Press Ctrl+C to abort ...\n");
+  signal (SIGINT, vSigIntHandler);
+  printf ("Press Ctrl+C to abort ...\n");
 
   for (;;) {
 

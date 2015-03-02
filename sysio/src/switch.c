@@ -13,6 +13,7 @@
 /* structures =============================================================== */
 typedef struct xSwitchContext {
   iSwitchCallback callback;
+  void * udata;
   xDinPort * sw;
 } xSwitchContext;
 
@@ -23,12 +24,12 @@ typedef struct xSwitchData {
 
 /* private functions ======================================================== */
 static int
-iSwitchHandler (eDinEdge edge, void *udata) {
-  xSwitchData * d = (xSwitchData *) udata;
+iSwitchHandler (eDinEdge edge, void *swdata) {
+  xSwitchData * d = (xSwitchData *) swdata;
 
   if (d->ctx->callback) {
 
-    return d->ctx->callback ((unsigned) iDinReadAll (d->ctx->sw), d->pin);
+    return d->ctx->callback ((unsigned) iDinReadAll (d->ctx->sw), d->pin, d->ctx->udata);
   }
   return 0;
 }
@@ -36,22 +37,23 @@ iSwitchHandler (eDinEdge edge, void *udata) {
 /* internal public functions ================================================ */
 // -----------------------------------------------------------------------------
 int
-iSwitchSetCallback (iSwitchCallback callback, xDinPort * sw) {
+iSwitchSetCallback (iSwitchCallback callback, void *udata, xDinPort * sw) {
   assert (sw);
 
   xSwitchContext * ctx = malloc (sizeof(xSwitchContext));
   assert (ctx);
   ctx->callback = callback;
   ctx->sw = sw;
+  ctx->udata = udata;
 
   for (unsigned pin = 0; pin < iDinPortSize (sw); pin++) {
 
-    xSwitchData * udata = malloc (sizeof(xSwitchData));
-    assert (udata);
-    udata->ctx = ctx;
-    udata->pin = pin;
+    xSwitchData * swdata = malloc (sizeof(xSwitchData));
+    assert (swdata);
+    swdata->ctx = ctx;
+    swdata->pin = pin;
 
-    if (iDinSetCallback (pin, eEdgeBoth, iSwitchHandler, udata, sw) != 0) {
+    if (iDinSetCallback (pin, eEdgeBoth, iSwitchHandler, swdata, sw) != 0) {
       return -1;
     }
   }
