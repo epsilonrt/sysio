@@ -33,7 +33,7 @@ OPT = 2
 #DEBUG = dwarf-2
 
 # View the gcc line when compile and link ON/OFF
-VIEW_GCC_LINE = ON
+VIEW_GCC_LINE = OFF
 
 # Project build options
 #ARCH = ARCH_GENERIC_LINUX
@@ -88,7 +88,7 @@ EXTRA_LIBDIRS =
 
 # List any extra libraries here (without lib prefix).
 #     Each library must be seperated by a space.
-EXTRA_LIBS = pthread rt config
+EXTRA_LIBS = config
 
 # Enable link with  mathematics library (ON/OFF)
 MATH_LIB_ENABLE = ON
@@ -262,8 +262,8 @@ clean: clean_list_lib
 distclean: distclean_list clean_list_lib
 
 version:
-	$(SYSIO_ROOT)/util/version.sh $@.h
-	$(SYSIO_ROOT)/util/version.sh $@.mk
+	@$(SYSIO_ROOT)/util/version.sh $@.h
+	@$(SYSIO_ROOT)/util/version.sh $@.mk
 
 libstatic: $(TARGET_LIB_PATH).a
 libshared: $(TARGET_LIB_PATH).so
@@ -273,9 +273,13 @@ libshared: $(TARGET_LIB_PATH).so
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
 	-install -m 0755 $(TARGET_LIB_PATH).a $(INSTALL_LIBDIR)
+ifeq ($(DEBUG),)
 	strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
+endif
 	-install -m 0755 $(TARGET_LIB_PATH).so $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
+ifeq ($(DEBUG),)
 	strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
+endif
 	ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
 	-install -d -m 0755 $(INSTALL_INCDIR)/sysio
 	-install -m 0644 $(PROJECT_ROOT)/sysio/*.h $(INSTALL_INCDIR)/sysio
