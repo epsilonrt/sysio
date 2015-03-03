@@ -15,7 +15,22 @@
 __BEGIN_C_DECLS
 /* ========================================================================== */
 
+/**
+ *  @defgroup sysio_serial Liaison série
+ *
+ *  Ce module fournit les fonctions permettant de contrôler une liaison série.
+ *  @{
+ */
+
+/**
+ * @brief Erreur de baudrate
+ */
 #define EBADBAUD (-2)
+
+/**
+ * @enum eSerialFlow
+ * @brief Type de gestion de flux
+ */
 
 typedef enum {
 
@@ -27,31 +42,54 @@ typedef enum {
 /* internal public functions ================================================ */
 
 /**
- *  Open and initialise the serial port
+ *  Ouverture d'un port série
  *
- * @param device device to operate on.
- * @param baud baudrate
- * @return file descriptor on the device, negative value on error
+ * @param device le nom du port à ouvrir (/dev/tty...)
+ * @param baud vitesse en bauds
+ * @return le descripteur de fichier du port ou une valeur nétaive sur erreur
  */
 int iSerialOpen (const char *device, const int baud);
 
 /**
- *  Release the serial port
+ *  Fermeture du port série
  *
- * @param file descriptor on the device.
+ * @param le descripteur de fichier du port
  */
 void vSerialClose (int fd);
 
 /**
- *  Flush the serial buffers (both tx & rx)
+ *  Vide les buffers de réception et de transmission
+ * 
+ * Le buffer de transmission est transmis, celui de réception est vidé.
  *
- * @param file descriptor on the device.
+ * @param le descripteur de fichier du port
  */
 void vSerialFlush (int fd);
 
+/**
+ *  Lecture du type de contrôle de flux en cours
+ *
+ * @param le descripteur de fichier du port
+ */
 eSerialFlow eSerialGetFlow (int fd);
+
+/**
+ *  Modification du type de contrôle de flux
+ *
+ * @param le descripteur de fichier du port
+ */
 eSerialFlow eSerialSetFlow (int fd, eSerialFlow eNewFlow);
+
+/**
+ *  Lecture du type de contrôle de flux en cours sous forme "lisible"
+ *
+ * @param le descripteur de fichier du port
+ */
 const char * eSerialGetFlowStr (int fd);
+
+/**
+ * @}
+ */
 
 /* ========================================================================== */
 __END_C_DECLS

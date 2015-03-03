@@ -18,7 +18,6 @@
 /* structures =============================================================== */
 struct xLog {
 
-  const char * cProgName;
   bool bIsDaemon;
   bool bIsInit;
   int iMask;
@@ -53,9 +52,8 @@ get_priority_name(int pri) {
 
 // -----------------------------------------------------------------------------
 void
-vLogInit (const char * myname, int mask) {
+vLogInit (int mask) {
 
-  xMyLog.cProgName = basename (myname);
   xMyLog.iMask = mask;
   xMyLog.bIsInit = true;
 }
@@ -69,7 +67,7 @@ void vLogDaemonize (bool daemonize) {
     if (daemonize) {
 
       (void)setlogmask (xMyLog.iMask);
-      openlog (xMyLog.cProgName, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
+      openlog (__progname, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
     }
   }
   else {
@@ -108,7 +106,7 @@ vLog (int priority, const char *format, ...) {
 
       if (xMyLog.iMask & LOG_MASK(priority)) {
 
-        (void)fprintf(stderr,"%s(%s): ", xMyLog.cProgName, get_priority_name(priority));
+        (void)fprintf(stderr,"%s(%s): ", __progname, get_priority_name(priority));
         (void)vfprintf(stderr, format, va);
         (void)fputc('\n', stderr);
         fflush (stderr);

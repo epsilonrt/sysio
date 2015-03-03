@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libsysio" InternalType="">
-  <VirtualDirectory Name="dinput">
-    <VirtualDirectory Name="group">
-      <File Name="../../test/dinput/group/group.c"/>
-      <File Name="../../test/dinput/group/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="poll">
-      <File Name="../../test/dinput/poll/poll.c"/>
-      <File Name="../../test/dinput/poll/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="callback">
-      <File Name="../../test/dinput/callback/Makefile"/>
-      <File Name="../../test/dinput/callback/callback.c"/>
-    </VirtualDirectory>
-    <File Name="../../test/dinput/Makefile"/>
-  </VirtualDirectory>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../../sysio</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -41,6 +35,21 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="dinput">
+    <VirtualDirectory Name="group">
+      <File Name="../../test/dinput/group/group.c"/>
+      <File Name="../../test/dinput/group/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="poll">
+      <File Name="../../test/dinput/poll/poll.c"/>
+      <File Name="../../test/dinput/poll/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="callback">
+      <File Name="../../test/dinput/callback/Makefile"/>
+      <File Name="../../test/dinput/callback/callback.c"/>
+    </VirtualDirectory>
+    <File Name="../../test/dinput/Makefile"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="gpio">
     <VirtualDirectory Name="read">
       <File Name="../../test/gpio/read/read.c"/>
@@ -170,6 +179,8 @@
     <File Name="../../sysio/gpio.h"/>
     <File Name="../../sysio/dinput.h"/>
     <File Name="../../sysio/iomap.h"/>
+    <File Name="../../sysio/serial.h"/>
+    <File Name="../../sysio/log.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="linux">
     <File Name="../../sysio/linux/dev-interface"/>
@@ -180,9 +191,11 @@
     <File Name="../../sysio/posix/iomap.c"/>
     <File Name="../../sysio/posix/dinput.c"/>
     <File Name="../../sysio/posix/delay.c"/>
+    <File Name="../../sysio/posix/serial.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <File Name="../../sysio/src/doutput.c"/>
+    <File Name="../../sysio/src/log.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="../../test/Makefile"/>
