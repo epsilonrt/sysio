@@ -33,10 +33,103 @@
 #ifndef __ASSEMBLER__
 __BEGIN_C_DECLS
 /* ==========================Partie Langage C============================== */
+
+#if !defined(__DOXYGEN__)
+// -----------------------------------------------------------------------------
+// Partie non documentée
+#ifndef __need_NULL
+# define __need_NULL
+#endif
+#ifndef __need_NULL
+# define __need_size_t
+#endif
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+/* internal public functions ================================================ */
+/*
+ * Modifie le message de la dernière erreur
+ */
+int iSysIoSetStrError (const char *format, ...);
+
+/* macros =================================================================== */
+#ifndef _BV
+#define _BV(i) (1<<(i))
+#endif
+
+#ifndef MIN
+#define MIN(a,b) ((a) < (b) ? a : b)
+#endif
+
+#ifndef MAX
+#define MAX(a,b) ((a) > (b) ? a : b)
+#endif
+
+#ifndef MSB16
+#define  MSB16(x) ((uint8_t) (x >> 8) & 0xFF)
+#endif
+
+#ifndef LSB
+#define  LSB(x) ((uint8_t) (x & 0xFF))
+#endif
+
+
+#ifdef DEBUG
+#define PERROR(fmt,...) do { \
+  vLog (LOG_ERR, fmt, ##__VA_ARGS__); \
+  iSysIoSetStrError ("%s:%d: %s: Error: " fmt "\n", \
+               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+} while (0)
+#define PWARNING(fmt,...) do { \
+  vLog (LOG_WARNING, fmt, ##__VA_ARGS__); \
+  iSysIoSetStrError ("%s:%d: %s: Warning: " fmt "\n", \
+               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+} while (0)
+#define PDEBUG(fmt,...) vLog (LOG_DEBUG, fmt, ##__VA_ARGS__)
+#else
+#define PDEBUG(fmt,...)
+#define PERROR(fmt,...) iSysIoSetStrError("%s:%d: %s: Error: " fmt "\n", \
+                                    __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define PWARNING(fmt,...) iSysIoSetStrError("%s:%d: %s: Warning: " fmt "\n", \
+                                      __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#endif
+
+#ifdef __unix__
+# ifndef delay
+#   include <unistd.h>
+#   define delay(ms) usleep(ms*1000.0)
+# endif
+#endif /*  __unix__ defined */
+
+  /* GCC attributes */
+#define FORMAT(type,fmt,first)  __attribute__((__format__(type, fmt, first)))
+#define NORETURN                __attribute__((__noreturn__))
+#define UNUSED_ARG(type,arg)    __attribute__((__unused__)) type arg
+#define UNUSED_VAR(type,name)   __attribute__((__unused__)) type name
+#define USED_VAR(type,name)     __attribute__((__used__)) type name
+#define INLINE                  static inline __attribute__((__always_inline__))
+#define NOINLINE                __attribute__((noinline))
+#define LIKELY(x)               __builtin_expect(!!(x), 1)
+#define UNLIKELY(x)             __builtin_expect(!!(x), 0)
+#define PURE_FUNC               __attribute__((pure))
+#define CONST_FUNC              __attribute__((const))
+#define UNUSED_FUNC             __attribute__((unused))
+#define USED_FUNC               __attribute__((__used__))
+#define RESTRICT                __restrict__
+#define MUST_CHECK              __attribute__((warn_unused_result))
+#define PACKED                  __attribute__((packed))
+#define ALIGNED(x)              __attribute__ ((__aligned__(x)))
+
+// -----------------------------------------------------------------------------
+#endif /* !defined(__DOXYGEN__) */
+
 /**
  *  @defgroup sysio_static Erreurs et versions
  * @{
  */
+
+/* internal public functions ================================================ */
 
 /**
  * @brief Renvoie la version de la bibliothèque sous forme de string
@@ -88,101 +181,8 @@ bool bSysIoLogAssert (void);
  * @}
  */
 
-#if !defined(__DOXYGEN__)
-// -----------------------------------------------------------------------------
-// Partie non documentée
-#ifndef __need_NULL
-# define __need_NULL
-#endif
-#ifndef __need_NULL
-# define __need_size_t
-#endif
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-
-/* internal public functions ================================================ */
-/*
- * Modifie le message de la dernière erreur
- */
-int iSysIoError (const char *format, ...);
-
-/* macros =================================================================== */
-#ifndef _BV
-#define _BV(i) (1<<(i))
-#endif
-
-#ifndef MIN
-#define MIN(a,b) ((a) < (b) ? a : b)
-#endif
-
-#ifndef MAX
-#define MAX(a,b) ((a) > (b) ? a : b)
-#endif
-
-#ifndef MSB16
-#define  MSB16(x) ((uint8_t) (x >> 8) & 0xFF)
-#endif
-
-#ifndef LSB
-#define  LSB(x) ((uint8_t) (x & 0xFF))
-#endif
-
-
-#ifdef DEBUG
-#define PERROR(fmt,...) do { \
-  fprintf (stderr, "%s:%d: %s: Error: " fmt "\n", \
-           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-  iSysIoError ("%s:%d: %s: Error: " fmt "\n", \
-               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-} while (0)
-#define PWARNING(fmt,...) do { \
-  fprintf (stderr, "%s:%d: %s: Warning: " fmt "\n", \
-           __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-  iSysIoError ("%s:%d: %s: Warning: " fmt "\n", \
-               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-} while (0)
-#define PDEBUG(fmt,...) printf("%s:%d: %s: Debug: " fmt "\n", \
-                               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#else
-#define PDEBUG(format,...)
-#define PERROR(fmt,...) iSysIoError("%s:%d: %s: Error: " fmt "\n", \
-                                    __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#define PWARNING(fmt,...) iSysIoError("%s:%d: %s: Warning: " fmt "\n", \
-                                      __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#endif
-
-#ifdef __unix__
-# ifndef delay
-#   include <unistd.h>
-#   define delay(ms) usleep(ms*1000.0)
-# endif
-#endif /*  __unix__ defined */
-
-  /* GCC attributes */
-#define FORMAT(type,fmt,first)  __attribute__((__format__(type, fmt, first)))
-#define NORETURN                __attribute__((__noreturn__))
-#define UNUSED_ARG(type,arg)    __attribute__((__unused__)) type arg
-#define UNUSED_VAR(type,name)   __attribute__((__unused__)) type name
-#define USED_VAR(type,name)     __attribute__((__used__)) type name
-#define INLINE                  static inline __attribute__((__always_inline__))
-#define NOINLINE                __attribute__((noinline))
-#define LIKELY(x)               __builtin_expect(!!(x), 1)
-#define UNLIKELY(x)             __builtin_expect(!!(x), 0)
-#define PURE_FUNC               __attribute__((pure))
-#define CONST_FUNC              __attribute__((const))
-#define UNUSED_FUNC             __attribute__((unused))
-#define USED_FUNC               __attribute__((__used__))
-#define RESTRICT                __restrict__
-#define MUST_CHECK              __attribute__((warn_unused_result))
-#define PACKED                  __attribute__((packed))
-#define ALIGNED(x)              __attribute__ ((__aligned__(x)))
-
-// -----------------------------------------------------------------------------
-#endif /* !defined(__DOXYGEN__) */
-
-  /* =========================Fin Partie Langage C============================= */
-  __END_C_DECLS
+/* =========================Fin Partie Langage C============================= */
+__END_C_DECLS
 #endif /* __ASSEMBLER__ not defined */
 
 

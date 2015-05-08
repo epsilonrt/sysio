@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "version.h"
+#include <sysio/defs.h>
 
 /* constants ================================================================ */
 #define ERROR_BUFFER_SIZE 256
@@ -80,7 +81,7 @@ sSysIoStrError (void) {
 
 // -----------------------------------------------------------------------------
 int
-iSysIoError (const char *format, ...) {
+iSysIoSetStrError (const char *format, ...) {
   va_list va;
   int size;
 
