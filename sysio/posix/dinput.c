@@ -5,12 +5,12 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <sysio/dinput.h>
 #include <sysio/delay.h>
+#include <sysio/log.h>
 
 /* constants ================================================================ */
 #define DINPUT_POLL_DELAY 20

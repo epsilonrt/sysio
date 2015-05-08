@@ -10,9 +10,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <assert.h>
 #include <sys/mman.h>
 #include <sysio/iomap.h>
+#include <sysio/log.h>
 
 /* constants ================================================================ */
 #define IOMAP_SHM "/dev/mem"

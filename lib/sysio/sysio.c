@@ -90,4 +90,14 @@ iSysIoError (const char *format, ...) {
   return size;
 }
 
+// -----------------------------------------------------------------------------
+bool
+bSysIoLogAssert (void) {
+#ifdef LOG_ASSERT
+  return true;
+#else
+  return false;
+#endif
+}
+
 /* ========================================================================== */

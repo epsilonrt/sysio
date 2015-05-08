@@ -9,11 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <sysio/delay.h>
 #include <sysio/iomap.h>
 #include <sysio/gpio.h>
 #include <sysio/rpi.h>
+#include <sysio/log.h>
 
 /* constants ================================================================ */
 // Register offsets

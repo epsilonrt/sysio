@@ -10,11 +10,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <sysio/delay.h>
 #include <sysio/iomap.h>
 #include <sysio/pwm.h>
 #include <sysio/rpi.h>
+#include <sysio/log.h>
 
 /* constants ================================================================ */
 #define CLK_DIVISOR_DEFAULT 32

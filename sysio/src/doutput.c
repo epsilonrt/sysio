@@ -5,10 +5,10 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sysio/doutput.h>
+#include <sysio/log.h>
 
 /* structures =============================================================== */
 typedef struct xDoutPort {

@@ -1,5 +1,9 @@
 $Id$
 --------------------------------------------------------------------------------
-prerequistes
-------------
+make
+sudo make install
+
+make CDEFS+=-DLOG_ASSERT
+
+
 

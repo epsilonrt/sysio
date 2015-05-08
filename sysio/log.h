@@ -20,7 +20,7 @@ __BEGIN_C_DECLS
  *
  * Ce module fournit les fonctions permettant d'afficher des messages sur
  * la sortie d'erreur ou dans syslog. \n
- * Les logs sont orgnisés en fonction de priorités, dans l'ordre décroissant
+ * Les logs sont organisés en fonction de priorités, dans l'ordre décroissant
  * d'importance nous avons :
  * - LOG_EMERG      Le système est inutilisable.
  * - LOG_ALERT      Des actions doivent être entreprises immédiatement.
@@ -35,7 +35,7 @@ __BEGIN_C_DECLS
  * Initialement le module est en mode "front-end", c'est à dire que les messages
  * sont affichés sur le terminal de sortie d'erreur. \n
  * En passant en mode daemon, les messages sont transmis au daemon syslog, plus
- * aucun message ne sont affichés sur le terminal. \n
+ * aucun message n'est affiché sur le terminal. \n
  * Si la macro LOG_ASSERT est définie avant l'inclusion de ce fichier, ce module
  * fournit aussi les macros assert() et assert_perror() qui se substitue à celles
  * de la la glibc de façon à pouvoir avorter le programme en mode daemon en 

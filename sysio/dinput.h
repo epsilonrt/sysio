@@ -182,7 +182,7 @@ eDinEdge eDinGetEdge (unsigned input, xDinPort *port);
  *
  * @param input le numéro logique de l'entrée concernée
  * @param port le port d'entrée
- * @return le type de front (eEdgeRising, EEdgeFalling), eEdgeNone si aucun
+ * @return le type de front (eEdgeRising, eEdgeFalling), eEdgeNone si aucun
  *          front détecté, -1 si erreur
  */
 int iDinEdgeOccured (unsigned input, xDinPort * port);

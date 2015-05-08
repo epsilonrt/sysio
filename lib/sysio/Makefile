@@ -61,13 +61,13 @@ CPPSRC =
 # system is not case sensitive).ASRC =
 
 # Place -D or -U options here for C sources
-CDEFS +=
+CDEFS += -DLOG_ASSERT
 
 # Place -D or -U options here for ASM sources
 ADEFS +=
 
 # Place -D or -U options here for C++ sources
-CPPDEFS +=
+CPPDEFS += -DLOG_ASSERT
 
 # Enable gcc warning (without -W)
 CWARNINGS   = all strict-prototypes

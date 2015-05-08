@@ -80,6 +80,11 @@ const char * sSysIoGitCommit (void);
 const char * sSysIoStrError (void);
 
 /**
+ * @brief Renvoie true si LOG_ASSERT a été défini lors de la compilation
+ */
+bool bSysIoLogAssert (void);
+
+/**
  * @}
  */
 
