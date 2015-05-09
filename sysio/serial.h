@@ -4,8 +4,6 @@
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
- * Revision History ---
- *    20140208 - Initial version
  */
 
 #ifndef _SYSIO_SERIAL_H_
@@ -42,11 +40,14 @@ typedef enum {
 /* internal public functions ================================================ */
 
 /**
- *  Ouverture d'un port série
+ * Ouverture d'un port série
  *
+ * Le port est ouvert en lecture/écriture non bloquante, 8 bits sans parité,
+ * 1 bit de stop.
+ *  
  * @param device le nom du port à ouvrir (/dev/tty...)
  * @param baud vitesse en bauds
- * @return le descripteur de fichier du port ou une valeur nétaive sur erreur
+ * @return le descripteur de fichier du port ou une valeur négative sur erreur
  */
 int iSerialOpen (const char *device, const int baud);
 

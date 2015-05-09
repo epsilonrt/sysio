@@ -12,6 +12,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sysio/serial.h>
+#include <sysio/delay.h>
 #include <sysio/log.h>
 
 
@@ -145,7 +146,7 @@ iSerialOpen (const char *device, const int baud) {
     status |= TIOCM_RTS;
     ioctl (fd, TIOCMSET, &status);
 
-    usleep (10000);  // 10mS
+    delay_ms (10);
   }
 
   return fd;
