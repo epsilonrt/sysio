@@ -9,15 +9,14 @@
 TARGET = sysio
 
 # Project build options
-#ARCH = ARCH_GENERIC_LINUX
-ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
 
 #---------------- Install Options ----------------
 prefix=/usr/local
+
 INSTALL_LIBDIR=$(prefix)/lib
 INSTALL_INCDIR=$(prefix)/include
-INSTALL_BINDIR=$(prefix)/bin
-INSTALL_DATDIR=$(prefix)/share
 
 # Relative path of the project's root directory
 SYSIO_ROOT = ../..
@@ -59,7 +58,7 @@ DISABLE_DELETE_UNUSED_SECTIONS = OFF
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
 # recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
 # d'accès complet du fichier mais seulement le nom du projet
-SRC  = $(TARGET).c
+SRC  = ../version.c
 
 # Liste des fichiers source C++ (Les dépendances sont automatiquement générées.)
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
@@ -307,7 +306,7 @@ libstatic: $(TARGET_LIB_PATH).a
 libshared: $(TARGET_LIB_PATH).so
 
 install: uninstall build
-	@echo "$(MSG_INSTALL) $(TARGET) lib and headers"
+	@echo "$(MSG_INSTALL) $(TARGET) lib and headers in $(prefix)"
 	@-install -m 0755 $(TARGET_LIB_PATH).a $(INSTALL_LIBDIR)
 ifeq ($(DEBUG),)
 	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
@@ -317,27 +316,16 @@ ifeq ($(DEBUG),)
 	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
 endif
 	@ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
-	@-install -d -m 0755 $(INSTALL_INCDIR)/sysio
-	@-install -m 0644 $(SYSIO_ROOT)/sysio/*.h $(INSTALL_INCDIR)/sysio
+	@-install -d -m 0755 $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/*.h $(INSTALL_INCDIR)/$(TARGET)
 	@-ldconfig
-	@echo "$(MSG_INSTALL) $(TARGET) utils and templates"
-	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio
-	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio/template
-	@-install -m 0644 $(SYSIO_ROOT)/util/template/* $(INSTALL_DATDIR)/sysio/template
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-prj $(INSTALL_BINDIR)
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)
-	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 
 uninstall:
-	@echo "$(MSG_UNINSTALL) $(TARGET) lib and headers"
+	@echo "$(MSG_UNINSTALL) $(TARGET) lib and headers from $(prefix)"
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.*
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
-	@-rm -fr $(INSTALL_INCDIR)/sysio
-	@echo "$(MSG_UNINSTALL) $(TARGET) utils and templates"
-	@-rm -fr $(INSTALL_DATDIR)/sysio
-	@-rm -fr $(INSTALL_BINDIR)/sysio-prj
-	@-rm -fr $(INSTALL_BINDIR)/sysio-ver
+	@-rm -fr $(INSTALL_INCDIR)/$(TARGET)
 
 version.h: version
 

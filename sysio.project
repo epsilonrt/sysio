@@ -38,8 +38,6 @@
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -130,6 +128,15 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="sysio">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="arm">
+        <VirtualDirectory Name="rpi">
+          <File Name="sysio/arch/arm/rpi/rpi.c"/>
+          <File Name="sysio/arch/arm/rpi/gpio.c"/>
+          <File Name="sysio/arch/arm/rpi/pwm.c"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
     <File Name="LICENCE"/>
@@ -137,9 +144,45 @@
     <File Name="Makefile"/>
     <File Name="TODO"/>
     <File Name="LICENSE"/>
+    <File Name="sysio/delay.h"/>
+    <File Name="sysio/doutput.h"/>
+    <File Name="sysio/defs.h"/>
+    <File Name="sysio/rpi.h"/>
+    <File Name="sysio/i2c.h"/>
+    <File Name="sysio/pwm.h"/>
+    <File Name="sysio/serial.hpp"/>
+    <File Name="sysio/gpio.h"/>
+    <File Name="sysio/dinput.h"/>
+    <File Name="sysio/iomap.h"/>
+    <File Name="sysio/serial.h"/>
+    <File Name="sysio/log.h"/>
+    <VirtualDirectory Name="linux">
+      <File Name="sysio/linux/dev-interface"/>
+      <File Name="sysio/linux/i2c.c"/>
+      <File Name="sysio/linux/i2c-dev.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="posix">
+      <File Name="sysio/posix/iomap.c"/>
+      <File Name="sysio/posix/serial.c"/>
+      <File Name="sysio/posix/dinput.c"/>
+      <File Name="sysio/posix/delay.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="src">
+      <File Name="sysio/src/doutput.c"/>
+      <File Name="sysio/src/log.c"/>
+      <File Name="sysio/src/ax25.c"/>
+      <File Name="sysio/src/crc.c"/>
+      <File Name="sysio/src/tnc.c"/>
+    </VirtualDirectory>
+    <File Name="sysio/ax25.h"/>
+    <File Name="sysio/crc.h"/>
+    <File Name="sysio/tnc.h"/>
+    <File Name="sysio++.mk"/>
   </VirtualDirectory>
   <VirtualDirectory Name="doc">
     <File Name="doc/Doxyfile"/>
     <File Name="doc/DoxygenLayout.xml"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

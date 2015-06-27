@@ -1,6 +1,7 @@
-/*
- * sysio/serial.h
+/**
+ * @file sysio/serial.h
  * @brief Liaison série
+ * 
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -34,7 +35,8 @@ typedef enum {
 
   SERIAL_FLOW_NONE,
   SERIAL_FLOW_RTSCTS,
-  SERIAL_FLOW_UNKNOWN
+  SERIAL_FLOW_XONXOFF,
+  SERIAL_FLOW_UNKNOWN = -1
 } eSerialFlow;
 
 /* internal public functions ================================================ */

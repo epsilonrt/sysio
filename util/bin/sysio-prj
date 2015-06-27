@@ -13,7 +13,7 @@ EOF
 exit 1
 fi
 
-while getopts ":fgs" opt; do
+while getopts ":fgsp" opt; do
   case $opt in
     f)
       FORCE="ON"
@@ -22,7 +22,10 @@ while getopts ":fgs" opt; do
       GIT="ON"
       ;;
     s)
-      SRC="ON"
+      SOURCE="ON"
+      ;;
+    p)
+      CPP="ON"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -41,7 +44,11 @@ else
 fi
 
 PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
-SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.c
+if [ "_$CPP" = "_ON" ]; then
+  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
+else
+  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.c
+fi
 MAKE_FILE=${PROJECT_DIR}/Makefile
 #echo "PROJECT_DIR=$PROJECT_DIR"
 #echo "PROJECT_FILE=$PROJECT_FILE"
@@ -54,19 +61,29 @@ if [ -f ${PROJECT_FILE} ]; then
   fi
 fi
 
-cp ${SYSIO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
+if [ "_$CPP" = "_ON" ]; then
+  cp ${SYSIO_TEMPLATE_DIR}/cpp/template.project ${PROJECT_FILE}
+else
+  cp ${SYSIO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
+fi
 sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
 if [ "_$GIT" = "_ON" ]; then
   git add ${PROJECT_FILE}
 fi
 
-if [ "_$SRC" = "_ON" ]; then
-  cp ${SYSIO_TEMPLATE_DIR}/template.c ${SOURCE_FILE}
+
+if [ "_$SOURCE" = "_ON" ]; then
+  if [ "_$CPP" = "_ON" ]; then
+    cp ${SYSIO_TEMPLATE_DIR}/cpp/template.cpp ${SOURCE_FILE}
+    cp ${SYSIO_TEMPLATE_DIR}/cpp/Makefile ${MAKE_FILE}
+  else
+    cp ${SYSIO_TEMPLATE_DIR}/template.c ${SOURCE_FILE}
+    cp ${SYSIO_TEMPLATE_DIR}/Makefile ${MAKE_FILE}
+  fi
   sed -i -e "s#template#$PROJECT_NAME#g" ${SOURCE_FILE}
-  cp ${SYSIO_TEMPLATE_DIR}/Makefile ${MAKE_FILE}
   sed -i -e "s#template#$PROJECT_NAME#g" ${MAKE_FILE}
   if [ "_$GIT" = "_ON" ]; then
-    git add ${SOURCE_FILE} ${MAKE_FILE}
+    git add ${MAKE_FILE} ${SOURCE_FILE}
   fi
 fi
 

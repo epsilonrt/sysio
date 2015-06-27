@@ -5,18 +5,23 @@
 ###############################################################################
 # $Id$
 
-SUBDIRS = sysio
+SUBDIRS = sysio sysio++
+
+# Project build options
+ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
+
+#---------------- Install Options ----------------
+prefix=/usr/local
 
 all: $(SUBDIRS)
 rebuild: $(SUBDIRS)
-static: $(SUBDIRS)
 clean: $(SUBDIRS)
 distclean: $(SUBDIRS)
 install: $(SUBDIRS)
-install-static: $(SUBDIRS)
 uninstall: $(SUBDIRS)
 
 $(SUBDIRS):
-	$(MAKE) -w -C $@ $(MAKECMDGOALS)
+	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH)
 
-.PHONY: all rebuild static clean distclean install install-static uninstall $(SUBDIRS)
+.PHONY: all rebuild clean distclean install uninstall $(SUBDIRS)

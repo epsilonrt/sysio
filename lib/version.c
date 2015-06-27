@@ -1,6 +1,6 @@
 /*
- * lib/sysio.c
- * @brief
+ * lib/version.c
+ * @brief Version de la bibliothèque
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.

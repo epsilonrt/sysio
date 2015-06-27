@@ -4,7 +4,7 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 # $Id$
-SUBDIRS = gpio pwm doutput dinput serial
+SUBDIRS = gpio pwm doutput dinput serial radio
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

@@ -4,8 +4,6 @@
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
- * Revision History ---
- *    20140208 - Initial version
  */
 #include <unistd.h>
 #include <fcntl.h>
@@ -189,11 +187,16 @@ eSerialGetFlow (int fd) {
 // -----------------------------------------------------------------------------
 const char *
 eSerialGetFlowStr (int fd) {
-  static const char * sFlow[] = { "None", "RtsCts", "Unknown" };
+  static const char * sFlow[] = { "None", "Hardware", "Software" };
+  static const char sUnknown[] = "Unknown" ;
   eSerialFlow eCurrentFlow;
 
   eCurrentFlow = eSerialGetFlow (fd);
-  return sFlow[eCurrentFlow];
+  if (eCurrentFlow != SERIAL_FLOW_UNKNOWN) {
+    
+    return sFlow[eCurrentFlow];
+  }
+  return sUnknown;
 }
 
 // -----------------------------------------------------------------------------

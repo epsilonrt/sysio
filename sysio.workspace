@@ -9,10 +9,21 @@
   <Project Name="test_write" Path="test/gpio/write/test_write.project" Active="No"/>
   <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
   <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
-  <Project Name="test" Path="test/test.project" Active="No"/>
+  <Project Name="test" Path="test/test.project" Active="Yes"/>
   <Project Name="test_serial" Path="test/serial/test_serial.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
+  <Project Name="lib" Path="lib/lib.project" Active="No"/>
+  <Project Name="sysio++" Path="sysio++/sysio++.project" Active="No"/>
+  <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
+  <Project Name="test_pipe" Path="test/radio/pipe/test_pipe.project" Active="No"/>
+  <Project Name="test_crc" Path="test/radio/crc/test_crc.project" Active="No"/>
+  <Project Name="test_ax25_pipe" Path="test/radio/ax25/pipe/test_ax25_pipe.project" Active="No"/>
+  <Project Name="test_ax25_serial" Path="test/radio/ax25/serial/test_ax25_serial.project" Active="No"/>
+  <Project Name="test_ax25_cpp" Path="test/radio/ax25/cpp/test_ax25_cpp.project" Active="No"/>
+  <Project Name="test_tnc_pipe" Path="test/radio/tnc/pipe/test_tnc_pipe.project" Active="No"/>
+  <Project Name="test_tnc_cpp" Path="test/radio/tnc/cpp/test_tnc_cpp.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -27,6 +38,18 @@
       <Project Name="test_serial" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="libsysio" ConfigName="Debug"/>
+      <Project Name="libsysio++" ConfigName="Debug"/>
+      <Project Name="lib" ConfigName="Debug"/>
+      <Project Name="sysio++" ConfigName="Debug"/>
+      <Project Name="ssdv" ConfigName="Debug"/>
+      <Project Name="test_crc" ConfigName="Debug"/>
+      <Project Name="test_pipe" ConfigName="Debug"/>
+      <Project Name="test_crc" ConfigName="Debug"/>
+      <Project Name="test_ax25_pipe" ConfigName="Debug"/>
+      <Project Name="test_ax25_serial" ConfigName="Debug"/>
+      <Project Name="test_ax25_cpp" ConfigName="Debug"/>
+      <Project Name="test_tnc_pipe" ConfigName="Debug"/>
+      <Project Name="test_tnc_cpp" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -41,6 +64,18 @@
       <Project Name="test_serial" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="libsysio" ConfigName="Release"/>
+      <Project Name="libsysio++" ConfigName="Release"/>
+      <Project Name="lib" ConfigName="Release"/>
+      <Project Name="sysio++" ConfigName="Release"/>
+      <Project Name="ssdv" ConfigName="Release"/>
+      <Project Name="test_crc" ConfigName="Release"/>
+      <Project Name="test_pipe" ConfigName="Release"/>
+      <Project Name="test_crc" ConfigName="Release"/>
+      <Project Name="test_ax25_pipe" ConfigName="Release"/>
+      <Project Name="test_ax25_serial" ConfigName="Release"/>
+      <Project Name="test_ax25_cpp" ConfigName="Release"/>
+      <Project Name="test_tnc_pipe" ConfigName="Release"/>
+      <Project Name="test_tnc_cpp" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

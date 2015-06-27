@@ -58,6 +58,10 @@ int iSysIoSetStrError (const char *format, ...);
 #define _BV(i) (1<<(i))
 #endif
 
+#ifndef ABS
+# define ABS(n)  (((n) < 0) ? -(n) : (n))
+#endif
+
 #ifndef MIN
 #define MIN(a,b) ((a) < (b) ? a : b)
 #endif
@@ -74,6 +78,13 @@ int iSysIoSetStrError (const char *format, ...);
 #define  LSB(x) ((uint8_t) (x & 0xFF))
 #endif
 
+#ifndef COUNTOF
+# define COUNTOF(a)  (sizeof(a) / sizeof(*(a)))
+#endif
+
+#ifndef STRUCT_FIELD_OFFSET
+# define STRUCT_FIELD_OFFSET(s,f)  ((size_t)&(((s *)0)->f))
+#endif
 
 #ifdef DEBUG
 #define PERROR(fmt,...) do { \
@@ -87,8 +98,10 @@ int iSysIoSetStrError (const char *format, ...);
                __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
 #define PDEBUG(fmt,...) vLog (LOG_DEBUG, fmt, ##__VA_ARGS__)
+#define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
 #else
 #define PDEBUG(fmt,...)
+#define PINFO(fmt,...)
 #define PERROR(fmt,...) iSysIoSetStrError("%s:%d: %s: Error: " fmt "\n", \
                                     __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #define PWARNING(fmt,...) iSysIoSetStrError("%s:%d: %s: Warning: " fmt "\n", \
