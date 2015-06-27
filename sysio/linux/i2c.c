@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sysio/i2c.h>
+#include <sysio/log.h>
 #include "i2c-dev.h"
 
 /* internal public functions ================================================ */

@@ -10,15 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 #include "version.h"
 #include <sysio/defs.h>
-
-/* constants ================================================================ */
-#define ERROR_BUFFER_SIZE 256
-
-/* private variables ======================================================== */
-static char sError[ERROR_BUFFER_SIZE];
 
 /* private functions ======================================================== */
 
@@ -71,34 +64,6 @@ int iSysIoBuild (void) {
     return iGetInt (++p);
   }
   return 0;
-}
-
-// -----------------------------------------------------------------------------
-const char *
-sSysIoStrError (void) {
-  return sError;
-}
-
-// -----------------------------------------------------------------------------
-int
-iSysIoSetStrError (const char *format, ...) {
-  va_list va;
-  int size;
-
-  va_start (va, format);
-  size = vsnprintf (sError, ERROR_BUFFER_SIZE - 1, format, va);
-  va_end (va);
-  return size;
-}
-
-// -----------------------------------------------------------------------------
-bool
-bSysIoLogAssert (void) {
-#ifdef LOG_ASSERT
-  return true;
-#else
-  return false;
-#endif
 }
 
 /* ========================================================================== */

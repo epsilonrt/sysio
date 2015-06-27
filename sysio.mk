@@ -3,21 +3,8 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
-CDEFS += -D_REENTRANT
-EXTRA_LIBS += pthread rt
-LDFLAGS += -pthread
 
-# Conditionals
-ifeq ($(SYSIO_LIB_ENABLE),ON)
 #-------------------------------------------------------------------------------
-EXTRA_LIBS += sysio
-
-else
-#-------------------------------------------------------------------------------
-ifeq ($(SYSIO_ROOT),)
-$(error SYSIO_ROOT not defined)
-else
 VPATH+=:$(SYSIO_ROOT)
 EXTRA_INCDIRS += $(SYSIO_ROOT)
 
@@ -48,7 +35,5 @@ SRC += $(addprefix $(ARCH_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(ARCH_DIR)/*
 #$(warning ARCH_DIR=$(ARCH_DIR))
 #$(warning SYS_DIR=$(SYS_DIR))
 #$(warning SRC=$(SRC))
-endif
 
 #-------------------------------------------------------------------------------
-endif

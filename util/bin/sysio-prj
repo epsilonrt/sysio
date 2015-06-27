@@ -1,0 +1,73 @@
+#!/bin/bash
+#----------------------------------------------------------------------------
+
+SYSIO_TEMPLATE_DIR=INSTALLED_TEMPLATE_DIR
+#----------------------------------------------------------------------------
+
+
+if [ ! -d ${SYSIO_TEMPLATE_DIR} ]; then
+cat << EOF
+<<ERREUR>> Le répertoire racine n'a pas été localisé.
+Vous devez installer correctement SysIO (sudo make install)
+EOF
+exit 1
+fi
+
+while getopts ":fgs" opt; do
+  case $opt in
+    f)
+      FORCE="ON"
+      ;;
+    g)
+      GIT="ON"
+      ;;
+    s)
+      SRC="ON"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+PROJECT_DIR=$(pwd)
+
+if [ $# -lt 1 ]; then
+  PROJECT_NAME=$(basename ${PROJECT_DIR})
+else
+  PROJECT_NAME=$1
+fi
+
+PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
+SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.c
+MAKE_FILE=${PROJECT_DIR}/Makefile
+#echo "PROJECT_DIR=$PROJECT_DIR"
+#echo "PROJECT_FILE=$PROJECT_FILE"
+
+if [ -f ${PROJECT_FILE} ]; then
+  echo "$PROJECT_FILE exists !"
+  if [ "_$FORCE" = "_" ]; then
+    echo "Error: you need to put the -f option to overwrite the file !"
+    exit 1
+  fi
+fi
+
+cp ${SYSIO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
+sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
+if [ "_$GIT" = "_ON" ]; then
+  git add ${PROJECT_FILE}
+fi
+
+if [ "_$SRC" = "_ON" ]; then
+  cp ${SYSIO_TEMPLATE_DIR}/template.c ${SOURCE_FILE}
+  sed -i -e "s#template#$PROJECT_NAME#g" ${SOURCE_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/Makefile ${MAKE_FILE}
+  sed -i -e "s#template#$PROJECT_NAME#g" ${MAKE_FILE}
+  if [ "_$GIT" = "_ON" ]; then
+    git add ${SOURCE_FILE} ${MAKE_FILE}
+  fi
+fi
+
+exit 0

@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="">
+  <Project Name="test_callback" Path="test/dinput/callback/test_callback.project" Active="No"/>
+  <Project Name="test_group" Path="test/dinput/group/test_group.project" Active="No"/>
+  <Project Name="test_poll" Path="test/dinput/poll/test_poll.project" Active="No"/>
+  <Project Name="test_doutput" Path="test/doutput/test_doutput.project" Active="No"/>
+  <Project Name="test_getmode" Path="test/gpio/getmode/test_getmode.project" Active="No"/>
+  <Project Name="test_read" Path="test/gpio/read/test_read.project" Active="No"/>
+  <Project Name="test_write" Path="test/gpio/write/test_write.project" Active="No"/>
+  <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
+  <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
+  <Project Name="test" Path="test/test.project" Active="No"/>
+  <Project Name="test_serial" Path="test/serial/test_serial.project" Active="No"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Project Name="test_callback" ConfigName="Debug"/>
+      <Project Name="test_group" ConfigName="Debug"/>
+      <Project Name="test_poll" ConfigName="Debug"/>
+      <Project Name="test_doutput" ConfigName="Debug"/>
+      <Project Name="test_getmode" ConfigName="Debug"/>
+      <Project Name="test_read" ConfigName="Debug"/>
+      <Project Name="test_write" ConfigName="Debug"/>
+      <Project Name="test_pwm" ConfigName="Debug"/>
+      <Project Name="test" ConfigName="Debug"/>
+      <Project Name="test_serial" ConfigName="Debug"/>
+      <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="libsysio" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="test_callback" ConfigName="Release"/>
+      <Project Name="test_group" ConfigName="Release"/>
+      <Project Name="test_poll" ConfigName="Release"/>
+      <Project Name="test_doutput" ConfigName="Release"/>
+      <Project Name="test_getmode" ConfigName="Release"/>
+      <Project Name="test_read" ConfigName="Release"/>
+      <Project Name="test_write" ConfigName="Release"/>
+      <Project Name="test_pwm" ConfigName="Release"/>
+      <Project Name="test" ConfigName="Release"/>
+      <Project Name="test_serial" ConfigName="Release"/>
+      <Project Name="sysio" ConfigName="Release"/>
       <Project Name="libsysio" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

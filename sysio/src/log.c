@@ -14,6 +14,9 @@
 #include <sys/syslog.h>
 #include <sysio/log.h>
 
+/* constants ================================================================ */
+#define ERROR_BUFFER_SIZE 256
+
 
 /* structures =============================================================== */
 struct xLog {
@@ -25,6 +28,7 @@ struct xLog {
 
 /* private variables ======================================================== */
 static struct xLog xMyLog;
+static char sError[ERROR_BUFFER_SIZE];
 
 /* private functions ======================================================== */
 /* -----------------------------------------------------------------------------
@@ -122,6 +126,35 @@ vLog (int priority, const char *format, ...) {
   }
 
   va_end(va);
+}
+
+
+// -----------------------------------------------------------------------------
+const char *
+sSysIoStrError (void) {
+  return sError;
+}
+
+// -----------------------------------------------------------------------------
+int
+iSysIoSetStrError (const char *format, ...) {
+  va_list va;
+  int size;
+
+  va_start (va, format);
+  size = vsnprintf (sError, ERROR_BUFFER_SIZE - 1, format, va);
+  va_end (va);
+  return size;
+}
+
+// -----------------------------------------------------------------------------
+bool
+bSysIoLogAssert (void) {
+#ifdef LOG_ASSERT
+  return true;
+#else
+  return false;
+#endif
 }
 
 #ifdef LOG_ASSERT

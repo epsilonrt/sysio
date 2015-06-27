@@ -8,48 +8,72 @@
 # Target Name (without extension).
 TARGET = sysio
 
-#---------------- Install Options ----------------
-prefix=/usr/local
-INSTALL_LIBDIR=$(prefix)/lib
-INSTALL_INCDIR=$(prefix)/include
-#VERSION=1.0.0
-
-# Relative path of the project's root directory
-PROJECT_ROOT = ../..
-
-# Optimization Level =  [0, 1, 2, 3, s].
-#     0 = Reduce compilation time and make debugging produce the expected
-#         results. This is the default.
-#     2 = Optimize even more. GCC performs nearly all supported optimizations
-#         that do not involve a space-speed tradeoff.
-#     s = Optimize for size. -Os enables all -O2 optimizations that do not
-#         typically increase code size. It also performs further optimizations
-#         designed to reduce code size.
-#     (Note: 3 is not always the best level)
-OPT = 2
-
-# Debugging format. Leave blank for disable debugging information
-# dwarf-2 is the most expressive format available
-#DEBUG = dwarf-2
-
-# View the gcc line when compile and link ON/OFF
-VIEW_GCC_LINE = OFF
-
 # Project build options
 #ARCH = ARCH_GENERIC_LINUX
 ARCH = ARCH_ARM_RASPBERRYPI
 
-# C source files (The dependencies are automatically generated.)
-# The path to the source files of the system was added to the search path of
-# the compiler, it is not necessary to specify the full path of the file, but
-# only one from the project root.
-SRC = sysio.c
+#---------------- Install Options ----------------
+prefix=/usr/local
+INSTALL_LIBDIR=$(prefix)/lib
+INSTALL_INCDIR=$(prefix)/include
+INSTALL_BINDIR=$(prefix)/bin
+INSTALL_DATDIR=$(prefix)/share
 
-# C++ source files (The dependencies are automatically generated.)
-# The path to the source files of the system was added to the search path of
-# the compiler, it is not necessary to specify the full path of the file, but
-# only one from the project root.
+# Relative path of the project's root directory
+SYSIO_ROOT = ../..
+
+# Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
+GIT_VERSION = OFF
+
+# Niveau d'optimisation de GCC =  [0, 1, 2, 3, s].
+#     0 = pas d'optimisation (pour debug).
+#     s = optimisation de la taille du code (pour release).
+#     (Note: 3 n'est pas toujours le meilleur niveau. Voir la FAQ avr-libc.)
+OPT = s
+
+# Format informations Debug
+#     Les formats natifs pour AVR-GCC -g sont dwarf-2 [default] ou stabs.
+#     AVR Studio 4.10 nécessite dwarf-2.
+DEBUG_FORMAT = dwarf-2
+
+# Niveau d'optimisation de GCC =  [0, 1, 2, 3, s] pour le debug
+#     0 = pas d'optimisation (pour debug).
+#     s = optimisation de la taille du code (pour release).
+#     (Note: 3 n'est pas toujours le meilleur niveau. Voir la FAQ avr-libc.)
+DEBUG_OPT = 0
+
+# Retrait des informations Debug (ON/OFF)
+# Si défini sur ON, aucune information de debug ne sera générée
+#DEBUG = ON
+
+# Affiche la ligne de compilation GCC ou non (ON/OFF)
+VIEW_GCC_LINE = OFF
+
+# Désactive la suppression des variables et fonctions "inutiles"
+# Le linker vérifie d'une fonction ou une variable est appellée, si ce n'est pas
+# le cas, il supprime la variable ou la fonction
+# Cela peut être problèmatique dans certains cas (bootloarder !)
+DISABLE_DELETE_UNUSED_SECTIONS = OFF
+
+# Liste des fichiers source C. (Les dépendances sont automatiquement générées.)
+# Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
+# recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
+# d'accès complet du fichier mais seulement le nom du projet
+SRC  = $(TARGET).c
+
+# Liste des fichiers source C++ (Les dépendances sont automatiquement générées.)
+# Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
+# recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
+# d'accès complet du fichier mais seulement le nom du projet (avrio, avrx, ...)
 CPPSRC =
+
+# Liste des fichiers source assembleur
+#   L'extenson doit toujours être .S (en majuscule). En effet, les fichiers .s
+#   ne sont pas consédérés comme des fichiers sources mais comme des fichiers
+#   générés par le compilateur et seront supprimés lors d'un make clean.
+#   Cela est valable aussi sous DOS/Windows (bien que le système d'exploitation
+#   ne soit pas sensible à la casse).
+ASRC =
 
 # Assembler source files
 # The path to the source files of the system was added to the search path of
@@ -126,8 +150,17 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
-SYSIO_ROOT = $(PROJECT_ROOT)
+CDEFS += -D_REENTRANT
+EXTRA_LIBS += pthread rt
+LDFLAGS += -pthread
+
+ifeq ($(SYSIO_ROOT),)
+$(error SYSIO_ROOT not defined, double-check that !)
+else
 include $(SYSIO_ROOT)/sysio.mk
+endif
+
+VERSION = $(shell cat version.mk)
 
 #-------------------------------------------------------------------------------
 # Destination files directory
@@ -147,18 +180,21 @@ TARGET_LIB_PATH = $(DESTDIR)/lib$(TARGET)
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-ifeq ($(DEBUG),)
-CFLAGS += -O$(OPT)
+ifeq ($(DEBUG),ON)
+CFLAGS += -g$(DEBUG_FORMAT) -O$(DEBUG_OPT) -DDEBUG
 else
-CFLAGS += -g$(DEBUG) -O0
+CFLAGS += -O$(OPT) -DNDEBUG
 endif
+
 CFLAGS += $(CDEFS)
-CFLAGS += -ffunction-sections
-CFLAGS += -fdata-sections
 CFLAGS += -Wa,-adhlns=$(addprefix $(OBJDIR)/, $*.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRA_INCDIRS))
 CFLAGS += $(patsubst %,-W%,$(CWARNINGS))
 CFLAGS += $(CSTANDARD)
+ifeq ($(DISABLE_DELETE_UNUSED_SECTIONS),OFF)
+CFLAGS += -ffunction-sections
+CFLAGS += -fdata-sections
+endif
 
 #---------------- Compiler Options C++ ----------------
 #  -g*:          generate debugging information
@@ -167,18 +203,21 @@ CFLAGS += $(CSTANDARD)
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-ifeq ($(DEBUG),)
-CPPFLAGS += -O$(OPT)
+ifeq ($(DEBUG),ON)
+CPPFLAGS += -g$(DEBUG_FORMAT) -O$(DEBUG_OPT) -DDEBUG
 else
-CPPFLAGS += -g$(DEBUG) -O0
+CPPFLAGS += -O$(OPT) -DNDEBUG
 endif
+
 CPPFLAGS += $(CPPDEFS)
 CPPFLAGS += -Wall
-CPPFLAGS += -ffunction-sections
-CPPFLAGS += -fdata-sections
 CPPFLAGS += -Wa,-adhlns=$(addprefix $(OBJDIR)/, $*.lst)
 CPPFLAGS += $(patsubst %,-I%,$(EXTRA_INCDIRS))
 CPPFLAGS += $(patsubst %,-W%,$(CPPWARNINGS))
+ifeq ($(DISABLE_DELETE_UNUSED_SECTIONS),OFF)
+CPPFLAGS += -ffunction-sections
+CPPFLAGS += -fdata-sections
+endif
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -211,9 +250,8 @@ LDFLAGS += -Wl,-Map=$(TARGET_PATH).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,--relax
-ifeq ($(DEBUG),)
-else
-LDFLAGS += -g
+ifeq ($(DEBUG),ON)
+LD_CFLAGS += -g$(DEBUG_FORMAT)
 endif
 
 
@@ -262,35 +300,44 @@ clean: clean_list_lib
 distclean: distclean_list clean_list_lib
 
 version:
-	@$(SYSIO_ROOT)/util/version.sh $@.h
-	@$(SYSIO_ROOT)/util/version.sh $@.mk
+	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
+	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.mk
 
 libstatic: $(TARGET_LIB_PATH).a
 libshared: $(TARGET_LIB_PATH).so
 
--include version.mk
-
 install: uninstall build
-	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 $(TARGET_LIB_PATH).a $(INSTALL_LIBDIR)
+	@echo "$(MSG_INSTALL) $(TARGET) lib and headers"
+	@-install -m 0755 $(TARGET_LIB_PATH).a $(INSTALL_LIBDIR)
 ifeq ($(DEBUG),)
-	strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
+	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
 endif
-	-install -m 0755 $(TARGET_LIB_PATH).so $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
+	@-install -m 0755 $(TARGET_LIB_PATH).so $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
 ifeq ($(DEBUG),)
-	strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
+	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
 endif
-	ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
-	-install -d -m 0755 $(INSTALL_INCDIR)/sysio
-	-install -m 0644 $(PROJECT_ROOT)/sysio/*.h $(INSTALL_INCDIR)/sysio
-	-ldconfig
+	@ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
+	@-install -d -m 0755 $(INSTALL_INCDIR)/sysio
+	@-install -m 0644 $(SYSIO_ROOT)/sysio/*.h $(INSTALL_INCDIR)/sysio
+	@-ldconfig
+	@echo "$(MSG_INSTALL) $(TARGET) utils and templates"
+	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio
+	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio/template
+	@-install -m 0644 $(SYSIO_ROOT)/util/template/* $(INSTALL_DATDIR)/sysio/template
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-prj $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)
+	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 
 uninstall:
-	@echo "$(MSG_UNINSTALL) $(TARGET)"
-	-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
-	-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.*
-	-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
-	-rm -fr $(INSTALL_INCDIR)/sysio
+	@echo "$(MSG_UNINSTALL) $(TARGET) lib and headers"
+	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
+	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.*
+	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
+	@-rm -fr $(INSTALL_INCDIR)/sysio
+	@echo "$(MSG_UNINSTALL) $(TARGET) utils and templates"
+	@-rm -fr $(INSTALL_DATDIR)/sysio
+	@-rm -fr $(INSTALL_BINDIR)/sysio-prj
+	@-rm -fr $(INSTALL_BINDIR)/sysio-ver
 
 version.h: version
 
