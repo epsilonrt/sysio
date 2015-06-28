@@ -1,5 +1,5 @@
-/*
- * test/gpio/write/write.c
+/**
+ * @file test/gpio/write/write.c
  * @brief
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>

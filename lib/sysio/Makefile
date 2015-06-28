@@ -3,14 +3,13 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
 
 # Target Name (without extension).
 TARGET = sysio
 
-# Project build options
-ARCH = ARCH_GENERIC_LINUX
-#ARCH = ARCH_ARM_RASPBERRYPI
+# Choix de l'architecture matérielle du système
+#ARCH = ARCH_GENERIC_LINUX
+ARCH = ARCH_ARM_RASPBERRYPI
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -18,7 +17,7 @@ prefix=/usr/local
 INSTALL_LIBDIR=$(prefix)/lib
 INSTALL_INCDIR=$(prefix)/include
 
-# Relative path of the project's root directory
+# Chemin relatif du répertoire racine de SysIO
 SYSIO_ROOT = ../..
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
@@ -41,7 +40,7 @@ DEBUG_FORMAT = dwarf-2
 #     (Note: 3 n'est pas toujours le meilleur niveau. Voir la FAQ avr-libc.)
 DEBUG_OPT = 0
 
-# Retrait des informations Debug (ON/OFF)
+# Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
 #DEBUG = ON
 
@@ -52,7 +51,7 @@ VIEW_GCC_LINE = OFF
 # Le linker vérifie d'une fonction ou une variable est appellée, si ce n'est pas
 # le cas, il supprime la variable ou la fonction
 # Cela peut être problèmatique dans certains cas (bootloarder !)
-DISABLE_DELETE_UNUSED_SECTIONS = OFF
+DISABLE_DELETE_UNUSED_SECTIONS = ON
 
 # Liste des fichiers source C. (Les dépendances sont automatiquement générées.)
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
@@ -103,6 +102,10 @@ CPPWARNINGS = all
 EXTRA_INCDIRS =
 
 #---------------- Library Options ----------------
+
+# Enable static link
+STATIC_LINKER = OFF
+
 # List any extra directories to look for libraries here.
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
@@ -150,6 +153,7 @@ COPY = cp
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
 CDEFS += -D_REENTRANT
+CPPDEFS += -D_REENTRANT
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
 
@@ -242,13 +246,18 @@ endif
 #  -Wl,...:     tell GCC to pass this to linker.
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
+ifeq ($(STATIC_LINKER),ON)
+LDFLAGS += -static
+endif
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += $(MATH_LIB)
 LDFLAGS += -Wl,-Map=$(TARGET_PATH).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
+ifeq ($(DISABLE_DELETE_UNUSED_SECTIONS),OFF)
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,--relax
+endif
 ifeq ($(DEBUG),ON)
 LD_CFLAGS += -g$(DEBUG_FORMAT)
 endif
@@ -283,7 +292,7 @@ DEPDIRS := $(addsuffix .dep, $(OBJDIRS))
 ALL_CFLAGS = -I. $(CFLAGS) $(GENDEPFLAGS)
 ALL_CPPFLAGS = -I. -x c++ $(CPPFLAGS)  $(GENDEPFLAGS)
 ALL_ASFLAGS = -I. -x assembler-with-cpp $(ASFLAGS)
-LD_CFLAGS = -g$(DEBUG)
+#
 
 ifeq ($(VIEW_GCC_LINE),ON)
 else

@@ -6,7 +6,7 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <sysio++/ax25.hpp>
+#include <sysio/ax25.hpp>
 #include <sysio/ax25.h>
 #include <stdlib.h>
 #include <stdexcept>
@@ -337,6 +337,20 @@ void
 Ax25::read (Ax25Frame &f) {
 
   iAx25Read (p, f.p);
+}
+
+// -----------------------------------------------------------------------------
+void
+Ax25::send (const Ax25Frame *f) {
+
+  iAx25Send (p, f->p);
+}
+
+// -----------------------------------------------------------------------------
+void
+Ax25::read (Ax25Frame *f) {
+
+  iAx25Read (p, f->p);
 }
 
 // -----------------------------------------------------------------------------

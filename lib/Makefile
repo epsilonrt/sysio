@@ -3,13 +3,16 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
 
 SUBDIRS = sysio sysio++
 
-# Project build options
+# Choix de l'architecture matérielle du système
 ARCH = ARCH_GENERIC_LINUX
 #ARCH = ARCH_ARM_RASPBERRYPI
+
+# Activation des informations Debug (ON/OFF)
+# Si défini sur ON, aucune information de debug ne sera générée
+#DEBUG = ON
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -22,6 +25,6 @@ install: $(SUBDIRS)
 uninstall: $(SUBDIRS)
 
 $(SUBDIRS):
-	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH)
+	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
 
 .PHONY: all rebuild clean distclean install uninstall $(SUBDIRS)

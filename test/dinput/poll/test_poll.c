@@ -1,6 +1,7 @@
-/*
- * test/dinput/poll/poll.c
+/**
+ * @file test/dinput/poll/poll.c
  * @brief Test de scrutation de boutons poussoir
+ * 
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>

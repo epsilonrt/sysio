@@ -1,14 +1,12 @@
 /**
- * @file test_cpp.cpp
+ * @file test_ax25_cpp.cpp
  * @brief APRS radio demo.
  *
  * This example shows how to read and decode APRS radio packets.
- * @author Pascal JEAN <pjean@btssn.net>
- *          @copyright 2014 GNU Lesser General Public License version 3
- *          <http://www.gnu.org/licenses/lgpl.html>
- * @version $Id$
- * Revision History ---
- *    20120519 - Initial version
+ * 
+ * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +15,7 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#include <sysio++/ax25.hpp>
+#include <sysio/ax25.hpp>
 #include <sysio/serial.h>
 #include <iostream>
 

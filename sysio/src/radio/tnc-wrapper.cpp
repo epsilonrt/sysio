@@ -6,13 +6,13 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <sysio++/tnc.hpp>
+#include <sysio/tnc.hpp>
 #include <sysio/tnc.h>
+#include <sysio/ssdv.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <stdexcept>
-#include <ssdv/ssdv.h>
 
 //##############################################################################
 //#                                                                            #

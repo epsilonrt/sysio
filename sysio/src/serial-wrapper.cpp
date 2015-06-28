@@ -6,7 +6,7 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <sysio++/serial.hpp>
+#include <sysio/serial.hpp>
 #include <sysio/serial.h>
 #include <stdlib.h>
 #include <errno.h>

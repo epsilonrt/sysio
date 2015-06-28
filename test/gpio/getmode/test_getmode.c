@@ -1,5 +1,5 @@
-/*
- * gpio/mode/mode.c
+/**
+ * @file gpio/mode/mode.c
  * @brief
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>

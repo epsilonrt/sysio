@@ -3,7 +3,6 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
 SUBDIRS = write read getmode
 
 all: $(SUBDIRS)

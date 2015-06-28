@@ -1,6 +1,11 @@
-/* Copyright © 2014 epsilonRT. All rights reserved.
- *  $Id$ */
-/* ========================================================================== */
+/**
+ * @file test_crc.c
+ * @brief CRC Test
+ * 
+ * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
+ */
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>

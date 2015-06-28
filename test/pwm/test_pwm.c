@@ -1,5 +1,5 @@
-/*
- * sysio/test/pwm/pwm.c
+/**
+ * @file sysio/test/pwm/pwm.c
  * @brief Test sortie PWM
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>

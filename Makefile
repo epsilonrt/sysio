@@ -3,16 +3,19 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
 
 SUBDIRS = lib
 
-# Relative path of the project's root directory
+# Chemin relatif du répertoire racine de SysIO
 SYSIO_ROOT = .
 
-# Project build options
+# Choix de l'architecture matérielle du système
 ARCH = ARCH_GENERIC_LINUX
 #ARCH = ARCH_ARM_RASPBERRYPI
+
+# Activation des informations Debug (ON/OFF)
+# Si défini sur ON, aucune information de debug ne sera générée
+#DEBUG = ON
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -47,6 +50,6 @@ uninstall_utils:
 	@-rm -fr $(INSTALL_BINDIR)/sysio-ver
 
 $(SUBDIRS):
-	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH)
+	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
 
 .PHONY: all rebuild clean distclean install uninstall $(SUBDIRS)

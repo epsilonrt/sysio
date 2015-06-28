@@ -1,7 +1,8 @@
-/*
- * test/dinput/callback/callback.c
+/**
+ * @file test/dinput/callback/callback.c
  * @brief Test de callback
- * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * 
+ * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */

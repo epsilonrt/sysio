@@ -141,7 +141,9 @@ public:
 
   bool poll();
   void send (const Ax25Frame &f);
+  void send (const Ax25Frame *f);
   void read (Ax25Frame  &f);
+  void read (Ax25Frame  *f);
 
 private:
   struct xAx25 *p;

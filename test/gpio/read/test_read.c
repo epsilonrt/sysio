@@ -1,5 +1,5 @@
-/*
- * test/gpio/read/read.c
+/**
+ * @file test/gpio/read/read.c
  * @brief
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>

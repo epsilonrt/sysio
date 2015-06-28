@@ -1,3 +1,11 @@
+/**
+ * @file test_pipe.c
+ * @brief pipe read/write test
+ * 
+ * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
+ */
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>

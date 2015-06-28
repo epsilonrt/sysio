@@ -27,7 +27,7 @@ DEBUG_FORMAT = dwarf-2
 #     (Note: 3 n'est pas toujours le meilleur niveau. Voir la FAQ avr-libc.)
 DEBUG_OPT = 0
 
-# Retrait des informations Debug (ON/OFF)
+# Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
 #DEBUG = ON
 
@@ -79,6 +79,10 @@ WARNINGS = all
 EXTRA_INCDIRS =
 
 #---------------- Library Options ----------------
+
+# Enable static link
+STATIC_LINKER = OFF
+
 # List any extra directories to look for libraries here.
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
@@ -135,7 +139,8 @@ COPY = cp
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
 CDEFS += -D_REENTRANT
-EXTRA_LIBS += stdc++ pthread rt
+CPPDEFS += -D_REENTRANT
+EXTRA_LIBS += pthread rt stdc++
 LDFLAGS += -pthread
 
 ifeq ($(SYSIO_DEBUG_TEST),ON)
@@ -229,12 +234,17 @@ endif
 #  -Wl,...:     tell GCC to pass this to linker.
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
+ifeq ($(STATIC_LINKER),ON)
+LDFLAGS += -static
+endif
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 LDFLAGS += $(MATH_LIB)
 LDFLAGS += -Wl,-Map=$(TARGET_PATH).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
+ifeq ($(DISABLE_DELETE_UNUSED_SECTIONS),OFF)
 LDFLAGS += -Wl,--gc-sections
+endif
 LDFLAGS += -Wl,--relax
 ifeq ($(DEBUG),ON)
 LD_CFLAGS += -g$(DEBUG_FORMAT)
@@ -269,7 +279,7 @@ DEPDIRS := $(addsuffix .dep, $(OBJDIRS))
 ALL_CFLAGS = -I. $(CFLAGS) $(GENDEPFLAGS)
 ALL_CPPFLAGS = -I. -x c++ $(CPPFLAGS)  $(GENDEPFLAGS)
 ALL_ASFLAGS = -I. -x assembler-with-cpp $(ASFLAGS)
-LD_CFLAGS = -g$(DEBUG)
+#
 
 ifeq ($(VIEW_GCC_LINE),ON)
 else

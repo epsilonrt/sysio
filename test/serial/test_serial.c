@@ -1,5 +1,5 @@
-/*
- * test/serial/serial.c
+/**
+ * @file test/serial/serial.c
  * @brief Test liaison série
  *
  * La liaison est bouclée sur elle-même (TXD relié à RXD).

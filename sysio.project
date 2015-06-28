@@ -128,6 +128,29 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="sysio">
+    <VirtualDirectory Name="src">
+      <VirtualDirectory Name="gpio">
+        <File Name="sysio/src/gpio/doutput.c"/>
+        <File Name="sysio/src/gpio/dinput.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ssdv">
+        <File Name="sysio/src/ssdv/ssdv.c"/>
+        <File Name="sysio/src/ssdv/rs8.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="i2c">
+        <File Name="sysio/src/i2c/i2c.c"/>
+        <File Name="sysio/src/i2c/i2c-dev.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="radio">
+        <File Name="sysio/src/radio/crc.c"/>
+        <File Name="sysio/src/radio/ax25.c"/>
+        <File Name="sysio/src/radio/ax25-wrapper.cpp"/>
+        <File Name="sysio/src/radio/tnc-wrapper.cpp"/>
+        <File Name="sysio/src/radio/tnc.c"/>
+      </VirtualDirectory>
+      <File Name="sysio/src/log.c"/>
+      <File Name="sysio/src/serial-wrapper.cpp"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
         <VirtualDirectory Name="rpi">
@@ -167,17 +190,12 @@
       <File Name="sysio/posix/dinput.c"/>
       <File Name="sysio/posix/delay.c"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="src">
-      <File Name="sysio/src/doutput.c"/>
-      <File Name="sysio/src/log.c"/>
-      <File Name="sysio/src/ax25.c"/>
-      <File Name="sysio/src/crc.c"/>
-      <File Name="sysio/src/tnc.c"/>
-    </VirtualDirectory>
     <File Name="sysio/ax25.h"/>
     <File Name="sysio/crc.h"/>
     <File Name="sysio/tnc.h"/>
     <File Name="sysio++.mk"/>
+    <File Name="sysio/ax25.hpp"/>
+    <File Name="sysio/tnc.hpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="doc">
     <File Name="doc/Doxyfile"/>

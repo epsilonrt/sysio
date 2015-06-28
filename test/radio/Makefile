@@ -3,7 +3,6 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# $Id$
 SUBDIRS = pipe crc ax25 tnc
 
 all: $(SUBDIRS)
