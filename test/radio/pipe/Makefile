@@ -7,6 +7,9 @@
 # Nom du fichier cible (sans extension).
 TARGET = test_pipe
 
+# Chemin relatif du répertoire racine du projet de l'utilisateur
+PROJECT_TOPDIR = .
+
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = OFF
 
@@ -151,6 +154,12 @@ include $(SYSIO_ROOT)/sysio.mk
 endif
 else
 EXTRA_LIBS += sysio
+endif
+
+ifeq ($(PROJECT_TOPDIR),)
+else
+VPATH+=:$(PROJECT_TOPDIR)
+EXTRA_INCDIRS += $(PROJECT_TOPDIR)
 endif
 
 #-------------------------------------------------------------------------------

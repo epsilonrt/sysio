@@ -66,9 +66,9 @@ vSigSendHandler (int sig) {
 static void
 vSetup (const char * cDev, int iBaudrate) {
 
-  serial = new Serial;
+  serial = new Serial (cDev, iBaudrate);
   // Opens the serial port
-  if (serial->open (cDev, iBaudrate) < 0) {
+  if (!serial->open()) {
 
     perror ("iSerialOpen:");
     exit (EXIT_FAILURE);
