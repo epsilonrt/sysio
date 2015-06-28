@@ -325,8 +325,8 @@ ifeq ($(DEBUG),)
 	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
 endif
 	@ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
-	@-install -d -m 0755 $(INSTALL_INCDIR)/$(TARGET)
-	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/*.hpp $(INSTALL_INCDIR)/$(TARGET)
+	@-install -d -m 0755 $(INSTALL_INCDIR)/sysio
+	@-install -m 0644 $(SYSIO_ROOT)/sysio/*.hpp $(INSTALL_INCDIR)/sysio
 	@-ldconfig
 
 uninstall:
@@ -334,7 +334,7 @@ uninstall:
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.*
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
-	@-rm -fr $(INSTALL_INCDIR)/$(TARGET)
+	@-rm -f $(INSTALL_INCDIR)/sysio/*.hpp
 
 version.h: version
 

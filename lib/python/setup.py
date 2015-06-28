@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 #  setup.py
-#
 #-----------------------------------------------------------------------------#
 # Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>     #
 # All rights reserved.                                                        #
@@ -19,7 +18,7 @@ module_swig = Extension('_sysio',
                         swig_opts=['-c++'],
                         language='c++')
 setup (name = 'sysio',
-       version = '1.1',
+       version = '1.0',
        description = 'Extended I/O system library',
        author = 'Pascal JEAN aka epsilonrt',
        author_email = 'pjean@btssn.net',

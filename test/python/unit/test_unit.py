@@ -3,28 +3,16 @@
 #
 #  test_unit.py
 #
-#  Copyright 2014 Pascal JEAN aka epsilonrt <pjean@btssn.net>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
-from radio import *
-import serial
+#-----------------------------------------------------------------------------#
+# Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>     #
+# All rights reserved.                                                        #
+# This software is governed by the CeCILL license <http://www.cecill.info>    #
+#-----------------------------------------------------------------------------#
+from sysio import *
+# import serial
 
-device="/dev/ttyAMA0"
+device="/dev/ttyUSB0"
+#device="/dev/ttyAMA0"
 baudrate=2400
 
 def NodeTest():
@@ -134,29 +122,22 @@ def LinkTest():
   assert ax25.error == Ax25.SUCCESS
   print "Test1 Success !"
 
-  ser=serial.Serial(device, baudrate, timeout=1)
-  ser.open()
-  ser.nonblocking()
+  ser = Serial(device, baudrate)
+  assert ser.open() == True
   print("Serial port infos :")
   print("  Port = %s" % ser.port)
   print("  Baudrate = %s" % ser.baudrate)
-  print("  Bits = %s" % ser.bytesize)
-  print("  Parité = %s" % ser.parity)
-  print("  Bit de stop = %s" % ser.stopbits)
-  print("  Time out = %s" % ser.timeout)
-  print("  Xon/Xoff = %s" % ser.xonxoff)
-  print("  Rts/Cts = %s" % ser.rtscts)
-  print("  fd = %s" % ser.fileno())
+  print("  fd = %s" % ser.fileno)
   print "Test2 Success !"
 
-  ax25.fdout =  ser.fileno()
-  assert ax25.fdout == ser.fileno()
-  ax25.fdin =  ser.fileno()
-  assert ax25.fdin == ser.fileno()
+  ax25.fdout =  ser.fileno
+  assert ax25.fdout == ser.fileno
+  ax25.fdin =  ser.fileno
+  assert ax25.fdin == ser.fileno
   print "Test3 Success !"
 
   payload="012345678901234567890123456789012345678901234567890123456789"
-  print "RXD line must be connected to TXD line for test !"
+  print "RXD line must be connected to TXD line for testing !"
   frx=Ax25Frame()
   ftx=Ax25Frame ("tlm100", "nocall")
   ftx.setInfo (payload, len(payload))

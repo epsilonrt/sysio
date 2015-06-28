@@ -1,9 +1,9 @@
 // sysio.i
 %module sysio
 %{
-  #include "../src/sysio/ax25.hpp"
-  #include "../src/sysio/tnc.hpp"
-  #include "../src/sysio/serial.hpp"
+  #include "../../sysio/ax25.hpp"
+  #include "../../sysio/tnc.hpp"
+  #include "../../sysio/serial.hpp"
 %}
 
 
@@ -238,10 +238,34 @@ public:
 class Serial {
 
 public:
-  Serial();
+ 
+  Serial(const char * port, int baudrate);
   ~Serial();
-  int open (const char *device, const int baud);
+  bool open ();
   void close();
-  int fileno() const;
   void flush();
+  int getFileno() const;
+  int getBaudrate() const;
+  void setBaudrate (int baudrate);
+  const char * getPort() const;
+  void setPort (const char * portname);
+  const char * getFlowControlName() const;
+  bool setFlowControlName (const char * newFlowControl);
+  
+  %pythoncode %{
+    __swig_getmethods__["flowcontrol"] = getFlowControlName
+    __swig_setmethods__["flowcontrol"] = setFlowControlName
+    if _newclass: flowcontrol = property(getFlowControlName, setFlowControlName)
+
+    __swig_getmethods__["port"] = getPort
+    __swig_setmethods__["port"] = setPort
+    if _newclass: port = property(getPort, setPort)
+    
+    __swig_getmethods__["baudrate"] = getBaudrate
+    __swig_setmethods__["baudrate"] = setBaudrate
+    if _newclass: baudrate = property(getBaudrate, setBaudrate)
+
+    __swig_getmethods__["fileno"] = getFileno
+    if _newclass: fileno = property(getFileno, None)
+  %}
 };

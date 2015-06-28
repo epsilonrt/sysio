@@ -37,7 +37,9 @@ install_utils: uninstall_utils
 	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio
 	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio/template
 	@-install -d -m 0755 $(INSTALL_DATDIR)/sysio/template/cpp
-	@-install -m 0644 $(SYSIO_ROOT)/util/template/* $(INSTALL_DATDIR)/sysio/template
+	@-install -m 0644 $(SYSIO_ROOT)/util/template/Makefile $(INSTALL_DATDIR)/sysio/template
+	@-install -m 0644 $(SYSIO_ROOT)/util/template/template.c $(INSTALL_DATDIR)/sysio/template
+	@-install -m 0644 $(SYSIO_ROOT)/util/template/template.project $(INSTALL_DATDIR)/sysio/template
 	@-install -m 0644 $(SYSIO_ROOT)/util/template/cpp/* $(INSTALL_DATDIR)/sysio/template/cpp
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-prj $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)

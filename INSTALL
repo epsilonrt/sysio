@@ -1,9 +1,52 @@
-$Id$
---------------------------------------------------------------------------------
-make
-sudo make install
 
-make CDEFS+=-DLOG_ASSERT
+Basic Installation
+==================
+These are installation instructions.
+
+The simplest way to compile this package is:
+
+  1. 'cd' to the directory containing the package's source code.
+
+  2. Type 'make' to compile the package.
+
+  3. Type 'sudo make install' to install the programs.
+
+  4. You can remove the program binaries and object files from the
+     source code directory by typing 'make clean'.
+
+  5. Type 'sudo make uninstall' if you wish uninstall the programs.
+
+When the installation is done, you can then compile the demo programs found in
+the demo directory (cd demo/aprs && make && ./demo_aprs).
+
+For build and install Python module, It is necessary to install swig, 
+for example on a debian system, you need to :
+
+  1. Type 'sudo apt-get install swig'
+
+Then :
+
+  2. 'cd' to the directory lib/python of this package
+
+  3. Type 'make' to compile the package.
+
+  4. Type 'sudo make install' to install the programs.
+
+  5. You can remove the program binaries and object files from the
+     source code directory by typing 'make distclean'.
+
+  6. Type 'sudo make uninstall' if you wish uninstall the programs.
+
+When the installation is done, you can then execute the demo programs found in
+the demo directory (cd demo/python/aprs && python demo_aprs.py).
+
+Installation Names
+==================
+
+By default, 'make install' will install the package's files in
+'/usr/local/bin', '/usr/local/man', etc.  You can specify an
+installation prefix other than '/usr/local' by giving 'make' the
+option 'prefix=PATH' after target install/uninstall.
 
 
 

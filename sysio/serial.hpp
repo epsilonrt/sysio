@@ -11,6 +11,7 @@
 #define _SYSIO_SERIAL_HPP_
 
 #include <sysio/defs.h>
+#include <string>
 
 //##############################################################################
 //#                                                                            #
@@ -31,18 +32,32 @@ class Serial {
       UnknownFlowControl = -1
     } FlowControl;
 
-    Serial();
+    Serial(const char * portname, int baudrate);
     ~Serial();
-    int open (const char *device, const int baud);
+    bool open();
+    int baudrate() const;
+    void setBaudrate (int baudrate);
+    const char * port() const;
+    void setPort (const char * portname);
     void close();
     int fileno() const;
     void flush();
     FlowControl flowControl() const;
     bool setFlowControl (FlowControl newFlowControl);
-    const char * flowControlName();
+    const char * flowControlName() const;
+    bool setFlowControlName (const char * newFlowControl);
+    
+    // Swig access functions (python interface)
+    inline int getFileno() const { return fileno(); }
+    inline int getBaudrate() const { return baudrate(); }
+    inline const char * getPort() const { return port(); }
+    inline int getFlowControl() const { return flowControl(); }
+    inline const char * getFlowControlName() const { return flowControlName(); }
 
   private:
     int fd;
+    int _baudrate;
+    std::string _portname;
 };
 
 /* ========================================================================== */
