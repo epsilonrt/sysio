@@ -4,7 +4,7 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 
-SUBDIRS = lib
+SUBDIRS = lib ssdv
 
 # Chemin relatif du répertoire racine de SysIO
 SYSIO_ROOT = .

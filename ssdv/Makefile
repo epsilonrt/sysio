@@ -94,7 +94,7 @@ EXTRA_LIBDIRS =
 
 # List any extra libraries here (without lib prefix).
 #     Each library must be seperated by a space.
-EXTRA_LIBS = 
+EXTRA_LIBS =
 
 # Enable link with  mathematics library (ON/OFF)
 MATH_LIB_ENABLE = ON
@@ -113,7 +113,7 @@ VERSION=1.0.0
 #---------------- SysIO Options ----------------
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
+# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis
 #SYSIO_DEBUG_TEST = ON
 SYSIO_ROOT = ../..
 ARCH = ARCH_ARM_RASPBERRYPI
@@ -307,11 +307,11 @@ distclean: distclean_list clean_list
 
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 TARGET $(INSTALL_BINDIR)
+	@-install -m 0755 $(TARGET) $(INSTALL_BINDIR)
 
 uninstall:
 	@echo "$(MSG_UNINSTALL) $(TARGET)"
-	-rm -f $(INSTALL_BINDIR)/$(TARGET)
+	@-rm -f $(INSTALL_BINDIR)/$(TARGET)
 
 elf: version-git.h $(TARGET)
 lss: $(TARGET_PATH).lss

@@ -19,8 +19,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <ssdv/ssdv.h>
-#include <ssdv/rs8.h>
+#include <sysio/ssdv.h>
+#include <sysio/rs8.h>
 
 /* Recognised JPEG markers */
 enum {
