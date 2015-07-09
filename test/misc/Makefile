@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = crc ax25 tnc
+SUBDIRS = pipe ptty
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

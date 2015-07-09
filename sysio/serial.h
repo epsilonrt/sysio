@@ -1,7 +1,7 @@
 /**
  * @file sysio/serial.h
  * @brief Liaison série
- * 
+ *
  * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -28,9 +28,8 @@ __BEGIN_C_DECLS
 
 /**
  * @enum eSerialFlow
- * @brief Type de gestion de flux
+ * @brief Type de contrôle de flux
  */
-
 typedef enum {
 
   SERIAL_FLOW_NONE,
@@ -39,6 +38,42 @@ typedef enum {
   SERIAL_FLOW_UNKNOWN = -1
 } eSerialFlow;
 
+/**
+ * @enum eSerialDataBits
+ * @brief Nombre de bits de données
+ */
+typedef enum {
+  SERIAL_DATABIT_5,
+  SERIAL_DATABIT_6,
+  SERIAL_DATABIT_7,
+  SERIAL_DATABIT_8,
+  SERIAL_DATABIT_UNKNOWN = -1
+} eSerialDataBits;
+
+/**
+ * @enum eSerialParity
+ * @brief Parité
+ */
+typedef enum {
+  SERIAL_PARITY_NONE,
+  SERIAL_PARITY_EVEN,
+  SERIAL_PARITY_ODD,
+  SERIAL_PARITY_SPACE,
+  SERIAL_PARITY_MARK,
+  SERIAL_PARITY_UNKNOWN = -1
+} eSerialParity;
+
+/**
+ * @enum eSerialStopBits
+ * @brief Nombre de bits de stop
+ */
+typedef enum {
+  SERIAL_STOPBIT_ONE,
+  SERIAL_STOPBIT_TWO,
+  SERIAL_STOPBIT_ONEHALF,
+  SERIAL_STOPBIT_UNKNOWN
+} eSerialStopBits;
+
 /* internal public functions ================================================ */
 
 /**
@@ -46,7 +81,7 @@ typedef enum {
  *
  * Le port est ouvert en lecture/écriture non bloquante, 8 bits sans parité,
  * 1 bit de stop.
- *  
+ *
  * @param device le nom du port à ouvrir (/dev/tty...)
  * @param baud vitesse en bauds
  * @return le descripteur de fichier du port ou une valeur négative sur erreur
@@ -62,7 +97,7 @@ void vSerialClose (int fd);
 
 /**
  *  Vide les buffers de réception et de transmission
- * 
+ *
  * Le buffer de transmission est transmis, celui de réception est vidé.
  *
  * @param le descripteur de fichier du port

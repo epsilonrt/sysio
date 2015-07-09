@@ -207,7 +207,11 @@ xDinOpen (const xDin * pins, unsigned size) {
   port->ctx = calloc (size, sizeof (xDinCbContext));
   assert (port->ctx);
   memset (port->ctx, 0, sizeof (xDinCbContext) * size);
-
+  for (unsigned p = 0; p < size; p++) {
+    pthread_mutex_init(&port->ctx[p].read_mutex, NULL);
+    pthread_mutex_init(&port->ctx[p].write_mutex, NULL);
+  }
+  
   port->run = true;
   if (pthread_create (&port->thread, NULL, pvDinPoll, port) != 0) {
 

@@ -13,7 +13,27 @@ EOF
 exit 1
 fi
 
-while getopts ":fgsp" opt; do
+usage()
+{
+cat << EOF
+usage: $(basename $0) [Options] [project_name]
+
+Ce script permet de créer un nouveau projet pour SysIo.
+
+  project_name  nom du projet à créer. Si le nom de projet n'est pas fournit,
+  c'est le nom du répertoire courant qui est utilisé.
+  Sans l'option -s, seul un fichier projet CodeLite est créé.
+  
+OPTIONS:
+  -h    Affiche ce message
+  -f    Force l'écrasement de fichiers existants.
+  -g    Ajoute les fichiers créés au dépôt git du répertoire courant
+  -s    Créé aussi un fichier Makefile et un fichier source C (ou C++)
+  -p    Indique que le projet à créer est un projet C++
+EOF
+}
+
+while getopts ":fgsph" opt; do
   case $opt in
     f)
       FORCE="ON"
@@ -27,8 +47,14 @@ while getopts ":fgsp" opt; do
     p)
       CPP="ON"
       ;;
+    h)
+      usage
+      exit 1
+      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit
       ;;
   esac
 done
