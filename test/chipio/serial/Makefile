@@ -32,7 +32,7 @@ DEBUG_OPT = 0
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
-#DEBUG = ON
+DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
 VIEW_GCC_LINE = OFF
@@ -94,7 +94,7 @@ EXTRA_LIBDIRS =
 
 # List any extra libraries here (without lib prefix).
 #     Each library must be seperated by a space.
-EXTRA_LIBS = 
+EXTRA_LIBS =
 
 # Enable link with  mathematics library (ON/OFF)
 MATH_LIB_ENABLE = ON
@@ -113,7 +113,7 @@ VERSION=1.0.0
 #---------------- SysIO Options ----------------
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
+# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis
 SYSIO_DEBUG_TEST = ON
 SYSIO_ROOT = ../../..
 ARCH = ARCH_ARM_RASPBERRYPI

@@ -184,19 +184,61 @@ eSerialGetFlow (int fd) {
   return eCurrentFlow;
 }
 
+static const char sUnknown[] = "Unknown" ;
+
 // -----------------------------------------------------------------------------
 const char *
-eSerialGetFlowStr (int fd) {
+sSerialFlowToStr (eSerialFlow eFlow) {
   static const char * sFlow[] = { "None", "Hardware", "Software" };
-  static const char sUnknown[] = "Unknown" ;
-  eSerialFlow eCurrentFlow;
 
-  eCurrentFlow = eSerialGetFlow (fd);
-  if (eCurrentFlow != SERIAL_FLOW_UNKNOWN) {
-    
-    return sFlow[eCurrentFlow];
+  if (eFlow <= SERIAL_FLOW_XONXOFF) {
+
+    return sFlow[eFlow];
   }
   return sUnknown;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sSerialParityToStr (eSerialParity eParity) {
+  static const char * sParity[] = { "None", "Even", "Odd", "Space", "Mark" };
+
+  if (eParity <= SERIAL_PARITY_MARK) {
+
+    return sParity[eParity];
+  }
+  return sUnknown;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sSerialDataBitsToStr (eSerialDataBits eDataBits) {
+  static const char * sDataBits[] = { "5", "6", "7", "8" };
+
+  if (eDataBits <= SERIAL_DATABIT_8) {
+
+    return sDataBits[eDataBits];
+  }
+  return sUnknown;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sSerialStopBitsToStr (eSerialStopBits eStopBits) {
+  static const char * sStopBits[] = { "1", "2", "1.5" };
+
+  if (eStopBits <= SERIAL_STOPBIT_ONEHALF) {
+
+    return sStopBits[eStopBits];
+  }
+  return sUnknown;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sSerialGetFlowStr (int fd) {
+
+  return sSerialFlowToStr (eSerialGetFlow (fd));
 }
 
 // -----------------------------------------------------------------------------

@@ -22,6 +22,32 @@
 
 /* $Id: i2c-dev.h 5894 2010-12-12 13:22:29Z khali $ */
 
+/*
+  You can do SMBus level transactions (see documentation file smbus-protocol
+  for details) through the following functions:
+    __s32 i2c_smbus_write_quick(int file, __u8 value);
+    __s32 i2c_smbus_read_byte(int file);
+    __s32 i2c_smbus_write_byte(int file, __u8 value);
+    __s32 i2c_smbus_read_byte_data(int file, __u8 command);
+    __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value);
+    __s32 i2c_smbus_read_word_data(int file, __u8 command);
+    __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value);
+    __s32 i2c_smbus_process_call(int file, __u8 command, __u16 value);
+    __s32 i2c_smbus_read_block_data(int file, __u8 command, __u8 *values);
+    __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length,
+                                     __u8 *values);
+  All these transactions return -1 on failure; you can read errno to see
+  what happened. The 'write' transactions return 0 on success; the
+  'read' transactions return the read value, except for read_block, which
+  returns the number of values read. The block buffers need not be longer
+  than 32 bytes.
+
+  The above functions are all inline functions, that resolve to calls to
+  the i2c_smbus_access function, that on its turn calls a specific ioctl
+  with the data in a specific format. Read the source code if you
+  want to know what happens behind the screens.
+*/
+
 #ifndef LIB_I2CDEV_H
 #define LIB_I2CDEV_H
 

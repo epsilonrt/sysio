@@ -80,6 +80,8 @@ int iI2cReadReg16      (int fd, uint8_t reg);
 /**
  * @brief Lecture d'un bloc de registres
  *
+ * @warning La transmission s'effectue par bloc qu'au maximum 32 octets.
+ *
  * @param fd descripteur de fichier vers la connexion ouverte
  * @param reg adresse du premier registre (ou octet de contrôle)
  * @param buffer pointeur vers la zone de stockage des octets, la taille doit
@@ -131,11 +133,13 @@ int iI2cWriteReg16     (int fd, uint8_t reg, uint16_t data);
 /**
  * @brief Ecriture d'un bloc de registres
  *
+ * @warning La transmission s'effectue par bloc qu'au maximum 32 octets.
+ *
  * @param fd descripteur de fichier vers la connexion ouverte
  * @param reg adresse du premier registre (ou octet de contrôle)
  * @param buffer pointeur vers la zone de stockage des octets
  * @param size nombre d'octets à écrire
- * @return le nombre d'octets écrits, -1 si erreur
+ * @return 0, -1 si erreur
  */
 int iI2cWriteRegBlock  (int fd, uint8_t reg, const uint8_t * buffer, uint8_t size);
 

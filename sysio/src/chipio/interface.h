@@ -1,5 +1,5 @@
 /**
- * @file chipio/interface.h
+ * @file chipio.h
  * @brief Circuit d'entrées-sorties universel
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -13,6 +13,8 @@ extern "C" {
 /* ========================================================================== */
 
 /* constants ================================================================ */
+#define CHIPIO_I2C_BLOCK_MAX 32 // Nombre max d'octets dans une trame I2C
+
 // Octet de contrôle
 #define CHIPIO_CO 0x80 // Bit CO dans l'octet de contrôle
 #define CHIPIO_RS 0x40 // Bit RS dans l'octet de contrôle
@@ -81,59 +83,65 @@ extern "C" {
  *                      --- Registres de travail ---
  * Reg    RW  Description
  * -----------------------------------------------------------------------------
- * x20-21  R   Revision logicielle (lsb-msb), msb majeur, lsb mineur
+ * x20     R   Options disponibles (utilise eChipIoOption)
+ * x21     R   Revision logicielle, 4 bits MSB: majeur, 4 bits LSB: mineur
  * x22-23  R   Voie ADC0 (lsb-msb)
  * x24-25  R   Voie ADC1 (lsb-msb)
  * x26-27  R   Voie ADC2 (lsb-msb)
  * x28-29  R   Voie ADC3 (lsb-msb)
- * x2A     RW  Registre de transmission série :
+ * x2A     R   Registre d'état transmission série :
+ *             Contient la taille du tampon de transmission.
+ * x2B     RW  Registre de transmission série :
  *             Tout caractère qui y est écrit est transmis sur la liaison série
- * x2B     R   Registre de réception série :
- *             Dernier caractère reçu sur la liaison série
- * x2C     R   Registre d'état série :
- *             Contient le nombre de caractères à lire dans le buffer de 
+ * x2C     R   Registre d'état réception série :
+ *             Contient le nombre de caractères à lire dans le buffer de
  *             réception
- * 
+ * x2D     R   Registre de réception série :
+ *             Dernier caractère reçu sur la liaison série
+ *
  * -----------------------------------------------------------------------------
  *        --- Registres de configuration sauvegardés en EEPROM ---
  * Reg    RW  Description
  * -----------------------------------------------------------------------------
- * x30-31  RW  Options (lsb-msb)
- * x32-33  RW  Registre de contrôle série (lsb-msb)
- * x34-35  RW  Registre de baudrate série en centaines de baud (lsb-msb)
- * x36     RW  Registre de contrôle ADC
- * x37     RW  Registre de contrôle du diviseur d'horloge ADC
+ * x30     RW  Options activées (utilise eChipIoOption)
+ * x31-32  RW  Registre de contrôle série (lsb-msb)
+ * x33-34  RW  Registre de baudrate série en centaines de baud (lsb-msb)
+ * x35     RW  Registre de contrôle ADC
+ * x36     RW  Registre de contrôle du diviseur d'horloge ADC
  * =============================================================================
  * Les trames I2C ayant une adresse de registre correspondant à eRegSerTx ou
  * eRegSerRx permettent une lecture ou une écriture répétitive dans ces
  * registres (auto-incrémentation dévalidée).
  */
 typedef enum {
-  eRegRevision = CHIPIO_RA,                 // 0x20 LSB - 0x21 MSB
+  eRegOptAv    = CHIPIO_RA,                 // 0x20
+  eRegRev      = CHIPIO_RA + 1,             // 0x21
   eRegAdc0     = CHIPIO_RA + 2,             // 0x22 LSB - 0x23 MSB
   eRegAdc1     = CHIPIO_RA + 4,             // 0x24 LSB - 0x25 MSB
   eRegAdc2     = CHIPIO_RA + 6,             // 0x26 LSB - 0x27 MSB
   eRegAdc3     = CHIPIO_RA + 8,             // 0x28 LSB - 0x29 MSB
-  eRegSerTx    = CHIPIO_RA + 0x0A,          // 0x2A
-  eRegSerSr    = CHIPIO_RA + 0x0B,          // 0x2B
-  eRegSerRx    = CHIPIO_RA + 0x0C,          // 0x2C
+  eRegSerTxSr  = CHIPIO_RA + 0x0A,          // 0x2A
+  eRegSerTx    = CHIPIO_RA + 0x0B,          // 0x2B
+  eRegSerRxSr  = CHIPIO_RA + 0x0C,          // 0x2C
+  eRegSerRx    = CHIPIO_RA + 0x0D,          // 0x2D
 
-  eRegOptions  = CHIPIO_RA + CHIPIO_CF,     // 0x30 LSB - 0x31 MSB
-  eRegSerCr    = CHIPIO_RA + CHIPIO_CF + 2, // 0x32 LSB - 0x33 MSB
-  eRegSerBaud  = CHIPIO_RA + CHIPIO_CF + 4, // 0x34 LSB - 0x35 MSB
-  eRegAdcCr    = CHIPIO_RA + CHIPIO_CF + 6, // 0x36
-  eRegAdcDiv   = CHIPIO_RA + CHIPIO_CF + 7, // 0x37
+  eRegOptEn    = CHIPIO_RA + CHIPIO_CF,     // 0x30
+  eRegSerCr    = CHIPIO_RA + CHIPIO_CF + 1, // 0x31 LSB - 0x32 MSB
+  eRegSerBaud  = CHIPIO_RA + CHIPIO_CF + 3, // 0x33 LSB - 0x34 MSB
+  eRegAdcCr    = CHIPIO_RA + CHIPIO_CF + 5, // 0x35
+  eRegAdcDiv   = CHIPIO_RA + CHIPIO_CF + 6, // 0x36
 } eChipIoRegister;
 
 // eRegOptions
 typedef enum {
-  eOptionLcd          = 0x0001,
-  eOptionAdc          = 0x0002,
-  eOptionSerial       = 0x0004,
-  eOptionSplashScreen = 0x8000
+  eOptionLcd              = 0x01,
+  eOptionAdc              = 0x02,
+  eOptionSerial           = 0x04,
+  eOptionSerialIrq        = 0x40,
+  eOptionLcdSplashScreen  = 0x80
 } eChipIoOption;
 
-// eRegSerCr = 
+// eRegSerCr =
 //          eChipIoDataBit + eChipIoStopBit + eChipIoParity + eChipIoFlowControl
 typedef enum {
   eDataBit5     = 0x0000,
@@ -143,7 +151,7 @@ typedef enum {
   eDataBitMask  = 0x0007
 } eChipIoDataBit;
 
-// eRegSerCr = 
+// eRegSerCr =
 //          eChipIoDataBit + eChipIoStopBit + eChipIoParity + eChipIoFlowControl
 typedef enum {
   eStopBit1    = 0x0000,
@@ -151,7 +159,7 @@ typedef enum {
   eStopBitMask = 0x0008
 } eChipIoStopBit;
 
-// eRegSerCr = 
+// eRegSerCr =
 //          eChipIoDataBit + eChipIoStopBit + eChipIoParity + eChipIoFlowControl
 typedef enum {
   eParityNone = 0x0000,
@@ -160,7 +168,7 @@ typedef enum {
   eParityMask = 0x0030
 } eChipIoParity;
 
-// eRegSerCr = 
+// eRegSerCr =
 //          eChipIoDataBit + eChipIoStopBit + eChipIoParity + eChipIoFlowControl
 typedef enum {
   eFlowNone  = 0x0000,

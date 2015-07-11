@@ -123,7 +123,31 @@ eSerialFlow eSerialSetFlow (int fd, eSerialFlow eNewFlow);
  *
  * @param le descripteur de fichier du port
  */
-const char * eSerialGetFlowStr (int fd);
+const char * sSerialGetFlowStr (int fd);
+
+/**
+ *  Renvoie la chaîne de caractère correspondant à une valeur de contrôle de flux
+ *
+ */
+const char * sSerialFlowToStr (eSerialFlow eFlow);
+
+/**
+ *  Renvoie la chaîne de caractère correspondant à une valeur de parité
+ *
+ */
+const char * sSerialParityToStr (eSerialParity eParity);
+
+/**
+ *  Renvoie la chaîne de caractère correspondant à une valeur de bits de données
+ *
+ */
+const char * sSerialDataBitsToStr (eSerialDataBits eDataBits);
+
+/**
+ *  Renvoie la chaîne de caractère correspondant à une valeur de bits de stop
+ *
+ */
+const char * sSerialStopBitsToStr (eSerialStopBits eStopBits);
 
 /**
  * @}

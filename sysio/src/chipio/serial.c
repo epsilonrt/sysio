@@ -15,23 +15,26 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <linux/limits.h>
 #include <sysio/delay.h>
 #include <sysio/log.h>
+#include <sysio/doutput.h>
 #include <sysio/chipio/serial.h>
 #include "interface.h"
 
 /* macros =================================================================== */
 /* constants ================================================================ */
-#define CHIPIO_SERIAL_POLL_DELAY 20
-#define CHIPIO_SERIAL_BUFFER_SIZE 64
+#define SERIAL_POLL_DELAY 100
 
 /* structures =============================================================== */
 typedef struct xChipIoSerial {
   xChipIo * chipio;   // Objet chipio
+  uint8_t ucTxBufSize;
   int fdm;            // descripteur de fichier pseudo-terminal maître
   FILE * pts;         // flux pseudo-terminal esclave
+  char name[NAME_MAX];
   pthread_t thread;   // thread de surveillance
-  bool run;           // indique au thread de continuer
 } xChipIoSerial;
 
 /* types ==================================================================== */
@@ -45,33 +48,39 @@ pvSerialThread (void * xContext) {
   int iLen, iRet;
   fd_set xFdSet;
   struct timeval xTv;
-  uint8_t buffer[CHIPIO_SERIAL_BUFFER_SIZE];
+  uint8_t buffer[CHIPIO_I2C_BLOCK_MAX];
 
   xChipIoSerial * port = (xChipIoSerial *) xContext;
-  FD_ZERO (&xFdSet);
-  FD_SET (port->fdm, &xFdSet);
 
-  while (port->run) {
+  // DEBUG -->
+  xDoutPort * gpio;
+  static const xDout xMyLeds[3] = {
+    { .num = 0, .act = true },
+    { .num = 1, .act = true },
+    { .num = 2, .act = true }};
+  gpio = xDoutOpen (xMyLeds, 3);
+  assert(gpio);
+  iDoutClearAll (gpio);
+  iDoutToggle (0, gpio);
+  // <-- DEBUG
+
+  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
+  while (1) {
 
     // Surveillance des octets reçus par la liaison série et envoi vers ptm
     // TODO utilisation de la broche IRQ
-    
-    iLen = iChipIoReadReg8 (port->chipio, eRegSerSr);
-    
-    if (iLen < 0) {
 
-      PERROR ("iChipIoReadReg8()");
-    }
-    else if (iLen > 0) {
+    iLen = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
+    iDoutToggle (1, gpio); // <-- DEBUG
 
-      
+    if (iLen > 0) {
+
+
       iRet = iChipIoReadRegBlock (port->chipio, eRegSerRx, buffer, iLen);
-      
-      if (iRet < 0) {
 
-        PERROR ("iChipIoReadRegBlock()");
-      }
-      else if (iRet > 0) {
+      if (iRet > 0) {
+
         if (write (port->fdm, buffer, iRet) != iRet) {
           PERROR ("write()");
         }
@@ -80,29 +89,50 @@ pvSerialThread (void * xContext) {
 
     // Surveillance des octets reçus de ptm et envoi vers la liaison série
     xTv.tv_sec = 0;
-    xTv.tv_usec = CHIPIO_SERIAL_POLL_DELAY * 1000UL;
+    xTv.tv_usec = SERIAL_POLL_DELAY * 1000UL;
 
+    FD_ZERO (&xFdSet);
+    FD_SET (port->fdm, &xFdSet);
     iRet = select (port->fdm + 1, &xFdSet, NULL, NULL, &xTv);
-    // Considérer xTv comme indéfini maintenant ! 
+    // Considérer xTv comme indéfini maintenant !
 
     if (iRet == -1) {
-      
+
       PERROR ("select()");
     }
     else if (iRet > 0) {
-      
-      // Des données sont disponibles maintenant
-      while ( (iLen = read (port->fdm, buffer, CHIPIO_SERIAL_BUFFER_SIZE)) > 0) {
+      int iBytesAvailable;
 
-        
-        iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, buffer, iLen);
-        
-        if (iRet < 0) {
+      iRet = ioctl (port->fdm, FIONREAD, &iBytesAvailable);
 
-          PERROR ("iChipIoWriteRegBlock()");
+      if ((iRet != -1) && (iBytesAvailable)) {
+        uint8_t * p = buffer;
+
+        // Des données sont disponibles maintenant, on les envoient bloc par bloc
+        while (iBytesAvailable) {
+          int iBytesToRead = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
+
+          if  ((iLen = read (port->fdm, p, iBytesToRead)) > 0) {
+
+            /* // DEBUG -->
+            for (int i = 0; i < iLen; i++) {
+              printf ("\\%02X", p[i]);
+            }
+            putchar('\n');
+            // <-- DEBUG */
+
+            iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, p, iLen);
+            if (iRet == 0) {
+
+              iBytesAvailable -= iLen;
+              p += iLen;
+            }
+          }
         }
       }
     }
+    iDoutToggle (2, gpio); // <-- DEBUG
+    pthread_testcancel();
   }
   return NULL;
 }
@@ -114,61 +144,100 @@ pvSerialThread (void * xContext) {
 // -----------------------------------------------------------------------------
 xChipIoSerial *
 xChipIoSerialOpen (xChipIo * chip) {
-  xChipIoSerial * port = malloc (sizeof (xChipIoSerial));
+  xChipIoSerial * port = NULL;
 
-  if (port) {
-    char * pts;
+  if (iChipIoAvailableOptions(chip) & eOptionSerial) {
 
-    port->chipio = chip;
-    if ( (port->fdm = getpt ()) < 0) {
+    port = malloc (sizeof (xChipIoSerial));
+    if (port) {
+      int fds, reg;
 
-      goto error_exit;
+      port->chipio = chip;
+
+      reg = iChipIoReadReg8 (chip, eRegSerTxSr);
+      if (reg >= 0) {
+
+        port->ucTxBufSize = reg;
+      }
+      else {
+
+        PERROR("No ChipIo found");
+        goto open_error_exit;
+      }
+
+      if ( (port->fdm = getpt ()) < 0) {
+
+        goto open_error_exit;
+      }
+
+      // Partie à mettre dans le thread ?
+      if ( (grantpt (port->fdm)) != 0) {
+
+        goto open_error_exit;
+      }
+
+      if ( (unlockpt (port->fdm)) != 0) {
+
+        goto open_error_exit;
+      }
+
+      if (ptsname_r  (port->fdm, port->name, NAME_MAX) != 0) {
+
+        goto open_error_exit;
+      }
+
+      if ( (fds = open (port->name, O_RDWR | O_NOCTTY | O_NDELAY)) < 0) {
+
+        goto open_error_exit;
+      }
+
+      if ( (port->pts = fdopen (fds, "r+")) == NULL) {
+
+        goto open_error_exit;
+      }
+
+      // Création du thread
+      if (pthread_create (&port->thread, NULL, pvSerialThread, port) != 0) {
+
+        goto open_error_exit;
+      }
+
     }
-    
-    // Partie à mettre dans le thread ?
-    if ( (grantpt (port->fdm)) != 0) {
-
-      goto error_exit;
-    }
-    if ( (unlockpt (port->fdm)) != 0) {
-
-      goto error_exit;
-    }
-    if ( (pts = ptsname (port->fdm)) == NULL) {
-
-      goto error_exit;
-    }
-    if ( (port->pts = fopen (pts, "r+")) == NULL) {
-
-      goto error_exit;
-    }
-    // --- Fin de partie à mettre dans le thread
-    
-    // Création du thread
-    port->run = true;
-    if (pthread_create (&port->thread, NULL, pvSerialThread, port) != 0) {
-
-      goto error_exit;
-    }
-
+  }
+  else {
+    PERROR("Serial port is not available for this chip");
   }
   return port;
 
-error_exit:
+open_error_exit:
   free (port);
   return NULL;
 }
 
+
 // -----------------------------------------------------------------------------
 void
 vChipIoSerialClose (xChipIoSerial * port) {
+  int iRet;
+  assert (port);
+  // port->run = false;
+  iRet = pthread_cancel (port->thread);
+  assert (iRet == 0);
+  iRet = pthread_join (port->thread, NULL);
+  assert (iRet == 0);
+  iRet = fclose (port->pts);
+  assert (iRet == 0);
+  iRet = close (port->fdm);
+  assert (iRet == 0);
+  free (port);
+}
+
+// -----------------------------------------------------------------------------
+int
+iChipIoSerialBufferSize (xChipIoSerial * port) {
 
   assert (port);
-  port->run = false;
-  pthread_join (port->thread, NULL);
-  fclose (port->pts);
-  close (port->fdm);
-  free (port);
+  return port->ucTxBufSize;
 }
 
 // -----------------------------------------------------------------------------
@@ -188,15 +257,23 @@ iChipIoSerialFileNo (xChipIoSerial * port) {
 }
 
 // -----------------------------------------------------------------------------
+const char *
+sChipIoSerialPortName (xChipIoSerial * port) {
+
+  assert (port);
+  return port->name;
+}
+
+// -----------------------------------------------------------------------------
 int
 iChipIoSerialGetBaudrate (xChipIoSerial * port) {
   int iBaudrate;
 
   assert (port);
 
-  
+
   iBaudrate = iChipIoReadReg16 (port->chipio, eRegSerBaud);
-  
+
   if (iBaudrate > 0) {
 
     iBaudrate *= 100;
@@ -211,9 +288,9 @@ eChipIoSerialGetDataBits (xChipIoSerial * port) {
   int iSerCr;
 
   assert (port);
-  
+
   iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-  
+
 
   if (iSerCr > 0) {
     switch (iSerCr & eDataBitMask) {
@@ -243,9 +320,9 @@ eChipIoSerialGetStopBits (xChipIoSerial * port) {
   int iSerCr;
 
   assert (port);
-  
+
   iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-  
+
 
   if (iSerCr > 0) {
     switch (iSerCr & eStopBitMask) {
@@ -269,9 +346,9 @@ eChipIoSerialGetParity (xChipIoSerial * port) {
   int iSerCr;
 
   assert (port);
-  
+
   iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-  
+
 
   if (iSerCr > 0) {
     switch (iSerCr & eParityMask) {
@@ -298,9 +375,9 @@ eChipIoSerialGetFlow (xChipIoSerial * port) {
   int iSerCr;
 
   assert (port);
-  
+
   iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-  
+
 
   if (iSerCr > 0) {
     switch (iSerCr & eFlowMask) {
@@ -325,9 +402,9 @@ int
 iChipIoSerialSetBaudrate (xChipIoSerial * port, int iBaudrate) {
   int iRet;
   assert (port);
-  
+
   iRet = iChipIoWriteReg16 (port->chipio, eRegSerBaud, iBaudrate / 100);
-  
+
   if (iRet == 0) {
 
     return iChipIoSerialGetBaudrate (port);
@@ -343,9 +420,9 @@ eChipIoSerialSetDataBits (xChipIoSerial * port, eSerialDataBits eDataBits) {
   if (eChipIoSerialGetDataBits (port) != eDataBits) {
     int iSerCr, iRet;
 
-    
+
     iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-    
+
 
     if (iSerCr < 0) {
       return SERIAL_DATABIT_UNKNOWN;
@@ -369,9 +446,9 @@ eChipIoSerialSetDataBits (xChipIoSerial * port, eSerialDataBits eDataBits) {
       default:
         return SERIAL_DATABIT_UNKNOWN;
     }
-    
+
     iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-    
+
     if (iRet < 0) {
       return SERIAL_DATABIT_UNKNOWN;
     }
@@ -387,9 +464,9 @@ eChipIoSerialSetStopBits (xChipIoSerial * port, eSerialStopBits eStopBits) {
   if (eChipIoSerialGetStopBits (port) != eStopBits) {
     int iSerCr, iRet;
 
-    
+
     iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-    
+
 
     if (iSerCr < 0) {
       return SERIAL_STOPBIT_UNKNOWN;
@@ -407,9 +484,9 @@ eChipIoSerialSetStopBits (xChipIoSerial * port, eSerialStopBits eStopBits) {
       default:
         return SERIAL_STOPBIT_UNKNOWN;
     }
-    
+
     iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-    
+
     if (iRet < 0) {
       return SERIAL_STOPBIT_UNKNOWN;
     }
@@ -425,9 +502,9 @@ eChipIoSerialSetParity (xChipIoSerial * port, eSerialParity eParity) {
   if (eChipIoSerialGetParity (port) != eParity) {
     int iSerCr, iRet;
 
-    
+
     iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-    
+
 
     if (iSerCr < 0) {
       return SERIAL_PARITY_UNKNOWN;
@@ -448,9 +525,9 @@ eChipIoSerialSetParity (xChipIoSerial * port, eSerialParity eParity) {
       default:
         return SERIAL_PARITY_UNKNOWN;
     }
-    
+
     iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-    
+
     if (iRet < 0) {
       return SERIAL_PARITY_UNKNOWN;
     }
@@ -466,9 +543,9 @@ eChipIoSerialSetFlow (xChipIoSerial * port, eSerialFlow eFlow) {
   if (eChipIoSerialGetFlow (port) != eFlow) {
     int iSerCr, iRet;
 
-    
+
     iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-    
+
 
     if (iSerCr < 0) {
       return SERIAL_FLOW_UNKNOWN;
@@ -489,9 +566,9 @@ eChipIoSerialSetFlow (xChipIoSerial * port, eSerialFlow eFlow) {
       default:
         return SERIAL_FLOW_UNKNOWN;
     }
-    
+
     iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-    
+
     if (iRet < 0) {
       return SERIAL_FLOW_UNKNOWN;
     }
