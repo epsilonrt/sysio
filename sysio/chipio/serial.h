@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <sysio/serial.h>
+#include <sysio/dinput.h>
 #include <sysio/chipio.h>
 
 __BEGIN_C_DECLS
@@ -40,10 +41,11 @@ typedef struct xChipIoSerial xChipIoSerial;
  *
  * Le port est ouvert en lecture/écriture.
  *
- * @param iChipIoFd descripteur de fichiers du ChipIo ouvert avec iChipIoOpen()
+ * @param xChip Pointeur sur objet xChipIo ouvert avec xChipIoOpen()
+ * @param xIrqPin Pointeur sur broche d'interruption, NULL si inutilisé
  * @return Pointeur sur le port série ouvert, NULL si erreur
  */
-xChipIoSerial * xChipIoSerialOpen (xChipIo * chip);
+xChipIoSerial * xChipIoSerialOpen (xChipIo * xChip, xDin * xIrqPin);
 
 /**
  *  Fermeture du port série
@@ -52,7 +54,12 @@ xChipIoSerial * xChipIoSerialOpen (xChipIo * chip);
  */
 void vChipIoSerialClose (xChipIoSerial * xPort);
 
-int iChipIoSerialBufferSize (xChipIoSerial * xPort);
+/**
+ *  Retourne le status du port
+ *
+ * @param xPort Pointeur sur le port
+ */
+int iChipIoSerialStatus (xChipIoSerial * xPort);
 
 /**
  * Retourne le flux d'entrée-sortie vers le port série

@@ -1,5 +1,5 @@
 /**
- * @file sysio/chipio/chipio.h
+ * @file chipio/chipio.c
  * @brief Circuit d'entrées-sorties universel
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>

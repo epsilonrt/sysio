@@ -18,6 +18,18 @@
 #include <sysio/log.h>
 #include "i2c-dev.h"
 
+/* private variables ======================================================== */
+static bool bI2cDebug;
+
+// -----------------------------------------------------------------------------
+static void
+vI2cPrintDebug (int iErr, const char * func) {
+
+  if ((iErr < 0) && (bI2cDebug)) {
+    PERROR ("%s:%s", func, strerror (errno));
+  }
+}
+
 /* internal public functions ================================================ */
 
 // -----------------------------------------------------------------------------
@@ -32,7 +44,7 @@ iI2cOpen (const char * device, int i2caddr) {
       return fd;
     }
   }
-  PERROR ("%s", strerror (errno));
+  PERROR ("%s:%s", __func__, strerror (errno));
   return -1;
 }
 
@@ -42,19 +54,17 @@ iI2cClose (int fd) {
 
   if (close (fd) != 0) {
 
-    PERROR ("%s", strerror (errno));
+    PERROR ("%s:%s", __func__, strerror (errno));
     return -1;
   }
   return 0;
 }
+
 // -----------------------------------------------------------------------------
 int
 iI2cRead (int fd) {
   int i = i2c_smbus_read_byte (fd);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
   return i;
 }
 
@@ -63,9 +73,7 @@ int
 iI2cReadReg8 (int fd, uint8_t reg) {
   int i = i2c_smbus_read_byte_data (fd, reg);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -74,9 +82,7 @@ int
 iI2cReadReg16 (int fd, uint8_t reg) {
   int i = i2c_smbus_read_word_data (fd, reg);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -85,9 +91,7 @@ int
 iI2cReadRegBlock (int fd, uint8_t reg, uint8_t *values, uint8_t len) {
   int i = i2c_smbus_read_i2c_block_data (fd, reg, len, values);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -96,9 +100,7 @@ int
 iI2cWrite (int fd, uint8_t data) {
   int i = i2c_smbus_write_byte (fd, data);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -107,9 +109,7 @@ int
 iI2cWriteReg8 (int fd, uint8_t reg, uint8_t value) {
   int i = i2c_smbus_write_byte_data (fd, reg, value);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -118,9 +118,7 @@ int
 iI2cWriteReg16 (int fd, uint8_t reg, uint16_t value) {
   int i = i2c_smbus_write_word_data (fd, reg, value);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -129,9 +127,7 @@ int
 iI2cWriteRegBlock (int fd, uint8_t reg, const uint8_t * values, uint8_t len) {
   int i = i2c_smbus_write_i2c_block_data (fd, reg, len, values);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -141,9 +137,7 @@ int
 iI2cReadBlock (int fd, uint8_t * block, int len) {
   int i = read (fd, block, len);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 
@@ -151,9 +145,7 @@ iI2cReadBlock (int fd, uint8_t * block, int len) {
 int iI2cWriteBlock (int fd, const uint8_t * block, int len) {
   int i = write (fd, block, len);
 
-  if (i < 0) {
-    PERROR ("%s", strerror (errno));
-  }
+  vI2cPrintDebug (i, __func__);
   return i;
 }
 

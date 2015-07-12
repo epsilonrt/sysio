@@ -177,6 +177,10 @@ typedef enum {
   eFlowMask  = 0x0600,
 } eChipIoFlowControl;
 
+typedef enum {
+  eStatusBusy = 0x80,
+} eChipIoSerialStatus;
+
 // eRegAdcCr
 typedef enum {
   eRefExternal  = 0x00,

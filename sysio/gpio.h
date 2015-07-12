@@ -28,6 +28,11 @@ __BEGIN_C_DECLS
 
 /* constants ================================================================ */
 /**
+ * Permet d'indiquer qu'une broche est inutilisée
+ */
+#define GPIO_PIN_UNUSED (-1)
+
+/**
  * @enum eGpioMode
  * @brief Type de broche
  */
@@ -66,7 +71,7 @@ typedef struct xGpio xGpio;
 /**
  * @brief Ouverture d'un GPIO
  *
- * @param args pointeur sur une variable de configuration dépendant de 
+ * @param args pointeur sur une variable de configuration dépendant de
  *        l'architecture, mettre à NULL si inutilisée
  * @return le pointeur sur le GPIO, NULL en cas d'erreur
  */
