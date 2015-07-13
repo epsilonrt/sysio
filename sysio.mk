@@ -31,13 +31,13 @@ endif
 SRC += $(addprefix sysio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/*.c)))
 SRC += $(addprefix sysio/src/radio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/radio/*.c)))
 SRC += $(addprefix sysio/src/ssdv/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/ssdv/*.c)))
-SRC += $(addprefix sysio/src/chipio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/chipio/*.c)))
 SRC += $(addprefix $(SYS_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(SYS_DIR)/*.c)))
 ifeq ($(SYS_HAS_GPIO),ON)
 SRC += $(addprefix sysio/src/gpio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/gpio/*.c)))
 endif
 ifeq ($(SYS_HAS_I2C),ON)
 SRC += $(addprefix sysio/src/i2c/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/i2c/*.c)))
+SRC += $(addprefix sysio/src/chipio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/chipio/*.c)))
 endif
 ifeq ($(SYS_POSIX),ON)
 SRC += $(addprefix sysio/posix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/posix/*.c)))

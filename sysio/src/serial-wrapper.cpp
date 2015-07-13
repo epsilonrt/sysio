@@ -94,7 +94,7 @@ Serial::setFlowControl (Serial::FlowControl newFlowControl) {
 const char *
 Serial::flowControlName() const {
 
-  return eSerialGetFlowStr (fd);
+  return sSerialGetFlowStr (fd);
 }
 
 // -----------------------------------------------------------------------------

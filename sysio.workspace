@@ -27,11 +27,11 @@
   <Project Name="demo_cpp_ax25" Path="demo/cpp/ax25/demo_cpp_ax25.project" Active="No"/>
   <Project Name="demo" Path="demo/demo.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
-  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
+  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="Yes"/>
   <Project Name="test_python_unit" Path="test/python/unit/test_python_unit.project" Active="No"/>
   <Project Name="test_pipe" Path="test/misc/pipe/test_pipe.project" Active="No"/>
   <Project Name="test_ptty" Path="test/misc/ptty/test_ptty.project" Active="No"/>
-  <Project Name="test_chipio_serial" Path="test/chipio/serial/test_chipio_serial.project" Active="Yes"/>
+  <Project Name="test_chipio_serial" Path="test/chipio/serial/test_chipio_serial.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
