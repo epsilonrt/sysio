@@ -6,8 +6,10 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <assert.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 #include <sysio/delay.h>
 #include <sysio/chipio/serial.h>
 #include <sysio/log.h>
@@ -23,15 +25,16 @@
 #define SERIAL_IRQPIN { .num = GPIO_GEN6, .act = true, .pull = ePullOff }
 
 #define TEST_DELAY 200
-#define STR_SIZE 40
+#define BUFFER_SIZE 256
+#define TEST_PING_COUNT 20
 
 //#define TEST_DEBUG
-#define TEST_ALPHABET
+//#define TEST_ALPHABET
 //#define TEST_TXOVERFLOW
 //#define TEST_TERMINAL
 //#define TEST_PING
+#define TEST_PONG
 
-/* macros =================================================================== */
 /* private variables ======================================================== */
 static xChipIo * xChip;
 static xChipIoSerial * xPort;
@@ -47,6 +50,7 @@ void vTestAlphabet (void);
 void vTestTerminal (void);
 void vTestTxOverflow (void);
 void vTestPing (void);
+void vTestPong (void);
 
 /* main ===================================================================== */
 int
@@ -107,7 +111,7 @@ vTestAlphabet (void) {
     c = '\n';
     iRet = fputc (c, pts);
     assert (iRet == c);
-    //delay_ms (100);
+    delay_ms (20);
   }
 #endif
 }
@@ -117,15 +121,22 @@ vTestAlphabet (void) {
  */
 void
 vTestTxOverflow (void) {
-#if defined(TEST_TXOVERFLOW) && defined(SERIAL_TXBUFSIZE)
-  #define BUFSIZE (SERIAL_TXBUFSIZE * 2)
-  char s[BUFSIZE];
-  for (int i = 0; i < BUFSIZE - 1; i++) {
+#if defined(TEST_TXOVERFLOW)
+  char s[BUFFER_SIZE];
+  int iBlockSize;
+
+  iBlockSize = iChipIoSerialGetBufSize (xPort);
+  assert(iBlockSize != -1);
+
+  iBlockSize = MIN(BUFFER_SIZE - 1, iBlockSize * 2);
+
+  for (int i = 0; i < iBlockSize ; i++) {
 
     s[i] = (i % 10) + 0x30;
   }
-  s[BUFSIZE - 1] = 0;
-  vSerialPutString (s);
+  s[iBlockSize] = 0;
+  iRet = fprintf (pts, "%s\n", s);
+  assert (iRet >=  iBlockSize);
 #endif
 }
 
@@ -136,80 +147,147 @@ vTestTxOverflow (void) {
 void
 vTestTerminal (void) {
 #ifdef TEST_TERMINAL
-  uint16_t usCount = 0;
-  bool isWait = true;
+  int c;
 
-  puts_P (PSTR ("\nStdio Test\n-printf() test"));
+  iRet = fputs ("\nTerminal Test\n-printf() test\n", pts);
+  assert (iRet != EOF);
+
   for (c = 0; c < 8; c++) {
 
-    printf_P (PSTR ("\tTest #0x%02X\r"), c);
+    iRet = fprintf (pts, "\tTest #0x%02X\n", c);
+    assert (iRet > 0);
   }
 
-  printf_P (PSTR ("\n-getchar() test: Press any key (ENTER to quit)..."));
+  fprintf (pts, "\n-fgetc() test: Press any key (ENTER to quit)...\n");
   do {
 
-    c =  getchar ();;
-    iRet = ferror (stdin);
-    assert (iRet == 0);
-    if ( (c != EOF) && (feof (stdin) == 0)) {
+    c =  fgetc (pts);
 
-      if (isWait) {
-        iRet = putchar ('\n');
-        assert (iRet != EOF);
-        iRet = ferror (stdout);
-        assert (iRet == 0);
-        isWait = false;
+    if (c != EOF) {
+
+      if (isprint (c)) {
+
+        iRet = fputc (c, pts);
+        assert (iRet == c);
+        //fprintf (pts, "%c\\%02X", c, c);
+        fflush(pts);
       }
-
-      iRet = putchar (c);
-      assert (iRet == c);
-      iRet = ferror (stdout);
-      assert (iRet == 0);
-      vLedToggle (LED_LED1);
     }
     else {
-      if ( (isWait) && ( (usCount++ % 10000) == 0)) {
 
-        iRet = putchar ('.');
-        assert (iRet != EOF);
-        iRet = ferror (stdout);
-        assert (iRet == 0);
-      }
+      delay_ms (10);
     }
 
   }
-  while (c != '\r');    /* Return pour terminer */
-  putchar ('\n');
+  while (c != '\n');    /* Return pour terminer */
+  fputc ('\n', pts);
 #endif
 }
 
 /* -----------------------------------------------------------------------------
  * Test Ping, version avec les fonctions stdio getc et putc
- * Boucle infinie d'attente d'un caractère puis renvoi
+ * Envoi d'un caractère, attente d'une réponse et statistiques
  */
 void
 vTestPing (void) {
 #ifdef TEST_PING
+  fd_set xFdSet;
+  struct timeval xTv;
+  int iTxCount;
+  int iRxCount = 0;
+  int iErrorCount = 0;
+  int c = 0x55;
 
-  // iRet = puts ("\nPing Stdio Test\nPress any key...");
-  // assert (iRet >= 0);
+  printf("Ping Test\n");
+  for (iTxCount = 0; iTxCount < TEST_PING_COUNT; iTxCount++) {
+
+    putchar('.'); fflush(stdout);
+    iRet = fputc (c, pts);
+    assert (iRet == c);
+    fflush (pts);
+
+    FD_ZERO (&xFdSet);
+    FD_SET (fds, &xFdSet);
+    xTv.tv_sec = 0;
+    xTv.tv_usec = TEST_DELAY * 1000UL;
+
+    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
+    if (iRet == -1) {
+
+      PERROR ("select()");
+    }
+    else if (iRet > 0) {
+
+      int rc = fgetc (pts);
+      if (rc == c) {
+        iRxCount++;
+        continue;
+      }
+    }
+    iErrorCount++;
+  }
+  delay_ms (TEST_DELAY);
+  printf ("\n--- %s ping statistics ---\n", sChipIoSerialPortName (xPort));
+  printf ("%d packets transmitted, %d received, %d errors, %.1f%% packet loss\n",
+    iTxCount,
+    iRxCount,
+    iErrorCount,
+    (double)(iTxCount - iRxCount) * 100.0 / (double)iTxCount);
+
+#endif
+}
+
+/* -----------------------------------------------------------------------------
+ * Test Pong, version avec les fonctions read et write
+ * Boucle infinie d'attente d'un caractère puis renvoi
+ */
+void
+vTestPong (void) {
+#ifdef TEST_PONG
+  fd_set xFdSet;
+  struct timeval xTv;
+  char buffer[BUFFER_SIZE];
+
+  printf("Pong Test\nWaiting for data...\n");
   for (;;) {
 
-    c = getc (&xSerialPort);
-    iRet = ferror (&xSerialPort);
-    assert (iRet == 0);
-    if ( (c != EOF) && (feof (&xSerialPort) == 0)) {
+    FD_ZERO (&xFdSet);
+    FD_SET (fds, &xFdSet);
+    xTv.tv_sec = 0;
+    xTv.tv_usec = TEST_DELAY * 1000UL;
 
-      iRet = putc (c, &xSerialPort);
-      assert (iRet == c);
-      iRet = ferror (&xSerialPort);
-      assert (iRet == 0);
-      vLedToggle (LED_LED1);
+    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
+    if (iRet == -1) {
+
+      PERROR ("select()");
+    }
+    else if (iRet > 0) {
+      int iBytesAvailable;
+
+      // Lecture du nombre de caractères à transmettre
+      iRet = ioctl (fds, FIONREAD, &iBytesAvailable);
+      if (iRet == -1) {
+        PERROR ("ioctl()");
+      }
+      else {
+        if (iBytesAvailable) {
+
+          int iBytesRead = read (fds, buffer, iBytesAvailable);
+          if (iBytesRead == -1) {
+            PERROR ("read()");
+          }
+          else if (iBytesRead > 0) {
+            int iBytesWritten = write (fds, buffer, iBytesRead);
+            if (iBytesWritten == iBytesRead) {
+              putchar('.'); fflush(stdout);
+            }
+          }
+        }
+      }
     }
   }
 #endif
 }
-
 
 // -----------------------------------------------------------------------------
 void
@@ -281,64 +359,5 @@ vPrintSetup (void) {
   printf ("\tParity: %s\n", sSerialParityToStr (eParity));
   printf ("\tStop bits: %s\n", sSerialStopBitsToStr (eStopBits));
 }
-
-#if 0
-  int iRet, fds;
-  fd_set xFdSet;
-  struct timeval xTv;
-  //const char hello[] = "Hello World #%d !\n";
-  const char hello[] = "#%d#\n";
-  char msg[256];
-    // Transmission
-    putchar('.'); fflush(stdout);
-#if 1
-    iRet = fputc ('A', pts); fflush (pts);
-    assert(iRet >= 0);
-#endif
-
-#if 0
-    iRet = fprintf (pts, hello, iCount);
-    assert(iRet >= 0);
-#endif
-
-#if 0
-    for (int i = 0; i < STR_SIZE; i++) {
-      msg[i] = i % 10 + 0x30;
-    }
-    msg[STR_SIZE] = 0;
-    iRet = fprintf (pts, "%s\n", msg);
-    assert(iRet >= 0);
-#endif
-
-#if 0
-    printf("> ");
-    fgets (msg, 256, stdin);
-    printf ("%s", msg);
-    iRet = fprintf (pts, "%s", msg);
-    assert(iRet >= 0);
-#endif
-    delay_ms (20);
-
-    // Réception
-#if 0
-    FD_ZERO (&xFdSet);
-    FD_SET (fds, &xFdSet);
-    xTv.tv_sec = TEST_POLL_DELAY;
-    xTv.tv_usec = 0;
-
-    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
-    if (iRet == -1) {
-
-      PERROR ("select()");
-    }
-    else if (iRet > 0) {
-
-      int c = fgetc (pts);
-      if (c > 0) {
-        putchar(c);
-      }
-    }
-#endif
-#endif
 
 /* ========================================================================== */

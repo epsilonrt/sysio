@@ -26,21 +26,65 @@
 
 /* macros =================================================================== */
 /* constants ================================================================ */
-#define SERIAL_POLL_DELAY 10
+#define THREAD_POLL_DELAY 10
+#define LED_DEBUG 1
+
+#define LED_RED     0
+#define LED_YELLOW  1
+#define LED_GREEN   2
 
 /* structures =============================================================== */
 typedef struct xChipIoSerial {
   xChipIo * chipio;   // Objet chipio
   int fdm;            // descripteur de fichier pseudo-terminal maître
   FILE * pts;         // flux pseudo-terminal esclave
-  char name[NAME_MAX];
+  char name[NAME_MAX];// Nom du pseudo-terminal esclave
   pthread_t thread;   // thread de surveillance
-  xDinPort * irq;
+  xDinPort * irq;     // Port pour la broche d'interruption
 } xChipIoSerial;
 
-/* types ==================================================================== */
+#if LED_DEBUG
+// Les leds sont utilisées pour la mise au point du thread
 /* private variables ======================================================== */
+static xDoutPort * led;
+
 /* private functions ======================================================== */
+// -----------------------------------------------------------------------------
+static inline void
+vLedDebugInit (void) {
+  const xDout xMyLeds[3] = {
+    { .num = 0, .act = true },
+    { .num = 1, .act = true },
+    { .num = 2, .act = true }};
+
+  led = xDoutOpen (xMyLeds, 3);
+  assert(led);
+  iDoutClearAll (led);
+}
+
+// -----------------------------------------------------------------------------
+static void
+vLedDebugClear (unsigned i) {
+  (void) iDoutClear (i, led);
+}
+
+// -----------------------------------------------------------------------------
+static void
+vLedDebugSet (unsigned i) {
+  (void) iDoutSet (i, led);
+}
+
+// -----------------------------------------------------------------------------
+static void
+vLedDebugToggle (unsigned i) {
+  (void) iDoutToggle (i, led);
+}
+#else
+#define vLedDebugInit()
+#define vLedDebugSet(i)
+#define vLedDebugClear(i)
+#define vLedDebugToggle(i)
+#endif /* LED_DEBUG */
 
 // -----------------------------------------------------------------------------
 // Thread de surveillance du port
@@ -53,24 +97,15 @@ pvSerialThread (void * xContext) {
   bool bIrqPending = false;
 
   xChipIoSerial * port = (xChipIoSerial *) xContext;
-
-  // DEBUG -->
-  xDoutPort * gpio;
-  static const xDout xMyLeds[3] = {
-    { .num = 0, .act = true },
-    { .num = 1, .act = true },
-    { .num = 2, .act = true }};
-  gpio = xDoutOpen (xMyLeds, 3);
-  assert(gpio);
-  iDoutClearAll (gpio);
-  iDoutToggle (0, gpio);
-  // <-- DEBUG
-
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+  vLedDebugInit();
 
-  while (1) {
+  for (;;) {
 
-    // Surveillance des octets reçus par la liaison série et envoi vers ptm
+    vLedDebugToggle (LED_GREEN);
+
+    /* Surveillance des octets reçus par la liaison série et envoi vers ptm
+     * -----------------------------------------------------------------------*/
     if (port->irq) {
       // Il y a une broche d'interruption
       if (iDinRead (0, port->irq) == true) {
@@ -83,38 +118,48 @@ pvSerialThread (void * xContext) {
       // Interrruption active ou pas de broche d'interruption, on vient lire
       // le nombre de caractères en attente
 
-      iLen = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
-      iDoutToggle (1, gpio); // <-- DEBUG
+      if  (iChipIoSerialIsBusy(port) == false) {
+        int iBytesAvailable = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
 
-      if (iLen > 0) {
+        if (iBytesAvailable > 0) {
+          int iBlockSize;
 
+          vLedDebugSet (LED_RED);
 
-        iRet = iChipIoReadRegBlock (port->chipio, eRegSerRx, buffer, iLen);
+          // le port série est prêt, 32 octets max.
+          iBlockSize = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
 
-        if (iRet > 0) {
+          // lecture d'un bloc de données en réception
+          iRet = iChipIoReadRegBlock (port->chipio, eRegSerRx, buffer, iBlockSize);
 
-          if (write (port->fdm, buffer, iRet) != iRet) {
-            PERROR ("write()");
+          if (iRet > 0) {
+
+            // transmission vers l'esclave
+            if (write (port->fdm, buffer, iRet) != iRet) {
+              PWARNING ("write()");
+            }
           }
         }
       }
-      bIrqPending = false; // Interruption traitée
+      bIrqPending = false; /* Interruption traitée, si il y a encore des données
+                            * du côté de ChipIo, la broche d'interruption va
+                            * rester active et un nouveau bloc sera lu à la
+                            * prochaine itération
+                            */
+      vLedDebugClear (LED_RED);
     }
 
-    // Surveillance des octets reçus de ptm et envoi vers la liaison série
+    /* Surveillance des octets reçus de ptm et envoi vers la liaison série
+     * -----------------------------------------------------------------------*/
     xTv.tv_sec = 0;
-    xTv.tv_usec = SERIAL_POLL_DELAY * 1000UL;
+    xTv.tv_usec = THREAD_POLL_DELAY * 1000UL;
 
     FD_ZERO (&xFdSet);
     FD_SET (port->fdm, &xFdSet);
     iRet = select (port->fdm + 1, &xFdSet, NULL, NULL, &xTv);
     // Considérer xTv comme indéfini maintenant !
 
-    if (iRet == -1) {
-
-      PERROR ("select()");
-    }
-    else if (iRet > 0) {
+    if (iRet > 0) {
       int iBytesAvailable;
 
       // Lecture du nombre de caractères à transmettre
@@ -123,37 +168,29 @@ pvSerialThread (void * xContext) {
       if ((iRet != -1) && (iBytesAvailable)) {
         // Des données sont disponibles pour envoi
 
-        if  ((iChipIoSerialStatus(port) & eStatusBusy) == 0) {
+        if  (iChipIoSerialIsBusy(port) == false) {
           int iBlockSize;
 
           // le port série est prêt à transmettre, 32 octets max.
+          vLedDebugSet (LED_YELLOW);
+
           iBlockSize = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
-
           if  ((iLen = read (port->fdm, buffer, iBlockSize)) > 0) {
-
-            /* // DEBUG -->
-            for (int i = 0; i < iLen; i++) {
-              printf ("\\%02X", p[i]);
-            }
-            putchar('\n');
-            // <-- DEBUG */
 
             // on envoie un bloc de données
             iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, buffer, iLen);
           }
+          vLedDebugClear (LED_YELLOW);
         }
         else {
-          delay_ms (SERIAL_POLL_DELAY * 5);
+          delay_ms (THREAD_POLL_DELAY * 5);
         }
       }
     }
-    iDoutToggle (2, gpio); // <-- DEBUG
     pthread_testcancel();
   }
   return NULL;
 }
-
-/* public variables ========================================================= */
 
 /* internal public functions ================================================ */
 
@@ -180,13 +217,13 @@ xChipIoSerialOpen (xChipIo * chip, xDin * xIrqPin) {
   memset (port, 0, sizeof (xChipIoSerial));
   port->chipio = chip;
 
-
+  // Création du pseudo-terminal maître
   if ( (port->fdm = getpt ()) < 0) {
 
     goto open_error_exit;
   }
 
-  // Partie à mettre dans le thread ?
+  // Ajout de l'interface esclave qui sera fournie à l'utilisateur
   if ( (grantpt (port->fdm)) != 0) {
 
     goto open_error_exit;
@@ -197,24 +234,29 @@ xChipIoSerialOpen (xChipIo * chip, xDin * xIrqPin) {
     goto open_error_exit;
   }
 
+  // Lecture du nom du device esclave dans /dev/pts
   if (ptsname_r  (port->fdm, port->name, NAME_MAX) != 0) {
 
     goto open_error_exit;
   }
 
+  // Ouverture du descripteur de fichier côté esclave en mode non bloquant
   if ( (fds = open (port->name, O_RDWR | O_NOCTTY | O_NDELAY)) < 0) {
 
     goto open_error_exit;
   }
 
+  // Ouverture du fichier côté esclave
   if ( (port->pts = fdopen (fds, "r+")) == NULL) {
 
     goto open_error_exit;
   }
 
-  if (xIrqPin) {
+ if (xIrqPin) {
+    // Création du port de broche d'interruption
     port->irq = xDinOpen (xIrqPin, 1);
     if (port->irq == NULL) {
+
       goto open_error_exit;
     }
   }
@@ -236,25 +278,53 @@ open_error_exit:
 void
 vChipIoSerialClose (xChipIoSerial * port) {
   int iRet;
+
   assert (port);
-  // port->run = false;
+
+  // Arrêt du thread
   iRet = pthread_cancel (port->thread);
   assert (iRet == 0);
   iRet = pthread_join (port->thread, NULL);
   assert (iRet == 0);
+
+  // Fermeture des éléments
+  if (port->irq) {
+
+    iRet = iDinClose (port->irq);
+    assert (iRet == 0);
+  }
+
   iRet = fclose (port->pts);
   assert (iRet == 0);
+
   iRet = close (port->fdm);
   assert (iRet == 0);
+
   free (port);
 }
 
 // -----------------------------------------------------------------------------
 int
-iChipIoSerialStatus (xChipIoSerial * port) {
+iChipIoSerialGetBufSize (xChipIoSerial * port) {
 
   assert (port);
-  return  iChipIoReadReg8 (port->chipio, eRegSerTxSr);
+  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
+  if (iRet >= 0) {
+    iRet = MIN((iRet & ~eStatusBusy), CHIPIO_I2C_BLOCK_MAX);
+  }
+  return iRet;
+}
+
+// -----------------------------------------------------------------------------
+int
+iChipIoSerialIsBusy (xChipIoSerial * port) {
+
+  assert (port);
+  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
+  if (iRet >= 0) {
+    iRet &= eStatusBusy;
+  }
+  return (iRet != 0);
 }
 
 // -----------------------------------------------------------------------------
