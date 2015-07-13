@@ -66,10 +66,11 @@ main (int argc, char **argv) {
     vTestTxOverflow();
     vTestTerminal ();
     vTestPing();
+    vTestPong();
 #if TEST_DELAY > 0
     delay_ms (TEST_DELAY);
 #endif
-    putchar('.'); fflush(stdout);
+    // putchar('.'); fflush(stdout);
   }
 
   return 0;
