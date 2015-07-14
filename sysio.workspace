@@ -7,7 +7,7 @@
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="sysio" Path="sysio.project" Active="Yes"/>
   <Project Name="ssdv_util" Path="ssdv/util/ssdv_util.project" Active="No"/>
   <Project Name="chipio_test_serial" Path="chipio/test/serial/chipio_test_serial.project" Active="No"/>
   <Project Name="ssdv_demo" Path="ssdv/demo/ssdv/ssdv_demo.project" Active="No"/>
@@ -18,7 +18,10 @@
   <Project Name="radio_test_ax25_serial" Path="radio/test/ax25/serial/radio_test_ax25_serial.project" Active="No"/>
   <Project Name="radio_test_ax25_pipe" Path="radio/test/ax25/pipe/radio_test_ax25_pipe.project" Active="No"/>
   <Project Name="radio_test_crc" Path="radio/test/crc/radio_test_crc.project" Active="No"/>
-  <Project Name="radio_test_tnc_pipe" Path="radio/test/tnc/pipe/radio_test_tnc_pipe.project" Active="Yes"/>
+  <Project Name="radio_test_tnc_pipe" Path="radio/test/tnc/pipe/radio_test_tnc_pipe.project" Active="No"/>
+  <Project Name="radio_test_cpp_tnc" Path="radio/test/cpp/tnc/radio_test_cpp_tnc.project" Active="No"/>
+  <Project Name="radio_test_cpp_ax25" Path="radio/test/cpp/ax25/radio_test_cpp_ax25.project" Active="No"/>
+  <Project Name="radio_test_python_unit" Path="radio/test/python/unit/radio_test_python_unit.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -68,6 +71,9 @@
       <Project Name="radio_test_ax25_pipe" ConfigName="Debug"/>
       <Project Name="radio_test_crc" ConfigName="Debug"/>
       <Project Name="radio_test_tnc_pipe" ConfigName="Debug"/>
+      <Project Name="radio_test_cpp_tnc" ConfigName="Debug"/>
+      <Project Name="radio_test_cpp_ax25" ConfigName="Debug"/>
+      <Project Name="radio_test_python_unit" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -117,6 +123,9 @@
       <Project Name="radio_test_ax25_pipe" ConfigName="Release"/>
       <Project Name="radio_test_crc" ConfigName="Release"/>
       <Project Name="radio_test_tnc_pipe" ConfigName="Release"/>
+      <Project Name="radio_test_cpp_tnc" ConfigName="Release"/>
+      <Project Name="radio_test_cpp_ax25" ConfigName="Release"/>
+      <Project Name="radio_test_python_unit" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
