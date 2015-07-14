@@ -38,8 +38,8 @@
 /* private variables ======================================================== */
 static xChipIo * xChip;
 static xChipIoSerial * xPort;
-static FILE * pts;
 static int fds, iRet;
+static FILE * pts;
 
 /* internal public functions ================================================ */
 void vSetup (void);
@@ -245,24 +245,10 @@ vTestPing (void) {
 void
 vTestPong (void) {
 #ifdef TEST_PONG
-  fd_set xFdSet;
-  struct timeval xTv;
   char buffer[BUFFER_SIZE];
 
   printf("Pong Test\nWaiting for data...\n");
   for (;;) {
-
-    FD_ZERO (&xFdSet);
-    FD_SET (fds, &xFdSet);
-    xTv.tv_sec = 0;
-    xTv.tv_usec = TEST_DELAY * 1000UL;
-
-    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
-    if (iRet == -1) {
-
-      PERROR ("select()");
-    }
-    else if (iRet > 0) {
       int iBytesAvailable;
 
       // Lecture du nombre de caractères à transmettre
@@ -278,14 +264,38 @@ vTestPong (void) {
             PERROR ("read()");
           }
           else if (iBytesRead > 0) {
-            int iBytesWritten = write (fds, buffer, iBytesRead);
-            if (iBytesWritten == iBytesRead) {
-              putchar('.'); fflush(stdout);
+            int iBytesWritten;
+            // Affiche les données reçues pour contrôle
+            iBytesWritten = write (STDOUT_FILENO, buffer, iBytesRead);
+            if (iBytesWritten == -1) {
+              PERROR ("write(stdout)");
+            }
+            // Renvoie les données à l'envoyeur (echo)
+            iBytesWritten = write (fds, buffer, iBytesRead);
+            if (iBytesWritten == -1) {
+              PERROR ("write(fds)");
             }
           }
         }
       }
+
+      delay_ms (50);
+#if 0
+  fd_set xFdSet;
+  struct timeval xTv;
+    FD_ZERO (&xFdSet);
+    FD_SET (fds, &xFdSet);
+    xTv.tv_sec = 0;
+    xTv.tv_usec = TEST_DELAY * 1000UL;
+
+    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
+    if (iRet == -1) {
+
+      PERROR ("select()");
     }
+    else if (iRet > 0) {
+    }
+#endif
   }
 #endif
 }
@@ -304,7 +314,8 @@ vSetup (void) {
   printf("Serial port opened %s\n", sChipIoSerialPortName (xPort));
 
   fds = iChipIoSerialFileNo (xPort);
-  pts = xChipIoSerialFile (xPort);
+  pts = fdopen (fds, "r+");
+  assert (pts);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal(SIGINT, vSigIntHandler);
@@ -348,10 +359,10 @@ vSigIntHandler (int sig) {
 void
 vPrintSetup (void) {
 
-  int iBaudrate = iChipIoSerialGetBaudrate (xPort);
-  eSerialDataBits eDataBits = eChipIoSerialGetDataBits (xPort);
-  eSerialParity eParity = eChipIoSerialGetParity (xPort);
-  eSerialStopBits eStopBits= eChipIoSerialGetStopBits (xPort);
+  int iBaudrate = iChipIoSerialBaudrate (xPort);
+  eSerialDataBits eDataBits = eChipIoSerialDataBits (xPort);
+  eSerialParity eParity = eChipIoSerialParity (xPort);
+  eSerialStopBits eStopBits= eChipIoSerialStopBits (xPort);
 
   printf ("\tBaudrate: %d\n", iBaudrate);
   printf ("\tData bits: %s\n", sSerialDataBitsToStr (eDataBits));

@@ -55,16 +55,6 @@ xChipIoSerial * xChipIoSerialOpen (xChipIo * xChip, xDin * xIrqPin);
 void vChipIoSerialClose (xChipIoSerial * xPort);
 
 /**
- * Retourne le flux d'entrée-sortie vers le port série
- *
- * Permet des accès avec les fonctions de haut niveau de stdio.h (fprintf() ...)
- *
- * @param xPort Pointeur sur le port
- * @return Pointeur sur le flux ouvert en lecture-écriture, NULL si erreur
- */
-FILE * xChipIoSerialFile (xChipIoSerial * xPort);
-
-/**
  * Retourne descripteur de fichier du port série
  *
  * Permet des accès avec les fonctions de bas niveau (read(), write() ...)
@@ -83,38 +73,58 @@ int iChipIoSerialFileNo (xChipIoSerial * xPort);
 const char * sChipIoSerialPortName (xChipIoSerial * xPort);
 
 /**
+ * Retourne le nombre d'octets en attente de lecture
+ *
+ * @param xPort Pointeur sur le port
+ * @return le nombre d'octets en attente de lecture, NULL si erreur
+ */
+int iChipIoDataAvailable (xChipIoSerial * xPort);
+
+/**
  *  Lecture de la vitesse de transmission
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur, -1 si erreur.
  */
-int iChipIoSerialGetBaudrate (xChipIoSerial * xPort);
+int iChipIoSerialBaudrate (xChipIoSerial * xPort);
 
 /**
  *  Lecture du nombre de bits de données
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur, -1 si erreur.
  */
-eSerialDataBits eChipIoSerialGetDataBits (xChipIoSerial * xPort);
+eSerialDataBits eChipIoSerialDataBits (xChipIoSerial * xPort);
 
 /**
  *  Lecture de la parité
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur, -1 si erreur.
  */
-eSerialParity eChipIoSerialGetParity (xChipIoSerial * xPort);
+eSerialParity eChipIoSerialParity (xChipIoSerial * xPort);
 
 /**
  *  Lecture du nombre de bits de stop
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur, -1 si erreur.
  */
-eSerialStopBits eChipIoSerialGetStopBits (xChipIoSerial * xPort);
+eSerialStopBits eChipIoSerialStopBits (xChipIoSerial * xPort);
 
+/**
+ *  Lecture du type de contrôle de flux en cours
+ *
+ * @param xPort Pointeur sur le port
+ * @return la valeur, -1 si erreur.
+ */
+eSerialFlow eChipIoSerialFlow (xChipIoSerial * xPort);
 
 /**
  * Modification de la vitesse de transmission
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur réglée, -1 si erreur.
  */
 int iChipIoSerialSetBaudrate (xChipIoSerial * xPort, int iBaudrate);
 
@@ -122,6 +132,7 @@ int iChipIoSerialSetBaudrate (xChipIoSerial * xPort, int iBaudrate);
  * Modification du nombre de bits de données
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur réglée, -1 si erreur.
  */
 eSerialDataBits eChipIoSerialSetDataBits (xChipIoSerial * xPort, eSerialDataBits eDataBits);
 
@@ -129,6 +140,7 @@ eSerialDataBits eChipIoSerialSetDataBits (xChipIoSerial * xPort, eSerialDataBits
  * Modification de la parité
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur réglée, -1 si erreur.
  */
 eSerialParity eChipIoSerialSetParity (xChipIoSerial * xPort, eSerialParity eParity);
 
@@ -136,20 +148,15 @@ eSerialParity eChipIoSerialSetParity (xChipIoSerial * xPort, eSerialParity ePari
  * Modification du nombre de bits de stop
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur réglée, -1 si erreur.
  */
 eSerialStopBits eChipIoSerialSetStopBits (xChipIoSerial * xPort, eSerialStopBits eStopBits);
-
-/**
- *  Lecture du type de contrôle de flux en cours
- *
- * @param xPort Pointeur sur le port
- */
-eSerialFlow eChipIoSerialGetFlow (xChipIoSerial * xPort);
 
 /**
  *  Modification du type de contrôle de flux
  *
  * @param xPort Pointeur sur le port
+ * @return la valeur réglée, -1 si erreur.
  */
 eSerialFlow eChipIoSerialSetFlow (xChipIoSerial * xPort, eSerialFlow eNewFlow);
 
