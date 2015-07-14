@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = util
+SUBDIRS = gpio pwm doutput dinput serial misc
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

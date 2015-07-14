@@ -4,14 +4,14 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 
-SUBDIRS = lib ssdv
+SUBDIRS = lib
 
 # Chemin relatif du répertoire racine de SysIO
 SYSIO_ROOT = .
 
 # Choix de l'architecture matérielle du système
-ARCH = ARCH_GENERIC_LINUX
-#ARCH = ARCH_ARM_RASPBERRYPI
+#ARCH = ARCH_GENERIC_LINUX
+ARCH = ARCH_ARM_RASPBERRYPI
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée

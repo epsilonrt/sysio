@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = util
+SUBDIRS = aprs tnc cpp
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

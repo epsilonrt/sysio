@@ -8,8 +8,8 @@
 TARGET = sysio++
 
 # Choix de l'architecture matérielle du système
-#ARCH = ARCH_GENERIC_LINUX
-ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -324,6 +324,7 @@ libstatic: $(TARGET_LIB_PATH).a
 libshared: $(TARGET_LIB_PATH).so
 
 install: uninstall build
+# static and shared library
 	@echo "$(MSG_INSTALL) $(TARGET) lib and headers in $(prefix)"
 	@-install -m 0755 $(TARGET_LIB_PATH).a $(INSTALL_LIBDIR)
 ifeq ($(DEBUG),)
@@ -334,8 +335,11 @@ ifeq ($(DEBUG),)
 	@strip --strip-unneeded $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION)
 endif
 	@ln -f -s $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.$(VERSION) $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so
+# header files
 	@-install -d -m 0755 $(INSTALL_INCDIR)/sysio
 	@-install -m 0644 $(SYSIO_ROOT)/sysio/*.hpp $(INSTALL_INCDIR)/sysio
+	@-install -d -m 0755 $(INSTALL_INCDIR)/radio
+	@-install -m 0644 $(SYSIO_ROOT)/radio/*.hpp $(INSTALL_INCDIR)/radio
 	@-ldconfig
 
 uninstall:
@@ -344,6 +348,7 @@ uninstall:
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).so.*
 	@-rm -f $(INSTALL_LIBDIR)/$(TARGET_LIB_PATH).a
 	@-rm -f $(INSTALL_INCDIR)/sysio/*.hpp
+	@-rm -f $(INSTALL_INCDIR)/radio/*.hpp
 
 version.h: version
 

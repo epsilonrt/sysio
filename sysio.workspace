@@ -1,38 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="">
-  <Project Name="test_callback" Path="test/dinput/callback/test_callback.project" Active="No"/>
-  <Project Name="test_group" Path="test/dinput/group/test_group.project" Active="No"/>
-  <Project Name="test_poll" Path="test/dinput/poll/test_poll.project" Active="No"/>
-  <Project Name="test_doutput" Path="test/doutput/test_doutput.project" Active="No"/>
-  <Project Name="test_getmode" Path="test/gpio/getmode/test_getmode.project" Active="No"/>
-  <Project Name="test_read" Path="test/gpio/read/test_read.project" Active="No"/>
-  <Project Name="test_write" Path="test/gpio/write/test_write.project" Active="No"/>
-  <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
-  <Project Name="test_pwm" Path="test/pwm/test_pwm.project" Active="No"/>
-  <Project Name="test" Path="test/test.project" Active="No"/>
-  <Project Name="test_serial" Path="test/serial/test_serial.project" Active="No"/>
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
-  <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
-  <Project Name="test_crc" Path="test/radio/crc/test_crc.project" Active="No"/>
-  <Project Name="test_ax25_pipe" Path="test/radio/ax25/pipe/test_ax25_pipe.project" Active="No"/>
-  <Project Name="test_ax25_serial" Path="test/radio/ax25/serial/test_ax25_serial.project" Active="No"/>
-  <Project Name="test_ax25_cpp" Path="test/radio/ax25/cpp/test_ax25_cpp.project" Active="No"/>
-  <Project Name="test_tnc_pipe" Path="test/radio/tnc/pipe/test_tnc_pipe.project" Active="No"/>
-  <Project Name="test_tnc_cpp" Path="test/radio/tnc/cpp/test_tnc_cpp.project" Active="No"/>
-  <Project Name="demo_ssdv" Path="demo/ssdv/demo_ssdv.project" Active="No"/>
-  <Project Name="demo_tnc" Path="demo/tnc/demo_tnc.project" Active="No"/>
-  <Project Name="demo_aprs" Path="demo/aprs/demo_aprs.project" Active="No"/>
-  <Project Name="demo_cpp_tnc" Path="demo/cpp/tnc/demo_cpp_tnc.project" Active="No"/>
-  <Project Name="demo_cpp_ax25" Path="demo/cpp/ax25/demo_cpp_ax25.project" Active="No"/>
-  <Project Name="demo" Path="demo/demo.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
-  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="Yes"/>
-  <Project Name="test_python_unit" Path="test/python/unit/test_python_unit.project" Active="No"/>
-  <Project Name="test_pipe" Path="test/misc/pipe/test_pipe.project" Active="No"/>
-  <Project Name="test_ptty" Path="test/misc/ptty/test_ptty.project" Active="No"/>
-  <Project Name="test_chipio_serial" Path="test/chipio/serial/test_chipio_serial.project" Active="No"/>
+  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
+  <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
+  <Project Name="radio" Path="radio/radio.project" Active="No"/>
+  <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="ssdv_util" Path="ssdv/util/ssdv_util.project" Active="No"/>
+  <Project Name="chipio_test_serial" Path="chipio/test/serial/chipio_test_serial.project" Active="No"/>
+  <Project Name="ssdv_demo" Path="ssdv/demo/ssdv/ssdv_demo.project" Active="No"/>
+  <Project Name="radio_demo_aprs" Path="radio/demo/aprs/radio_demo_aprs.project" Active="No"/>
+  <Project Name="radio_demo_tnc" Path="radio/demo/tnc/radio_demo_tnc.project" Active="No"/>
+  <Project Name="radio_demo_cpp_ax25" Path="radio/demo/cpp/ax25/radio_demo_cpp_ax25.project" Active="No"/>
+  <Project Name="radio_demo_cpp_tnc" Path="radio/demo/cpp/tnc/radio_demo_cpp_tnc.project" Active="No"/>
+  <Project Name="radio_test_ax25_serial" Path="radio/test/ax25/serial/radio_test_ax25_serial.project" Active="No"/>
+  <Project Name="radio_test_ax25_pipe" Path="radio/test/ax25/pipe/radio_test_ax25_pipe.project" Active="No"/>
+  <Project Name="radio_test_crc" Path="radio/test/crc/radio_test_crc.project" Active="No"/>
+  <Project Name="radio_test_tnc_pipe" Path="radio/test/tnc/pipe/radio_test_tnc_pipe.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -47,7 +33,6 @@
       <Project Name="test_serial" ConfigName="Debug"/>
       <Project Name="libsysio" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
-      <Project Name="ssdv" ConfigName="Debug"/>
       <Project Name="test_crc" ConfigName="Debug"/>
       <Project Name="test_crc" ConfigName="Debug"/>
       <Project Name="test_ax25_pipe" ConfigName="Debug"/>
@@ -67,7 +52,22 @@
       <Project Name="test_pipe" ConfigName="Debug"/>
       <Project Name="test_ptty" ConfigName="Debug"/>
       <Project Name="test_chipio_serial" ConfigName="Debug"/>
+      <Project Name="ssdv" ConfigName="Debug"/>
+      <Project Name="chipio" ConfigName="Debug"/>
+      <Project Name="radio" ConfigName="Debug"/>
+      <Project Name="ssdv" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
+      <Project Name="ssdv_util" ConfigName="Debug"/>
+      <Project Name="chipio_test_serial" ConfigName="Debug"/>
+      <Project Name="ssdv_demo" ConfigName="Debug"/>
+      <Project Name="radio_demo_aprs" ConfigName="Debug"/>
+      <Project Name="radio_demo_tnc" ConfigName="Debug"/>
+      <Project Name="radio_demo_cpp_ax25" ConfigName="Debug"/>
+      <Project Name="radio_demo_cpp_tnc" ConfigName="Debug"/>
+      <Project Name="radio_test_ax25_serial" ConfigName="Debug"/>
+      <Project Name="radio_test_ax25_pipe" ConfigName="Debug"/>
+      <Project Name="radio_test_crc" ConfigName="Debug"/>
+      <Project Name="radio_test_tnc_pipe" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -82,7 +82,6 @@
       <Project Name="test_serial" ConfigName="Release"/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
-      <Project Name="ssdv" ConfigName="Release"/>
       <Project Name="test_crc" ConfigName="Release"/>
       <Project Name="test_crc" ConfigName="Release"/>
       <Project Name="test_ax25_pipe" ConfigName="Release"/>
@@ -102,7 +101,22 @@
       <Project Name="test_pipe" ConfigName="Release"/>
       <Project Name="test_ptty" ConfigName="Release"/>
       <Project Name="test_chipio_serial" ConfigName="Release"/>
+      <Project Name="ssdv" ConfigName="Release"/>
+      <Project Name="chipio" ConfigName="Release"/>
+      <Project Name="radio" ConfigName="Release"/>
+      <Project Name="ssdv" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
+      <Project Name="ssdv_util" ConfigName="Release"/>
+      <Project Name="chipio_test_serial" ConfigName="Release"/>
+      <Project Name="ssdv_demo" ConfigName="Release"/>
+      <Project Name="radio_demo_aprs" ConfigName="Release"/>
+      <Project Name="radio_demo_tnc" ConfigName="Release"/>
+      <Project Name="radio_demo_cpp_ax25" ConfigName="Release"/>
+      <Project Name="radio_demo_cpp_tnc" ConfigName="Release"/>
+      <Project Name="radio_test_ax25_serial" ConfigName="Release"/>
+      <Project Name="radio_test_ax25_pipe" ConfigName="Release"/>
+      <Project Name="radio_test_crc" ConfigName="Release"/>
+      <Project Name="radio_test_tnc_pipe" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

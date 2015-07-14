@@ -7,6 +7,6 @@
 #-------------------------------------------------------------------------------
 include $(SYSIO_ROOT)/sysio.mk
 CPPSRC += $(addprefix sysio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/*.cpp)))
-CPPSRC += $(addprefix sysio/src/radio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/radio/*.cpp)))
+CPPSRC += $(addprefix radio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/radio/src/*.cpp)))
 
 #-------------------------------------------------------------------------------

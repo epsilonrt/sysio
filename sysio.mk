@@ -12,35 +12,35 @@ ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
-ARCH_DIR = sysio/arch/arm/rpi
+ARCH_DIR = sysio/src/arch/arm/rpi
 CDEFS += -DARCH_ARM_RASPBERRYPI -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C
 endif
 
 ifeq ($(ARCH),ARCH_GENERIC_LINUX)
 SYS  = SYS_LINUX
-ARCH_DIR = sysio/arch/generic
+ARCH_DIR = sysio/src/arch/generic
 CDEFS += -DARCH_GENERIC_LINUX
 endif
 
 ifeq ($(SYS),SYS_LINUX)
 CDEFS += -DSYS_LINUX
-SYS_DIR = sysio/linux
+SYS_DIR = sysio/src/linux
 SYS_POSIX = ON
 endif
 
 SRC += $(addprefix sysio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/*.c)))
-SRC += $(addprefix sysio/src/radio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/radio/*.c)))
-SRC += $(addprefix sysio/src/ssdv/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/ssdv/*.c)))
+SRC += $(addprefix radio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/radio/src/*.c)))
+SRC += $(addprefix ssdv/src/, $(notdir $(wildcard $(SYSIO_ROOT)/ssdv/src/*.c)))
 SRC += $(addprefix $(SYS_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(SYS_DIR)/*.c)))
 ifeq ($(SYS_HAS_GPIO),ON)
 SRC += $(addprefix sysio/src/gpio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/gpio/*.c)))
 endif
 ifeq ($(SYS_HAS_I2C),ON)
 SRC += $(addprefix sysio/src/i2c/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/i2c/*.c)))
-SRC += $(addprefix sysio/src/chipio/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/chipio/*.c)))
+SRC += $(addprefix chipio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/chipio/src/*.c)))
 endif
 ifeq ($(SYS_POSIX),ON)
-SRC += $(addprefix sysio/posix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/posix/*.c)))
+SRC += $(addprefix sysio/src/posix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/posix/*.c)))
 endif
 SRC += $(addprefix $(ARCH_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(ARCH_DIR)/*.c)))
 #$(warning ARCH_DIR=$(ARCH_DIR))

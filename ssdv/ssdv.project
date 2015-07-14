@@ -28,10 +28,6 @@
   </Plugins>
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="ssdv">
-    <File Name="Makefile"/>
-    <File Name="main.c"/>
-  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -121,6 +117,14 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="ssdv">
+    <File Name="ssdv.h"/>
+    <File Name="rs8.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <File Name="src/ssdv.c"/>
+    <File Name="src/rs8.c"/>
+  </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
 </CodeLite_Project>

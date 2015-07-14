@@ -1,8 +1,8 @@
 // sysio.i
 %module sysio
 %{
-  #include "../../sysio/ax25.hpp"
-  #include "../../sysio/tnc.hpp"
+  #include "../../radio/ax25.hpp"
+  #include "../../radio/tnc.hpp"
   #include "../../sysio/serial.hpp"
 %}
 
