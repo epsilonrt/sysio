@@ -28,7 +28,7 @@
 /* macros =================================================================== */
 /* constants ================================================================ */
 #define THREAD_POLL_DELAY 10
-#define LED_DEBUG 1
+#define LED_DEBUG 0
 
 #define LED_RED     0
 #define LED_YELLOW  1

@@ -254,6 +254,7 @@ vTestPong (void) {
       // Lecture du nombre de caractères à transmettre
       iRet = ioctl (fds, FIONREAD, &iBytesAvailable);
       if (iRet == -1) {
+
         PERROR ("ioctl()");
       }
       else {
@@ -265,11 +266,13 @@ vTestPong (void) {
           }
           else if (iBytesRead > 0) {
             int iBytesWritten;
+
             // Affiche les données reçues pour contrôle
             iBytesWritten = write (STDOUT_FILENO, buffer, iBytesRead);
             if (iBytesWritten == -1) {
               PERROR ("write(stdout)");
             }
+
             // Renvoie les données à l'envoyeur (echo)
             iBytesWritten = write (fds, buffer, iBytesRead);
             if (iBytesWritten == -1) {
@@ -280,22 +283,6 @@ vTestPong (void) {
       }
 
       delay_ms (50);
-#if 0
-  fd_set xFdSet;
-  struct timeval xTv;
-    FD_ZERO (&xFdSet);
-    FD_SET (fds, &xFdSet);
-    xTv.tv_sec = 0;
-    xTv.tv_usec = TEST_DELAY * 1000UL;
-
-    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
-    if (iRet == -1) {
-
-      PERROR ("select()");
-    }
-    else if (iRet > 0) {
-    }
-#endif
   }
 #endif
 }
