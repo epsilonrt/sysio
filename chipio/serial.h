@@ -192,7 +192,7 @@ int iChipIoSerialIsBusy (xChipIoSerial * xPort);
  * @param xPort Pointeur sur le port
  * @return la taille du buffer en octets (valeur positive), -1 si erreur
  */
-int iChipIoSerialGetBufSize (xChipIoSerial * xPort);
+int iChipIoSerialBufferSize (xChipIoSerial * xPort);
 #endif /* __DOXYGEN__ not defined */
 
 /* ========================================================================== */

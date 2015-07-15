@@ -4,10 +4,9 @@
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
-  <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="Yes"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="ssdv_util" Path="ssdv/util/ssdv_util.project" Active="No"/>
   <Project Name="chipio_test_serial" Path="chipio/test/serial/chipio_test_serial.project" Active="No"/>
   <Project Name="ssdv_demo" Path="ssdv/demo/ssdv/ssdv_demo.project" Active="No"/>
@@ -33,6 +32,8 @@
   <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
   <Project Name="sysio_test_doutput" Path="sysio/test/doutput/sysio_test_doutput.project" Active="No"/>
   <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
+  <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
+  <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -67,7 +68,6 @@
       <Project Name="test_ptty" ConfigName="Debug"/>
       <Project Name="test_chipio_serial" ConfigName="Debug"/>
       <Project Name="ssdv" ConfigName="Debug"/>
-      <Project Name="chipio" ConfigName="Debug"/>
       <Project Name="radio" ConfigName="Debug"/>
       <Project Name="ssdv" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
@@ -96,6 +96,8 @@
       <Project Name="sysio_test_dinput_group" ConfigName="Debug"/>
       <Project Name="sysio_test_doutput" ConfigName="Debug"/>
       <Project Name="sysio_test" ConfigName="Debug"/>
+      <Project Name="chipio" ConfigName="Debug"/>
+      <Project Name="chipio_test_adc" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -130,7 +132,6 @@
       <Project Name="test_ptty" ConfigName="Release"/>
       <Project Name="test_chipio_serial" ConfigName="Release"/>
       <Project Name="ssdv" ConfigName="Release"/>
-      <Project Name="chipio" ConfigName="Release"/>
       <Project Name="radio" ConfigName="Release"/>
       <Project Name="ssdv" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
@@ -159,6 +160,8 @@
       <Project Name="sysio_test_dinput_group" ConfigName="Release"/>
       <Project Name="sysio_test_doutput" ConfigName="Release"/>
       <Project Name="sysio_test" ConfigName="Release"/>
+      <Project Name="chipio" ConfigName="Release"/>
+      <Project Name="chipio_test_adc" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

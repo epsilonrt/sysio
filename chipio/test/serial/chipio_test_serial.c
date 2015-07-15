@@ -126,7 +126,7 @@ vTestTxOverflow (void) {
   char s[BUFFER_SIZE];
   int iBlockSize;
 
-  iBlockSize = iChipIoSerialGetBufSize (xPort);
+  iBlockSize = iChipIoSerialBufferSize (xPort);
   assert(iBlockSize != -1);
 
   iBlockSize = MIN(BUFFER_SIZE - 1, iBlockSize * 2);

@@ -310,7 +310,7 @@ vChipIoSerialClose (xChipIoSerial * port) {
 
 // -----------------------------------------------------------------------------
 int
-iChipIoSerialGetBufSize (xChipIoSerial * port) {
+iChipIoSerialBufferSize (xChipIoSerial * port) {
 
   assert (port);
   int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);

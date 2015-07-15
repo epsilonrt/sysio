@@ -120,11 +120,13 @@
   <VirtualDirectory Name="chipio">
     <File Name="chipio.h"/>
     <File Name="serial.h"/>
+    <File Name="adc.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <File Name="src/serial.c"/>
     <File Name="src/interface.h"/>
     <File Name="src/chipio.c"/>
+    <File Name="src/adc.c"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
