@@ -5,7 +5,7 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = sysio_test_serial
+TARGET = test_ptty
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
@@ -111,13 +111,13 @@ INSTALL_BINDIR=$(prefix)/bin
 VERSION=1.0.0
 
 #---------------- SysIO Options ----------------
-ARCH = ARCH_GENERIC_LINUX
-#ARCH = ARCH_ARM_RASPBERRYPI
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
 #SYSIO_DEBUG_TEST = ON
 SYSIO_ROOT = ../..
+ARCH = ARCH_ARM_RASPBERRYPI
+#ARCH = ARCH_GENERIC_LINUX
 #-----------------------------------------------
 
 #-------------------------------------------------------------------------------

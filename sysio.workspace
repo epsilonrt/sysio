@@ -22,8 +22,19 @@
   <Project Name="radio_test_cpp_tnc" Path="radio/test/cpp/tnc/radio_test_cpp_tnc.project" Active="No"/>
   <Project Name="radio_test_cpp_ax25" Path="radio/test/cpp/ax25/radio_test_cpp_ax25.project" Active="No"/>
   <Project Name="radio_test_python_unit" Path="radio/test/python/unit/radio_test_python_unit.project" Active="No"/>
+  <Project Name="sysio_test_serial" Path="sysio/test/serial/sysio_test_serial.project" Active="No"/>
+  <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
+  <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
+  <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
+  <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
+  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
+  <Project Name="sysio_test_dinput_callback" Path="sysio/test/dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
+  <Project Name="sysio_test_dinput_poll" Path="sysio/test/dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
+  <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
+  <Project Name="sysio_test_doutput" Path="sysio/test/doutput/sysio_test_doutput.project" Active="No"/>
+  <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
       <Project Name="test_group" ConfigName="Debug"/>
       <Project Name="test_poll" ConfigName="Debug"/>
@@ -74,6 +85,17 @@
       <Project Name="radio_test_cpp_tnc" ConfigName="Debug"/>
       <Project Name="radio_test_cpp_ax25" ConfigName="Debug"/>
       <Project Name="radio_test_python_unit" ConfigName="Debug"/>
+      <Project Name="sysio_test_serial" ConfigName="Debug"/>
+      <Project Name="util_sping" ConfigName="Debug"/>
+      <Project Name="sysio_test_pwm" ConfigName="Debug"/>
+      <Project Name="sysio_test_gpio_getmode" ConfigName="Debug"/>
+      <Project Name="sysio_test_gpio_read" ConfigName="Debug"/>
+      <Project Name="sysio_test_gpio_write" ConfigName="Debug"/>
+      <Project Name="sysio_test_dinput_callback" ConfigName="Debug"/>
+      <Project Name="sysio_test_dinput_poll" ConfigName="Debug"/>
+      <Project Name="sysio_test_dinput_group" ConfigName="Debug"/>
+      <Project Name="sysio_test_doutput" ConfigName="Debug"/>
+      <Project Name="sysio_test" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -126,6 +148,17 @@
       <Project Name="radio_test_cpp_tnc" ConfigName="Release"/>
       <Project Name="radio_test_cpp_ax25" ConfigName="Release"/>
       <Project Name="radio_test_python_unit" ConfigName="Release"/>
+      <Project Name="sysio_test_serial" ConfigName="Release"/>
+      <Project Name="util_sping" ConfigName="Release"/>
+      <Project Name="sysio_test_pwm" ConfigName="Release"/>
+      <Project Name="sysio_test_gpio_getmode" ConfigName="Release"/>
+      <Project Name="sysio_test_gpio_read" ConfigName="Release"/>
+      <Project Name="sysio_test_gpio_write" ConfigName="Release"/>
+      <Project Name="sysio_test_dinput_callback" ConfigName="Release"/>
+      <Project Name="sysio_test_dinput_poll" ConfigName="Release"/>
+      <Project Name="sysio_test_dinput_group" ConfigName="Release"/>
+      <Project Name="sysio_test_doutput" ConfigName="Release"/>
+      <Project Name="sysio_test" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

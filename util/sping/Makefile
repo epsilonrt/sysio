@@ -5,13 +5,13 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = test_ptty
+TARGET = sping
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
-GIT_VERSION = OFF
+GIT_VERSION = ON
 
 # Niveau d'optimisation de GCC =  [0, 1, 2, 3, s].
 #     0 = pas d'optimisation (pour debug).
@@ -35,7 +35,7 @@ DEBUG_OPT = 0
 #DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
-VIEW_GCC_LINE = OFF
+VIEW_GCC_LINE = ON
 
 # Désactive la suppression des variables et fonctions "inutiles"
 # Le linker vérifie d'une fonction ou une variable est appellée, si ce n'est pas
@@ -116,8 +116,8 @@ VERSION=1.0.0
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
 #SYSIO_DEBUG_TEST = ON
 SYSIO_ROOT = ../..
-ARCH = ARCH_ARM_RASPBERRYPI
-#ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
 #-----------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -141,8 +141,8 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
-CDEFS += -D_REENTRANT
-CPPDEFS += -D_REENTRANT
+CDEFS += -D_REENTRANT -D$(ARCH)
+CPPDEFS += -D_REENTRANT -D$(ARCH)
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
 
@@ -307,7 +307,7 @@ distclean: distclean_list clean_list
 
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 TARGET $(INSTALL_BINDIR)
+	-install -m 0755 $(TARGET) $(INSTALL_BINDIR)
 
 uninstall:
 	@echo "$(MSG_UNINSTALL) $(TARGET)"

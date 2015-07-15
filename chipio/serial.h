@@ -18,7 +18,9 @@ __BEGIN_C_DECLS
 /* ========================================================================== */
 
 /**
- *  @defgroup chipio_serial Liaison série ChipIo
+ *  @addtogroup chipio
+ *  @{
+ *  @defgroup chipio_serial Liaison série
  *
  *  Ce module fournit les fonctions permettant de contrôler une liaison série
  *  d'un circuit d'entrées-sorties universel ChipIo.
@@ -161,6 +163,7 @@ eSerialStopBits eChipIoSerialSetStopBits (xChipIoSerial * xPort, eSerialStopBits
 eSerialFlow eChipIoSerialSetFlow (xChipIoSerial * xPort, eSerialFlow eNewFlow);
 
 /**
+ *  @}
  * @}
  */
 /* ========================================================================== */

@@ -5,7 +5,7 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = test_write
+TARGET = sysio_test_gpio_write
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
@@ -141,8 +141,9 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
-CDEFS += -D_REENTRANT
-CPPDEFS += -D_REENTRANT
+CDEFS += -D_REENTRANT -D$(ARCH)
+CPPDEFS += -D_REENTRANT -D$(ARCH)
+
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
 

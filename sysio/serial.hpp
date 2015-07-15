@@ -13,40 +13,88 @@
 #include <sysio/defs.h>
 #include <string>
 
-//##############################################################################
-//#                                                                            #
-//#                             Serial Class                                   #
-//#                                                                            #
-//##############################################################################
 /**
- * Serial Port Class
+ *  @addtogroup sysio_serial
+ *  @{
+ *  @defgroup sysio_serial_cpp Interface C++
+ *
+ *  Ce module fournit les fonctions permettant de contrôler une liaison série.
+ *  @{
+ */
+/**
+ * Port série
  */
 class Serial {
 
-  public:
+public:
+  /**
+   * Type de contrôle de flux
+   */
     typedef enum {
 
-      NoFlowControl,
-      HardwareControl,
-      SoftwareControl,
-      UnknownFlowControl = -1
+      NoFlowControl,    /**< Sans */
+      HardwareControl,  /**< Matériel (RTS/CTS) */
+      SoftwareControl,  /**< Logiciel (XON/XOFF) */
+      UnknownFlowControl = -1 /**< Inconnu */
     } FlowControl;
-
+    /**
+     * Consctructeur
+     */
     Serial(const char * portname, int baudrate);
+    /**
+     * Destructeur
+     */
     ~Serial();
+    /**
+     * Ouverture
+     */
     bool open();
+    /**
+     * Vitesse
+     */
     int baudrate() const;
+    /**
+     * Modification vitesse
+     */
     void setBaudrate (int baudrate);
+    /**
+     * Nom du port
+     */
     const char * port() const;
+    /**
+     * Modifie le nom du port
+     */
     void setPort (const char * portname);
+    /**
+     * Ferme le port
+     */
     void close();
+    /**
+     * Descripteur de fichier d'un port ouvert
+     */
     int fileno() const;
+    /**
+     * Vide les tampons
+     */
     void flush();
+    /**
+     * Contrôle de flux
+     */
     FlowControl flowControl() const;
+    /**
+     * Modifie le contrôle de flux
+     */
     bool setFlowControl (FlowControl newFlowControl);
+    /**
+     * Contrôle de flux sous forme de texte
+     */
     const char * flowControlName() const;
+    /**
+     * Modifie le contrôle de flux à partir du nom
+     */
     bool setFlowControlName (const char * newFlowControl);
     
+#if !defined(__DOXYGEN__)
     // Swig access functions (python interface)
     inline int getFileno() const { return fileno(); }
     inline int getBaudrate() const { return baudrate(); }
@@ -58,7 +106,12 @@ class Serial {
     int fd;
     int _baudrate;
     std::string _portname;
+#endif /* __DOXYGEN__ not defined */
 };
+/**
+ *  @}
+ * @}
+ */
 
 /* ========================================================================== */
 #endif /* _SYSIO_SERIAL_HPP_ */

@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = ax25 cpp crc tnc
+SUBDIRS = sping
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
