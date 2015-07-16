@@ -201,11 +201,39 @@ int iSerialSetFlow (int fd, eSerialFlow eNewFlow);
 const char * sSerialGetFlowStr (int fd);
 
 /**
- *  Chaîne de caractère décrivant la configuration du port
+ * Chaîne de caractère décrivant la configuration du port
+ *
+ * Le format est BBBBBB-DPSF avec :
+ * - BBBBBB Baudrate
+ * - D Data bits (5, 6, 7 ,8)
+ * - P Parité (N, E, O)
+ * - S Stop (1, 2)
+ * - F Flow (H, S)
+ * .
+ * @param le descripteur de fichier du port
+ * @return la représentation de la configuration sous forme de string, NULL si
+ * erreur.
+ */
+const char * sSerialConfigStrShort (int fd);
+
+/**
+ * Durée d'une trame de ulSize octets en secondes
  *
  * @param le descripteur de fichier du port
  */
-const char * sSerialConfigStrShort (int fd);
+double dSerialFrameDuration (int fd, size_t ulSize);
+
+int iSerialTermiosBaudrate (const struct termios * ts);
+int iSerialTermiosDataBits (const struct termios * ts);
+int iSerialTermiosStopBits (const struct termios * ts);
+int iSerialTermiosParity (const struct termios * ts);
+int iSerialTermiosFlow (const struct termios * ts);
+const char * sSerialTermiosToStr  (const struct termios * ts);
+
+/**
+ * Durée d'une trame de ulSize octets en secondes
+ */
+double dSerialTermiosFrameDuration (const struct termios * ts, size_t ulSize);
 
 /**
  *  Renvoie la chaîne de caractère correspondant à une valeur de contrôle de flux
@@ -240,13 +268,6 @@ int iSerialSpeedToInt (speed_t speed);
  *  Renvoie la constante speed_t associée à une valeur en baud
  */
 speed_t eSerialIntToSpeed (int baud);
-
-int iSerialTermiosBaudrate (const struct termios * ts);
-int iSerialTermiosDataBits (const struct termios * ts);
-int iSerialTermiosStopBits (const struct termios * ts);
-int iSerialTermiosParity (const struct termios * ts);
-int iSerialTermiosFlow (const struct termios * ts);
-const char * sSerialTermiosToStr  (const struct termios * ts);
 
 /**
  * @}

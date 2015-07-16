@@ -25,11 +25,11 @@
 #include <chipio/serial.h>
 #include "interface.h"
 
-/* macros =================================================================== */
-/* constants ================================================================ */
+/* setup ==================================================================== */
+#define LED_DEBUG 0
 #define THREAD_POLL_DELAY 10
-#define LED_DEBUG 1
 
+/* constants ================================================================ */
 #define LED_RED     0
 #define LED_YELLOW  1
 #define LED_GREEN   2
@@ -86,6 +86,7 @@ vLedDebugToggle (unsigned i) {
 #define vLedDebugToggle(i)
 #endif /* LED_DEBUG */
 
+#if 0
 // -----------------------------------------------------------------------------
 static int
 iBufferSize (xChipIoSerial * port) {
@@ -96,6 +97,7 @@ iBufferSize (xChipIoSerial * port) {
   }
   return iRet;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 static int
@@ -371,11 +373,12 @@ iChipIoReadSerialAttr (xChipIoSerial * port, struct termios * ts) {
 static void *
 pvSerialThread (void * xContext) {
   int iLen, iRet;
-  fd_set xFdSet;
-  struct timeval xTv;
+  int iBytesAvailable;
   uint8_t buffer[CHIPIO_I2C_BLOCK_MAX];
   bool bIrqPending = false;
   struct termios xCurrentTs, xNewTs;
+  int iBlockSize = CHIPIO_I2C_BLOCK_MAX;
+  unsigned uDelay;
 
   xChipIoSerial * port = (xChipIoSerial *) xContext;
   tcgetattr (port->fdm, &xCurrentTs);
@@ -387,12 +390,15 @@ pvSerialThread (void * xContext) {
 
     vLedDebugToggle (LED_GREEN);
 
-    // Surveillance configuration
+    /* Surveillance de la configuration du port modifiée par l'utilisateur
+     * -----------------------------------------------------------------------*/
     tcgetattr (port->fdm, &xNewTs);
     if (memcmp (&xCurrentTs, &xNewTs, sizeof(struct termios)) != 0) {
 
-      PDEBUG ("Config changed ! %s", sSerialTermiosToStr (&xNewTs)); fflush(stdout);
-      iChipIoWriteSerialAttr (port, &xNewTs, &xCurrentTs);
+      PDEBUG ("Config changed ! %s", sSerialTermiosToStr (&xNewTs));
+      if (iChipIoWriteSerialAttr (port, &xNewTs, &xCurrentTs) != 0) {
+        PERROR("Failed to write port attributes");
+      }
       memcpy (&xCurrentTs, &xNewTs, sizeof(struct termios));
     }
 
@@ -411,12 +417,11 @@ pvSerialThread (void * xContext) {
       // le nombre de caractères en attente
 
       if  (iChipIsBusy(port) == false) {
-        int iBytesAvailable = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
+        int iBytesAvailable;
 
-        if (iBytesAvailable > 0) {
-          int iBlockSize;
+        vLedDebugSet (LED_YELLOW);
+        while ((iBytesAvailable = iChipIoReadReg8 (port->chipio, eRegSerRxSr)) > 0) {
 
-          vLedDebugSet (LED_YELLOW);
 
           // le port série est prêt, 32 octets max.
           iBlockSize = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
@@ -428,7 +433,8 @@ pvSerialThread (void * xContext) {
 
             // transmission vers l'esclave
             if (write (port->fdm, buffer, iRet) != iRet) {
-              PWARNING ("write()");
+
+              PERROR ("Unable to write to pty");
             }
           }
         }
@@ -443,43 +449,35 @@ pvSerialThread (void * xContext) {
 
     /* Surveillance des octets reçus de ptm et envoi vers la liaison série
      * -----------------------------------------------------------------------*/
-    xTv.tv_sec = 0;
-    xTv.tv_usec = THREAD_POLL_DELAY * 1000UL;
+    iLen = 0;
 
-    FD_ZERO (&xFdSet);
-    FD_SET (port->fdm, &xFdSet);
-    iRet = select (port->fdm + 1, &xFdSet, NULL, NULL, &xTv);
-    // Considérer xTv comme indéfini maintenant !
+    while ((iBytesAvailable = iSerialDataAvailable (port->fdm)) > 0) {
 
-    if (iRet > 0) {
-      int iBytesAvailable;
+      // Des données sont disponibles pour envoi
 
-      // Lecture du nombre de caractères à transmettre
-      iRet = ioctl (port->fdm, FIONREAD, &iBytesAvailable);
+      if  (iChipIsBusy(port) == false) {
 
-      if ((iRet != -1) && (iBytesAvailable)) {
-        // Des données sont disponibles pour envoi
+        // le port série est prêt à transmettre, 32 octets max.
+        vLedDebugSet (LED_RED);
 
-        if  (iChipIsBusy(port) == false) {
-          int iBlockSize;
+        iBlockSize = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
+        if  ((iLen = read (port->fdm, buffer, iBlockSize)) > 0) {
 
-          // le port série est prêt à transmettre, 32 octets max.
-          vLedDebugSet (LED_RED);
-
-          iBlockSize = MIN(CHIPIO_I2C_BLOCK_MAX, iBytesAvailable);
-          if  ((iLen = read (port->fdm, buffer, iBlockSize)) > 0) {
-
-            // on envoie un bloc de données
-            iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, buffer, iLen);
-          }
-          vLedDebugClear (LED_RED);
+          // on envoie un bloc de données
+          iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, buffer, iLen);
+          uDelay = dSerialFrameDuration (port->fdm, iLen) * 1000.;
+          delay_ms (uDelay);
         }
-        else {
-          delay_ms (THREAD_POLL_DELAY * 5);
-        }
+        vLedDebugClear (LED_RED);
+      }
+      else {
+
+        uDelay = dSerialFrameDuration (port->fdm, MAX(iLen, CHIPIO_I2C_BLOCK_MAX)) * 1000.;
+        delay_ms (uDelay);
       }
     }
     pthread_testcancel();
+    delay_ms (THREAD_POLL_DELAY);
   }
   return NULL;
 }
@@ -490,7 +488,6 @@ pvSerialThread (void * xContext) {
 xChipIoSerial *
 xChipIoSerialNew (xChipIo * chip, xDin * xIrqPin) {
   xChipIoSerial * port;
-  char * name;
 
   if ((iChipIoAvailableOptions(chip) & eOptionSerial) == 0) {
 
@@ -572,7 +569,7 @@ open_error_exit:
 // -----------------------------------------------------------------------------
 void
 vChipIoSerialDelete (xChipIoSerial * port) {
-  int iRet;
+  UNUSED_VAR(int, iRet);
 
   assert (port);
 

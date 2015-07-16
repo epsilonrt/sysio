@@ -85,7 +85,7 @@ Serial::setFlowControl (Serial::FlowControl newFlowControl) {
 
   if (fd >= 0) {
 
-    return static_cast <Serial::FlowControl> (eSerialSetFlow (fd, static_cast <eSerialFlow> (newFlowControl))) == newFlowControl;
+    return static_cast <Serial::FlowControl> (iSerialSetFlow (fd, static_cast <eSerialFlow> (newFlowControl))) == newFlowControl;
   }
   return false;
 }

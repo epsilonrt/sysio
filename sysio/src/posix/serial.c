@@ -25,8 +25,6 @@
 #define MAX_BAUDRATE BAUDRATE(0)
 #define MIN_BAUDRATE BAUDRATE(0xFFFF)
 
-/* private variables ======================================================== */
-static const char sUnknown[] = "Unknown" ;
 
 /* private functions ======================================================== */
 
@@ -45,6 +43,9 @@ iCheckBaudrate (unsigned long ulBaud) {
 #else
 #define iCheckBaudrate(b) (0)
 #endif
+
+/* private variables ======================================================== */
+static const char sUnknown[] = "Unknown" ;
 
 /* internal public functions ================================================ */
 
@@ -238,6 +239,18 @@ eSerialGetFlow (int fd) {
   if (tcgetattr (fd, &ts) == 0) {
 
     return iSerialTermiosFlow (&ts);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+double
+dSerialFrameDuration (int fd, size_t ulSize) {
+  struct termios ts;
+
+  if (tcgetattr (fd, &ts) == 0) {
+
+    return dSerialTermiosFrameDuration (&ts, ulSize);
   }
   return -1;
 }
@@ -467,6 +480,19 @@ sSerialTermiosToStr  (const struct termios * ts) {
     iSerialTermiosStopBits (ts),
     iSerialTermiosFlow (ts));
   return str;
+}
+
+// -----------------------------------------------------------------------------
+double
+dSerialTermiosFrameDuration (const struct termios * ts, size_t ulSize) {
+  unsigned uByteWidth;
+
+  uByteWidth = 1 + iSerialTermiosDataBits (ts) +
+                  (iSerialTermiosParity (ts) == SERIAL_PARITY_NONE ? 0 : 1) +
+                   iSerialTermiosStopBits (ts);
+
+  return (double) ulSize * (double) uByteWidth /
+            (double) iSerialTermiosBaudrate (ts);
 }
 
 // -----------------------------------------------------------------------------

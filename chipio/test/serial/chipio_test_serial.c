@@ -18,10 +18,10 @@
 /* constants ================================================================ */
 #define I2C_DEVICE      "/dev/i2c-1"
 #define I2C_SLAVE       0x46
-#define SERIAL_BAUDRATE 115200
-//#define SERIAL_DATABITS SERIAL_DATABIT_8
-//#define SERIAL_PARITY   SERIAL_PARITY_NONE
-//#define SERIAL_STOPBITS SERIAL_STOPBIT_ONE
+#define SERIAL_BAUDRATE 38400
+#define SERIAL_DATABITS SERIAL_DATABIT_8
+#define SERIAL_PARITY   SERIAL_PARITY_NONE
+#define SERIAL_STOPBITS SERIAL_STOPBIT_ONE
 #define SERIAL_IRQPIN { .num = GPIO_GEN6, .act = true, .pull = ePullOff }
 
 #define TEST_DELAY 200
@@ -57,8 +57,6 @@ main (int argc, char **argv) {
 
   vSetup();
   printf("Press Ctrl+C to abort ...\n");
-  delay_ms(1000);
-  iRet = iSerialSetBaudrate (fd, 38400);
 
   for (;;) {
 
@@ -299,11 +297,10 @@ vSetup (void) {
   printf("ChipIo found on %s at 0x%02X\n", I2C_DEVICE, I2C_SLAVE);
   xPort = xChipIoSerialNew (xChip, &xIrqPin);
   assert(xPort);
-  printf("Serial port opened %s\n", sChipIoSerialPortName (xPort));
+  printf("Serial port opened %s", sChipIoSerialPortName (xPort));
 
   fd = iSerialOpen (sChipIoSerialPortName (xPort), SERIAL_BAUDRATE);
   assert (fd >= 0);
-  printf("\t%s\n", sSerialConfigStrShort (fd));
 
   pts = fdopen (fd, "r+");
   assert (pts);
@@ -323,9 +320,7 @@ vSetup (void) {
   iRet = iSerialSetStopBits (fd, SERIAL_STOPBITS);
   assert (iRet == 0);
 #endif
-#if defined(SERIAL_BAUDRATE) || defined(SERIAL_DATABITS) || defined(SERIAL_PARITY) || defined(SERIAL_STOPBITS)
-  printf("New setting-up: %s\n", sSerialConfigStrShort (fd));
-#endif
+  printf("\t%s\n", sSerialConfigStrShort (fd));
 }
 
 // -----------------------------------------------------------------------------
