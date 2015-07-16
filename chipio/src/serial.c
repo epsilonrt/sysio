@@ -28,7 +28,7 @@
 /* macros =================================================================== */
 /* constants ================================================================ */
 #define THREAD_POLL_DELAY 10
-#define LED_DEBUG 0
+#define LED_DEBUG 1
 
 #define LED_RED     0
 #define LED_YELLOW  1
@@ -38,7 +38,6 @@
 typedef struct xChipIoSerial {
   xChipIo * chipio;   // Objet chipio
   int fdm;            // descripteur de fichier pseudo-terminal maître
-  int fds;            // descripteur de fichier pseudo-terminal esclave
   pthread_t thread;   // thread de surveillance
   xDinPort * irq;     // Port pour la broche d'interruption
 } xChipIoSerial;
@@ -74,6 +73,7 @@ vLedDebugSet (unsigned i) {
   (void) iDoutSet (i, led);
 }
 
+
 // -----------------------------------------------------------------------------
 static void
 vLedDebugToggle (unsigned i) {
@@ -87,6 +87,286 @@ vLedDebugToggle (unsigned i) {
 #endif /* LED_DEBUG */
 
 // -----------------------------------------------------------------------------
+static int
+iBufferSize (xChipIoSerial * port) {
+
+  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
+  if (iRet >= 0) {
+    iRet = MIN((iRet & ~eStatusBusy), CHIPIO_I2C_BLOCK_MAX);
+  }
+  return iRet;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iChipIsBusy (xChipIoSerial * port) {
+
+  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
+  if (iRet >= 0) {
+    iRet &= eStatusBusy;
+  }
+  return (iRet != 0);
+}
+
+
+// -----------------------------------------------------------------------------
+static int
+iChipIoWriteSerialAttr (xChipIoSerial * port, struct termios * newts,
+                                              struct termios * oldts) {
+  int i, iSerCr;
+  bool bCrChanged = false;
+
+  i = iSerialTermiosBaudrate (newts);
+  if (i != iSerialTermiosBaudrate (oldts)) {
+    if (iChipIoWriteReg16 (port->chipio, eRegSerBaud, i / 100) != 0) {
+      return -1;
+    }
+    PDEBUG("Baudrate changed");
+  }
+
+  iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
+  if (i < 0) {
+    return -1;
+  }
+
+  i = iSerialTermiosDataBits (newts);
+  if (i != iSerialTermiosDataBits (oldts)) {
+
+    bCrChanged = true;
+    iSerCr &= ~eDataBitMask;
+    switch (i) {
+
+      case SERIAL_DATABIT_5:
+        iSerCr |= eDataBit5;
+        break;
+      case SERIAL_DATABIT_6:
+        iSerCr |= eDataBit6;
+        break;
+      case SERIAL_DATABIT_7:
+        iSerCr |= eDataBit7;
+        break;
+      case SERIAL_DATABIT_8:
+        iSerCr |= eDataBit8;
+        break;
+      default:
+        return -1;
+    }
+    PDEBUG("Data bits changed");
+  }
+
+  i = iSerialTermiosStopBits (newts);
+  if (i != iSerialTermiosStopBits (oldts)) {
+
+    bCrChanged = true;
+    iSerCr &= ~eStopBitMask;
+    switch (i) {
+
+      case SERIAL_STOPBIT_ONE:
+        iSerCr |= eStopBit1;
+        break;
+      case SERIAL_STOPBIT_TWO:
+        iSerCr |= eStopBit2;
+        break;
+      default:
+        return -1;
+    }
+    PDEBUG("Stop bits changed");
+  }
+
+  i = iSerialTermiosParity (newts);
+  if (i != iSerialTermiosParity (oldts)) {
+
+    bCrChanged = true;
+    iSerCr &= ~eParityMask;
+    switch (i) {
+
+      case SERIAL_PARITY_NONE:
+        iSerCr |= eParityNone;
+        break;
+      case SERIAL_PARITY_EVEN:
+        iSerCr |= eParityEven;
+        break;
+      case SERIAL_PARITY_ODD:
+        iSerCr |= eParityOdd;
+        break;
+      default:
+        return -1;
+    }
+    PDEBUG("Parity changed");
+  }
+
+  i = iSerialTermiosFlow (newts);
+  if (i != iSerialTermiosFlow (oldts)) {
+
+    bCrChanged = true;
+    iSerCr &= ~eFlowMask;
+    switch (i) {
+
+      case SERIAL_FLOW_NONE:
+        iSerCr |= eFlowNone;
+        break;
+      case SERIAL_FLOW_RTSCTS:
+        iSerCr |= eFlowHard;
+        break;
+      case SERIAL_FLOW_XONXOFF:
+        iSerCr |= eFlowSoft;
+        break;
+      default:
+        return -1;
+    }
+    PDEBUG("Flow control changed");
+  }
+
+  if (bCrChanged) {
+
+    return iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
+  }
+
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iChipIoReadSerialAttr (xChipIoSerial * port, struct termios * ts) {
+  int i;
+
+  // Baudrate
+  i = iChipIoReadReg16 (port->chipio, eRegSerBaud);
+  if (i < 0) {
+    return i;
+  }
+
+  speed_t baud;
+  switch (i) {
+    case 2:
+      baud = B200;
+      break;
+    case 3:
+      baud = B300;
+      break;
+    case 6:
+      baud = B600;
+      break;
+    case 12:
+      baud = B1200;
+      break;
+    case 18:
+      baud = B1800;
+      break;
+    case 24:
+      baud = B2400;
+      break;
+    case 48:
+      baud = B4800;
+      break;
+    case 96:
+      baud = B9600;
+      break;
+    case 192:
+      baud = B19200;
+      break;
+    case 384:
+      baud = B38400;
+      break;
+    case 576:
+      baud = B57600;
+      break;
+    case 1152:
+      baud = B115200;
+      break;
+    case 2304:
+      baud = B230400;
+      break;
+    case 4608:
+      baud = B460800;
+      break;
+    case 9216:
+      baud = B921600;
+      break;
+    default:
+      baud = B0;
+      break;
+  }
+
+  if (baud != B0) {
+    if (cfsetispeed (ts, baud) != 0) {
+      return -1;
+    }
+    if (cfsetospeed (ts, baud) != 0) {
+      return -1;
+    }
+  }
+  else {
+    // TODO Custom baudrate
+    return EBADBAUD;
+  }
+
+  // Clear des paramètres
+  ts->c_cflag &= ~(PARENB | PARODD);
+  ts->c_cflag &= ~CSTOPB;
+  ts->c_cflag &= ~CSIZE;
+  ts->c_cflag &= ~CRTSCTS;
+  ts->c_iflag &= ~(IXON | IXOFF | IXANY);
+
+  i = iChipIoReadReg16 (port->chipio, eRegSerCr);
+  if (i < 0) {
+    return i;
+  }
+
+  // Data bits
+  switch (i & eDataBitMask) {
+    case eDataBit5:
+      ts->c_cflag |= CS5;
+      break;
+    case eDataBit6:
+      ts->c_cflag |= CS6;
+      break;
+    case eDataBit7:
+      ts->c_cflag |= CS7;
+      break;
+    case eDataBit8:
+      ts->c_cflag |= CS8;
+      break;
+    default:
+      break;
+  }
+
+  // Stop bits
+  switch (i & eStopBitMask) {
+    case eStopBit2:
+      ts->c_cflag |= CSTOPB;
+      break;
+    default:
+      break;
+  }
+
+  // Parity
+  switch (i & eParityMask) {
+    case eParityEven:
+      ts->c_cflag |= PARENB;
+      break;
+    case eParityOdd:
+      ts->c_cflag |= PARENB | PARODD;
+      break;
+    default:
+      break;
+  }
+
+  // Flow control
+  switch (i & eFlowMask) {
+    case eFlowHard:
+      ts->c_cflag |= CRTSCTS;
+      break;
+    case eFlowSoft:
+      ts->c_iflag |= IXON | IXOFF | IXANY;
+      break;
+    default:
+      break;
+  }
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
 // Thread de surveillance du port
 static void *
 pvSerialThread (void * xContext) {
@@ -95,14 +375,26 @@ pvSerialThread (void * xContext) {
   struct timeval xTv;
   uint8_t buffer[CHIPIO_I2C_BLOCK_MAX];
   bool bIrqPending = false;
+  struct termios xCurrentTs, xNewTs;
 
   xChipIoSerial * port = (xChipIoSerial *) xContext;
+  tcgetattr (port->fdm, &xCurrentTs);
+
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
   vLedDebugInit();
 
   for (;;) {
 
     vLedDebugToggle (LED_GREEN);
+
+    // Surveillance configuration
+    tcgetattr (port->fdm, &xNewTs);
+    if (memcmp (&xCurrentTs, &xNewTs, sizeof(struct termios)) != 0) {
+
+      PDEBUG ("Config changed ! %s", sSerialTermiosToStr (&xNewTs)); fflush(stdout);
+      iChipIoWriteSerialAttr (port, &xNewTs, &xCurrentTs);
+      memcpy (&xCurrentTs, &xNewTs, sizeof(struct termios));
+    }
 
     /* Surveillance des octets reçus par la liaison série et envoi vers ptm
      * -----------------------------------------------------------------------*/
@@ -118,7 +410,7 @@ pvSerialThread (void * xContext) {
       // Interrruption active ou pas de broche d'interruption, on vient lire
       // le nombre de caractères en attente
 
-      if  (iChipIoSerialIsBusy(port) == false) {
+      if  (iChipIsBusy(port) == false) {
         int iBytesAvailable = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
 
         if (iBytesAvailable > 0) {
@@ -168,7 +460,7 @@ pvSerialThread (void * xContext) {
       if ((iRet != -1) && (iBytesAvailable)) {
         // Des données sont disponibles pour envoi
 
-        if  (iChipIoSerialIsBusy(port) == false) {
+        if  (iChipIsBusy(port) == false) {
           int iBlockSize;
 
           // le port série est prêt à transmettre, 32 octets max.
@@ -196,7 +488,7 @@ pvSerialThread (void * xContext) {
 
 // -----------------------------------------------------------------------------
 xChipIoSerial *
-xChipIoSerialOpen (xChipIo * chip, xDin * xIrqPin) {
+xChipIoSerialNew (xChipIo * chip, xDin * xIrqPin) {
   xChipIoSerial * port;
   char * name;
 
@@ -234,28 +526,26 @@ xChipIoSerialOpen (xChipIo * chip, xDin * xIrqPin) {
     goto open_error_exit;
   }
 
-  // Lecture du nom du device esclave dans /dev/pts
-  if ( (name = ptsname  (port->fdm)) == NULL) {
-
-    goto open_error_exit;
-  }
-
-  // Ouverture du descripteur de fichier côté esclave en mode non bloquant
-  if ( (port->fds = open (name, O_RDWR | O_NOCTTY | O_NDELAY)) < 0) {
-
-    goto open_error_exit;
-  }
-
   /* Configuration en mode Raw, sans cela le pseudo-terminal est en mode
    * canonique, c'est à dire que les échanges se font lignes par lignes */
   struct termios ts;
 
-  if (tcgetattr (port->fds, &ts)) {
+  if (tcgetattr (port->fdm, &ts)) {
 
     goto open_error_exit;
   }
+
   cfmakeraw (&ts);
-  tcsetattr (port->fds, TCSANOW, &ts);
+  ts.c_cc [VMIN]  = 0;
+  ts.c_cc [VTIME] = 0;
+
+  if (iChipIoReadSerialAttr (port, &ts) != 0) {
+
+    goto open_error_exit;
+  }
+
+  tcflush (port->fdm, TCIOFLUSH);
+  tcsetattr (port->fdm, TCSANOW, &ts);
 
   // Création du port de broche d'interruption si nécessaire
   if (xIrqPin) {
@@ -271,6 +561,7 @@ xChipIoSerialOpen (xChipIo * chip, xDin * xIrqPin) {
 
     goto open_error_exit;
   }
+
   return port;
 
 open_error_exit:
@@ -278,10 +569,9 @@ open_error_exit:
   return NULL;
 }
 
-
 // -----------------------------------------------------------------------------
 void
-vChipIoSerialClose (xChipIoSerial * port) {
+vChipIoSerialDelete (xChipIoSerial * port) {
   int iRet;
 
   assert (port);
@@ -299,9 +589,6 @@ vChipIoSerialClose (xChipIoSerial * port) {
     assert (iRet == 0);
   }
 
-  iRet = close (port->fds);
-  assert (iRet == 0);
-
   iRet = close (port->fdm);
   assert (iRet == 0);
 
@@ -309,367 +596,11 @@ vChipIoSerialClose (xChipIoSerial * port) {
 }
 
 // -----------------------------------------------------------------------------
-int
-iChipIoSerialBufferSize (xChipIoSerial * port) {
-
-  assert (port);
-  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
-  if (iRet >= 0) {
-    iRet = MIN((iRet & ~eStatusBusy), CHIPIO_I2C_BLOCK_MAX);
-  }
-  return iRet;
-}
-
-// -----------------------------------------------------------------------------
-int
-iChipIoSerialIsBusy (xChipIoSerial * port) {
-
-  assert (port);
-  int iRet = iChipIoReadReg8 (port->chipio, eRegSerTxSr);
-  if (iRet >= 0) {
-    iRet &= eStatusBusy;
-  }
-  return (iRet != 0);
-}
-
-// -----------------------------------------------------------------------------
-int
-iChipIoSerialFileNo (xChipIoSerial * port) {
-
-  assert (port);
-  return port->fds;
-}
-
-// -----------------------------------------------------------------------------
 const char *
 sChipIoSerialPortName (xChipIoSerial * port) {
 
   assert (port);
-  return ttyname(port->fds);
-}
-
-// -----------------------------------------------------------------------------
-int
-iChipIoDataAvailable (xChipIoSerial * port) {
-  int iDataAvailable;
-
-  assert (port);
-  if (ioctl (port->fds, FIONREAD, &iDataAvailable) == -1) {
-    return -1;
-  }
-  return iDataAvailable;
-}
-
-// -----------------------------------------------------------------------------
-int
-iChipIoSerialBaudrate (xChipIoSerial * port) {
-  int iBaudrate;
-
-  assert (port);
-
-
-  iBaudrate = iChipIoReadReg16 (port->chipio, eRegSerBaud);
-
-  if (iBaudrate > 0) {
-
-    iBaudrate *= 100;
-  }
-  return iBaudrate;
-}
-
-// -----------------------------------------------------------------------------
-eSerialDataBits
-eChipIoSerialDataBits (xChipIoSerial * port) {
-  eSerialDataBits eDataBits = SERIAL_DATABIT_UNKNOWN;
-  int iSerCr;
-
-  assert (port);
-
-  iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-  if (iSerCr > 0) {
-    switch (iSerCr & eDataBitMask) {
-      case eDataBit5:
-        eDataBits = SERIAL_DATABIT_5;
-        break;
-      case eDataBit6:
-        eDataBits = SERIAL_DATABIT_6;
-        break;
-      case eDataBit7:
-        eDataBits = SERIAL_DATABIT_7;
-        break;
-      case eDataBit8:
-        eDataBits = SERIAL_DATABIT_8;
-        break;
-      default:
-        break;
-    }
-  }
-  return eDataBits;
-}
-
-// -----------------------------------------------------------------------------
-eSerialStopBits
-eChipIoSerialStopBits (xChipIoSerial * port) {
-  eSerialStopBits eStopBits = SERIAL_PARITY_UNKNOWN;
-  int iSerCr;
-
-  assert (port);
-
-  iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-  if (iSerCr > 0) {
-    switch (iSerCr & eStopBitMask) {
-      case eStopBit1:
-        eStopBits = SERIAL_STOPBIT_ONE;
-        break;
-      case eStopBit2:
-        eStopBits = SERIAL_STOPBIT_TWO;
-        break;
-      default:
-        break;
-    }
-  }
-  return eStopBits;
-}
-
-// -----------------------------------------------------------------------------
-eSerialParity
-eChipIoSerialParity (xChipIoSerial * port) {
-  eSerialParity eParity = SERIAL_PARITY_UNKNOWN;
-  int iSerCr;
-
-  assert (port);
-
-  iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-  if (iSerCr > 0) {
-    switch (iSerCr & eParityMask) {
-      case eParityNone:
-        eParity = SERIAL_PARITY_NONE;
-        break;
-      case eParityEven:
-        eParity = SERIAL_PARITY_EVEN;
-        break;
-      case eParityOdd:
-        eParity = SERIAL_PARITY_ODD;
-        break;
-      default:
-        break;
-    }
-  }
-  return eParity;
-}
-
-// -----------------------------------------------------------------------------
-eSerialFlow
-eChipIoSerialFlow (xChipIoSerial * port) {
-  eSerialParity eFlow = SERIAL_FLOW_UNKNOWN;
-  int iSerCr;
-
-  assert (port);
-
-  iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-  if (iSerCr > 0) {
-    switch (iSerCr & eFlowMask) {
-      case eFlowNone:
-        eFlow = SERIAL_FLOW_NONE;
-        break;
-      case eFlowHard:
-        eFlow = SERIAL_FLOW_RTSCTS;
-        break;
-      case eFlowSoft:
-        eFlow = SERIAL_FLOW_XONXOFF;
-        break;
-      default:
-        break;
-    }
-  }
-  return eFlow;
-}
-
-// -----------------------------------------------------------------------------
-int
-iChipIoSerialSetBaudrate (xChipIoSerial * port, int iBaudrate) {
-  int iRet;
-  assert (port);
-
-  iRet = iChipIoWriteReg16 (port->chipio, eRegSerBaud, iBaudrate / 100);
-
-  if (iRet == 0) {
-
-    return iChipIoSerialBaudrate (port);
-  }
-  return -1;
-}
-
-// -----------------------------------------------------------------------------
-eSerialDataBits
-eChipIoSerialSetDataBits (xChipIoSerial * port, eSerialDataBits eDataBits) {
-
-  assert (port);
-  if (eChipIoSerialDataBits (port) != eDataBits) {
-    int iSerCr, iRet;
-
-
-    iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-    if (iSerCr < 0) {
-      return SERIAL_DATABIT_UNKNOWN;
-    }
-
-    iSerCr &= ~eDataBitMask;
-    switch (eDataBits) {
-
-      case SERIAL_DATABIT_5:
-        iSerCr |= eDataBit5;
-        break;
-      case SERIAL_DATABIT_6:
-        iSerCr |= eDataBit6;
-        break;
-      case SERIAL_DATABIT_7:
-        iSerCr |= eDataBit7;
-        break;
-      case SERIAL_DATABIT_8:
-        iSerCr |= eDataBit8;
-        break;
-      default:
-        return SERIAL_DATABIT_UNKNOWN;
-    }
-
-    iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-
-    if (iRet < 0) {
-      return SERIAL_DATABIT_UNKNOWN;
-    }
-  }
-  return eDataBits;
-}
-
-// -----------------------------------------------------------------------------
-eSerialStopBits
-eChipIoSerialSetStopBits (xChipIoSerial * port, eSerialStopBits eStopBits) {
-
-  assert (port);
-  if (eChipIoSerialStopBits (port) != eStopBits) {
-    int iSerCr, iRet;
-
-
-    iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-    if (iSerCr < 0) {
-      return SERIAL_STOPBIT_UNKNOWN;
-    }
-
-    iSerCr &= ~eStopBitMask;
-    switch (eStopBits) {
-
-      case SERIAL_STOPBIT_ONE:
-        iSerCr |= eStopBit1;
-        break;
-      case SERIAL_STOPBIT_TWO:
-        iSerCr |= eStopBit2;
-        break;
-      default:
-        return SERIAL_STOPBIT_UNKNOWN;
-    }
-
-    iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-
-    if (iRet < 0) {
-      return SERIAL_STOPBIT_UNKNOWN;
-    }
-  }
-  return eStopBits;
-}
-
-// -----------------------------------------------------------------------------
-eSerialParity
-eChipIoSerialSetParity (xChipIoSerial * port, eSerialParity eParity) {
-
-  assert (port);
-  if (eChipIoSerialParity (port) != eParity) {
-    int iSerCr, iRet;
-
-
-    iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-    if (iSerCr < 0) {
-      return SERIAL_PARITY_UNKNOWN;
-    }
-
-    iSerCr &= ~eParityMask;
-    switch (eParity) {
-
-      case SERIAL_PARITY_NONE:
-        iSerCr |= eParityNone;
-        break;
-      case SERIAL_PARITY_EVEN:
-        iSerCr |= eParityEven;
-        break;
-      case SERIAL_PARITY_ODD:
-        iSerCr |= eParityOdd;
-        break;
-      default:
-        return SERIAL_PARITY_UNKNOWN;
-    }
-
-    iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-
-    if (iRet < 0) {
-      return SERIAL_PARITY_UNKNOWN;
-    }
-  }
-  return eParity;
-}
-
-// -----------------------------------------------------------------------------
-eSerialFlow
-eChipIoSerialSetFlow (xChipIoSerial * port, eSerialFlow eFlow) {
-
-  assert (port);
-  if (eChipIoSerialFlow (port) != eFlow) {
-    int iSerCr, iRet;
-
-
-    iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr);
-
-
-    if (iSerCr < 0) {
-      return SERIAL_FLOW_UNKNOWN;
-    }
-
-    iSerCr &= ~eFlowMask;
-    switch (eFlow) {
-
-      case SERIAL_FLOW_NONE:
-        iSerCr |= eFlowNone;
-        break;
-      case SERIAL_FLOW_RTSCTS:
-        iSerCr |= eFlowHard;
-        break;
-      case SERIAL_FLOW_XONXOFF:
-        iSerCr |= eFlowSoft;
-        break;
-      default:
-        return SERIAL_FLOW_UNKNOWN;
-    }
-
-    iRet = iChipIoWriteReg16 (port->chipio, eRegSerCr, iSerCr);
-
-    if (iRet < 0) {
-      return SERIAL_FLOW_UNKNOWN;
-    }
-  }
-  return eFlow;
+  return ptsname (port->fdm);
 }
 
 /* ========================================================================== */

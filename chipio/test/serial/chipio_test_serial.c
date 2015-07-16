@@ -18,10 +18,10 @@
 /* constants ================================================================ */
 #define I2C_DEVICE      "/dev/i2c-1"
 #define I2C_SLAVE       0x46
-#define SERIAL_BAUDRATE 38400
-#define SERIAL_DATABITS SERIAL_DATABIT_8
-#define SERIAL_PARITY   SERIAL_PARITY_NONE
-#define SERIAL_STOPBITS SERIAL_STOPBIT_ONE
+#define SERIAL_BAUDRATE 115200
+//#define SERIAL_DATABITS SERIAL_DATABIT_8
+//#define SERIAL_PARITY   SERIAL_PARITY_NONE
+//#define SERIAL_STOPBITS SERIAL_STOPBIT_ONE
 #define SERIAL_IRQPIN { .num = GPIO_GEN6, .act = true, .pull = ePullOff }
 
 #define TEST_DELAY 200
@@ -38,12 +38,11 @@
 /* private variables ======================================================== */
 static xChipIo * xChip;
 static xChipIoSerial * xPort;
-static int fds, iRet;
+static int fd, iRet;
 static FILE * pts;
 
 /* internal public functions ================================================ */
 void vSetup (void);
-void vPrintSetup (void);
 void vSigIntHandler (int sig);
 void vTestDebug (void);
 void vTestAlphabet (void);
@@ -58,6 +57,8 @@ main (int argc, char **argv) {
 
   vSetup();
   printf("Press Ctrl+C to abort ...\n");
+  delay_ms(1000);
+  iRet = iSerialSetBaudrate (fd, 38400);
 
   for (;;) {
 
@@ -85,7 +86,7 @@ vTestDebug (void) {
 #ifdef TEST_DEBUG
 
   char c = 0x55;
-  iRet = write (fds, &c, 1);
+  iRet = write (fd, &c, 1);
   assert (iRet == 1);
 #endif
 }
@@ -208,11 +209,11 @@ vTestPing (void) {
     fflush (pts);
 
     FD_ZERO (&xFdSet);
-    FD_SET (fds, &xFdSet);
+    FD_SET (fd, &xFdSet);
     xTv.tv_sec = 0;
     xTv.tv_usec = TEST_DELAY * 1000UL;
 
-    iRet = select (fds + 1, &xFdSet, NULL, NULL, &xTv);
+    iRet = select (fd + 1, &xFdSet, NULL, NULL, &xTv);
     if (iRet == -1) {
 
       PERROR ("select()");
@@ -252,7 +253,7 @@ vTestPong (void) {
       int iBytesAvailable;
 
       // Lecture du nombre de caractères à transmettre
-      iRet = ioctl (fds, FIONREAD, &iBytesAvailable);
+      iRet = ioctl (fd, FIONREAD, &iBytesAvailable);
       if (iRet == -1) {
 
         PERROR ("ioctl()");
@@ -260,7 +261,7 @@ vTestPong (void) {
       else {
         if (iBytesAvailable) {
 
-          int iBytesRead = read (fds, buffer, iBytesAvailable);
+          int iBytesRead = read (fd, buffer, iBytesAvailable);
           if (iBytesRead == -1) {
             PERROR ("read()");
           }
@@ -274,9 +275,9 @@ vTestPong (void) {
             }
 
             // Renvoie les données à l'envoyeur (echo)
-            iBytesWritten = write (fds, buffer, iBytesRead);
+            iBytesWritten = write (fd, buffer, iBytesRead);
             if (iBytesWritten == -1) {
-              PERROR ("write(fds)");
+              PERROR ("write(fd)");
             }
           }
         }
@@ -296,38 +297,34 @@ vSetup (void) {
   xChip = xChipIoOpen (I2C_DEVICE, I2C_SLAVE);
   assert(xChip);
   printf("ChipIo found on %s at 0x%02X\n", I2C_DEVICE, I2C_SLAVE);
-  xPort = xChipIoSerialOpen (xChip, &xIrqPin);
+  xPort = xChipIoSerialNew (xChip, &xIrqPin);
   assert(xPort);
   printf("Serial port opened %s\n", sChipIoSerialPortName (xPort));
 
-  fds = iChipIoSerialFileNo (xPort);
-  pts = fdopen (fds, "r+");
+  fd = iSerialOpen (sChipIoSerialPortName (xPort), SERIAL_BAUDRATE);
+  assert (fd >= 0);
+  printf("\t%s\n", sSerialConfigStrShort (fd));
+
+  pts = fdopen (fd, "r+");
   assert (pts);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal(SIGINT, vSigIntHandler);
 
-  printf("Old setting-up:\n");
-  vPrintSetup();
-#ifdef SERIAL_BAUDRATE
-  iRet = iChipIoSerialSetBaudrate (xPort, SERIAL_BAUDRATE);
-  assert (iRet == SERIAL_BAUDRATE);
-#endif
 #ifdef SERIAL_DATABITS
-  iRet = eChipIoSerialSetDataBits (xPort, SERIAL_DATABITS);
-  assert (iRet == SERIAL_DATABITS);
+  iRet = iSerialSetDataBits (fd, SERIAL_DATABITS);
+  assert (iRet == 0);
 #endif
 #ifdef SERIAL_PARITY
-  iRet = eChipIoSerialSetParity (xPort, SERIAL_PARITY);
-  assert (iRet == SERIAL_PARITY);
+  iRet = iSerialSetParity (fd, SERIAL_PARITY);
+  assert (iRet == 0);
 #endif
 #ifdef SERIAL_STOPBITS
-  iRet = eChipIoSerialSetStopBits (xPort, SERIAL_STOPBITS);
-  assert (iRet == SERIAL_STOPBITS);
+  iRet = iSerialSetStopBits (fd, SERIAL_STOPBITS);
+  assert (iRet == 0);
 #endif
 #if defined(SERIAL_BAUDRATE) || defined(SERIAL_DATABITS) || defined(SERIAL_PARITY) || defined(SERIAL_STOPBITS)
-  printf("New setting-up:\n");
-  vPrintSetup();
+  printf("New setting-up: %s\n", sSerialConfigStrShort (fd));
 #endif
 }
 
@@ -335,26 +332,13 @@ vSetup (void) {
 void
 vSigIntHandler (int sig) {
 
-  vChipIoSerialClose (xPort);
+  iRet = fclose (pts);
+  assert (iRet == 0);
+  vChipIoSerialDelete (xPort);
   iRet = iChipIoClose (xChip);
   assert (iRet == 0);
   printf("\neverything was closed.\nHave a nice day !\n");
   exit(EXIT_SUCCESS);
-}
-
-// -----------------------------------------------------------------------------
-void
-vPrintSetup (void) {
-
-  int iBaudrate = iChipIoSerialBaudrate (xPort);
-  eSerialDataBits eDataBits = eChipIoSerialDataBits (xPort);
-  eSerialParity eParity = eChipIoSerialParity (xPort);
-  eSerialStopBits eStopBits= eChipIoSerialStopBits (xPort);
-
-  printf ("\tBaudrate: %d\n", iBaudrate);
-  printf ("\tData bits: %s\n", sSerialDataBitsToStr (eDataBits));
-  printf ("\tParity: %s\n", sSerialParityToStr (eParity));
-  printf ("\tStop bits: %s\n", sSerialStopBitsToStr (eStopBits));
 }
 
 /* ========================================================================== */

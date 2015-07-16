@@ -32,7 +32,7 @@ DEBUG_OPT = 0
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
-#DEBUG = ON
+DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
 VIEW_GCC_LINE = OFF
@@ -114,7 +114,7 @@ VERSION=1.0.0
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis
-#SYSIO_DEBUG_TEST = ON
+SYSIO_DEBUG_TEST = ON
 SYSIO_ROOT = ../../..
 ARCH = ARCH_ARM_RASPBERRYPI
 #ARCH = ARCH_GENERIC_LINUX
