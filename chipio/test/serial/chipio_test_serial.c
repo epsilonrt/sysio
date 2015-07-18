@@ -42,7 +42,7 @@ static int fd, iRet;
 static FILE * pts;
 
 /* internal public functions ================================================ */
-void vSetup (void);
+void vSetup (int iBaudrate);
 void vSigIntHandler (int sig);
 void vTestDebug (void);
 void vTestAlphabet (void);
@@ -54,8 +54,14 @@ void vTestPong (void);
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
+  int iBaudrate = SERIAL_BAUDRATE;
 
-  vSetup();
+  if (argc > 1) {
+
+    iBaudrate = atoi(argv[1]);
+  }
+
+  vSetup(iBaudrate);
   printf("Press Ctrl+C to abort ...\n");
 
   for (;;) {
@@ -288,7 +294,7 @@ vTestPong (void) {
 
 // -----------------------------------------------------------------------------
 void
-vSetup (void) {
+vSetup (int iBaudrate) {
   xDin xIrqPin = SERIAL_IRQPIN;
 
   printf ("ChipIo Serial Port Test\n");
@@ -299,7 +305,7 @@ vSetup (void) {
   assert(xPort);
   printf("Serial port opened %s", sChipIoSerialPortName (xPort));
 
-  fd = iSerialOpen (sChipIoSerialPortName (xPort), SERIAL_BAUDRATE);
+  fd = iSerialOpen (sChipIoSerialPortName (xPort), iBaudrate);
   assert (fd >= 0);
 
   pts = fdopen (fd, "r+");
