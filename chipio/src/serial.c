@@ -9,6 +9,7 @@
 #define _GNU_SOURCE
 #define _XOPEN_SOURCE
 #include <pthread.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -382,6 +383,10 @@ pvSerialThread (void * xContext) {
 
   xChipIoSerial * port = (xChipIoSerial *) xContext;
   tcgetattr (port->fdm, &xCurrentTs);
+  // memset (&xCurrentTs, -1, sizeof(struct termios));
+  if (iChipIoWriteSerialAttr (port, &xCurrentTs, NULL) != 0) {
+    PERROR("Failed to write port attributes");
+  }
 
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
   vLedDebugInit();

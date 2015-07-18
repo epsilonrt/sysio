@@ -406,26 +406,32 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
 // -----------------------------------------------------------------------------
 int
 iSerialTermiosBaudrate (const struct termios * ts) {
-  speed_t baud = cfgetospeed (ts);
 
-  return iSerialSpeedToInt (baud);
+  if (ts) {
+    speed_t baud = cfgetospeed (ts);
+
+    return iSerialSpeedToInt (baud);
+  }
+  return EBADBAUD;
 }
 
 // -----------------------------------------------------------------------------
 int
 iSerialTermiosDataBits (const struct termios * ts) {
 
-  switch (ts->c_cflag & CSIZE) {
-    case CS5:
-      return SERIAL_DATABIT_5;
-    case CS6:
-      return SERIAL_DATABIT_6;
-    case CS7:
-      return SERIAL_DATABIT_7;
-    case CS8:
-      return SERIAL_DATABIT_8;
-    default:
-      break;
+  if (ts) {
+    switch (ts->c_cflag & CSIZE) {
+      case CS5:
+        return SERIAL_DATABIT_5;
+      case CS6:
+        return SERIAL_DATABIT_6;
+      case CS7:
+        return SERIAL_DATABIT_7;
+      case CS8:
+        return SERIAL_DATABIT_8;
+      default:
+        break;
+    }
   }
   return SERIAL_DATABIT_UNKNOWN;
 }
@@ -434,65 +440,81 @@ iSerialTermiosDataBits (const struct termios * ts) {
 int
 iSerialTermiosStopBits (const struct termios * ts) {
 
-  if (ts->c_cflag & CSTOPB) {
-    return SERIAL_STOPBIT_TWO;
+  if (ts) {
+    if (ts->c_cflag & CSTOPB) {
+      return SERIAL_STOPBIT_TWO;
+    }
+    return SERIAL_STOPBIT_ONE;
   }
-  return SERIAL_STOPBIT_ONE;
+  return SERIAL_STOPBIT_UNKNOWN;
 }
 
 // -----------------------------------------------------------------------------
 int
 iSerialTermiosParity (const struct termios * ts) {
 
-  switch (ts->c_cflag & (PARENB | PARODD)) {
-    case PARENB:
-      return SERIAL_PARITY_EVEN;
-    case PARENB | PARODD:
-      return SERIAL_PARITY_ODD;
-    default:
-      break;
+  if (ts) {
+    switch (ts->c_cflag & (PARENB | PARODD)) {
+      case PARENB:
+        return SERIAL_PARITY_EVEN;
+      case PARENB | PARODD:
+        return SERIAL_PARITY_ODD;
+      default:
+        break;
+    }
+    return SERIAL_PARITY_NONE;
   }
-  return SERIAL_PARITY_NONE;
+  return SERIAL_PARITY_UNKNOWN;
 }
 
 // -----------------------------------------------------------------------------
 int
 iSerialTermiosFlow (const struct termios * ts) {
 
-  if (ts->c_cflag & CRTSCTS) {
-    return SERIAL_FLOW_RTSCTS;
+  if (ts) {
+    if (ts->c_cflag & CRTSCTS) {
+      return SERIAL_FLOW_RTSCTS;
+    }
+    if (ts->c_iflag & (IXON | IXOFF | IXANY)) {
+      return SERIAL_FLOW_XONXOFF;
+    }
+    return SERIAL_FLOW_NONE;
   }
-  if (ts->c_iflag & (IXON | IXOFF | IXANY)) {
-    return SERIAL_FLOW_XONXOFF;
-  }
-  return SERIAL_FLOW_NONE;
+  return SERIAL_FLOW_UNKNOWN;
 }
 
 // -----------------------------------------------------------------------------
 const char *
 sSerialTermiosToStr  (const struct termios * ts) {
   // BBBBBBBB-DPSF
-  static char str[14];
-  snprintf (str, 14, "%d-%d%c%d%c",
-    iSerialTermiosBaudrate (ts),
-    iSerialTermiosDataBits (ts),
-    iSerialTermiosParity (ts),
-    iSerialTermiosStopBits (ts),
-    iSerialTermiosFlow (ts));
-  return str;
+
+  if (ts) {
+    static char str[14];
+    snprintf (str, 14, "%d-%d%c%d%c",
+      iSerialTermiosBaudrate (ts),
+      iSerialTermiosDataBits (ts),
+      iSerialTermiosParity (ts),
+      iSerialTermiosStopBits (ts),
+      iSerialTermiosFlow (ts));
+    return str;
+  }
+  return sUnknown;
 }
 
 // -----------------------------------------------------------------------------
 double
 dSerialTermiosFrameDuration (const struct termios * ts, size_t ulSize) {
-  unsigned uByteWidth;
+  if (ts) {
+    unsigned uByteWidth;
 
-  uByteWidth = 1 + iSerialTermiosDataBits (ts) +
-                  (iSerialTermiosParity (ts) == SERIAL_PARITY_NONE ? 0 : 1) +
-                   iSerialTermiosStopBits (ts);
+    uByteWidth = 1 + iSerialTermiosDataBits (ts) +
+                    (iSerialTermiosParity (ts) == SERIAL_PARITY_NONE ? 0 : 1) +
+                     iSerialTermiosStopBits (ts);
 
-  return (double) ulSize * (double) uByteWidth /
-            (double) iSerialTermiosBaudrate (ts);
+    return (double) ulSize * (double) uByteWidth /
+              (double) iSerialTermiosBaudrate (ts);
+  }
+  return -1;
 }
 
 // -----------------------------------------------------------------------------
