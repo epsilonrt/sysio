@@ -217,18 +217,66 @@ const char * sSerialGetFlowStr (int fd);
 const char * sSerialConfigStrShort (int fd);
 
 /**
+ * Chaîne de caractère décrivant la configuration correspondant aux paramètres
+ *
+ * Le format est BBBBBB-DPSF avec :
+ * - BBBBBB Baudrate
+ * - D Data bits (5, 6, 7 ,8)
+ * - P Parité (N, E, O)
+ * - S Stop (1, 2)
+ * - F Flow (H, S)
+ * .
+ * @return la représentation de la configuration sous forme de string, NULL si
+ * erreur.
+ */
+const char * sSerialConfigToStr (int iBaudrate, eSerialDataBits eDatabits,
+                                 eSerialParity eParity, eSerialStopBits eStopbits,
+                                 eSerialFlow eFlow);
+
+/**
  * Durée d'une trame de ulSize octets en secondes
  *
  * @param le descripteur de fichier du port
  */
 double dSerialFrameDuration (int fd, size_t ulSize);
 
+/**
+ * Baudrate d'une structure termios
+ */
 int iSerialTermiosBaudrate (const struct termios * ts);
+
+/**
+ * Data bits d'une structure termios
+ */
 int iSerialTermiosDataBits (const struct termios * ts);
+
+/**
+ * Stop bits d'une structure termios
+ */
 int iSerialTermiosStopBits (const struct termios * ts);
+
+/**
+ * Parité d'une structure termios
+ */
 int iSerialTermiosParity (const struct termios * ts);
+
+/**
+ * Contrôle de flux d'une structure termios
+ */
 int iSerialTermiosFlow (const struct termios * ts);
-const char * sSerialTermiosToStr  (const struct termios * ts);
+
+/**
+ *  Chaîne de caractère correspondant à une structure termios
+ *
+ * Le format est BBBBBB-DPSF avec :
+ * - BBBBBB Baudrate
+ * - D Data bits (5, 6, 7 ,8)
+ * - P Parité (N, E, O)
+ * - S Stop (1, 2)
+ * - F Flow (H, S)
+ * .
+ */
+const char * sSerialTermiosToStr (const struct termios * ts);
 
 /**
  * Durée d'une trame de ulSize octets en secondes
@@ -236,36 +284,32 @@ const char * sSerialTermiosToStr  (const struct termios * ts);
 double dSerialTermiosFrameDuration (const struct termios * ts, size_t ulSize);
 
 /**
- *  Renvoie la chaîne de caractère correspondant à une valeur de contrôle de flux
- *
+ *  Chaîne de caractère correspondant à une valeur de contrôle de flux
  */
 const char * sSerialFlowToStr (eSerialFlow eFlow);
 
 /**
- *  Renvoie la chaîne de caractère correspondant à une valeur de parité
- *
+ *  Chaîne de caractère correspondant à une valeur de parité
  */
 const char * sSerialParityToStr (eSerialParity eParity);
 
 /**
- *  Renvoie la chaîne de caractère correspondant à une valeur de bits de données
- *
+ *  Chaîne de caractère correspondant à une valeur de bits de données
  */
 const char * sSerialDataBitsToStr (eSerialDataBits eDataBits);
 
 /**
- *  Renvoie la chaîne de caractère correspondant à une valeur de bits de stop
- *
+ *  Chaîne de caractère correspondant à une valeur de bits de stop
  */
 const char * sSerialStopBitsToStr (eSerialStopBits eStopBits);
 
 /**
- *  Renvoie la valeur en baud associée à une constante speed_t
+ *  Baudrate associée à une constante speed_t
  */
 int iSerialSpeedToInt (speed_t speed);
 
 /**
- *  Renvoie la constante speed_t associée à une valeur en baud
+ *  Constante speed_t associée à une valeur en baud
  */
 speed_t eSerialIntToSpeed (int baud);
 

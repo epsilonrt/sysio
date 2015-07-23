@@ -598,7 +598,7 @@ vChipIoSerialDelete (xChipIoSerial * port) {
 }
 
 // -----------------------------------------------------------------------------
-const char *
+char *
 sChipIoSerialPortName (xChipIoSerial * port) {
 
   assert (port);

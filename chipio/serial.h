@@ -65,7 +65,7 @@ void vChipIoSerialDelete (xChipIoSerial * xPort);
  * @param xPort Pointeur sur le port
  * @return le nom du port sous forme d'une chaîne de caractères statique, NULL si erreur
  */
-const char * sChipIoSerialPortName (xChipIoSerial * xPort);
+char * sChipIoSerialPortName (xChipIoSerial * xPort);
 
 /**
  *  @}

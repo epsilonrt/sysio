@@ -32,10 +32,10 @@
 static int
 iCheckBaudrate (unsigned long ulBaud) {
 
-  if ((ulBaud < MIN_BAUDRATE) || (ulBaud > MAX_BAUDRATE)) {
+  if ( (ulBaud < MIN_BAUDRATE) || (ulBaud > MAX_BAUDRATE)) {
 
     vLog (LOG_WARNING, "Baudrate: %lu Bd out of range {%lu,%lu}",
-                                ulBaud, MIN_BAUDRATE, MAX_BAUDRATE);
+          ulBaud, MIN_BAUDRATE, MAX_BAUDRATE);
     return EBADBAUD;
   }
   return 0;
@@ -46,6 +46,7 @@ iCheckBaudrate (unsigned long ulBaud) {
 
 /* private variables ======================================================== */
 static const char sUnknown[] = "Unknown" ;
+static const char sNone[] = "none";
 
 /* internal public functions ================================================ */
 
@@ -119,15 +120,16 @@ iSerialOpen (const char *device, const int baud) {
         return EBADBAUD;
     }
 
-    if ((fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1)
+    if ( (fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1) {
       return -1;
+    }
 
     fcntl (fd, F_SETFL, O_RDWR);
 
     // Get and modify current options:
     tcgetattr (fd, &options);
 
-    cfmakeraw   (&options);
+    cfmakeraw (&options);
     cfsetispeed (&options, myBaud);
     cfsetospeed (&options, myBaud);
 
@@ -136,7 +138,7 @@ iSerialOpen (const char *device, const int baud) {
     options.c_cflag &= ~CSTOPB;
     options.c_cflag &= ~CSIZE;
     options.c_cflag |= CS8;
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    options.c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG);
     options.c_oflag &= ~OPOST;
 
     // read() should never block
@@ -277,7 +279,7 @@ iSerialSetBaudrate (int fd, int iBaudrate) {
   if (s != -1) {
     struct termios ts;
 
-    if ((i = tcgetattr (fd, &ts)) == 0) {
+    if ( (i = tcgetattr (fd, &ts)) == 0) {
 
       cfsetispeed (&ts, s);
       cfsetospeed (&ts, s);
@@ -295,7 +297,7 @@ iSerialSetDataBits (int fd, eSerialDataBits eDataBits) {
   struct termios ts;
   int i;
 
-  if ((i = tcgetattr (fd, &ts)) == 0) {
+  if ( (i = tcgetattr (fd, &ts)) == 0) {
 
     ts.c_cflag &= ~CSIZE;
     switch (eDataBits) {
@@ -327,7 +329,7 @@ iSerialSetStopBits (int fd, eSerialStopBits eStopBits) {
   struct termios ts;
   int i;
 
-  if ((i = tcgetattr (fd, &ts)) == 0) {
+  if ( (i = tcgetattr (fd, &ts)) == 0) {
 
     ts.c_cflag &= ~CSTOPB;
     switch (eStopBits) {
@@ -352,9 +354,9 @@ iSerialSetParity (int fd, eSerialParity eParity) {
   struct termios ts;
   int i;
 
-  if ((i = tcgetattr (fd, &ts)) == 0) {
+  if ( (i = tcgetattr (fd, &ts)) == 0) {
 
-    ts.c_cflag &= ~(PARENB | PARODD);
+    ts.c_cflag &= ~ (PARENB | PARODD);
     switch (eParity) {
 
       case SERIAL_PARITY_NONE:
@@ -380,10 +382,10 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
   struct termios ts;
   int i;
 
-  if ((i = tcgetattr (fd, &ts)) == 0) {
+  if ( (i = tcgetattr (fd, &ts)) == 0) {
 
     ts.c_cflag &= ~CRTSCTS;
-    ts.c_iflag &= ~(IXON | IXOFF | IXANY);
+    ts.c_iflag &= ~ (IXON | IXOFF | IXANY);
     switch (eFlow) {
 
       case SERIAL_FLOW_NONE:
@@ -485,18 +487,15 @@ iSerialTermiosFlow (const struct termios * ts) {
 
 // -----------------------------------------------------------------------------
 const char *
-sSerialTermiosToStr  (const struct termios * ts) {
+sSerialTermiosToStr (const struct termios * ts) {
   // BBBBBBBB-DPSF
 
   if (ts) {
-    static char str[14];
-    snprintf (str, 14, "%d-%d%c%d%c",
-      iSerialTermiosBaudrate (ts),
-      iSerialTermiosDataBits (ts),
-      iSerialTermiosParity (ts),
-      iSerialTermiosStopBits (ts),
-      iSerialTermiosFlow (ts));
-    return str;
+    return sSerialConfigToStr (iSerialTermiosBaudrate (ts),
+                               iSerialTermiosDataBits (ts),
+                               iSerialTermiosParity (ts),
+                               iSerialTermiosStopBits (ts),
+                               iSerialTermiosFlow (ts));
   }
   return sUnknown;
 }
@@ -508,11 +507,11 @@ dSerialTermiosFrameDuration (const struct termios * ts, size_t ulSize) {
     unsigned uByteWidth;
 
     uByteWidth = 1 + iSerialTermiosDataBits (ts) +
-                    (iSerialTermiosParity (ts) == SERIAL_PARITY_NONE ? 0 : 1) +
-                     iSerialTermiosStopBits (ts);
+                 (iSerialTermiosParity (ts) == SERIAL_PARITY_NONE ? 0 : 1) +
+                 iSerialTermiosStopBits (ts);
 
     return (double) ulSize * (double) uByteWidth /
-              (double) iSerialTermiosBaudrate (ts);
+           (double) iSerialTermiosBaudrate (ts);
   }
   return -1;
 }
@@ -731,16 +730,31 @@ eSerialIntToSpeed (int baud) {
 
 // -----------------------------------------------------------------------------
 const char *
+sSerialConfigToStr (int iBaudrate, eSerialDataBits eDatabits,
+                    eSerialParity eParity, eSerialStopBits eStopbits,
+                    eSerialFlow eFlow) {
+  static char str[14];
+  snprintf (str, 14, "%d-%d%c%d%c",
+            iBaudrate,
+            eDatabits,
+            eParity,
+            eStopbits,
+            eFlow);
+  return str;
+}
+
+// -----------------------------------------------------------------------------
+const char *
 sSerialFlowToStr (eSerialFlow eFlow) {
 
   switch (eFlow) {
 
     case SERIAL_FLOW_NONE:
-      return "None";
+      return sNone;
     case SERIAL_FLOW_RTSCTS:
-      return "Hardware";
+      return "hardware";
     case SERIAL_FLOW_XONXOFF:
-      return "Software";
+      return "software";
     default:
       break;
   }
@@ -754,15 +768,15 @@ sSerialParityToStr (eSerialParity eParity) {
   switch (eParity) {
 
     case SERIAL_PARITY_NONE:
-      return "None";
+      return sNone;
     case SERIAL_PARITY_EVEN:
-      return "Even";
+      return "even";
     case SERIAL_PARITY_ODD:
-      return "Odd";
+      return "odd";
     case SERIAL_PARITY_SPACE:
-      return "Space";
+      return "space";
     case SERIAL_PARITY_MARK:
-      return "Mark";
+      return "mark";
     default:
       break;
   }
