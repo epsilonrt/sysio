@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="sysio" Database="">
+<CodeLite_Workspace Name="sysio" Database="" SWTLW="No">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
@@ -8,7 +8,7 @@
   <Project Name="ssdv" Path="ssdv/ssdv.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="ssdv_util" Path="ssdv/util/ssdv_util.project" Active="No"/>
-  <Project Name="chipio_test_serial" Path="chipio/test/serial/chipio_test_serial.project" Active="No"/>
+  <Project Name="chipio_test_serial" Path="chipio/test/serial/chipio_test_serial.project" Active="Yes"/>
   <Project Name="ssdv_demo" Path="ssdv/demo/ssdv/ssdv_demo.project" Active="No"/>
   <Project Name="radio_demo_aprs" Path="radio/demo/aprs/radio_demo_aprs.project" Active="No"/>
   <Project Name="radio_demo_tnc" Path="radio/demo/tnc/radio_demo_tnc.project" Active="No"/>
@@ -33,7 +33,7 @@
   <Project Name="sysio_test_doutput" Path="sysio/test/doutput/sysio_test_doutput.project" Active="No"/>
   <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
-  <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="Yes"/>
+  <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>

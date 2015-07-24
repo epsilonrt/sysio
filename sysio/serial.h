@@ -28,18 +28,6 @@ __BEGIN_C_DECLS
 #define EBADBAUD (-2)
 
 /**
- * @enum eSerialFlow
- * @brief Type de contrôle de flux
- */
-typedef enum {
-
-  SERIAL_FLOW_NONE = ' ',
-  SERIAL_FLOW_RTSCTS = 'H',
-  SERIAL_FLOW_XONXOFF = 'S',
-  SERIAL_FLOW_UNKNOWN = -1
-} eSerialFlow;
-
-/**
  * @enum eSerialDataBits
  * @brief Nombre de bits de données
  */
@@ -75,6 +63,31 @@ typedef enum {
   SERIAL_STOPBIT_UNKNOWN
 } eSerialStopBits;
 
+/**
+ * @enum eSerialFlow
+ * @brief Type de contrôle de flux
+ */
+typedef enum {
+
+  SERIAL_FLOW_NONE = ' ',
+  SERIAL_FLOW_RTSCTS = 'H',
+  SERIAL_FLOW_XONXOFF = 'S',
+  SERIAL_FLOW_UNKNOWN = -1
+} eSerialFlow;
+
+/* structures =============================================================== */
+/**
+ * Configuration d'un port série
+ */
+typedef struct xSerialIos {
+  int baud; /**< Vitesse de transmission, négative si erreur */
+  eSerialDataBits dbits; /**< Bits de données */
+  eSerialParity parity; /**< Parité */
+  eSerialStopBits sbits;/**< Bits de stop */
+  eSerialFlow flow;/**< Contrôle de flux */
+  int flag; /**< Réservé pour un usage futur */
+} xSerialIos;
+
 /* internal public functions ================================================ */
 
 /**
@@ -84,10 +97,43 @@ typedef enum {
  * 1 bit de stop.
  *
  * @param device le nom du port à ouvrir (/dev/tty...)
- * @param baud vitesse en bauds
+ * @param xIos configuration du port
  * @return le descripteur de fichier du port ou une valeur négative sur erreur
  */
-int iSerialOpen (const char *device, const int baud);
+int iSerialOpen (const char *device, xSerialIos * xIos);
+
+/**
+ * Modification de configuration d'un port série
+ * 
+ * @param le descripteur de fichier du port
+ * @param xIos configuration du port
+ * @return 0, -1 si erreur
+ */
+int iSerialSetAttr (int fd, const xSerialIos * xIos);
+
+/**
+ * Lecture de configuration d'un port série
+ * 
+ * @param le descripteur de fichier du port
+ * @param xIos configuration du port lue
+ * @return 0, -1 si erreur
+ */
+int iSerialGetAttr (int fd, xSerialIos * xIos);
+
+/**
+ * Chaîne de caractère décrivant la configuration correspondant aux paramètres
+ *
+ * Le format est BBBBBB-DPSF avec :
+ * - BBBBBB Baudrate
+ * - D Data bits (5, 6, 7 ,8)
+ * - P Parité (N, E, O)
+ * - S Stop (1, 2)
+ * - F Flow (H, S)
+ * .
+ * @return la représentation de la configuration sous forme de string, NULL si
+ * erreur.
+ */
+const char * sSerialAttrToStr (const xSerialIos * xIos);
 
 /**
  *  Fermeture du port série
@@ -214,56 +260,75 @@ const char * sSerialGetFlowStr (int fd);
  * @return la représentation de la configuration sous forme de string, NULL si
  * erreur.
  */
-const char * sSerialConfigStrShort (int fd);
+const char * sSerialAttrStr (int fd);
 
 /**
- * Chaîne de caractère décrivant la configuration correspondant aux paramètres
- *
- * Le format est BBBBBB-DPSF avec :
- * - BBBBBB Baudrate
- * - D Data bits (5, 6, 7 ,8)
- * - P Parité (N, E, O)
- * - S Stop (1, 2)
- * - F Flow (H, S)
- * .
- * @return la représentation de la configuration sous forme de string, NULL si
- * erreur.
+ * Modification de configuration d'un port série d'une structure termios
+ * 
+ * @param ts structure termios
+ * @param xIos configuration du port
+ * @return 0, -1 si erreur
  */
-const char * sSerialConfigToStr (int iBaudrate, eSerialDataBits eDatabits,
-                                 eSerialParity eParity, eSerialStopBits eStopbits,
-                                 eSerialFlow eFlow);
+int iSerialTermiosSetAttr (struct termios * ts, const xSerialIos * xIos);
 
 /**
- * Durée d'une trame de ulSize octets en secondes
- *
- * @param le descripteur de fichier du port
+ * Lecture de configuration d'un port série d'une structure termios
+ * 
+ * @param ts structure termios
+ * @param xIos configuration du port lue
+ * @return 0, -1 si erreur
  */
-double dSerialFrameDuration (int fd, size_t ulSize);
+int iSerialTermiosGetAttr (const struct termios * ts, xSerialIos * xIos);
+
+/**
+ * Modification du baudrate d'une structure termios
+ */
+int iSerialTermiosSetBaudrate (struct termios * ts, int iBaudrate);
+
+/**
+ * Modification data bits d'une structure termios
+ */
+int iSerialTermiosSetDataBits (struct termios * ts, eSerialDataBits eDataBits);
+
+/**
+ * Modification du parité d'une structure termios
+ */
+int iSerialTermiosSetParity (struct termios * ts, eSerialParity eParity);
+
+/**
+ * Modification du stop bits d'une structure termios
+ */
+int iSerialTermiosSetStopBits (struct termios * ts, eSerialStopBits eStopBits);
+
+/**
+ * Modification du contrôle de flux d'une structure termios
+ */
+int iSerialTermiosSetFlow (struct termios * ts, eSerialFlow eFlow);
 
 /**
  * Baudrate d'une structure termios
  */
-int iSerialTermiosBaudrate (const struct termios * ts);
+int iSerialTermiosGetBaudrate (const struct termios * ts);
 
 /**
  * Data bits d'une structure termios
  */
-int iSerialTermiosDataBits (const struct termios * ts);
+int iSerialTermiosGetDataBits (const struct termios * ts);
 
 /**
  * Stop bits d'une structure termios
  */
-int iSerialTermiosStopBits (const struct termios * ts);
+int iSerialTermiosGetStopBits (const struct termios * ts);
 
 /**
  * Parité d'une structure termios
  */
-int iSerialTermiosParity (const struct termios * ts);
+int iSerialTermiosGetParity (const struct termios * ts);
 
 /**
  * Contrôle de flux d'une structure termios
  */
-int iSerialTermiosFlow (const struct termios * ts);
+int iSerialTermiosGetFlow (const struct termios * ts);
 
 /**
  *  Chaîne de caractère correspondant à une structure termios
@@ -312,6 +377,13 @@ int iSerialSpeedToInt (speed_t speed);
  *  Constante speed_t associée à une valeur en baud
  */
 speed_t eSerialIntToSpeed (int baud);
+
+/**
+ * Durée d'une trame de ulSize octets en secondes
+ *
+ * @param le descripteur de fichier du port
+ */
+double dSerialFrameDuration (int fd, size_t ulSize);
 
 /**
  * @}

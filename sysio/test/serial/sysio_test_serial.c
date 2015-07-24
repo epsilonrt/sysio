@@ -23,7 +23,12 @@
 #include <sysio/delay.h>
 
 /* constants ================================================================ */
-#define BAUDRATE      38400
+#define BAUDRATE  38400
+#define DATABITS  SERIAL_DATABIT_8
+#define PARITY    SERIAL_PARITY_NONE
+#define STOPBITS  SERIAL_STOPBIT_ONE
+#define FLOW      SERIAL_FLOW_NONE
+
 #define BYTE2PUT      'U'
 #define TIMEOUT_LOOP  200
 #define STEP_MS       1
@@ -34,7 +39,6 @@
 
 #ifdef ARCH_ARM_RASPBERRYPI
 /* ========================================================================== */
-
 #include <sysio/doutput.h>
 
 /* constants ================================================================ */
@@ -75,11 +79,11 @@ static void
 vLedToggle (unsigned i) {
   (void) vLedToggle (i, led);
 }
-#else
+#else /* ARCH_ARM_RASPBERRYPI not defined */
 /* ========================================================================== */
 
 /* constants ================================================================ */
-#define DEVICE "/dev/ttyUSB0"
+#define DEVICE "/dev/ttyUSB1"
 
 /* private variables ======================================================== */
 static char led[] = { 'E', 'T', 'O' };
@@ -97,7 +101,7 @@ vLedClear (unsigned i) {
 // -----------------------------------------------------------------------------
 static void
 vLedSet (unsigned i) {
-  
+
   if (led_status[i] == false) {
     putchar (led[i]);
     fflush (stdout);
@@ -116,12 +120,11 @@ vLedToggle (unsigned i) {
     vLedSet (i);
   }
 }
-
 /* ========================================================================== */
-#endif
+#endif  /* ARCH_ARM_RASPBERRYPI not defined */
 
 /* private variables ======================================================== */
-static int iSerialFd;
+static int fd;
 static FILE * xSerialPort;
 unsigned uRxError, uTimeoutError, uRxCharCount, uTxCharCount;
 
@@ -153,17 +156,24 @@ vSigIntHandler (int sig) {
 // ------------------------------------------------------------------------------
 static void
 vSetup (int iBaudrate) {
-
-
+  int iRet;
+  xSerialIos xIosSet = { .baud = BAUDRATE, .dbits = DATABITS, .parity = PARITY,
+                      .sbits = STOPBITS, .flow = FLOW
+                    };
+  xSerialIos xIosGet;
+  
   vLedInit();
 
-  if ( (iSerialFd = iSerialOpen (DEVICE, iBaudrate)) < 0) {
+  if ( (fd = iSerialOpen (DEVICE, &xIosSet)) < 0) {
 
     perror ("serialOpen failed !");
     exit (EXIT_FAILURE);
   }
-
-  if ( (xSerialPort = fdopen (iSerialFd, "w+")) == NULL) {
+  
+  iRet = iSerialGetAttr(fd, &xIosGet);
+  assert ((iRet == 0) && (memcmp (&xIosGet, &xIosSet, sizeof(xSerialIos)) == 0));
+  
+  if ( (xSerialPort = fdopen (fd, "w+")) == NULL) {
 
     perror ("fdopen failed !");
     exit (EXIT_FAILURE);

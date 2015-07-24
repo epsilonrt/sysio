@@ -55,7 +55,6 @@ xChipIoSerial * xChipIoSerialNew (xChipIo * xChip, xDin * xIrqPin);
  */
 void vChipIoSerialDelete (xChipIoSerial * xPort);
 
-
 /**
  * Retourne le nom du port série dans le système
  *
@@ -66,6 +65,24 @@ void vChipIoSerialDelete (xChipIoSerial * xPort);
  * @return le nom du port sous forme d'une chaîne de caractères statique, NULL si erreur
  */
 char * sChipIoSerialPortName (xChipIoSerial * xPort);
+
+/**
+ * Modification de configuration d'un port série
+ * 
+ * @param xPort Pointeur sur le port
+ * @param xIos configuration du port
+ * @return 0, -1 si erreur
+ */
+int iChipIoSerialSetAttr (xChipIoSerial * xPort, const xSerialIos * xIos);
+
+/**
+ * Lecture de configuration d'un port série
+ * 
+ * @param xPort Pointeur sur le port
+ * @param xIos configuration du port lue
+ * @return 0, -1 si erreur
+ */
+int iChipIoSerialGetAttr (xChipIoSerial * xPort, xSerialIos * xIos);
 
 /**
  *  @}

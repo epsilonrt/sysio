@@ -24,7 +24,12 @@
 // -----------------------------------------------------------------------------
 Serial::Serial (const char * portname, int baudrate) : fd (-1) {
 
-  _baudrate = baudrate;
+  ios.baud = baudrate;
+  ios.dbits = static_cast <eSerialDataBits> (Data8);
+  ios.parity = static_cast <eSerialParity> (EvenParity);
+  ios.sbits = static_cast <eSerialStopBits> (OneStop);
+  ios.flow = static_cast <eSerialFlow> (NoFlowControl);
+  ios.flag = 0;
   _portname = portname;
 }
 
@@ -38,7 +43,7 @@ Serial::~Serial () {
 bool
 Serial::open () {
 
-  fd = iSerialOpen (_portname.c_str(), _baudrate);
+  fd = iSerialOpen (_portname.c_str(), &ios);
   return fd >= 0;
 }
 
@@ -100,7 +105,7 @@ Serial::flowControlName() const {
 // -----------------------------------------------------------------------------
 int Serial::baudrate() const {
 
-  return _baudrate;
+  return ios.baud;
 }
 
 // -----------------------------------------------------------------------------
@@ -130,18 +135,17 @@ Serial::setFlowControlName (const char * flowStr) {
 
 // -----------------------------------------------------------------------------
 void
-Serial::setBaudrate (int baudrate) {
+Serial::setBaudrate (int baud) {
 
-  if (baudrate != _baudrate) {
-    int old = _baudrate;
-    _baudrate = baudrate;
+  if (baud != baudrate()) {
+    int old = baudrate();
 
     if (fd >= 0) {
-      close();
-      if (open() == false) {
-        _baudrate = old;
-        open();
+      if (iSerialSetBaudrate (fd, baud) != 0) {
+        ios.baud = old;
+        return;
       }
+      ios.baud = baud;
     }
   }
 }
@@ -150,7 +154,7 @@ Serial::setBaudrate (int baudrate) {
 void
 Serial::setPort (const char * portname) {
 
-  if (_portname.compare(portname) != 0) {
+  if (_portname.compare (portname) != 0) {
     std::string old = _portname;
     _portname = portname;
 
