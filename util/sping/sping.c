@@ -103,8 +103,8 @@ int
 main (int argc, char **argv) {
 
   /* Options ligne de commande */
-  int iBaudrate, iPacketSize, iPacketCount, iPacketTimeout, iPacketInterval;
-  int iDataBit, iStopBit, iParity;
+  int iPacketSize, iPacketCount, iPacketTimeout, iPacketInterval;
+  xSerialIos xIos;
 
 #ifndef ARCH_ARM_RASPBERRYPI
   const int iStopBitList[] = STOPBIT_LIST;
@@ -156,10 +156,12 @@ main (int argc, char **argv) {
 
 
   /* Paramètres */
-  iBaudrate =       DEFAULT_BAUDRATE;
-  iDataBit =        DEFAULT_DATABIT;
-  iStopBit =        DEFAULT_STOPBIT;
-  iParity  =        DEFAULT_PARITY;
+  xIos.baud =       DEFAULT_BAUDRATE;
+  xIos.dbits =      DEFAULT_DATABIT;
+  xIos.sbits =      DEFAULT_STOPBIT;
+  xIos.parity  =    DEFAULT_PARITY;
+  xIos.flow =       SERIAL_FLOW_NONE;
+  xIos.flag =       0;
   iPacketSize =     DEFAULT_PACKET_SIZE;
   iPacketCount =    DEFAULT_PACKET_COUNT;
   iPacketTimeout  = DEFAULT_PACKET_TIMEOUT;
@@ -172,37 +174,37 @@ main (int argc, char **argv) {
 
     switch (iNextOption) {
       case 'b':
-        iBaudrate = atoi (optarg);
-        if ( ( (unsigned long) iBaudrate < MIN_BAUDRATE) ||
-             ( (unsigned long) iBaudrate > MAX_BAUDRATE)) {
-          iBaudrate = DEFAULT_BAUDRATE;
+        xIos.baud = atoi (optarg);
+        if ( ( (unsigned long) xIos.baud < MIN_BAUDRATE) ||
+             ( (unsigned long) xIos.baud > MAX_BAUDRATE)) {
+          xIos.baud = DEFAULT_BAUDRATE;
           fprintf (stderr, "Warning: baudrate out of range {%d,%d} !\n", MIN_BAUDRATE, MAX_BAUDRATE);
         }
-        //printf("baudrate=%d\n", iBaudrate);
+        //printf("baudrate=%d\n", xIos.baud);
         break;
       case 'd':
-        iDataBit = atoi (optarg);
-        if ( (iDataBit < MIN_DATABIT) ||
-             (iDataBit > MAX_DATABIT)) {
-          iDataBit = DEFAULT_DATABIT;
+        xIos.dbits = atoi (optarg);
+        if ( (xIos.dbits < MIN_DATABIT) ||
+             (xIos.dbits > MAX_DATABIT)) {
+          xIos.dbits = DEFAULT_DATABIT;
           fprintf (stderr, "Warning: databit out of range {%d,%d} !\n", MIN_DATABIT, MAX_DATABIT);
         }
         /***************** TODO *****************/
         fprintf (stderr, "databit: not implemented yet feature !\n");
-        //printf("databit=%d\n", iDataBit);
+        //printf("databit=%d\n", xIos.dbits);
         break;
 #ifndef ARCH_ARM_RASPBERRYPI
       case 't':
-        iStopBit = atoi (optarg);
-        iStopBit = iCheckValue (iStopBit, iStopBitList, DEFAULT_STOPBIT);
+        xIos.sbits = atoi (optarg);
+        xIos.sbits = iCheckValue (xIos.sbits, iStopBitList, DEFAULT_STOPBIT);
         fprintf (stderr, "stopbit: not implemented yet feature !\n");
-        //printf("stopbit=%d\n", iStopBit);
+        //printf("stopbit=%d\n", xIos.sbits);
         break;
       case 'p':
-        iParity = atoi (optarg);
-        iParity = iCheckValue (iParity, iParityList, DEFAULT_PARITY);
+        xIos.parity = atoi (optarg);
+        xIos.parity = iCheckValue (xIos.parity, iParityList, DEFAULT_PARITY);
         fprintf (stderr, "parity: not implemented yet feature !\n");
-        //printf("parity=%c\n", iParity);
+        //printf("parity=%c\n", xIos.parity);
         break;
 #endif
       case 's':
@@ -250,7 +252,7 @@ main (int argc, char **argv) {
   }
 
   /* Début du traitement */
-  iFd = iSerialOpen (sDevice, iBaudrate);
+  iFd = iSerialOpen (sDevice, &xIos);
   if (iFd < 0) {
 
     fprintf (stderr, "Unable to open %s device: %s\n", sDevice, strerror (errno));
@@ -274,15 +276,15 @@ main (int argc, char **argv) {
   sPingPacket[iPacketSize + 1] = ETX;
 
   tTransmittTime = ( (iPacketSize + 2) *
-                     (iDataBit + iStopBit + (iParity == 'N' ? 0 : 1) + 1) *
-                     1E6) / iBaudrate;
+                     (xIos.dbits + xIos.sbits + (xIos.parity == 'N' ? 0 : 1) + 1) *
+                     1E6) / xIos.baud;
   printf ("SERIAL PING %d(%d) bytes of data. %d-%d%c%d. Timeout %d ms.\n",
           iPacketSize,
           iPacketSize + 2,
-          iBaudrate,
-          iDataBit,
-          iParity,
-          iStopBit,
+          xIos.baud,
+          xIos.dbits,
+          xIos.parity,
+          xIos.sbits,
           iPacketTimeout);
   //printf ("delay=%lu\n", (unsigned long)tTransmittTime);
 
