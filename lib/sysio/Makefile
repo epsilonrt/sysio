@@ -378,7 +378,7 @@ uninstall:
 	@-rm -fr $(INSTALL_INCDIR)/chipio
 
 version.h:
-	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
+	@$(SYSIO_ROOT)/util/bin/sysio-ver $@
 
 version.mk: version
 
