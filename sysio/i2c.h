@@ -19,6 +19,13 @@ __BEGIN_C_DECLS
  *  @{
  */
 
+/* constants ================================================================ */
+/**
+ * Nombre max d'octets dans une trame I2C
+ */
+#define I2C_BLOCK_MAX 32
+
+/* internal public functions ================================================ */
 /**
  * @brief Ouverture d'une connexion vers un circuit I2C
  *

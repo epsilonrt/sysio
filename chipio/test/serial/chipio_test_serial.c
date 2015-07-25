@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <assert.h>
 #include <signal.h>
@@ -19,9 +20,9 @@
 #define I2C_DEVICE      "/dev/i2c-1"
 #define I2C_SLAVE       0x46
 #define SERIAL_BAUDRATE 38400
-#define SERIAL_DATABITS SERIAL_DATABIT_7
-#define SERIAL_PARITY   SERIAL_PARITY_EVEN
-#define SERIAL_STOPBITS SERIAL_STOPBIT_TWO
+#define SERIAL_DATABITS SERIAL_DATABIT_8
+#define SERIAL_PARITY   SERIAL_PARITY_NONE
+#define SERIAL_STOPBITS SERIAL_STOPBIT_ONE
 #define SERIAL_IRQPIN { .num = GPIO_GEN6, .act = true, .pull = ePullOff }
 
 #define TEST_DELAY 200
@@ -41,7 +42,8 @@ static xChipIoSerial * xPort;
 static int fd, iRet;
 static FILE * pts;
 static xSerialIos xCurrentIos = { .baud = SERIAL_BAUDRATE, .dbits = SERIAL_DATABITS,
-                           .parity = SERIAL_PARITY, .sbits = SERIAL_STOPBITS
+                           .parity = SERIAL_PARITY, .sbits = SERIAL_STOPBITS,
+                           .flow = SERIAL_FLOW_NONE
                          };
 
 /* internal public functions ================================================ */
@@ -322,7 +324,7 @@ vSetup (int iBaudrate) {
   iRet = iChipIoSerialGetAttr (xPort, &xIos);
   assert(iRet == 0);
   printf ("Previous port config: %s\n", sSerialAttrToStr (&xIos));
-  
+
   iRet = iChipIoSerialSetAttr (xPort, &xCurrentIos);
   assert(iRet == 0);
   iRet = iChipIoSerialGetAttr (xPort, &xIos);
