@@ -68,7 +68,7 @@ char * sChipIoSerialPortName (xChipIoSerial * xPort);
 
 /**
  * Modification de configuration d'un port série
- * 
+ *
  * @param xPort Pointeur sur le port
  * @param xIos configuration du port
  * @return 0, -1 si erreur
@@ -77,12 +77,20 @@ int iChipIoSerialSetAttr (xChipIoSerial * xPort, const xSerialIos * xIos);
 
 /**
  * Lecture de configuration d'un port série
- * 
+ *
  * @param xPort Pointeur sur le port
  * @param xIos configuration du port lue
  * @return 0, -1 si erreur
  */
 int iChipIoSerialGetAttr (xChipIoSerial * xPort, xSerialIos * xIos);
+
+/**
+ *  Vide les buffers de réception et de transmission
+ *
+ * @param xPort Pointeur sur le port
+ * @return 0, -1 si erreur
+ */
+int iChipIoSerialFlush (xChipIoSerial * port);
 
 /**
  *  @}

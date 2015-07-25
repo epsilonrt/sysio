@@ -8,8 +8,8 @@
 TARGET = sysio++
 
 # Choix de l'architecture matérielle du système
-ARCH = ARCH_GENERIC_LINUX
-#ARCH = ARCH_ARM_RASPBERRYPI
+#ARCH = ARCH_GENERIC_LINUX
+ARCH = ARCH_ARM_RASPBERRYPI
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -66,7 +66,7 @@ SRC  = ../version.c
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
 # recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
 # d'accès complet du fichier mais seulement le nom du projet (avrio, avrx, ...)
-CPPSRC  = 
+CPPSRC  =
 
 # Liste des fichiers source assembleur
 #   L'extenson doit toujours être .S (en majuscule). En effet, les fichiers .s
@@ -318,7 +318,6 @@ clean: clean_list_lib
 distclean: distclean_list clean_list_lib
 
 version:
-	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
 	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.mk
 
 libstatic: $(TARGET_LIB_PATH).a
@@ -351,7 +350,8 @@ uninstall:
 	@-rm -f $(INSTALL_INCDIR)/sysio/*.hpp
 	@-rm -f $(INSTALL_INCDIR)/radio/*.hpp
 
-version.h: version
+version.h:
+	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
 
 version.mk: version
 

@@ -8,8 +8,8 @@
 TARGET = sysio
 
 # Choix de l'architecture matérielle du système
-ARCH = ARCH_GENERIC_LINUX
-#ARCH = ARCH_ARM_RASPBERRYPI
+#ARCH = ARCH_GENERIC_LINUX
+ARCH = ARCH_ARM_RASPBERRYPI
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -318,7 +318,6 @@ clean: clean_list_lib
 distclean: distclean_list clean_list_lib
 
 version:
-	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
 	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.mk
 
 libstatic: $(TARGET_LIB_PATH).a
@@ -378,7 +377,8 @@ uninstall:
 	@-rm -fr $(INSTALL_INCDIR)/ssdv
 	@-rm -fr $(INSTALL_INCDIR)/chipio
 
-version.h: version
+version.h:
+	@$(SYSIO_ROOT)/util/bin/sysio-ver $@.h
 
 version.mk: version
 
@@ -434,12 +434,10 @@ $(OBJDIR)/%.o : %.c Makefile version.h
 	@echo "$(MSG_COMPILING) $<"
 	$(CC) -c $(ALL_CFLAGS) $< -o $@
 
-
 # Compile: create object files from C++ source files.
 $(OBJDIR)/%.o : %.cpp Makefile version.h
 	@echo "$(MSG_COMPILING_CPP) $<"
 	$(CC) -c $(ALL_CPPFLAGS) $< -o $@
-
 
 # Compile: create assembler files from C source files.
 %.s : %.c

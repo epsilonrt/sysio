@@ -333,6 +333,8 @@ vChipIoSerialDelete (xChipIoSerial * port) {
   iRet = pthread_join (port->thread, NULL);
   assert (iRet == 0);
 
+  iChipIoSerialFlush (port);
+
   // Fermeture des éléments
   if (port->irq) {
 
@@ -560,6 +562,14 @@ sChipIoSerialPortName (xChipIoSerial * port) {
 
   assert (port);
   return ptsname (port->fdm);
+}
+
+// -----------------------------------------------------------------------------
+int
+iChipIoSerialFlush (xChipIoSerial * port) {
+
+  int iRet = iChipIoWriteReg8 (port->chipio, eRegSerSr, eStatusBusy);
+  return iRet;
 }
 
 /* ========================================================================== */
