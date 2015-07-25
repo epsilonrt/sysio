@@ -307,6 +307,8 @@ xChipIoSerialNew (xChipIo * chip, xDin * xIrqPin) {
     }
   }
 
+  iChipIoSerialFlush (port);
+
   // Création du thread
   if (pthread_create (&port->thread, NULL, pvSerialThread, port) != 0) {
 
