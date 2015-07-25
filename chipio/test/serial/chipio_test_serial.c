@@ -15,7 +15,7 @@
 #include <chipio/serial.h>
 #include <sysio/log.h>
 #include <sysio/rpi.h>
-
+#error "TODO: Ce test n'est plus fonctionnel suite à modification de chipio/serial.c pour modbus"
 /* constants ================================================================ */
 #define I2C_DEVICE      "/dev/i2c-1"
 #define I2C_SLAVE       0x46
@@ -47,7 +47,7 @@ static xSerialIos xCurrentIos = { .baud = SERIAL_BAUDRATE, .dbits = SERIAL_DATAB
                          };
 
 /* internal public functions ================================================ */
-void vSetup (int iBaudrate);
+void vSetup (void);
 void vSigIntHandler (int sig);
 void vTestDebug (void);
 void vTestAlphabet (void);
@@ -59,14 +59,13 @@ void vTestPong (void);
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  int iBaudrate = SERIAL_BAUDRATE;
 
   if (argc > 1) {
 
-    iBaudrate = atoi (argv[1]);
+    xCurrentIos.baud = atoi (argv[1]);
   }
 
-  vSetup (iBaudrate);
+  vSetup ();
   printf ("Press Ctrl+C to abort ...\n");
 
   for (;;) {
@@ -300,7 +299,7 @@ vTestPong (void) {
 
 // -----------------------------------------------------------------------------
 void
-vSetup (int iBaudrate) {
+vSetup (void) {
   xDin xIrqPin = SERIAL_IRQPIN;
 
   printf ("ChipIo Serial Port Test\n");
