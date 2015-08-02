@@ -59,25 +59,25 @@ vLedInit (void) {
 
   led = xDoutOpen (xMyLeds, 3);
   assert (led);
-  vLedClearAll (led);
+  (void)iDoutClearAll (led);
 }
 
 // -----------------------------------------------------------------------------
 static void
 vLedClear (unsigned i) {
-  (void) vLedClear (i, led);
+  (void) iDoutClear (i, led);
 }
 
 // -----------------------------------------------------------------------------
 static void
 vLedSet (unsigned i) {
-  (void) vLedSet (i, led);
+  (void) iDoutSet (i, led);
 }
 
 // -----------------------------------------------------------------------------
 static void
 vLedToggle (unsigned i) {
-  (void) vLedToggle (i, led);
+  (void) iDoutToggle (i, led);
 }
 #else /* ARCH_ARM_RASPBERRYPI not defined */
 /* ========================================================================== */
@@ -161,7 +161,7 @@ vSetup (int iBaudrate) {
                       .sbits = STOPBITS, .flow = FLOW
                     };
   xSerialIos xIosGet;
-  
+
   vLedInit();
 
   if ( (fd = iSerialOpen (DEVICE, &xIosSet)) < 0) {
@@ -169,10 +169,10 @@ vSetup (int iBaudrate) {
     perror ("serialOpen failed !");
     exit (EXIT_FAILURE);
   }
-  
+
   iRet = iSerialGetAttr(fd, &xIosGet);
   assert ((iRet == 0) && (memcmp (&xIosGet, &xIosSet, sizeof(xSerialIos)) == 0));
-  
+
   if ( (xSerialPort = fdopen (fd, "w+")) == NULL) {
 
     perror ("fdopen failed !");
