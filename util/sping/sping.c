@@ -59,7 +59,7 @@
 #ifdef ARCH_ARM_RASPBERRYPI
 // below is for Raspberry Pi
 #   define F_CPU 700000000UL // Raspberry Pi System Clock: 700 MHz
-#   define BAUDRATE(baudrate_reg) (unsigned long)(F_CPU/(8UL*(baudrate_reg+1UL)))
+#   define BAUDRATE(baudrate_reg) (unsigned int)(F_CPU/(8UL*(baudrate_reg+1UL)))
 //
 #   define MAX_BAUDRATE BAUDRATE(0)
 #   define MIN_BAUDRATE BAUDRATE(0xFFFF)
