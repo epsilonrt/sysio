@@ -28,7 +28,9 @@
   </Plugins>
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="libsysio++"/>
+  <VirtualDirectory Name="libsysio++">
+    <File Name="Makefile"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
