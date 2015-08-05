@@ -26,36 +26,6 @@
  }]]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="gpio">
-    <VirtualDirectory Name="read">
-      <File Name="gpio/read/sysio_test_gpio_read.c"/>
-      <File Name="gpio/read/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="getmode">
-      <File Name="gpio/getmode/sysio_test_gpio_getmode.c"/>
-      <File Name="gpio/getmode/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="write">
-      <File Name="gpio/write/Makefile"/>
-      <File Name="gpio/write/sysio_test_gpio_write.c"/>
-    </VirtualDirectory>
-    <File Name="gpio/Makefile"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="dinput">
-    <VirtualDirectory Name="group">
-      <File Name="dinput/group/sysio_test_dinput_group.c"/>
-      <File Name="dinput/group/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="poll">
-      <File Name="dinput/poll/sysio_test_dinput_poll.c"/>
-      <File Name="dinput/poll/Makefile"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="callback">
-      <File Name="dinput/callback/Makefile"/>
-      <File Name="dinput/callback/sysio_test_dinput_callback.c"/>
-    </VirtualDirectory>
-    <File Name="dinput/Makefile"/>
-  </VirtualDirectory>
   <Description/>
   <Dependencies/>
   <Settings Type="Executable">
@@ -149,18 +119,6 @@
   </Settings>
   <VirtualDirectory Name="test">
     <File Name="Makefile"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="doutput">
-    <File Name="doutput/sysio_test_doutput.c"/>
-    <File Name="doutput/Makefile"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="pwm">
-    <File Name="pwm/sysio_test_pwm.c"/>
-    <File Name="pwm/Makefile"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="serial">
-    <File Name="serial/sysio_test_serial.c"/>
-    <File Name="serial/Makefile"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

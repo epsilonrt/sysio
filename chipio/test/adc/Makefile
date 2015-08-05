@@ -118,10 +118,11 @@ VERSION=1.0.0
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
-SYSIO_DEBUG_TEST = ON
-SYSIO_ROOT = ../../..
-ARCH = ARCH_ARM_RASPBERRYPI
-#ARCH = ARCH_GENERIC_LINUX
+#SYSIO_DEBUG_TEST = ON
+
+ifeq ($(SYSIO_ROOT),)
+SYSIO_ROOT = $(PROJECT_TOPDIR)/../sysio
+endif
 #-----------------------------------------------
 
 #-------------------------------------------------------------------------------
