@@ -40,12 +40,29 @@ __BEGIN_C_DECLS
 #ifndef __need_NULL
 # define __need_NULL
 #endif
-#ifndef __need_NULL
+#ifndef __need_size_t
 # define __need_size_t
 #endif
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+/* UNIX-style OS */
+#define SYSIO_OS_UNIX
+#if defined(_POSIX_VERSION)
+/* POSIX compliant */
+#define SYSIO_OS_POSIX
+#endif
+#if defined(__linux__)
+#define SYSIO_OS_LINUX
+#endif
+#elif defined(_WIN32) || defined(WIN32)
+#define SYSIO_OS_WIN32
+#else
+#error Unable to detect operating system !
+#endif
 
 /* internal public functions ================================================ */
 /*
@@ -107,13 +124,6 @@ int iSysIoSetStrError (const char *format, ...);
 #define PWARNING(fmt,...) iSysIoSetStrError("%s:%d: %s: Warning: " fmt "\n", \
                                       __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #endif
-
-#ifdef __unix__
-# ifndef delay
-#   include <unistd.h>
-#   define delay(ms) usleep(ms*1000.0)
-# endif
-#endif /*  __unix__ defined */
 
   /* GCC attributes */
 #define FORMAT(type,fmt,first)  __attribute__((__format__(type, fmt, first)))

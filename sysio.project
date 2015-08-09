@@ -161,10 +161,14 @@
       <VirtualDirectory Name="posix">
         <File Name="sysio/src/posix/iomap.c"/>
         <File Name="sysio/src/posix/serial.c"/>
+        <File Name="sysio/src/posix/log.c"/>
         <File Name="sysio/src/posix/delay.c"/>
       </VirtualDirectory>
-      <File Name="sysio/src/log.c"/>
       <File Name="sysio/src/serial-wrapper.cpp"/>
+      <File Name="sysio/src/serial.c"/>
+      <VirtualDirectory Name="win32">
+        <File Name="sysio/src/win32/delay.c"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
