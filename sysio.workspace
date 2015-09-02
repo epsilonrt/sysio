@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" SWTLW="No">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
@@ -34,6 +34,7 @@
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="sysio_test_xbee" Path="sysio/test/xbee/sysio_test_xbee.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -98,6 +99,7 @@
       <Project Name="chipio" ConfigName="Debug"/>
       <Project Name="chipio_test_adc" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
+      <Project Name="sysio_test_xbee" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -162,6 +164,7 @@
       <Project Name="chipio" ConfigName="Release"/>
       <Project Name="chipio_test_adc" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
+      <Project Name="sysio_test_xbee" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
