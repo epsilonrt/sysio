@@ -105,7 +105,7 @@ int iSerialOpen (const char *device, xSerialIos * xIos);
 /**
  * Modification de configuration d'un port série
  * 
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  * @param xIos configuration du port
  * @return 0, -1 si erreur
  */
@@ -114,7 +114,7 @@ int iSerialSetAttr (int fd, const xSerialIos * xIos);
 /**
  * Lecture de configuration d'un port série
  * 
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  * @param xIos configuration du port lue
  * @return 0, -1 si erreur
  */
@@ -136,9 +136,17 @@ int iSerialGetAttr (int fd, xSerialIos * xIos);
 const char * sSerialAttrToStr (const xSerialIos * xIos);
 
 /**
+ * @brief Vérifie si le descripteur de fichier est valide
+ * 
+ * @param fd le descripteur de fichier du port
+ * @return true si valide
+ */
+bool bSerialFdIsValid (int fd);
+
+/**
  *  Fermeture du port série
  *
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  */
 void vSerialClose (int fd);
 
@@ -147,7 +155,7 @@ void vSerialClose (int fd);
  *
  * Le buffer de transmission est transmis, celui de réception est vidé.
  *
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  */
 void vSerialFlush (int fd);
 
@@ -155,7 +163,7 @@ void vSerialFlush (int fd);
  * Retourne le nombre d'octets en attente de lecture
  *
  * @param xPort Pointeur sur le port
- * @return le nombre d'octets en attente de lecture, NULL si erreur
+ * @return le nombre d'octets en attente de lecture, -1 si erreur
  */
 int iSerialDataAvailable (int fd);
 
@@ -242,7 +250,7 @@ int iSerialSetFlow (int fd, eSerialFlow eNewFlow);
 /**
  *  Lecture du type de contrôle de flux en cours sous forme "lisible"
  *
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  */
 const char * sSerialGetFlowStr (int fd);
 
@@ -256,7 +264,7 @@ const char * sSerialGetFlowStr (int fd);
  * - S Stop (1, 2)
  * - F Flow (H, S)
  * .
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  * @return la représentation de la configuration sous forme de string, NULL si
  * erreur.
  */
@@ -381,7 +389,7 @@ speed_t eSerialIntToSpeed (int baud);
 /**
  * Durée d'une trame de ulSize octets en secondes
  *
- * @param le descripteur de fichier du port
+ * @param fd le descripteur de fichier du port
  */
 double dSerialFrameDuration (int fd, size_t ulSize);
 

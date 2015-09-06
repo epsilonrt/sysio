@@ -34,9 +34,10 @@
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="sysio_test_xbee" Path="sysio/test/xbee/sysio_test_xbee.project" Active="Yes"/>
+  <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
+  <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
       <Project Name="test_group" ConfigName="Debug"/>
       <Project Name="test_poll" ConfigName="Debug"/>
@@ -100,6 +101,8 @@
       <Project Name="chipio_test_adc" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_xbee" ConfigName="Debug"/>
+      <Project Name="sysio_test_xbee_node" ConfigName="Debug"/>
+      <Project Name="sysio_test_xbee_coordinator" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -165,6 +168,8 @@
       <Project Name="chipio_test_adc" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_xbee" ConfigName="Release"/>
+      <Project Name="sysio_test_xbee_node" ConfigName="Release"/>
+      <Project Name="sysio_test_xbee_coordinator" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -65,4 +65,113 @@ iXBeeZbSendToCoordinator (xXBee *xbee, const void *data, uint8_t len) {
                       pucXBeeAddr64Coordinator(), 
                       pucXBeeAddr16Unknown(), 0, 0);
 }
+
+// -----------------------------------------------------------------------------
+int 
+iXBeeZbSendBroadcast (xXBee *xbee, const void *data, uint8_t len) {
+  
+  return iXBeeZbSend (xbee, data, len, 
+                      pucXBeeAddr64Broadcast(), 
+                      pucXBeeAddr16Unknown(), 0, 0);
+}
+
+// -----------------------------------------------------------------------------
+// STATIC
+static xXBeeZbNodeIdPktTail *
+pxXBeeZbNodeIdPktTail (xXBeePkt * pkt) {
+  char * ni = pcXBeePktNiString (pkt);
+
+  return (xXBeeZbNodeIdPktTail *) (ni + strlen (ni) + 1);
+}
+
+// -----------------------------------------------------------------------------
+uint8_t * 
+pucXBeePktAddrRemote64 (xXBeePkt *pkt) {
+  
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return ( (xXBeeZbNodeIdPkt *) pkt)->remote64;
+  }
+  return NULL;
+}
+
+// -----------------------------------------------------------------------------
+uint8_t * 
+pucXBeePktAddrRemote16 (xXBeePkt *pkt) {
+  
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return ( (xXBeeZbNodeIdPkt *) pkt)->remote16;
+  }
+  return NULL;
+}
+
+
+// -----------------------------------------------------------------------------
+char *
+pcXBeePktNiString (xXBeePkt * pkt) {
+
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return ( (xXBeeZbNodeIdPkt *) pkt)->ni;
+  }
+  return NULL;
+}
+
+
+// -----------------------------------------------------------------------------
+uint8_t * 
+pucXBeePktAddrParent16 (xXBeePkt *pkt) {
+  
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return (pxXBeeZbNodeIdPktTail (pkt))->parent16;
+  }
+  return NULL;
+}
+
+// -----------------------------------------------------------------------------
+eXBeeDeviceType
+eXBeePktDeviceType (xXBeePkt * pkt) {
+
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return (eXBeeDeviceType)(pxXBeeZbNodeIdPktTail (pkt))->device;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+eXBeeSourceEvent
+eXBeePktSourceEvent (xXBeePkt * pkt) {
+
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return (eXBeeSourceEvent) (pxXBeeZbNodeIdPktTail (pkt))->event;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iXBeePktProfileId (xXBeePkt * pkt) {
+
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return ntohs ( (pxXBeeZbNodeIdPktTail (pkt))->profile);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iXBeePktManufacturerId (xXBeePkt * pkt) {
+
+  if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_NODE_IDENT) {
+
+    return ntohs ( (pxXBeeZbNodeIdPktTail (pkt))->manufacturer);
+  }
+  return -1;
+}
+
 /* ========================================================================== */

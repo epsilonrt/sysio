@@ -6,26 +6,6 @@
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
- *
- * NOTE: This doesn't touch hardware; it's up to developers to link in functions
- *  that handle hardware communication.
- *
- *  DEVELOPERS: Pieces you need to implement (see prototypes, below):
- *    pvXBeeAllocPkt   (can just return static data)
- *    vXBeeFreePkt    (can do nothing if not dynamic)
- *
- *    iXBeeOut
- *    iXBeeRecvPktCB
- *
- *   What you need to call from wherever you read data from UART, etc:
- *    vXBeeIn
- *
- *  Incoming data from UART, etc. should be passed to vXBeeIn; it will
- *   be built into well-formed packets and passed to iXBeeRecvPktCB
- *   for further processing.
- *
- *  Outgoing data will be passed to iXBeeOut to be passed off to
- *   the XBee hardware.
  */
 #ifndef _SYSIO_XBEE_H_
 #define _SYSIO_XBEE_H_
@@ -166,6 +146,8 @@ struct xXBee;
 
 // ntohs, htons, ntohl, htonl, ntohll, htonll 
 #include <arpa/inet.h>
+// mutex
+#include <pthread.h>
 
 #else
 /**
@@ -206,8 +188,16 @@ typedef enum {
   XBEE_CB_TX_STATUS     = 4, /**< Réception d'une réponse suite à une transmission */
   XBEE_CB_MODEM_STATUS  = 5, /**< Réception d'un paquet d'état modem */
   XBEE_CB_SENSOR        = 6, /**< Réception d'un paquet capteur (S2 seulement) */
-  XBEE_CB_UNKNOWN       = -1
+  XBEE_CB_NODE_IDENT    = 7, /**< Réception d'un paquet d'identification de paquet */
+  XBEE_CB_UNKNOWN       = -1,
+  XBEE_CB_FIRST         = XBEE_CB_AT_LOCAL,
+  XBEE_CB_LAST          = XBEE_CB_NODE_IDENT
 } eXBeeCbType;
+
+#ifndef __DOXYGEN__
+// A modifier si eXBeeCbType modifié
+#define XBEE_SIZEOF_CB 8
+#endif
 
 /**
  * @brief Types de paquets géré par le module
@@ -239,7 +229,7 @@ typedef enum {
   XBEE_PKT_TYPE_ZB_RX             = 0x90,
   XBEE_PKT_TYPE_ZB_RX_IO          = 0x92,
   XBEE_PKT_TYPE_ZB_RX_SENSOR      = 0x94,
-  XBEE_PKT_TYPE_ZB_NODE_IDENT     = 0x95, /* Not yet impl */
+  XBEE_PKT_TYPE_ZB_NODE_IDENT     = 0x95,
 } eXBeePktType;
 
 /**
@@ -280,6 +270,39 @@ typedef enum {
   XBEE_XMIT = 0x01  /**< En transmission */
 } eXBeeDirection;
 
+/**
+ * @brief Serie du module XBee
+ */
+typedef enum {
+
+  XBEE_SERIES_S1  = 1,
+  XBEE_SERIES_S2  = 2,
+  XBEE_SERIES_S2B = 3,
+  XBEE_SERIES_UNKNOWN = -1
+} eXBeeSeries;
+
+/**
+ * @brief Type de noeud
+ */
+typedef enum {
+
+  XBEE_DEVICE_COORDINATOR = 0,
+  XBEE_DEVICE_ROUTER  = 1,
+  XBEE_DEVICE_END_DEVICE = 2,
+  XBEE_DEVICE_UNKNOWN = -1
+} eXBeeDeviceType;
+
+/**
+ * @brief Type de noeud
+ */
+typedef enum {
+
+  XBEE_EVENT_BUTTON   = 1,
+  XBEE_EVENT_JOIN     = 2,
+  XBEE_EVENT_POWER_ON = 3,
+  XBEE_EVENT_UNKNOWN  = -1
+} eXBeeSourceEvent;
+
 /* structures =============================================================== */
 /**
  * @brief Entête de paquet
@@ -316,13 +339,15 @@ typedef struct xXBee {
     uint8_t bytes_rcvd;
     xXBeePkt *packet;
     uint8_t hdr_data[sizeof (xXBeePktHdr)];
-    iXBeeRxCB user_cb[7];
+    iXBeeRxCB user_cb[XBEE_SIZEOF_CB];
   } __attribute__ ( (__packed__)) in;
   struct {
     uint8_t frame_id;
   } __attribute__ ( (__packed__)) out;
-  FILE * io_stream;
+  int fd;
+  eXBeeSeries series;
   void *user_context; // yours to pass data around with
+  pthread_mutex_t mutex;
 #ifdef XBEE_DEBUG
   int rx_crc_error, rx_error, rx_dropped;
   int tx_error, tx_dropped;
@@ -335,11 +360,14 @@ typedef struct xXBee {
 /**
  * @brief Initialise le contexte du module XBee
  *
- * Cette fonction doit être appellée avant toute utilisation du contexte.
- * @param Flux ouvert en lecture et écriture correspondant à la liaison série
- * connectée au module XBee. Le flux doit être ouvert en mode non-bloquant.
+ * Cette fonction doit être appellée avant toute utilisation du contexte xbee.
+ * 
+ * @param fd descripteur de fichier du port série ouvert en lecture et écriture
+ * @param series Modèle du module utilisé
+ * connectée au module XBee, doit être ouvert en mode non-bloquant.
+ * @return 0, -1 si erreur
  */
-void vXBeeInit (xXBee *xbee, FILE * io_stream);
+int iXBeeInit (xXBee *xbee, eXBeeSeries series, int fd);
 
 /**
  * @brief Modifie un gestionnaire de réception
@@ -432,6 +460,18 @@ int iXBeeZbSend (xXBee *xbee,
 int iXBeeZbSendToCoordinator (xXBee *xbee, const void *data, uint8_t len);
 
 /**
+ * @brief Envoi d'un paquet de données de diffusion sur le réseau
+ *
+ * @warning Uniquement pour les modules de série 2.
+
+ * @param xbee pointeur sur le contexte
+ * @param data pointeur sur les données
+ * @param len longueur en octets des données
+ * @return le numéro de trame (valeur positive), une valeur négative si erreur
+ */
+int iXBeeZbSendBroadcast (xXBee *xbee, const void *data, uint8_t len);
+
+/**
  * @brief Envoi d'un paquet de données à un module distant par son adresse 64-bit
  *
  * @warning Uniquement pour les modules de série 1.
@@ -518,44 +558,7 @@ uint8_t ucXBeePktType (xXBeePkt *pkt);
 uint16_t usXBeePktLength (xXBeePkt *pkt);
 
 /**
- * @brief Vérifie l'égalité de 2 adresses réseau de len octets
- */
-bool bXBeePktAddressIsEqual (const uint8_t *a1, const uint8_t *a2, uint8_t len);
-
-/**
- * @brief Pointeur sur l'adresse Adresse 16-bits inconnue (0xFFFE)
- *
- * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
- * fonctions de transmission ou de comparaison de la bibliothèque.
- */
-const uint8_t * pucXBeeAddr16Unknown (void);
-
-/**
- * @brief Pointeur sur l'adresse 64-bits inconnue (0xFFFFFFFFFFFFFFFF)
- *
- * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
- * fonctions de transmission ou de comparaison de la bibliothèque.
- */
-const uint8_t * pucXBeeAddr64Unknown (void);
-
-/**
- * @brief Pointeur sur l'adresse 64-bits du cordinateur Zigbee (0x0000000000000000)
- *
- * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
- * fonctions de transmission ou de comparaison de la bibliothèque.
- */
-const uint8_t * pucXBeeAddr64Coordinator (void);
-
-/**
- * @brief Pointeur sur l'adresse 64-bits de broadcast (0x000000000000FFFF)
- *
- * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
- * fonctions de transmission ou de comparaison de la bibliothèque.
- */
-const uint8_t * pucXBeeAddr64Broadcast (void);
-
-/**
- * @brief Pointeur sur l'adresse 64-bits source du paquet
+ * @brief Adresse 64-bits source du paquet
  *
  * @param pkt pointeur sur le paquet
  * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
@@ -563,7 +566,7 @@ const uint8_t * pucXBeeAddr64Broadcast (void);
 uint8_t * pucXBeePktAddrSrc64 (xXBeePkt *pkt);
 
 /**
- * @brief Pointeur sur l'adresse réseau 16-bits source du paquet
+ * @brief Adresse réseau 16-bits source du paquet
  *
  * @param pkt pointeur sur le paquet
  * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
@@ -571,7 +574,7 @@ uint8_t * pucXBeePktAddrSrc64 (xXBeePkt *pkt);
 uint8_t * pucXBeePktAddrSrc16 (xXBeePkt *pkt);
 
 /**
- * @brief Pointeur sur l'adresse réseau 16-bits destination du paquet (Série 2)
+ * @brief Adresse réseau 16-bits destination du paquet (Série 2)
  *
  * @param pkt pointeur sur le paquet
  * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
@@ -687,6 +690,133 @@ int iXBeePktApply (xXBeePkt *pkt);
  * @return la valeur ou -1 si erreur
  */
 int iXBeePktRssi (xXBeePkt *pkt);
+
+/**
+ * @brief Adresse 64-bits distante du paquet (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ *
+ * @param pkt pointeur sur le paquet
+ * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
+ */
+uint8_t * pucXBeePktAddrRemote64 (xXBeePkt *pkt);
+
+/**
+ * @brief Adresse réseau 16-bits distante du paquet (Série 2)
+ *
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
+ */
+uint8_t * pucXBeePktAddrRemote16 (xXBeePkt *pkt);
+
+/**
+ * @brief Identifiant texte du noeud (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return 
+ */
+char * pcXBeePktNiString (xXBeePkt * pkt);
+
+/**
+ * @brief Adresse réseau 16-bits parent du paquet (Série 2)
+ *
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return pointeur sur l'adresse (Big Endian) ou 0 si erreur
+ */
+uint8_t * pucXBeePktAddrParent16 (xXBeePkt *pkt);
+
+/**
+ * @brief Type de noeud (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return la valeur ou -1 si erreur
+ */
+eXBeeDeviceType eXBeePktDeviceType (xXBeePkt * pkt);
+
+/**
+ * @brief Source de l'événement (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return la valeur ou -1 si erreur
+ */
+eXBeeSourceEvent eXBeePktSourceEvent (xXBeePkt * pkt);
+
+/**
+ * @brief Identifiant du profile Digi (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return la valeur ou -1 si erreur
+ */
+int iXBeePktProfileId (xXBeePkt * pkt);
+
+/**
+ * @brief Identification du fabricant du module (Série 2)
+ * 
+ * @note champs présent dans un paquet d'identification de noeud
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return la valeur ou -1 si erreur
+ */
+int iXBeePktManufacturerId (xXBeePkt * pkt);
+
+
+/**
+ * @brief Indique si le paquet est un broadcast
+ * 
+ * @param pkt pointeur sur le paquet
+ * @return true ou false, -1 si erreur
+ */
+int iXBeePktIsBroadcast (xXBeePkt *pkt);
+
+
+/**
+ * @brief Vérifie l'égalité de 2 adresses réseau de len octets
+ */
+bool bXBeePktAddressIsEqual (const uint8_t *a1, const uint8_t *a2, uint8_t len);
+
+/**
+ * @brief Adresse 16-bits inconnue (0xFFFE)
+ *
+ * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
+ * fonctions de transmission ou de comparaison de la bibliothèque.
+ */
+const uint8_t * pucXBeeAddr16Unknown (void);
+
+/**
+ * @brief Adresse 64-bits inconnue (0xFFFFFFFFFFFFFFFF)
+ *
+ * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
+ * fonctions de transmission ou de comparaison de la bibliothèque.
+ */
+const uint8_t * pucXBeeAddr64Unknown (void);
+
+/**
+ * @brief Adresse 64-bits du cordinateur Zigbee (0x0000000000000000)
+ *
+ * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
+ * fonctions de transmission ou de comparaison de la bibliothèque.
+ */
+const uint8_t * pucXBeeAddr64Coordinator (void);
+
+/**
+ * @brief Adresse 64-bits de broadcast (0x000000000000FFFF)
+ *
+ * Cette fonction simplifie l'utilisation de cette valeur pour l'appel des
+ * fonctions de transmission ou de comparaison de la bibliothèque.
+ */
+const uint8_t * pucXBeeAddr64Broadcast (void);
 
 /*==============================================================================
  *

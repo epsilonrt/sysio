@@ -1,7 +1,7 @@
 /**
  * @file xbee.c
  * @brief XBee module interface functions
- * 
+ *
  * Copyright © 2006-2008 Tymm Twillman <tymm@booyaka.com>
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -9,7 +9,9 @@
  */
 #include <string.h>
 #include <stdlib.h>
-#include <util/atomic.h>
+#include <unistd.h>
+#include <assert.h>
+#include <sysio/serial.h>
 #include "xbee_private.h"
 
 /* private functions ======================================================== */
@@ -21,14 +23,16 @@ uint8_t
 ucXBeeNextFrameId (xXBee *xbee) {
   uint8_t frame_id;
 
-  ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+  pthread_mutex_lock (&xbee->mutex);
 
-    if (++xbee->out.frame_id == 0) {
+  xbee->out.frame_id++;
+  if (xbee->out.frame_id == 0) {
 
-      ++xbee->out.frame_id;
-    }
-    frame_id = xbee->out.frame_id;
+    xbee->out.frame_id++;
   }
+  frame_id = xbee->out.frame_id;
+
+  pthread_mutex_unlock (&xbee->mutex);
   return frame_id;
 }
 
@@ -85,15 +89,21 @@ ulXBeePktAddress32 (xXBeePkt *pkt, uint8_t ucOffset) {
  */
 int
 iXBeeOut (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
-  int ret = 0;
+  int iDataWrite = 0;
 
   while (len) {
-    ret = fwrite (&pkt[ret], len, 1, xbee->io_stream);
-    len -= ret;
+
+    iDataWrite = write (xbee->fd, &pkt[iDataWrite], len);
+
+    if (iDataWrite < 0) {
+
+      return -1;
+    }
+    len -= iDataWrite;
   }
   vXBeeFreePkt (xbee, pkt);
 
-  return ret;
+  return 0;
 }
 
 /* -----------------------------------------------------------------------------
@@ -105,6 +115,8 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
   uint8_t *data = (uint8_t *) buf;
 
   while (len) {
+    xXBeePktHdr * hdr;
+
     switch (xbee->in.bytes_rcvd) {
 
       case 0:
@@ -138,8 +150,8 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
         xbee->in.hdr_data[xbee->in.bytes_rcvd++] = *data++;
 
         /* Got enough to get packet length */
-
-        xbee->in.bytes_left = ntohs ( ( (xXBeePktHdr *) xbee->in.hdr_data)->len);
+        hdr = (xXBeePktHdr *) xbee->in.hdr_data;
+        xbee->in.bytes_left = ntohs (hdr->len);
 
         if (xbee->in.bytes_left > XBEE_MAX_DATA_LEN
             || ( (xbee->in.packet
@@ -163,8 +175,7 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
 
         /* Fall thru */
 
-      default
-          :
+      default:
         while (xbee->in.bytes_left--) {
 
           ( (uint8_t *) xbee->in.packet) [xbee->in.bytes_rcvd++] = *data++;
@@ -183,7 +194,8 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
       continue;
     }
 
-    if (iXBeeRecvPktCB (xbee, xbee->in.packet, xbee->in.bytes_rcvd)) {
+    // Paquet reçu et vérifié, on le passe au callback
+    if (iXBeeRecvPktCB (xbee, xbee->in.packet, xbee->in.bytes_rcvd) == -1) {
 
       vXBeeFreePkt (xbee, xbee->in.packet);
       INC_RX_DROPPED (xbee);
@@ -193,76 +205,101 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
   }
 }
 
-
 /* -----------------------------------------------------------------------------
  * Handle an incoming packet
  *
  * the packet will be fully formed and verified
  * for proper construction before being passed off to this function.  This
  * function should dig into the packet & process based on its contents.
+ * @return -1 if packet has not been processed by a callback and must be dropped
  */
 int
 iXBeeRecvPktCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
-  uint8_t ucCbIndex = XBEE_CB_UNKNOWN;
+  eXBeeCbType eCallback = XBEE_CB_UNKNOWN;
 
-  switch (ucXBeePktType (pkt)) {
+  int iPktType = ucXBeePktType (pkt);
+
+  switch (iPktType) {
 
     case XBEE_PKT_TYPE_ATCMD_RESP:
-      ucCbIndex = XBEE_CB_AT_LOCAL;
+      eCallback = XBEE_CB_AT_LOCAL;
       break;
 
     case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
-      ucCbIndex = XBEE_CB_AT_REMOTE;
+      eCallback = XBEE_CB_AT_REMOTE;
       break;
 
     case XBEE_PKT_TYPE_MODEM_STATUS:
-      ucCbIndex = XBEE_CB_MODEM_STATUS;
+      eCallback = XBEE_CB_MODEM_STATUS;
       break;
-
-#if SYSIO_XBEE_SERIES == 1
-      //--------------------------------------------------------------------------
-    case XBEE_PKT_TYPE_TX_STATUS:
-      ucCbIndex = XBEE_CB_TX_STATUS;
-      break;
-
-    case XBEE_PKT_TYPE_RX16:
-    case XBEE_PKT_TYPE_RX64:
-      ucCbIndex = XBEE_CB_DATA;
-      break;
-
-    case XBEE_PKT_TYPE_RX16_IO:
-    case XBEE_PKT_TYPE_RX64_IO:
-      ucCbIndex = XBEE_CB_IO;
-      break;
-      //--------------------------------------------------------------------------
-
-#elif SYSIO_XBEE_SERIES == 2
-      //--------------------------------------------------------------------------
-    case XBEE_PKT_TYPE_ZB_TX_STATUS:
-      ucCbIndex = XBEE_CB_TX_STATUS;
-      break;
-
-    case XBEE_PKT_TYPE_ZB_RX:
-      ucCbIndex = XBEE_CB_DATA;
-      break;
-
-    case XBEE_PKT_TYPE_ZB_RX_IO:
-      ucCbIndex = XBEE_CB_IO;
-      break;
-
-    case XBEE_PKT_TYPE_ZB_RX_SENSOR:
-      ucCbIndex = XBEE_CB_SENSOR;
-      break;
-      //--------------------------------------------------------------------------
-#endif
 
     default:
-      return -1;
+      break;
   }
 
-  if (xbee->in.user_cb[ucCbIndex] != 0) {
+  if (eCallback == XBEE_CB_UNKNOWN) {
 
-    return xbee->in.user_cb[ucCbIndex] (xbee, pkt, len);
+    switch (xbee->series) {
+
+      case XBEE_SERIES_S1:
+        //----------------------------------------------------------------------
+        switch (iPktType) {
+          case XBEE_PKT_TYPE_TX_STATUS:
+            eCallback = XBEE_CB_TX_STATUS;
+            break;
+
+          case XBEE_PKT_TYPE_RX16:
+          case XBEE_PKT_TYPE_RX64:
+            eCallback = XBEE_CB_DATA;
+            break;
+
+          case XBEE_PKT_TYPE_RX16_IO:
+          case XBEE_PKT_TYPE_RX64_IO:
+            eCallback = XBEE_CB_IO;
+            break;
+
+          default:
+            return -1;
+        }
+        break;
+
+      case XBEE_SERIES_S2:
+      case XBEE_SERIES_S2B:
+        //----------------------------------------------------------------------
+        switch (iPktType) {
+          case XBEE_PKT_TYPE_ZB_TX_STATUS:
+            eCallback = XBEE_CB_TX_STATUS;
+            break;
+
+          case XBEE_PKT_TYPE_ZB_RX:
+            eCallback = XBEE_CB_DATA;
+            break;
+
+          case XBEE_PKT_TYPE_ZB_RX_IO:
+            eCallback = XBEE_CB_IO;
+            break;
+
+          case XBEE_PKT_TYPE_ZB_RX_SENSOR:
+            eCallback = XBEE_CB_SENSOR;
+            break;
+
+          case XBEE_PKT_TYPE_ZB_NODE_IDENT:
+            eCallback = XBEE_CB_NODE_IDENT;
+            break;
+
+          default:
+            return -1;
+        }
+        break;
+
+      default:
+        return -1;
+    }
+  }
+
+  if (xbee->in.user_cb[eCallback] != 0) {
+
+    return xbee->in.user_cb[eCallback] (xbee, pkt, len);
   }
   return -1; /* pkt was dropped */
 }
@@ -270,12 +307,21 @@ iXBeeRecvPktCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 /* internal public functions ================================================ */
 
 /* -----------------------------------------------------------------------------
- * Initialize this package
  */
-void vXBeeInit (xXBee * xbee, FILE * io_stream) {
+int
+iXBeeInit (xXBee *xbee, eXBeeSeries series, int fd) {
 
-  memset (xbee, 0, sizeof (xXBee));
-  xbee->io_stream = io_stream;
+  if (xbee) {
+    if (bSerialFdIsValid (fd)) {
+
+      memset (xbee, 0, sizeof (xXBee));
+      pthread_mutex_init (&xbee->mutex, NULL);
+      xbee->fd = fd;
+      xbee->series = series;
+      return 0;
+    }
+  }
+  return -1;
 }
 
 /* -----------------------------------------------------------------------------
@@ -283,7 +329,7 @@ void vXBeeInit (xXBee * xbee, FILE * io_stream) {
 void
 vXBeeSetCB (xXBee * xbee, eXBeeCbType cb_type, iXBeeRxCB cb) {
 
-  if ( (cb_type >= XBEE_CB_AT_LOCAL) && (cb_type <= XBEE_CB_SENSOR)) {
+  if ( (cb_type >= XBEE_CB_FIRST) && (cb_type <= XBEE_CB_LAST)) {
 
     xbee->in.user_cb[cb_type] = cb;
   }
@@ -396,25 +442,30 @@ iXBeeSendRemoteAt (xXBee * xbee,
   return ret;
 }
 
+
 /* -----------------------------------------------------------------------------
  * Poll the inputstream to read incoming bytes
  */
+#define IXBEEPOLL_BUFFER_SIZE 128
+
 int
 iXBeePoll (xXBee * xbee) {
-  uint8_t buf[256];
-  int len;
+  int iDataAvailable = iSerialDataAvailable (xbee->fd);
 
-  clearerr (xbee->io_stream);
-  len = fread (buf, 256, 1, xbee->io_stream);
-  if (ferror (xbee->io_stream)) {
+  if (iDataAvailable > 0) {
+    int iDataRead;
+    uint8_t ucBuffer[IXBEEPOLL_BUFFER_SIZE];
 
-    return -1;
+    iDataRead = read (xbee->fd, ucBuffer, MIN (iDataAvailable, IXBEEPOLL_BUFFER_SIZE));
+    if (iDataRead > 0) {
+
+      vXBeeIn (xbee, ucBuffer, iDataRead);
+      return 0;
+    }
+    return iDataRead;
   }
-  if (len) {
 
-    vXBeeIn (xbee, buf, len);
-  }
-  return 0;
+  return iDataAvailable;
 }
 
 // -----------------------------------------------------------------------------
@@ -457,25 +508,42 @@ pucXBeeAddr64Broadcast (void) {
 }
 
 // -----------------------------------------------------------------------------
+int
+iXBeePktIsBroadcast (xXBeePkt * pkt) {
+  int iOpt = iXBeePktOptions (pkt);
+
+  if (iOpt >= 0) {
+
+    return (iOpt & XBEE_RX_FLAG_ADDR_BCAST) ? true : false;
+  }
+  return iOpt;
+}
+
+// -----------------------------------------------------------------------------
 uint8_t *
 pucXBeePktAddrSrc64 (xXBeePkt *pkt) {
 
   switch (ucXBeePktType (pkt)) {
-#if SYSIO_XBEE_SERIES == 1
+
+    case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
+      return ( (xXBeeRemoteAtCmdRespPkt *) pkt)->src64;
+
+      // XBEE_SERIES_S1
     case XBEE_PKT_TYPE_RX64:
       return ( (xXBeeRx64Pkt *) pkt)->src;
     case XBEE_PKT_TYPE_RX64_IO:
       return ( (xXBeeRxIo64Pkt *) pkt)->src;
-#elif SYSIO_XBEE_SERIES == 2
+
+      // XBEE_SERIES_S2
     case XBEE_PKT_TYPE_ZB_RX:
       return ( (xXBeeZbRxPkt *) pkt)->src64;
     case XBEE_PKT_TYPE_ZB_RX_IO:
       return ( (xXBeeZbRxIoPkt *) pkt)->src64;
     case XBEE_PKT_TYPE_ZB_RX_SENSOR:
       return ( (xXBeeZbRxSensorPkt *) pkt)->src64;
-#endif
-    case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
-      return ( (xXBeeRemoteAtCmdRespPkt *) pkt)->src64;
+    case XBEE_PKT_TYPE_ZB_NODE_IDENT:
+      return ( (xXBeeZbNodeIdPkt *) pkt)->src64;
+
     default:
       break;
   }
@@ -487,21 +555,26 @@ uint8_t *
 pucXBeePktAddrSrc16 (xXBeePkt *pkt) {
 
   switch (ucXBeePktType (pkt)) {
-#if SYSIO_XBEE_SERIES == 1
+
+    case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
+      return ( (xXBeeRemoteAtCmdRespPkt *) pkt)->src16;
+
+      // XBEE_SERIES_S1
     case XBEE_PKT_TYPE_RX16:
       return ( (xXBeeRx16Pkt *) pkt)->src;
     case XBEE_PKT_TYPE_RX16_IO:
       return ( (xXBeeRxIo16Pkt *) pkt)->src;
-#elif SYSIO_XBEE_SERIES == 2
+
+      // XBEE_SERIES_S2
     case XBEE_PKT_TYPE_ZB_RX:
       return ( (xXBeeZbRxPkt *) pkt)->src16;
     case XBEE_PKT_TYPE_ZB_RX_IO:
       return ( (xXBeeZbRxIoPkt *) pkt)->src16;
     case XBEE_PKT_TYPE_ZB_RX_SENSOR:
       return ( (xXBeeZbRxSensorPkt *) pkt)->src16;
-#endif
-    case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
-      return ( (xXBeeRemoteAtCmdRespPkt *) pkt)->src16;
+    case XBEE_PKT_TYPE_ZB_NODE_IDENT:
+      return ( (xXBeeZbNodeIdPkt *) pkt)->src16;
+
     default:
       break;
   }
@@ -513,21 +586,23 @@ uint8_t *
 pucXBeePktData (xXBeePkt *pkt) {
 
   switch (ucXBeePktType (pkt)) {
-#if SYSIO_XBEE_SERIES == 1
+
+      // XBEE_SERIES_S1
     case XBEE_PKT_TYPE_RX64:
       return ( (xXBeeRx64Pkt *) pkt)->data;
     case XBEE_PKT_TYPE_RX64_IO:
-      return ( (xXBeeRxIo64Pkt *) pkt)->data;
+      return (uint8_t *) ( (xXBeeRxIo64Pkt *) pkt)->data;
     case XBEE_PKT_TYPE_RX16:
       return ( (xXBeeRx16Pkt *) pkt)->data;
     case XBEE_PKT_TYPE_RX16_IO:
-      return ( (xXBeeRxIo16Pkt *) pkt)->data;
-#elif SYSIO_XBEE_SERIES == 2
+      return (uint8_t *) ( (xXBeeRxIo16Pkt *) pkt)->data;
+
+      // XBEE_SERIES_S2
     case XBEE_PKT_TYPE_ZB_RX:
       return ( (xXBeeZbRxPkt *) pkt)->data;
     case XBEE_PKT_TYPE_ZB_RX_IO:
       return (uint8_t *) ( (xXBeeZbRxIoPkt *) pkt)->data;
-#endif
+
     default:
       break;
   }
@@ -540,7 +615,8 @@ iXBeePktDataLen (xXBeePkt *pkt) {
   int len = usXBeePktLength (pkt) + 3;
 
   switch (ucXBeePktType (pkt)) {
-#if SYSIO_XBEE_SERIES == 1
+
+      // XBEE_SERIES_S1
     case XBEE_PKT_TYPE_RX64:
       len -= sizeof (xXBeeRx64Pkt);
       break;
@@ -553,14 +629,15 @@ iXBeePktDataLen (xXBeePkt *pkt) {
     case XBEE_PKT_TYPE_RX16_IO:
       len -= sizeof (xXBeeRxIo16Pkt);
       break;
-#elif SYSIO_XBEE_SERIES == 2
+
+      // XBEE_SERIES_S2
     case XBEE_PKT_TYPE_ZB_RX:
       len -= sizeof (xXBeeZbRxPkt);
       break;
     case XBEE_PKT_TYPE_ZB_RX_IO:
       len -= sizeof (xXBeeZbRxIoPkt);
       break;
-#endif
+
     default:
       return -1;
   }
@@ -605,7 +682,7 @@ iXBeePktFrameId (xXBeePkt *pkt) {
     case XBEE_PKT_TYPE_REMOTE_ATCMD_RESP:
       return ( (xXBeeRemoteAtCmdRespPkt *) pkt)->frame_id;
 
-#if SYSIO_XBEE_SERIES == 1
+      // XBEE_SERIES_S1
       /* XBEE_PKT_TYPE_TX64 0x00: S1 Series */
     case XBEE_PKT_TYPE_TX64:
       return ( (xXBeeTxReq64Pkt *) pkt)->frame_id;
@@ -618,7 +695,7 @@ iXBeePktFrameId (xXBeePkt *pkt) {
     case XBEE_PKT_TYPE_TX_STATUS:
       return ( (xXBeeTxStatusPkt *) pkt)->frame_id;
 
-#elif SYSIO_XBEE_SERIES == 2
+      // XBEE_SERIES_S2
       /* XBEE_PKT_TYPE_ZB_TX_REQ 0x10: S2 Series */
     case XBEE_PKT_TYPE_ZB_TX_REQ:
       return ( (xXBeeZbTxReqPkt *) pkt)->frame_id;
@@ -626,7 +703,6 @@ iXBeePktFrameId (xXBeePkt *pkt) {
       /* XBEE_PKT_TYPE_ZB_TX_STATUS 0x8B: S2 Series */
     case XBEE_PKT_TYPE_ZB_TX_STATUS:
       return ( (xXBeeZbTxStatusPkt *) pkt)->frame_id;
-#endif
 
     default:
       break;
@@ -652,15 +728,16 @@ iXBeePktStatus (xXBeePkt *pkt) {
     case XBEE_PKT_TYPE_MODEM_STATUS:
       return ( (xXBeeModemStatusPkt *) pkt)->status;
 
-#if SYSIO_XBEE_SERIES == 1
+      // XBEE_SERIES_S1
       /* XBEE_PKT_TYPE_TX_STATUS 0x89: S1 Series */
     case XBEE_PKT_TYPE_TX_STATUS:
       return ( (xXBeeTxStatusPkt *) pkt)->status;
-#elif SYSIO_XBEE_SERIES == 2
+
+      // XBEE_SERIES_S2
       /* XBEE_PKT_TYPE_ZB_TX_STATUS 0x8B: S2 Series */
     case XBEE_PKT_TYPE_ZB_TX_STATUS:
       return ( (xXBeeZbTxStatusPkt *) pkt)->status;
-#endif
+
     default:
       break;
   }
@@ -671,12 +748,11 @@ iXBeePktStatus (xXBeePkt *pkt) {
 int
 iXBeePktDiscovery (xXBeePkt *pkt) {
 
-#if SYSIO_XBEE_SERIES == 2
   if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_TX_STATUS) {
 
+    // XBEE_SERIES_S2
     return ( (xXBeeZbTxStatusPkt *) pkt)->discovery;
   }
-#endif
   return -1;
 }
 
@@ -684,12 +760,11 @@ iXBeePktDiscovery (xXBeePkt *pkt) {
 int
 iXBeePktRetry (xXBeePkt *pkt) {
 
-#if SYSIO_XBEE_SERIES == 2
   if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_TX_STATUS) {
 
+    // XBEE_SERIES_S2
     return ( (xXBeeZbTxStatusPkt *) pkt)->retry;
   }
-#endif
   return -1;
 }
 
@@ -697,12 +772,11 @@ iXBeePktRetry (xXBeePkt *pkt) {
 uint8_t *
 iXBeePktDst16 (xXBeePkt *pkt) {
 
-#if SYSIO_XBEE_SERIES == 2
   if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_TX_STATUS) {
 
+    // XBEE_SERIES_S2
     return ( (xXBeeZbTxStatusPkt *) pkt)->dst16;
   }
-#endif
   return 0;
 }
 
@@ -809,13 +883,12 @@ pucXBeePktParam (xXBeePkt *pkt) {
 int
 iXBeePktRadius (xXBeePkt *pkt) {
 
-#if SYSIO_XBEE_SERIES == 2
   /* XBEE_PKT_TYPE_ZB_TX_REQ 0x10: S2 Series */
   if (ucXBeePktType (pkt) == XBEE_PKT_TYPE_ZB_TX_REQ) {
 
+    // XBEE_SERIES_S2
     return ( (xXBeeZbTxReqPkt *) pkt)->radius;
   }
-#endif
   return -1;
 }
 
@@ -836,9 +909,9 @@ iXBeePktApply (xXBeePkt * pkt) {
 // TODO: non testé
 int iXBeePktRssi (xXBeePkt *pkt) {
 
-#if SYSIO_XBEE_SERIES == 1
   switch (ucXBeePktType (pkt)) {
 
+      // XBEE_SERIES_S1
       /*  XBEE_PKT_TYPE_RX64 0x80: S1 Series */
     case XBEE_PKT_TYPE_RX64:
       return ( (xXBeeRx64Pkt *) pkt)->rssi;
@@ -858,7 +931,6 @@ int iXBeePktRssi (xXBeePkt *pkt) {
     default:
       break;
   }
-#endif
   return -1;
 }
 
@@ -868,7 +940,7 @@ int
 iXBeePktOptions (xXBeePkt * pkt) {
 
   switch (ucXBeePktType (pkt)) {
-#if SYSIO_XBEE_SERIES == 1
+      // XBEE_SERIES_S1
       /* XBEE_PKT_TYPE_TX64 0x00: S1 Series */
     case XBEE_PKT_TYPE_TX64:
       return ( (xXBeeTxReq64Pkt *) pkt)->opt;
@@ -888,7 +960,7 @@ iXBeePktOptions (xXBeePkt * pkt) {
     case XBEE_PKT_TYPE_RX16_IO:
       return ( (xXBeeRxIo16Pkt *) pkt)->opt;
 
-#elif SYSIO_XBEE_SERIES == 2
+      // XBEE_SERIES_S2
       /* XBEE_PKT_TYPE_ZB_TX_REQ 0x10: S2 Series */
     case XBEE_PKT_TYPE_ZB_TX_REQ:
       return ( (xXBeeZbTxReqPkt *) pkt)->opt;
@@ -901,7 +973,8 @@ iXBeePktOptions (xXBeePkt * pkt) {
       /* XBEE_PKT_TYPE_ZB_RX_SENSOR 0x94: S2 Series */
     case XBEE_PKT_TYPE_ZB_RX_SENSOR:
       return ( (xXBeeZbRxSensorPkt *) pkt)->opt;
-#endif
+    case XBEE_PKT_TYPE_ZB_NODE_IDENT:
+      return ( (xXBeeZbNodeIdPkt *) pkt)->opt;
   }
   return -1;
 }

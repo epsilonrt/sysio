@@ -99,8 +99,8 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   ts.c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG);
   ts.c_oflag &= ~OPOST;
 
-  if ((iRet = iSerialTermiosSetAttr (&ts, xIos)) < 0) {
-    
+  if ( (iRet = iSerialTermiosSetAttr (&ts, xIos)) < 0) {
+
     close (fd);
     return iRet;
   }
@@ -120,6 +120,14 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   delay_ms (10);
 
   return fd;
+}
+
+// -----------------------------------------------------------------------------
+bool
+bSerialFdIsValid (int fd) {
+  struct termios ts;
+  
+  return (tcgetattr (fd, &ts) == 0) ? true : false;
 }
 
 // -----------------------------------------------------------------------------

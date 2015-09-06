@@ -2,11 +2,30 @@
  * @file xbee_private.h
  * Maxstream XBee module private Header
  * 
- * 
  * Copyright © 2006-2008 Tymm Twillman <tymm@booyaka.com>
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
+ * 
+ * NOTE: This doesn't touch hardware; it's up to developers to link in functions
+ *  that handle hardware communication.
+ *
+ *  DEVELOPERS: Pieces you need to implement (see prototypes, below):
+ *    pvXBeeAllocPkt   (can just return static data)
+ *    vXBeeFreePkt    (can do nothing if not dynamic)
+ *
+ *    iXBeeOut
+ *    iXBeeRecvPktCB
+ *
+ *   What you need to call from wherever you read data from UART, etc:
+ *    vXBeeIn
+ *
+ *  Incoming data from UART, etc. should be passed to vXBeeIn; it will
+ *   be built into well-formed packets and passed to iXBeeRecvPktCB
+ *   for further processing.
+ *
+ *  Outgoing data will be passed to iXBeeOut to be passed off to
+ *   the XBee hardware.
  */
 #ifndef _SYSIO_XBEE_PROTOCOL_H_
 #define _SYSIO_XBEE_PROTOCOL_H_
@@ -14,14 +33,10 @@
 #include <sysio/defs.h>
 __BEGIN_C_DECLS
 /* ========================================================================== */
-#include "xbee.h"
+#include <sysio/xbee.h>
 
 #ifdef CONFIG_XBEE_REENTRANT_TX
 #error CONFIG_XBEE_REENTRANT_TX requires XBEE_ALLOC to be set!
-#endif
-
-#if (SYSIO_XBEE_SERIES != 1) && (SYSIO_XBEE_SERIES != 2)
-#error SYSIO_XBEE_SERIES must be specified to 1 or 2
 #endif
 
 /* macros =================================================================== */
@@ -88,24 +103,20 @@ __BEGIN_C_DECLS
 #define XBEE_STATUS_COORD_RESET   0x40
 
 /* Command status bits */
-
 #define XBEE_CMDSTATUS_OK  0
 #define XBEE_CMDSTATUS_ERR 1
 
 /* Transmit options */
-
 #define XBEE_TX_FLAG_NO_ACK 0x01
 #define XBEE_TX_FLAG_SEND_BCAST_PAN_ID 0x04
 
 /* Transmit status bits */
-
 #define XBEE_TXSTATUS_SUCCESS  0x00
 #define XBEE_TXSTATUS_NO_ACK   0x01
 #define XBEE_TXSTATUS_CCA_FAIL 0x02
 #define XBEE_TXSTATUS_PURGES   0x03
 
 /* Received options */
-
 #define XBEE_RX_FLAG_ADDR_BCAST 0x02
 #define XBEE_RX_FLAG_PAN_BCAST  0x04
 
@@ -230,6 +241,27 @@ typedef struct xXBeeZbRxSensorPkt {
   uint16_t values[4];
   uint16_t temp;
 } __attribute__ ( (__packed__)) xXBeeZbRxSensorPkt;
+
+/* XBEE_PKT_TYPE_ZB_NODE_IDENT 0x95: S2 Series */
+typedef struct xXBeeZbNodeIdPkt {
+  xXBeePktHdr  hdr;
+  uint8_t type;
+  uint8_t src64[8];
+  uint8_t src16[2];
+  uint8_t opt;
+  uint8_t remote16[2];
+  uint8_t remote64[8];
+  char ni[20]; // the maximum size is 20 characters without the terminating null character
+} __attribute__ ( (__packed__)) xXBeeZbNodeIdPkt;
+
+/* XBEE_PKT_TYPE_ZB_NODE_IDENT 0x95: S2 Series */
+typedef struct xXBeeZbNodeIdPktTail {
+  uint8_t parent16[2];
+  uint8_t device;
+  uint8_t event;
+  uint16_t profile;
+  uint16_t manufacturer;
+} __attribute__ ( (__packed__)) xXBeeZbNodeIdPktTail;
 
 /* XBEE_PKT_TYPE_ZB_TX_STATUS 0x8B: S2 Series */
 typedef struct xXBeeZbTxStatusPkt {
@@ -364,6 +396,5 @@ uint8_t ucXBeeCrc (const xXBeePkt *pkt);
 
 /* ========================================================================== */
 __END_C_DECLS
-/* *INDENT-ON* */
 #endif /* #ifndef _SYSIO_XBEE_PROTOCOL_H_ ... */
 
