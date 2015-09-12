@@ -111,10 +111,8 @@ iLocalAtCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 
     if (strncmp (cCmd, XBEE_CMD_NODE_ID, 2) == 0) {
       // Ni String
-      int iLen = iXBeePktParamLen (pkt);
-      char * cNi = (char *) pucXBeePktParam (pkt);
-
-      strncpy (cMyNi, cNi, iLen);
+      int ret = iXBeePktParamGetStr (cMyNi, pkt, 21);
+      assert (ret >= 0);
       printf ("My Ni String is '%s'\n", cMyNi);
     }
   }

@@ -652,6 +652,35 @@ char * pcXBeePktCommand (xXBeePkt *pkt);
 uint8_t * pucXBeePktParam (xXBeePkt *pkt);
 
 /**
+ * @brief Copie les paramètres de commande AT
+ * 
+ * Le paquet transmis doit un paquet de réponse à une commande AT. Si la taille
+ * de pcDest est suffisante, un caractère null est ajouté à la fin.
+ * 
+ * @param pcDest Destination de la copie
+ * @param pkt pointeur sur le paquet
+ * @param iDestSize Taille en caractères de la destination
+ * @return Le nombre de caractères copiés, -1 si erreur
+ */
+int iXBeePktParamGetStr (char * pcDest, xXBeePkt *pkt, int iDestSize);
+
+/**
+ * @brief Copie d'un mot long des paramètres de commande AT
+ * @param ulDest mot long résultat
+ * @param pkt pointeur sur le paquet
+ * @return 0, -1 sur erreur
+ */
+int iXBeePktParamGetULong (uint32_t * ulDest, xXBeePkt *pkt, int iOffset);
+
+/**
+ * @brief Copie d'un mot des paramètres de commande AT
+ * @param ulDest mot résultat
+ * @param pkt pointeur sur le paquet
+ * @return 0, -1 sur erreur
+ */
+int iXBeePktParamGetUShort (uint16_t * usDest, xXBeePkt *pkt, int iOffset);
+
+/**
  * @brief Longueur des paramètres de la commande AT
  *
  * @param pkt pointeur sur le paquet

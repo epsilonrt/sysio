@@ -848,7 +848,59 @@ iXBeePktParamLen (xXBeePkt *pkt) {
 }
 
 // -----------------------------------------------------------------------------
-// TODO: non testé
+int
+iXBeePktParamGetStr (char * pcDest, xXBeePkt *pkt, int iDestSize) {
+
+  int iLen = MIN (iXBeePktParamLen (pkt), iDestSize);
+  if (iLen >= 0) {
+    strncpy (pcDest, (char *) pucXBeePktParam (pkt), iLen);
+    // Ajout du zéro final si il y a de la place
+    if (iLen < iDestSize) {
+      pcDest[iLen++] = '\0';
+    }
+  }
+  else {
+
+    iLen = -1;
+  }
+  return iLen;
+}
+
+// -----------------------------------------------------------------------------
+int
+iXBeePktParamGetULong (uint32_t * ulDest, xXBeePkt *pkt, int iOffset) {
+  int iLen;
+  uint32_t ulNet;
+  
+  iLen = iXBeePktParamLen (pkt) - iOffset;
+  
+  if (iLen >= sizeof (ulNet)) {
+    
+    memcpy (&ulNet, pucXBeePktParam (pkt) + iOffset, sizeof (ulNet));
+    *ulDest = ntohl (ulNet);
+    return 0;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iXBeePktParamGetUShort (uint16_t * usDest, xXBeePkt *pkt, int iOffset) {
+  int iLen;
+  uint16_t usNet;
+  
+  iLen = iXBeePktParamLen (pkt) - iOffset;
+  
+  if (iLen >= sizeof (usNet)) {
+    
+    memcpy (&usNet, pucXBeePktParam (pkt) + iOffset, sizeof (usNet));
+    *usDest = ntohs (usNet);
+    return 0;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
 uint8_t *
 pucXBeePktParam (xXBeePkt *pkt) {
 

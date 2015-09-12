@@ -1,9 +1,9 @@
 /**
- * @file sysio_test_xbee_coordinator.c
- * @brief Test coordinateur XBee
- * - Affiche l'identification des nouveaux noeuds
+ * @file sysio_test_xbee_node.c
+ * @brief Test noeud XBee
  * - Affiche le contenu des paquets de données reçus
- * - Transmet périodiquement un paquet de test en broadcast
+ * - Transmet périodiquement un paquet xPL
+ * .
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -22,22 +22,24 @@
 #include <assert.h>
 
 /* constants ================================================================ */
-#define DEFAULT_BAUDRATE  38400
-#define TX_INTERVAL_DELAY  20
+#define XBEE_BAUDRATE  38400
+#define TX_INTERVAL_DELAY  5
 
 /* private variables ======================================================== */
 static xXBee xbee;
 static int fd;
 static const char * cDev;
-static char cMyNi[21];
+static uint32_t ulSH;
+static uint32_t ulSL;
+static uint16_t usXBeePayloadSize;
+static char * cXBeePayload;
+static bool bXBeeIsReady = false;
 volatile int frame_id = 0;
 
 /* private functions ======================================================== */
 int iDataCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
 int iTxStatusCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
-int iNodeIdCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
 int iLocalAtCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
-void vPrintAddr (uint8_t * pucAddr, int iSize);
 void vSigExitHandler (int sig);
 void vSigAlarmHandler (int sig);
 
@@ -46,7 +48,7 @@ int
 main (int argc, char **argv) {
   int ret;
   xSerialIos xIosSet = {
-    .baud = DEFAULT_BAUDRATE, .dbits = SERIAL_DATABIT_8, .parity = SERIAL_PARITY_NONE,
+    .baud = XBEE_BAUDRATE, .dbits = SERIAL_DATABIT_8, .parity = SERIAL_PARITY_NONE,
     .sbits = SERIAL_STOPBIT_ONE, .flow = SERIAL_FLOW_RTSCTS, .flag = 0
   };
 
@@ -71,8 +73,8 @@ main (int argc, char **argv) {
     perror ("serialOpen failed !");
     exit (EXIT_FAILURE);
   }
-  
-  printf ("*** SysIO XBee Coordinator Test ***\n");
+
+  printf ("*** SysIO XBee xPL Test ***\n");
 
   /*
    * Init XBee, mise en place des gestionnaires de réception
@@ -81,10 +83,13 @@ main (int argc, char **argv) {
   assert (ret == 0);
   vXBeeSetCB (&xbee, XBEE_CB_DATA, iDataCB);
   vXBeeSetCB (&xbee, XBEE_CB_TX_STATUS, iTxStatusCB);
-  vXBeeSetCB (&xbee, XBEE_CB_NODE_IDENT, iNodeIdCB);
   vXBeeSetCB (&xbee, XBEE_CB_AT_LOCAL, iLocalAtCB);
 
-  ret = iXBeeSendAt (&xbee, XBEE_CMD_NODE_ID, NULL, 0);
+  ret = iXBeeSendAt (&xbee, "SH", NULL, 0);
+  assert (ret >= 0);
+  ret = iXBeeSendAt (&xbee, "SL", NULL, 0);
+  assert (ret >= 0);
+  ret = iXBeeSendAt (&xbee, "NP", NULL, 0);
   assert (ret >= 0);
 
   signal (SIGTERM, vSigExitHandler);
@@ -111,12 +116,27 @@ iLocalAtCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
   char * cCmd = pcXBeePktCommand (pkt);
 
   if (iXBeePktStatus (pkt) == XBEE_PKT_STATUS_OK) {
+    int ret;
 
-    if (strncmp (cCmd, XBEE_CMD_NODE_ID, 2) == 0) {
-      // Ni String
-      int ret = iXBeePktParamGetStr (cMyNi, pkt, 21);
-      assert (ret >= 0);
-      printf ("My Ni String is '%s'\n", cMyNi);
+    if (strncmp (cCmd, "SH", 2) == 0) {
+
+      ret = iXBeePktParamGetULong (&ulSH, pkt, 0);
+      assert (ret == 0);
+    }
+    else if (strncmp (cCmd, "SL", 2) == 0) {
+
+      ret = iXBeePktParamGetULong (&ulSL, pkt, 0);
+      assert (ret == 0);
+      printf ("My serial number is 0x%08x%08x\n", ulSH, ulSL);
+    }
+    else if (strncmp (cCmd, "NP", 2) == 0) {
+
+      ret = iXBeePktParamGetUShort (&usXBeePayloadSize, pkt, 0);
+      assert (ret == 0);
+      cXBeePayload = malloc (usXBeePayloadSize);
+      assert(cXBeePayload);
+      bXBeeIsReady = true;
+      printf ("XBee payload size is %d bytes\n", usXBeePayloadSize);
     }
   }
   else {
@@ -140,18 +160,20 @@ iDataCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
     uint8_t * src64 = pucXBeePktAddrSrc64 (pkt);
 
     // Affiche l'adresse 64-bits de la source et le contenu du paquet
-    vPrintAddr (src64, 8);
+    for (int i = 0; i < 8; i++) {
+
+      printf ("%02X", src64[i]);
+    }
 
     // Indique si le paquet est en broadcast
     if (iXBeePktIsBroadcast (pkt)) {
-
       putchar ('*');
     }
 
     // puis le contenu du paquet
     p = (char *) pucXBeePktData (pkt);
     p[size] = 0; // Ajout d'un caractère de fin de chaine
-    printf (">\n%s\n", p);
+    printf (">%s\n", p);
   }
 
   vXBeeFreePkt (xbee, pkt);
@@ -168,47 +190,14 @@ iTxStatusCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 
     if (status) {
 
-      printf ("Tx%d Err. %d\n", frame_id, status);
+      printf (">Err. %d\n",status);
     }
     else {
 
-      printf ("Tx%d Ok\n", frame_id);
+      printf (">Ok\n");
     }
     frame_id = 0;
   }
-  vXBeeFreePkt (xbee, pkt);
-  return 0;
-}
-
-// -----------------------------------------------------------------------------
-int
-iNodeIdCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
-  const char * str;
-
-  printf ("A new node has joined the network:\n\taddr64: ");
-  vPrintAddr (pucXBeePktAddrRemote64 (pkt), 8);
-
-  printf ("\n\taddr16: ");
-  vPrintAddr (pucXBeePktAddrRemote16 (pkt), 2);
-
-  printf ("\n\tNi:'%s'\n", pcXBeePktNiString (pkt));
-
-  switch (eXBeePktDeviceType (pkt)) {
-
-    case XBEE_DEVICE_COORDINATOR:
-      str = "Coordinator";
-      break;
-    case XBEE_DEVICE_ROUTER:
-      str = "Router";
-      break;
-    case XBEE_DEVICE_END_DEVICE:
-      str = "End device";
-      break;
-    default:
-      str = "Unknown";
-      break;
-  }
-  printf ("\tDevice Type: %s\n", str);
   vXBeeFreePkt (xbee, pkt);
   return 0;
 }
@@ -218,6 +207,7 @@ void
 vSigExitHandler (int sig) {
 
   vSerialClose (fd);
+  free (cXBeePayload);
   printf ("\n%s closed.\nHave a nice day !\n", cDev);
   exit (EXIT_SUCCESS);
 }
@@ -225,24 +215,23 @@ vSigExitHandler (int sig) {
 // -----------------------------------------------------------------------------
 void
 vSigAlarmHandler (int sig) {
-  char message[64];
-  static int iCount = 1;
 
-  snprintf (message, 32, "Hello #%d from %s", iCount++, cMyNi);
+  if (bXBeeIsReady) {
+    time_t tNow = time (NULL);
+    struct tm * pxDecodedTime;
+    char cStrTime[24];
 
-  frame_id = iXBeeZbSendBroadcast (&xbee, message, strlen (message));
-  assert (frame_id >= 0);
-  printf ("Tx%d>'%s'\n", frame_id, message);
-  alarm (TX_INTERVAL_DELAY);
-}
+    pxDecodedTime = localtime (&tNow);
+    strftime (cStrTime, 24, "%Y%m%d%H%M%S", pxDecodedTime);
+    
+    snprintf (cXBeePayload, usXBeePayloadSize, 
+    "xpl-stat\n{\nhop=1\nsource=episrt-xbee.%08x%08x\ntarget=*\n}\nclock.update\n{\ntime=%s\n}\n", 
+    ulSH, ulSL, cStrTime);
 
-// -----------------------------------------------------------------------------
-void
-vPrintAddr (uint8_t * pucAddr, int iSize) {
-
-  for (int i = 0; i < iSize; i++) {
-
-    printf ("%02X", pucAddr[i]);
+    frame_id = iXBeeZbSendToCoordinator (&xbee, cXBeePayload, strlen (cXBeePayload));
+    assert (frame_id >= 0);
+    printf ("Frm%d[%ld]>\n%s", frame_id, strlen (cXBeePayload), cXBeePayload);
+    alarm (TX_INTERVAL_DELAY);
   }
 }
 
