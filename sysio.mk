@@ -36,10 +36,15 @@ ARCH_DIR = sysio/src/arch/x86_64
 CDEFS += -DARCH_X86_64
 endif
 
+ifeq ($(SYS),)
+$(error ARCH is not set correctly)
+endif
+
 ifeq ($(SYS),SYS_LINUX)
 CDEFS += -DSYS_LINUX
 SYS_DIR = sysio/src/linux
 SYS_POSIX = ON
+$(warning Posix)
 endif
 
 ifeq ($(SYS),SYS_WIN32)
