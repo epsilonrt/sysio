@@ -44,7 +44,6 @@ ifeq ($(SYS),SYS_LINUX)
 CDEFS += -DSYS_LINUX
 SYS_DIR = sysio/src/linux
 SYS_POSIX = ON
-$(warning Posix)
 endif
 
 ifeq ($(SYS),SYS_WIN32)
