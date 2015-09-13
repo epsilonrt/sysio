@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" SWTLW="No">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
@@ -37,7 +37,7 @@
   <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
   <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
   <Project Name="sysio_test_xbee_xPL" Path="sysio/test/xbee/xPL/sysio_test_xbee_xPL.project" Active="No"/>
-  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="Yes"/>
+  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
