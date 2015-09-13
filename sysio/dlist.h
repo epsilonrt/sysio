@@ -39,7 +39,7 @@ typedef int  (*iDListElmtMatch) (const void *key1, const void *key2);
 /**
  * @brief Retourne la clé d'un élément
  */
-typedef const void * (*iDListElmtKey) (const xDListElmt * element);
+typedef const void * (*pvDListElmtKey) (const xDListElmt * element);
 
 /* structures =============================================================== */
 
@@ -63,7 +63,7 @@ typedef struct xDList {
   xDListElmt          *head;
   xDListElmt          *tail;
   vDListElmtDestroy   destroy;
-  iDListElmtKey       key;
+  pvDListElmtKey       key;
   iDListElmtMatch     match;
 } xDList;
 
@@ -88,7 +88,7 @@ void vDListInit (xDList *list, vDListElmtDestroy fdestroy);
  * @param fkey fonction de clé
  * @param fmatch fonction de comparaison
  */
-void vDListSetSearch (xDList *list, iDListElmtKey fkey, iDListElmtMatch fmatch);
+void vDListSetSearch (xDList *list, pvDListElmtKey fkey, iDListElmtMatch fmatch);
 
 /**
  * @brief Destruction d'une liste doublement chaînée
