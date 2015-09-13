@@ -27,6 +27,18 @@
 #  define TRUE  (1==1)
 #  define FALSE (1==2)
 #endif
+
+#ifndef __cplusplus
+#ifndef __need_NULL
+# define __need_NULL
+#endif
+#ifndef __need_size_t
+# define __need_size_t
+#endif
+#include <stddef.h>
+#include <stdbool.h>
+#endif
+
 // -----------------------------------------------------------------------------
 #endif /* !defined(__DOXYGEN__) */
 
@@ -37,16 +49,8 @@ __BEGIN_C_DECLS
 #if !defined(__DOXYGEN__)
 // -----------------------------------------------------------------------------
 // Partie non documentée
-#ifndef __need_NULL
-# define __need_NULL
-#endif
-#ifndef __need_size_t
-# define __need_size_t
-#endif
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 
+#include <stdint.h>
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 /* UNIX-style OS */
