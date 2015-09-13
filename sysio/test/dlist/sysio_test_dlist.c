@@ -62,7 +62,7 @@ int main (int argc, char **argv) {
 
   //  Initialize the doubly-linked list.
   vDListInit (&list, free);
-  vDListSetSearch (&list, key, match);
+  vDListInitSearch (&list, key, match);
   
   //  Test 1 - Perform some doubly-linked list operations.
   element = pxDListHead (&list);

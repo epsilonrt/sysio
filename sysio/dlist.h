@@ -63,7 +63,7 @@ typedef struct xDList {
   xDListElmt          *head;
   xDListElmt          *tail;
   vDListElmtDestroy   destroy;
-  pvDListElmtKey       key;
+  pvDListElmtKey      key;
   iDListElmtMatch     match;
 } xDList;
 
@@ -88,7 +88,7 @@ void vDListInit (xDList *list, vDListElmtDestroy fdestroy);
  * @param fkey fonction de clé
  * @param fmatch fonction de comparaison
  */
-void vDListSetSearch (xDList *list, pvDListElmtKey fkey, iDListElmtMatch fmatch);
+void vDListInitSearch (xDList *list, pvDListElmtKey fkey, iDListElmtMatch fmatch);
 
 /**
  * @brief Destruction d'une liste doublement chaînée

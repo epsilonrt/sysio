@@ -28,7 +28,7 @@ vDListInit (xDList *list, vDListElmtDestroy destroy) {
 
 // -----------------------------------------------------------------------------
 void 
-vDListSetSearch (xDList *list, pvDListElmtKey fkey, iDListElmtMatch fmatch) {
+vDListInitSearch (xDList *list, pvDListElmtKey fkey, iDListElmtMatch fmatch) {
   
   list->key = fkey;
   list->match = fmatch;
