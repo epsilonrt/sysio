@@ -68,7 +68,7 @@ CPPSRC =
 ASRC =
 
 # Place -D or -U options here for C sources
-CDEFS +=
+CDEFS += -UNDEBUG -DDEBUG
 
 # Place -D or -U options here for ASM sources
 ADEFS +=

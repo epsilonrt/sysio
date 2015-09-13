@@ -2,7 +2,7 @@
  * @file sysio/dlist.h
  * @brief Liste doublement chaînée
  *
- * Code issue de la lecture du livre "Maitrise des algorithmes en C" de K. Loudon
+ * Inspiré par la lecture du livre "Maitrise des algorithmes en C" de K. Loudon
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -15,6 +15,7 @@
 
 __BEGIN_C_DECLS
 /* ========================================================================== */
+typedef struct xDListElmt xDListElmt;
 
 /**
  *  @defgroup sysio_dlist Liste doublement chaînée
@@ -23,10 +24,27 @@ __BEGIN_C_DECLS
  *  @{
  */
 
+/* types ==================================================================== */
+/**
+ * @brief Fonction qui libère la mémoire allouée à une donnée de la liste
+ */
+typedef void (*vDListElmtDestroy) (void *data);
+
+/**
+ * @brief Fonction de comparaison de 2 clés
+ * @return 0 si key1 == key2, positif si key1 > key2, négatif si key1 < key2, 
+ */
+typedef int  (*iDListElmtMatch) (const void *key1, const void *key2);
+
+/**
+ * @brief Retourne la clé d'un élément
+ */
+typedef const void * (*iDListElmtKey) (const xDListElmt * element);
+
 /* structures =============================================================== */
 
 /**
- * @brief Define a structure for doubly-linked list elements
+ * @brief Elément d'une liste doublement chaînée
  */
 typedef struct xDListElmt {
 
@@ -37,112 +55,155 @@ typedef struct xDListElmt {
 } xDListElmt;
 
 /**
- * @brief  Define a structure for doubly-linked lists.
+ * @brief Liste doublement chaînée
  */
 typedef struct xDList {
 
-  int                size;
-  int (*match) (const void *key1, const void *key2);
-  void (*destroy) (void *data);
+  int                 size;
   xDListElmt          *head;
   xDListElmt          *tail;
+  vDListElmtDestroy   destroy;
+  iDListElmtKey       key;
+  iDListElmtMatch     match;
 } xDList;
+
+/* macros =================================================================== */
+/**
+ * @brief Retourne le pointeur sur la donnée convertit en pointeur sur type t
+ */
+#define pxDListElmtDataPtr(element, t) ((t *)pvDListElmtData(element))
 
 /* internal public functions ================================================ */
 /**
- * @brief
- * @param list
- * @param data
+ * @brief Initialise une liste doublement chaînée
+ * @param list pointeur sur la liste
+ * @param fdestroy fonction chargée de libébrer la mémoire allouée aux données,
+ *        NULL si les données sont statiques
  */
-void vDListInit (xDList *list, void (*destroy) (void *data));
+void vDListInit (xDList *list, vDListElmtDestroy fdestroy);
 
 /**
- * @brief
- * @param list
+ * @brief Initialise les fonctions de recherche
+ * @param list pointeur sur la liste
+ * @param fkey fonction de clé
+ * @param fmatch fonction de comparaison
+ */
+void vDListSetSearch (xDList *list, iDListElmtKey fkey, iDListElmtMatch fmatch);
+
+/**
+ * @brief Destruction d'une liste doublement chaînée
+ * 
+ * La mémoire allouée aux données de chaque élément est libérée si une fonction
+ * destroy() a été fournie à l'initialisation.
+ * @param list pointeur sur la liste
  */
 void vDListDestroy (xDList *list);
 
 /**
- * @brief
- * @param list
- * @param element
- * @param data
- * @return
+ * @brief Insertion avant l'élément
+ * @param list pointeur sur la liste
+ * @param element précédent le nouveau
+ * @param data à affecter au nouvel élément
+ * @return 0, -1 si erreur
  */
 int iDListInsertAfter (xDList *list, xDListElmt *element, const void *data);
 
 /**
- * @brief
- * @param list
- * @param element
- * @param data
- * @return
+ * @brief Insertion après l'élément
+ * @param list pointeur sur la liste
+ * @param element suivant le nouveau
+ * @param data à affecter au nouvel élément
+ * @return 0, -1 si erreur
  */
 int iDListInsertBefore (xDList *list, xDListElmt *element, const void *data);
 
 /**
- * @brief
- * @param list
- * @param element
- * @param data
- * @return
+ * @brief Retire un élément
+ * @param list pointeur sur la liste
+ * @param element à retier
+ * @param data pointeur sur la donnée de l'élément retiré (mémoire non libérée)
+ * @return 0, -1 si erreur
  */
 int iDListRemove (xDList *list, xDListElmt *element, void **data);
 
+/**
+ * @brief Chercher le premier élément correspondant à une clé
+ * @param list pointeur sur la liste
+ * @param key clé de l'élément à trouver
+ * @return premier élément trouvé, NULL si pas trouvé
+ */
+xDListElmt * pxDListFindFirst (xDList *list, const void * key);
+
 # ifdef __DOXYGEN__
 /**
- * @brief
- * @param list
- * @return
+ * @brief Nombre d'élément 
+ * @param list pointeur sur la liste
+ * @return la valeur
  */
 static inline int iDListSize (const xDList *list);
 
 /**
- * @brief
- * @param list
- * @return
+ * @brief Insertion en début de liste
+ * @param list pointeur sur la liste
+ * @param data à affecter au nouvel élément
+ * @return 0, -1 si erreur
+ */
+static inline int iDListPrepend (xDList *list,const void *data);
+
+/**
+ * @brief Insertion en fin de liste
+ * @param list pointeur sur la liste
+ * @param data à affecter au nouvel élément
+ * @return 0, -1 si erreur
+ */
+static inline int iDListAppend (xDList *list,const void *data);
+
+/**
+ * @brief Retourne l'élément en tête de liste
+ * @param list pointeur sur la liste
+ * @return la valeur
  */
 static inline xDListElmt * pxDListHead (const xDList *list);
 
 /**
- * @brief
- * @param list
- * @return
+ * @brief Retourne l'élément en queue de liste
+ * @param list pointeur sur la liste
+ * @return la valeur
  */
 static inline xDListElmt * pxDListTail (const xDList *list);
 
 /**
- * @brief
- * @param element
- * @return
+ * @brief Indique si l'élément est en tête de liste
+ * @param element pointeur sur l'élément concerné
+ * @return la valeur
  */
 static inline bool bDListElmtIsHead (const xDListElmt *element);
 
 /**
- * @brief
- * @param element
- * @return
+ * @brief Indique si l'élément est en queue de liste
+ * @param element pointeur sur l'élément concerné
+ * @return la valeur
  */
 static inline bool bDListElmtIsTail (const xDListElmt *element);
 
 /**
- * @brief
- * @param element
- * @return
+ * @brief Pointeur sur la donnée de l'élément
+ * @param element pointeur sur l'élément concerné
+ * @return la valeur
  */
 static inline void * pvDListElmtData (const xDListElmt *element);
 
 /**
- * @brief
- * @param element
- * @return
+ * @brief Pointeur sur l'élément suivant dans la liste
+ * @param element pointeur sur l'élément concerné
+ * @return la valeur
  */
 static inline xDListElmt * pxDListElmtNext (const xDListElmt *element);
 
 /**
- * @brief
- * @param element
- * @return
+ * @brief Pointeur sur l'élément précédent dans la liste
+ * @param element pointeur sur l'élément concerné
+ * @return la valeur
  */
 static inline xDListElmt * pxDListElmtPrev (const xDListElmt *element);
 
@@ -198,6 +259,18 @@ pxDListElmtNext (const xDListElmt *element) {
 INLINE xDListElmt *
 pxDListElmtPrev (const xDListElmt *element) {
   return element->prev;
+}
+
+// -----------------------------------------------------------------------------
+INLINE int 
+iDListPrepend (xDList *list,const void *data) {
+  return iDListInsertBefore (list, pxDListHead(list), data);
+}
+
+// -----------------------------------------------------------------------------
+INLINE int 
+iDListAppend (xDList *list,const void *data) {
+  return iDListInsertAfter (list, pxDListTail(list), data);
 }
 
 # endif /* __DOXYGEN__ not defined */

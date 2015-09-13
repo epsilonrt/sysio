@@ -2,7 +2,7 @@
  * @file sysio/dlist.c
  * @brief Liste doublement chaînée (Implémentation)
  *
- * Code issu de la lecture du livre "Maitrise des algorithmes en C" de K. Loudon
+ * Inspiré par la lecture du livre "Maitrise des algorithmes en C" de K. Loudon
  * 
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -11,19 +11,72 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <sysio/dlist.h>
 
 /* internal public functions ================================================ */
 
 // -----------------------------------------------------------------------------
 void
-vDListInit (xDList *list, void (*destroy) (void *data)) {
-
+vDListInit (xDList *list, vDListElmtDestroy destroy) {
+  assert (list);
+  
   //  Initialize the list.
-  list->size = 0;
+  memset (list, 0, sizeof(xDList));
   list->destroy = destroy;
-  list->head = NULL;
-  list->tail = NULL;
+}
+
+// -----------------------------------------------------------------------------
+void 
+vDListSetSearch (xDList *list, iDListElmtKey fkey, iDListElmtMatch fmatch) {
+  
+  list->key = fkey;
+  list->match = fmatch;
+}
+
+// -----------------------------------------------------------------------------
+int 
+iDListRemove (xDList *list, xDListElmt *element, void **data) {
+
+  //  Do not allow a NULL element or removal from an empty list.
+  if (element == NULL || iDListSize (list) == 0) {
+    return -1;
+  }
+
+  //  Remove the element from the list.
+  *data = element->data;
+
+  if (element == list->head) {
+
+    //  Handle removal from the head of the list.
+    list->head = element->next;
+
+    if (list->head == NULL) {
+      list->tail = NULL;
+    }
+    else {
+      element->next->prev = NULL;
+    }
+  }
+  else {
+
+    //  Handle removal from other than the head of the list.
+    element->prev->next = element->next;
+
+    if (element->next == NULL) {
+      list->tail = element->prev;
+    }
+    else {
+      element->next->prev = element->prev;
+    }
+  }
+
+  //  Free the storage allocated by the abstract data type.
+  free (element);
+
+  //  Adjust the size of the list to account for the removed element.
+  list->size--;
+  return 0;
 }
 
 // -----------------------------------------------------------------------------
@@ -144,47 +197,20 @@ iDListInsertBefore (xDList *list, xDListElmt *element, const void *data) {
 }
 
 // -----------------------------------------------------------------------------
-int 
-iDListRemove (xDList *list, xDListElmt *element, void **data) {
-
-  //  Do not allow a NULL element or removal from an empty list.
-  if (element == NULL || iDListSize (list) == 0) {
-    return -1;
+xDListElmt * 
+pxDListFindFirst (xDList *list, const void * key) {
+  
+  if ((list->key) && (list->match) && (iDListSize(list))) {
+    xDListElmt * element = pxDListHead(list);
+    
+    do {
+      if (list->match (key, list->key(element)) == 0) {
+        return element;
+      }
+      element = pxDListElmtNext(element);
+    } while (element);
   }
-
-  //  Remove the element from the list.
-  *data = element->data;
-
-  if (element == list->head) {
-
-    //  Handle removal from the head of the list.
-    list->head = element->next;
-
-    if (list->head == NULL) {
-      list->tail = NULL;
-    }
-    else {
-      element->next->prev = NULL;
-    }
-  }
-  else {
-
-    //  Handle removal from other than the head of the list.
-    element->prev->next = element->next;
-
-    if (element->next == NULL) {
-      list->tail = element->prev;
-    }
-    else {
-      element->next->prev = element->prev;
-    }
-  }
-
-  //  Free the storage allocated by the abstract data type.
-  free (element);
-
-  //  Adjust the size of the list to account for the removed element.
-  list->size--;
-  return 0;
+  return NULL;
 }
+
 /* ========================================================================== */
