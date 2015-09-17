@@ -10,8 +10,7 @@ SUBDIRS = lib
 SYSIO_ROOT = .
 
 # Choix de l'architecture matérielle du système
-#ARCH = ARCH_GENERIC_LINUX
-ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
@@ -43,6 +42,8 @@ install_utils: uninstall_utils
 	@-install -m 0644 $(SYSIO_ROOT)/util/template/cpp/* $(INSTALL_DATDIR)/sysio/template/cpp
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-prj $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-cpu $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-rev $(INSTALL_BINDIR)
 	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 
 uninstall_utils:
@@ -50,6 +51,8 @@ uninstall_utils:
 	@-rm -fr $(INSTALL_DATDIR)/sysio
 	@-rm -fr $(INSTALL_BINDIR)/sysio-prj
 	@-rm -fr $(INSTALL_BINDIR)/sysio-ver
+	@-rm -fr $(INSTALL_BINDIR)/rpi-cpu
+	@-rm -fr $(INSTALL_BINDIR)/rpi-rev
 
 $(SUBDIRS):
 	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
