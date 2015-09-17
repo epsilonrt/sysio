@@ -46,7 +46,18 @@
         <File Name="util/template/cpp/template.cpp"/>
         <File Name="util/template/cpp/Makefile"/>
       </VirtualDirectory>
+      <VirtualDirectory Name="module">
+        <File Name="util/template/module/module.h"/>
+        <File Name="util/template/module/module.c"/>
+      </VirtualDirectory>
     </VirtualDirectory>
+    <VirtualDirectory Name="sping">
+      <File Name="util/sping/sping.c"/>
+      <File Name="util/sping/version-git.h"/>
+      <File Name="util/sping/sping"/>
+      <File Name="util/sping/Makefile"/>
+    </VirtualDirectory>
+    <File Name="util/Makefile"/>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
@@ -147,6 +158,7 @@
             <File Name="sysio/src/arch/arm/rpi/rpi.c"/>
             <File Name="sysio/src/arch/arm/rpi/gpio.c"/>
             <File Name="sysio/src/arch/arm/rpi/pwm.c"/>
+            <File Name="sysio/test/vector/Makefile"/>
           </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
@@ -174,6 +186,7 @@
       <File Name="sysio/src/xbee2.c"/>
       <File Name="sysio/src/xbee_private.h"/>
       <File Name="sysio/src/dlist.c"/>
+      <File Name="sysio/src/vector.c"/>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -197,6 +210,7 @@
     <File Name="sysio/log.h"/>
     <File Name="sysio/xbee.h"/>
     <File Name="sysio/dlist.h"/>
+    <File Name="sysio/vector.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

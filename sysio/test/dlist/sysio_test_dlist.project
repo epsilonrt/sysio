@@ -28,8 +28,6 @@
   </Plugins>
   <Description/>
   <Dependencies/>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="sysio_test_dlist">
     <File Name="Makefile"/>
     <File Name="sysio_test_dlist.c"/>
@@ -123,4 +121,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
