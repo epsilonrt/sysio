@@ -126,6 +126,18 @@ iVectorRemove (xVector *v, int index) {
 int
 iVectorDestroy (xVector * v) {
 
+  if (iVectorClear (v) == 0) {
+
+    memset (v, 0, sizeof (xVector));
+    return 0;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iVectorClear (xVector * v) {
+
   if (v == NULL) {
 
     errno = EFAULT;
@@ -151,9 +163,11 @@ iVectorDestroy (xVector * v) {
     }
   }
   free (v->data);
-  memset (v, 0, sizeof (xVector));
+  v->data = NULL;
+  v->size = 0;
   return 0;
 }
+
 
 // -----------------------------------------------------------------------------
 int

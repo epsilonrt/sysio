@@ -113,6 +113,16 @@ int iVectorResize (xVector * vector, int new_size);
 int iVectorDestroy (xVector * vector);
 
 /**
+ * @brief Vide un tableau dynamique
+ * 
+ * La mémoire allouée aux données de chaque élément est libérée si une fonction
+ * destroy() a été fournie à l'initialisation.
+ * @param vector pointeur sur le vecteur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
+ */
+int iVectorClear (xVector * vector);
+
+/**
  * @brief Ajout en fin de tableau
  * 
  * Si la taille du tableau est importante, cette fonction peut-être lente
