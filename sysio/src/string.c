@@ -42,7 +42,7 @@ strupr (char * str) {
 
 // -----------------------------------------------------------------------------
 char *
-strcpylwr (char * dst, const char * src) {
+strcpyupr (char * dst, const char * src) {
   char * p = dst;
   
   while (*src) {
@@ -60,7 +60,7 @@ strcpylwr (char * dst, const char * src) {
 
 // -----------------------------------------------------------------------------
 char *
-strcpyupr (char * dst, const char * src) {
+strcpylwr (char * dst, const char * src) {
   char * p = dst;
   
   while (*src) {
