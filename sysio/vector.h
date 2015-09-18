@@ -1,6 +1,6 @@
 /**
- * @file
- * @brief
+ * @file vector.h
+ * @brief Tableau dynamique
  *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
@@ -69,7 +69,7 @@ typedef struct vVector {
  *        NULL si les données sont statiques
  * @param fdestroy fonction chargée de libébrer la mémoire allouée aux données,
  *        NULL si les données sont statiques
- * @return 0, -1 si erreur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
 int iVectorInit (xVector * vector, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy);
 
@@ -78,8 +78,16 @@ int iVectorInit (xVector * vector, vVectorElmtNew fnew, vVectorElmtDestroy fdest
  * @param vector pointeur sur le vecteur
  * @param fkey fonction de clé
  * @param fmatch fonction de comparaison
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
-void vVectorInitSearch (xVector *vector, pvVectorElmtKey fkey, iVectorElmtMatch fmatch);
+int iVectorInitSearch (xVector *vector, pvVectorElmtKey fkey, iVectorElmtMatch fmatch);
+
+/**
+ * @brief Taille du tableau en nombre d'éléments
+ * @param vector pointeur sur le vecteur
+ * @return la valeur, -1 si erreur dans ce cas errno contient le code d'erreur
+ */
+int iVectorSize (const xVector * vector);
 
 /**
  * @brief Modifie la taille
@@ -90,7 +98,7 @@ void vVectorInitSearch (xVector *vector, pvVectorElmtKey fkey, iVectorElmtMatch 
  * 
  * @param vector pointeur sur le vecteur
  * @param new_size nouvelle taille
- * @return 0, -1 si erreur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
 int iVectorResize (xVector * vector, int new_size);
 
@@ -100,26 +108,27 @@ int iVectorResize (xVector * vector, int new_size);
  * La mémoire allouée aux données de chaque élément est libérée si une fonction
  * destroy() a été fournie à l'initialisation.
  * @param vector pointeur sur le vecteur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
-void vVectorDestroy (xVector * vector);
+int iVectorDestroy (xVector * vector);
 
 /**
  * @brief Ajout en fin de tableau
  * 
  * Si la taille du tableau est importante, cette fonction peut-être lente
- * car chaque élément est recopié dans une nouvelle zone mémoire. On préférera
- * dans ce cas utiliser une liste.
+ * car chaque élément pourrait être recopié dans une nouvelle zone mémoire. 
+ * On préférera dans ce cas utiliser une liste.
  * 
  * @param vector pointeur sur le vecteur
  * @param data élément à affecter à la case
- * @return 0, -1 si erreur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
 int iVectorAppend (xVector * vector, void * data);
 
 /**
  * @brief Pointeur sur l'élément
  * @param index index de l'élément concerné
- * @return le pointeur sur l'élément ou NULL si index hors plage
+ * @return le pointeur sur l'élément ou NULL si erreur dans ce cas errno contient le code d'erreur
  */
 void * pvVectorGet (const xVector * vector, int index);
 
@@ -131,25 +140,24 @@ void * pvVectorGet (const xVector * vector, int index);
  * 
  * @param vector pointeur sur le vecteur
  * @param index index de l'élément concerné
- * @return 0, -1 si erreur
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
 int iVectorRemove (xVector * vector, int index);
 
 /**
  * @brief Modifie l'élément pointé par une case
  * 
- * Si il y a déjà un élément dans le tableau, la mémoire allouée à celui-ci est
- * libérée si une fonction destroy() a été fournie à l'initialisation avant de
- * le remplacer.
- 
+ * Il est de la responsabilité de l'utilisateur de libérer éventuellement la 
+ * mémoire allouée à l'élément remplacé.
+ * 
  * @warning pour modifier le contenu de l'élément pointé par une case, il ne faut
  * pas utiliser cette fonction mais pvVectorGet() afin de récupérer le pointeur
- * sur l'élément permettant de modifier l'élément en place.
+ * sur l'élément, puis modifier l'élément à partir de ce pointeur.
  * 
  * @param vector pointeur sur le vecteur
  * @param index index de l'élément concerné
  * @param data à affecter à l'élément
- * @return 0, -1 si index est supérieur à iVectorSize()
+ * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
 int iVectorReplace (xVector * vector, int index, void * data);
 
@@ -157,33 +165,22 @@ int iVectorReplace (xVector * vector, int index, void * data);
  * @brief Chercher le premier élément correspondant à une clé
  * @param vector pointeur sur le vecteur
  * @param key clé de l'élément à trouver
- * @return premier élément trouvé, NULL si pas trouvé
+ * @return premier élément trouvé, NULL si pas trouvé ou erreur
  */
 void * pvVectorFindFirst (const xVector * vector, const void * key);
 
-# ifdef __DOXYGEN__
-
 /**
- * @brief Taille du tableau en nombre d'éléments
+ * @brief Chercher l'index du premier élément correspondant à une clé
  * @param vector pointeur sur le vecteur
- * @return la valeur
+ * @param key clé de l'élément à trouver
+ * @return index, -1 si pas trouvé, -2 si erreur dans ce cas errno contient le code d'erreur
  */
-static inline int iVectorSize (const xVector * vector);
+int iVectorFindFirstIndex (const xVector * vector, const void * key);
 
 /**
  * @}
  */
 
-# else /* __DOXYGEN__ not defined */
-
-// -----------------------------------------------------------------------------
-INLINE int
-iVectorSize (const xVector * vector) {
-  
-  return vector->size;
-}
-
-# endif /* __DOXYGEN__ not defined */
 
 /* ========================================================================== */
 __END_C_DECLS

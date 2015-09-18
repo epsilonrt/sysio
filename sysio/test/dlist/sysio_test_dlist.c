@@ -61,8 +61,8 @@ int main (int argc, char **argv) {
   int                *data, i, j;
 
   //  Initialize the doubly-linked list.
-  vDListInit (&list, free);
-  vDListInitSearch (&list, key, match);
+  iDListInit (&list, free);
+  iDListInitSearch (&list, key, match);
   
   //  Test 1 - Perform some doubly-linked list operations.
   element = pxDListHead (&list);
@@ -197,7 +197,7 @@ int main (int argc, char **argv) {
 
   //  Destroy the doubly-linked list.                                           *
   fprintf (stdout, "\nDestroying the list\n");
-  vDListDestroy (&list);
+  iDListDestroy (&list);
 
   return 0;
 
