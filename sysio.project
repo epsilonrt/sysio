@@ -187,6 +187,7 @@
       <File Name="sysio/src/xbee_private.h"/>
       <File Name="sysio/src/dlist.c"/>
       <File Name="sysio/src/vector.c"/>
+      <File Name="sysio/src/string.c"/>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -211,6 +212,7 @@
     <File Name="sysio/xbee.h"/>
     <File Name="sysio/dlist.h"/>
     <File Name="sysio/vector.h"/>
+    <File Name="sysio/string.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
