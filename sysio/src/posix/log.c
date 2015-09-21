@@ -17,6 +17,9 @@
 /* constants ================================================================ */
 #define ERROR_BUFFER_SIZE 256
 
+#ifndef CONFIG_LOG_DEFAULT_MASK
+#define CONFIG_LOG_DEFAULT_MASK  LOG_UPTO (LOG_ERR)
+#endif
 
 /* structures =============================================================== */
 struct xLog {
@@ -27,7 +30,11 @@ struct xLog {
 };
 
 /* private variables ======================================================== */
-static struct xLog xMyLog;
+static struct xLog xMyLog = {
+  .bIsDaemon = false,
+  .bIsInit = true,
+  .iMask = CONFIG_LOG_DEFAULT_MASK
+};
 static char sError[ERROR_BUFFER_SIZE];
 
 /* private functions ======================================================== */
