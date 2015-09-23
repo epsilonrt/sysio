@@ -53,6 +53,8 @@ typedef const void * (*pvVectorElmtKey) (const void * element);
 typedef struct vVector {
   void** data; /**< pointeur sur le tableau d'éléments */
   int size; /**< Taille en nombre d'éléments */
+  int alloc; /**< nombre d'éléments alloués */
+  int growth; /**< nombre d'éléments à ajouter lors d'une réallocation à la hausse */
   vVectorElmtNew       fnew;
   vVectorElmtDestroy   fdestroy;
   pvVectorElmtKey      fkey;
@@ -65,13 +67,14 @@ typedef struct vVector {
  * @brief Initialise un tableau dynamique
  * 
  * @param vector pointeur sur le vecteur
+ * @param growth nombre d'éléments à ajouter lors d'une réallocation à la hausse
  * @param fnew fonction qui retourne un élément alloué avec une valeur par défaut,
  *        NULL si les données sont statiques
  * @param fdestroy fonction chargée de libébrer la mémoire allouée aux données,
  *        NULL si les données sont statiques
  * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
-int iVectorInit (xVector * vector, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy);
+int iVectorInit (xVector * vector, int growth, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy);
 
 /**
  * @brief Initialise les fonctions de recherche

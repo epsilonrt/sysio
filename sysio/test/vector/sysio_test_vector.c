@@ -43,7 +43,7 @@ main (int argc, char **argv) {
   int i, ret;
   xVector v;
 
-  ret = iVectorInit (&v, NULL, NULL);
+  ret = iVectorInit (&v, 3, NULL, NULL);
   assert (ret == 0);
 
   printf ("Test 1:\n");
@@ -89,7 +89,7 @@ main (int argc, char **argv) {
   printf ("Ok\n\n");
 
   printf ("Test 4:\n");
-  ret = iVectorInit (&v, fnew, free);
+  ret = iVectorInit (&v, 2, fnew, free);
   iVectorInitSearch (&v, fkey, fmatch);
 
   ret = iVectorResize (&v, NAME_SIZE);
@@ -123,6 +123,7 @@ main (int argc, char **argv) {
   ret = iVectorResize (&v, 3);
   assert (ret == 0);
   vPrintItemVector (&v);
+  
   ret = iVectorSize (&v);
   assert (ret == 3);
   printf ("Ok\n\n");

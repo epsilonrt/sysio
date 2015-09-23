@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <errno.h>
 #include <sysio/vector.h>
@@ -16,7 +17,7 @@
 
 // -----------------------------------------------------------------------------
 int
-iVectorInit (xVector * v, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy) {
+iVectorInit (xVector * v, int growth, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy) {
 
   if (v == NULL) {
     errno = EFAULT;
@@ -26,6 +27,7 @@ iVectorInit (xVector * v, vVectorElmtNew fnew, vVectorElmtDestroy fdestroy) {
   memset (v, 0, sizeof (xVector));
   v->fdestroy = fdestroy;
   v->fnew = fnew;
+  v->growth = (growth <= 1) ? 1 : growth;
   return 0;
 }
 
@@ -59,7 +61,12 @@ iVectorResize (xVector * v, int new_size) {
   }
 
   if (new_size >= 0)  {
-    void * p;
+    int new_alloc = (new_size / v->growth) * v->growth;
+
+    if ( (new_size - new_alloc) > 0) {
+      
+      new_alloc += v->growth;
+    }
 
     // Retrait des éléments en excès
     if (v->fdestroy)  {
@@ -68,28 +75,31 @@ iVectorResize (xVector * v, int new_size) {
         if (v->data[i]) {
 
           v->fdestroy (v->data[i]);
+          v->data[i] = NULL;
         }
       }
     }
 
-    p = realloc (v->data, sizeof (void*) * new_size);
-    if (p) {
-
+    if (new_alloc != v->alloc) {
+      void * p = realloc (v->data, sizeof (void*) * new_alloc);
+      assert (p);
+      v->alloc = new_alloc;
       v->data = p;
-      if (new_size > v->size) {
-        // Init des nouveaux éléments
-        for (int i = v->size; i < new_size; i++) {
-          if (v->fnew) {
-            v->data[i] = v->fnew();
-          }
-          else {
-            v->data[i] = NULL;
-          }
+    }
+
+    if (new_size > v->size) {
+      // Init des nouveaux éléments
+      for (int i = v->size; i < new_size; i++) {
+        if (v->fnew) {
+          v->data[i] = v->fnew();
+        }
+        else {
+          v->data[i] = NULL;
         }
       }
-      v->size = new_size;
-      return 0;
     }
+    v->size = new_size;
+    return 0;
   }
   return -1;
 }
@@ -110,9 +120,13 @@ iVectorRemove (xVector *v, int index) {
 
       v->fdestroy (v->data[index]);
     }
+
     memcpy (&v->data[index], &v->data[index + 1], sizeof (void *) * (v->size - index - 1));
-    v->data = realloc (v->data, sizeof (void*) * v->size - 1);
     v->size--;
+
+    if ( (v->alloc - v->size) >= v->growth) {
+      v->data = realloc (v->data, sizeof (void*) * v->size - 1);
+    }
     if (v->data) {
 
       return 0;
@@ -165,6 +179,7 @@ iVectorClear (xVector * v) {
   free (v->data);
   v->data = NULL;
   v->size = 0;
+  v->alloc = 0;
   return 0;
 }
 
