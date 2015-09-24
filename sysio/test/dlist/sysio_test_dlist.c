@@ -13,44 +13,36 @@
 /* private functions ======================================================== */
 
 // -----------------------------------------------------------------------------
-const void * 
+const void *
 key (const xDListElmt * element) {
-  
+
   return pvDListElmtData (element);
 }
 
 // -----------------------------------------------------------------------------
-int  
+int
 match (const void *key1, const void *key2) {
-  int k1 = *(int *)key1;
-  int k2 = *(int *)key2;
-  
+  int k1 = * (int *) key1;
+  int k2 = * (int *) key2;
+
   return k1 - k2;
 }
 
 
 // -----------------------------------------------------------------------------
-static void 
+static void
 vPrintList (const xDList *list) {
   xDListElmt          *element;
   int                *data, i;
 
   fprintf (stdout, "List size is %d\n", iDListSize (list));
-  i = 0;
-  element = pxDListHead (list);
 
-  while (1) {
+  for (element = pxDListHead (list), i = 0;
+       element != NULL;
+       element = pxDListElmtNext (element), i++) {
 
     data = pvDListElmtData (element);
     fprintf (stdout, "list[%03d]=%03d\n", i, *data);
-    i++;
-
-    if (bDListElmtIsTail (element)) {
-      break;
-    }
-    else {
-      element = pxDListElmtNext (element);
-    }
   }
 }
 
@@ -63,7 +55,7 @@ int main (int argc, char **argv) {
   //  Initialize the doubly-linked list.
   iDListInit (&list, free);
   iDListInitSearch (&list, key, match);
-  
+
   //  Test 1 - Perform some doubly-linked list operations.
   element = pxDListHead (&list);
   for (i = 10; i > 0; i--) {
@@ -80,21 +72,21 @@ int main (int argc, char **argv) {
   vPrintList (&list);
 
   element = pxDListHead (&list);
-  for (i = 1; i <= iDListSize(&list); i++) {
-    
+  for (i = 1; i <= iDListSize (&list); i++) {
+
     j = *pxDListElmtDataPtr (element, int);
     assert (i == j);
     element = pxDListElmtNext (element);
   }
   fprintf (stdout, "Test %d: %s\n", 1, "Ok");
-  
+
   //  Test 2
   element = pxDListHead (&list);
   for (i = 0; i < 8; i++) {
     element = pxDListElmtNext (element);
   }
   data = pvDListElmtData (element);
-  
+
   fprintf (stdout, "\nRemoving an element after the one containing %03d\n", *data);
 
   if (iDListRemove (&list, element, (void **) &data) != 0) {
@@ -190,9 +182,9 @@ int main (int argc, char **argv) {
   // Test  12
   fprintf (stdout, "Test %d: ", 12);
   j = 6;
-  element = pxDListFindFirst(&list, &j);
-  fprintf (stdout, "Search %d, found %d ... ", j, *pxDListElmtDataPtr(element, int));
-  assert (*pxDListElmtDataPtr(element, int) == 6);
+  element = pxDListFindFirst (&list, &j);
+  fprintf (stdout, "Search %d, found %d ... ", j, *pxDListElmtDataPtr (element, int));
+  assert (*pxDListElmtDataPtr (element, int) == 6);
   fprintf (stdout, "%s\n", "Ok");
 
   //  Destroy the doubly-linked list.                                           *
