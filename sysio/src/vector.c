@@ -64,7 +64,7 @@ iVectorResize (xVector * v, int new_size) {
     int new_alloc = (new_size / v->growth) * v->growth;
 
     if ( (new_size - new_alloc) > 0) {
-      
+
       new_alloc += v->growth;
     }
 
@@ -142,7 +142,12 @@ iVectorDestroy (xVector * v) {
 
   if (iVectorClear (v) == 0) {
 
-    memset (v, 0, sizeof (xVector));
+    if (v->malloc) {
+      free (v);
+    }
+    else {
+      memset (v, 0, sizeof (xVector));
+    }
     return 0;
   }
   return -1;

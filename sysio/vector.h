@@ -55,6 +55,12 @@ typedef struct vVector {
   int size; /**< Taille en nombre d'éléments */
   int alloc; /**< nombre d'éléments alloués */
   int growth; /**< nombre d'éléments à ajouter lors d'une réallocation à la hausse */
+  union {
+    uint16_t flag;
+    struct {
+      uint16_t malloc: 1; /** Vecteur alloué dynamiquement */
+    };
+  };
   vVectorElmtNew       fnew;
   vVectorElmtDestroy   fdestroy;
   pvVectorElmtKey      fkey;
@@ -109,7 +115,9 @@ int iVectorResize (xVector * vector, int new_size);
  * @brief Destruction d'un tableau dynamique
  * 
  * La mémoire allouée aux données de chaque élément est libérée si une fonction
- * destroy() a été fournie à l'initialisation.
+ * destroy() a été fournie à l'initialisation, puis le vecteur est effacé ou
+ * libéré si son champs malloc = 1.
+ * 
  * @param vector pointeur sur le vecteur
  * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
