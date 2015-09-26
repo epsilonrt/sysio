@@ -135,22 +135,20 @@ iVectorRemove (xVector *v, int index) {
   return -1;
 }
 
-
 // -----------------------------------------------------------------------------
-int
-iVectorDestroy (xVector * v) {
+void
+vVectorDestroy (xVector * v) {
+  if (v) {
+    if (iVectorClear (v) == 0) {
 
-  if (iVectorClear (v) == 0) {
-
-    if (v->malloc) {
-      free (v);
+      if (v->malloc) {
+        free (v);
+      }
+      else {
+        memset (v, 0, sizeof (xVector));
+      }
     }
-    else {
-      memset (v, 0, sizeof (xVector));
-    }
-    return 0;
   }
-  return -1;
 }
 
 // -----------------------------------------------------------------------------

@@ -119,9 +119,8 @@ int iVectorResize (xVector * vector, int new_size);
  * libéré si son champs malloc = 1.
  * 
  * @param vector pointeur sur le vecteur
- * @return 0, -1 si erreur dans ce cas errno contient le code d'erreur
  */
-int iVectorDestroy (xVector * vector);
+void vVectorDestroy (xVector * vector);
 
 /**
  * @brief Vide un tableau dynamique

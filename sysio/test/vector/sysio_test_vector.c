@@ -83,7 +83,7 @@ main (int argc, char **argv) {
   printf ("Test 3:\n");
   iVectorRemove (&v, 1);
   vPrintStrVector (&v);
-  iVectorDestroy (&v);
+  vVectorDestroy (&v);
   ret = iVectorSize (&v);
   assert (ret == 0);
   printf ("Ok\n\n");
@@ -142,7 +142,7 @@ main (int argc, char **argv) {
   ret = iVectorReplace (&v , 1, p);
   assert (ret == 0);
   vPrintItemVector (&v);
-  iVectorDestroy (&v);
+  vVectorDestroy (&v);
   ret = iVectorSize (&v);
   assert (ret == 0);
   printf ("Ok\n\n");
