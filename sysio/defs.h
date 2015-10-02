@@ -103,26 +103,24 @@ int iSysIoSetStrError (const char *format, ...);
 # define STRUCT_FIELD_OFFSET(s,f)  ((size_t)&(((s *)0)->f))
 #endif
 
-#ifdef DEBUG
 #define PERROR(fmt,...) do { \
-  vLog (LOG_ERR, fmt, ##__VA_ARGS__); \
+  vLog (LOG_ERR, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
   iSysIoSetStrError ("%s:%d: %s: Error: " fmt "\n", \
                __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
+  
 #define PWARNING(fmt,...) do { \
-  vLog (LOG_WARNING, fmt, ##__VA_ARGS__); \
+  vLog (LOG_WARNING, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
   iSysIoSetStrError ("%s:%d: %s: Warning: " fmt "\n", \
                __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
-#define PDEBUG(fmt,...) vLog (LOG_DEBUG, fmt, ##__VA_ARGS__)
-#define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
+
+#define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+
+#ifdef DEBUG
+#define PDEBUG(fmt,...) vLog (LOG_DEBUG, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define PDEBUG(fmt,...)
-#define PINFO(fmt,...)
-#define PERROR(fmt,...) iSysIoSetStrError("%s:%d: %s: Error: " fmt "\n", \
-                                    __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#define PWARNING(fmt,...) iSysIoSetStrError("%s:%d: %s: Warning: " fmt "\n", \
-                                      __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #endif
 
   /* GCC attributes */
