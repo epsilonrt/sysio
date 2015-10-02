@@ -115,12 +115,13 @@ int iSysIoSetStrError (const char *format, ...);
                __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
 
-#define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 
 #ifdef DEBUG
+#define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #define PDEBUG(fmt,...) vLog (LOG_DEBUG, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define PDEBUG(fmt,...)
+#define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
 #endif
 
   /* GCC attributes */
