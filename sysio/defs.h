@@ -48,20 +48,29 @@ __BEGIN_C_DECLS
 #include <stdbool.h>
 #include <stdint.h>
 
+#define BASENAME(f) (f)
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 /* UNIX-style OS */
-#define SYSIO_OS_UNIX
-#if defined(_POSIX_VERSION)
+# define SYSIO_OS_UNIX
+# include <libgen.h>
+# undef BASENAME
+# define BASENAME(f) basename(f)
+
+# if defined(_POSIX_VERSION)
 /* POSIX compliant */
-#define SYSIO_OS_POSIX
-#endif
-#if defined(__linux__)
-#define SYSIO_OS_LINUX
-#endif
+#   define SYSIO_OS_POSIX
+# endif
+
+# if defined(__linux__)
+#   define SYSIO_OS_LINUX
+# endif
+
 #elif defined(_WIN32) || defined(WIN32)
-#define SYSIO_OS_WIN32
+# define SYSIO_OS_WIN32
+
 #else
-#error Unable to detect operating system !
+# error Unable to detect operating system !
 #endif
 
 /* internal public functions ================================================ */
@@ -104,21 +113,21 @@ int iSysIoSetStrError (const char *format, ...);
 #endif
 
 #define PERROR(fmt,...) do { \
-  vLog (LOG_ERR, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-  iSysIoSetStrError ("%s:%d: %s: Error: " fmt "\n", \
-               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  vLog (LOG_ERR, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  iSysIoSetStrError ("%s:%d: %s(): Error: " fmt "\n", \
+               BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
   
 #define PWARNING(fmt,...) do { \
-  vLog (LOG_WARNING, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-  iSysIoSetStrError ("%s:%d: %s: Warning: " fmt "\n", \
-               __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  vLog (LOG_WARNING, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+  iSysIoSetStrError ("%s:%d: %s(): Warning: " fmt "\n", \
+               BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
 
 
 #ifdef DEBUG
-#define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
-#define PDEBUG(fmt,...) vLog (LOG_DEBUG, "%s:%d: %s: " fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define PDEBUG(fmt,...) vLog (LOG_DEBUG, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define PDEBUG(fmt,...)
 #define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
