@@ -857,7 +857,38 @@ const uint8_t * pucXBeeAddr64Broadcast (void);
 int iXBeePktDigital (xXBeePkt * pkt, int array[9], unsigned int index);
 int iXBeePktAnalog (xXBeePkt * pkt, int array[6], unsigned int index);
 int iXBeePktSamples (xXBeePkt * pkt);
+
+#if defined(SYSIO_OS_UNIX)
+// htons, ntohs ...
+#include <arpa/inet.h>
+#elif defined(SYSIO_OS_WIN32)
+#warning TODO: where is htons on win32 plateform ?
 #endif
+
+#ifndef htonll
+
+#if defined(SYSIO_OS_LINUX)
+#include <byteswap.h>
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+#define be64_to_cpu(val) bswap_64(val)
+#elif BYTE_ORDER == BIG_ENDIAN
+#define be64_to_cpu(val) (val)
+#else
+#error unknwon BYTE_ORDER
+#endif
+
+#elif defined(SYSIO_OS_APPLE)
+#warning TODO:  be64_to_cpu(val) for darwin
+#elif defined(SYSIO_OS_WIN32)
+#warning TODO:  be64_to_cpu(val) for win32 
+#endif /* SYSIO_OS_WIN32 defined */
+
+#define ntohll(x) be64_to_cpu(x)
+#define htonll(x) ntohll(x)
+#endif /* htonll not defined */
+
+#endif /* __DOXYGEN__ not defined */
 
 /**
  * @}

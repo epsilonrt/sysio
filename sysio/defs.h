@@ -66,6 +66,10 @@ __BEGIN_C_DECLS
 #   define SYSIO_OS_LINUX
 # endif
 
+# if defined(__APPLE__)
+#   define SYSIO_OS_APPLE
+# endif
+
 #elif defined(_WIN32) || defined(WIN32)
 # define SYSIO_OS_WIN32
 
