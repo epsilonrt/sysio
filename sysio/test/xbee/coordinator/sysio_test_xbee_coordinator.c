@@ -95,9 +95,8 @@ main (int argc, char **argv) {
   for (;;) {
 
     // Scrute la réception des paquets
-    ret = iXBeePoll (&xbee);
+    ret = iXBeePoll (&xbee, 10);
     assert (ret == 0);
-    delay_ms (10);
   }
 
   return 0;

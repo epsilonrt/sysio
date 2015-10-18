@@ -362,9 +362,9 @@ typedef struct xXBee {
  *
  * Cette fonction doit être appellée avant toute utilisation du contexte xbee.
  * 
- * @param fd descripteur de fichier du port série ouvert en lecture et écriture
  * @param series Modèle du module utilisé
- * connectée au module XBee, doit être ouvert en mode non-bloquant.
+ * @param fd descripteur de fichier du port série ouvert en lecture-écriture
+ *  connecté au module XBee, doit être ouvert en mode non-bloquant.
  * @return 0, -1 si erreur
  */
 int iXBeeInit (xXBee *xbee, eXBeeSeries series, int fd);
@@ -386,8 +386,9 @@ void vXBeeSetCB (xXBee *xbee, eXBeeCbType cb_type, iXBeeRxCB cb);
  * Cette fonction doit être appellée dans la boucle principale aussi souvent que
  * possible. \n
  * @warning Il faut appeller cette fonction sinon aucune réception n'est possible.
+ * @return 0, -1 si erreur
  */
-int iXBeePoll (xXBee *xbee);
+int iXBeePoll (xXBee *xbee, int timeout);
 
 /**
  * @brief Envoi une commande AT locale

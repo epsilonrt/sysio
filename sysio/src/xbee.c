@@ -449,8 +449,8 @@ iXBeeSendRemoteAt (xXBee * xbee,
 #define IXBEEPOLL_BUFFER_SIZE 128
 
 int
-iXBeePoll (xXBee * xbee) {
-  int iDataAvailable = iSerialDataAvailable (xbee->fd);
+iXBeePoll (xXBee * xbee, int timeout_ms) {
+  int iDataAvailable = iSerialPoll (xbee->fd, timeout_ms);
 
   if (iDataAvailable > 0) {
     int iDataRead;

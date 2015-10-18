@@ -116,21 +116,28 @@ iVectorRemove (xVector *v, int index) {
 
   if ( (index < v->size) && (index >= 0)) {
 
+    // libère la mémoire de l'élément
     if ( (v->fdestroy) && (v->data[index])) {
 
       v->fdestroy (v->data[index]);
     }
 
-    memcpy (&v->data[index], &v->data[index + 1], sizeof (void *) * (v->size - index - 1));
+    // Si il reste des éléments dans le vecteur les décaler vers la gauche
+    if (v->size > 1) {
+
+      memcpy (&v->data[index], &v->data[index + 1],
+              sizeof (void *) * (v->size - index - 1));
+    }
     v->size--;
 
     if ( (v->alloc - v->size) >= v->growth) {
-      v->data = realloc (v->data, sizeof (void*) * v->size - 1);
-    }
-    if (v->data) {
+      // l'excès d'allocation est supérieur ou égal à l'acroissement, on réduit
 
-      return 0;
+      // si v->size vaut 0, équivalent à free
+      v->data = realloc (v->data, sizeof (void*) * v->size);
+      v->alloc = v->size;
     }
+    return 0;
   }
   return -1;
 }

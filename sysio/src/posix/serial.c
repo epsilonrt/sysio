@@ -8,7 +8,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <errno.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <sysio/serial.h>
 #include <sysio/delay.h>
@@ -120,6 +122,44 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   delay_ms (10);
 
   return fd;
+}
+
+// -----------------------------------------------------------------------------
+int
+iSerialPoll (int fd, int timeout_ms) {
+  int ret;
+  fd_set set;
+  struct timeval timeout;
+  long timeout_us = timeout_ms * 1000L;
+
+  /* Initialize the file descriptor set. */
+  FD_ZERO (&set);
+  FD_SET (fd, &set);
+
+  /* Initialize the timeout data structure. */
+  timeout.tv_sec  = timeout_us / 1000000L;
+  timeout.tv_usec = timeout_us % 1000000L;
+
+  /* select returns 0 if timeout, 1 if input available, -1 if error. */
+  ret = select (FD_SETSIZE, &set, NULL, NULL, &timeout);
+  if (ret == -1) {
+    if (errno != EINTR) {
+      PERROR ("failed to poll serial port: %s", strerror (errno));
+    }
+    else {
+      ret = 0;
+    }
+  }
+  else if ( (ret > 0) && (FD_ISSET (fd, &set))) {
+    int available_data;
+    
+    ret = ioctl (fd, FIONREAD, &available_data);
+    if (ret == 0) {
+      ret = available_data;
+    }
+  }
+
+  return ret;
 }
 
 // -----------------------------------------------------------------------------

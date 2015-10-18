@@ -162,10 +162,19 @@ void vSerialFlush (int fd);
 /**
  * Retourne le nombre d'octets en attente de lecture
  *
- * @param xPort Pointeur sur le port
+ * @param fd le descripteur de fichier du port
  * @return le nombre d'octets en attente de lecture, -1 si erreur
  */
 int iSerialDataAvailable (int fd);
+
+/**
+ * Scrutation en réception du port série
+ *
+ * @param fd le descripteur de fichier du port
+ * @param timeout_ms temps d'attente maximal
+ * @return le nombre d'octets en attente de lecture, -1 si erreur
+ */
+int iSerialPoll (int fd, int timeout_ms);
 
 /**
  *  Lecture de la vitesse de transmission
