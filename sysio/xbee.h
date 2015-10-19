@@ -173,7 +173,7 @@ struct xXBee;
 #define ntohll(x) be64_to_cpu(x)
 #define htonll(x) ntohll(x)
 /* htonll not defined ------------------------------------------------------- */
-#endi
+#endif
 
 #else
 /**
