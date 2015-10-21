@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <sysio/serial.h>
+#include <sysio/log.h>
 #include "xbee_private.h"
 
 /* private functions ======================================================== */
@@ -119,18 +120,19 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
 
     switch (xbee->in.bytes_rcvd) {
 
-      case 0:
+      case 0: // Attente 0x7E
         while (*data != XBEE_PKT_START) {
 
-          if (!--len) {
+          if (--len == 0) {
 
             return;
           }
           data++;
         }
-
+        
+        // 0x7E reçu, on le stocke
         xbee->in.hdr_data[xbee->in.bytes_rcvd++] = *data++;
-        if (!--len) {
+        if (--len == 0) {
 
           return;
         }
@@ -138,8 +140,9 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
         /* Fall thru */
 
       case 1:
+        // Poids fort longueur trame
         xbee->in.hdr_data[xbee->in.bytes_rcvd++] = *data++;
-        if (!--len) {
+        if (--len == 0) {
 
           return;
         }
@@ -147,6 +150,7 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
         /* Fall thru */
 
       case 2:
+        // Poids faible longueur trame
         xbee->in.hdr_data[xbee->in.bytes_rcvd++] = *data++;
 
         /* Got enough to get packet length */
@@ -168,7 +172,7 @@ vXBeeIn (xXBee *xbee, const void *buf, uint8_t len) {
         memcpy (& (xbee->in.packet->hdr), & (xbee->in.hdr_data),
                 sizeof (xbee->in.hdr_data));
 
-        if (!--len) {
+        if (--len == 0) {
 
           return;
         }
@@ -446,19 +450,24 @@ iXBeeSendRemoteAt (xXBee * xbee,
 /* -----------------------------------------------------------------------------
  * Poll the inputstream to read incoming bytes
  */
-#define IXBEEPOLL_BUFFER_SIZE 128
-
 int
 iXBeePoll (xXBee * xbee, int timeout_ms) {
   int iDataAvailable = iSerialPoll (xbee->fd, timeout_ms);
 
   if (iDataAvailable > 0) {
     int iDataRead;
-    uint8_t ucBuffer[IXBEEPOLL_BUFFER_SIZE];
+    uint8_t ucBuffer[XBEE_MAX_RF_PAYLOAD];
 
-    iDataRead = read (xbee->fd, ucBuffer, MIN (iDataAvailable, IXBEEPOLL_BUFFER_SIZE));
+    iDataRead = read (xbee->fd, ucBuffer, MIN (iDataAvailable, XBEE_MAX_RF_PAYLOAD));
     if (iDataRead > 0) {
 
+#ifdef XBEE_DEBUG
+      printf ("read %d bytes: [", iDataRead);
+      for (int i = 0; i < iDataRead; i++) {
+        printf ("%02X", ucBuffer[i]);
+      }
+      printf ("]\n");
+#endif
       vXBeeIn (xbee, ucBuffer, iDataRead);
       return 0;
     }
@@ -871,11 +880,11 @@ int
 iXBeePktParamGetULong (uint32_t * ulDest, xXBeePkt *pkt, int iOffset) {
   int iLen;
   uint32_t ulNet;
-  
+
   iLen = iXBeePktParamLen (pkt) - iOffset;
-  
+
   if (iLen >= sizeof (ulNet)) {
-    
+
     memcpy (&ulNet, pucXBeePktParam (pkt) + iOffset, sizeof (ulNet));
     *ulDest = ntohl (ulNet);
     return 0;
@@ -888,11 +897,11 @@ int
 iXBeePktParamGetUShort (uint16_t * usDest, xXBeePkt *pkt, int iOffset) {
   int iLen;
   uint16_t usNet;
-  
+
   iLen = iXBeePktParamLen (pkt) - iOffset;
-  
+
   if (iLen >= sizeof (usNet)) {
-    
+
     memcpy (&usNet, pucXBeePktParam (pkt) + iOffset, sizeof (usNet));
     *usDest = ntohs (usNet);
     return 0;

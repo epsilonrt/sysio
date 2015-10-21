@@ -133,6 +133,7 @@ __BEGIN_C_DECLS
 #define XBEE_CMD_RESET_SOFT             "FR"
 #define XBEE_CMD_APPLY_CHANGES          "AC"
 #define XBEE_CMD_RESTORE_DEFAULTS       "RE"
+#define XBEE_CMD_MAX_PAYLOAD            "NP"
 
 /**
  * @}

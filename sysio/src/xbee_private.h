@@ -83,12 +83,13 @@ __BEGIN_C_DECLS
 /* "Start of packet" byte; always sent as the first
  *  byte of each packet
  */
-#define XBEE_PKT_START 0x7e
+#define XBEE_PKT_START      0x7e
 
+/* Maximum RF payload bytes, the value may be read with AT command NP for Zb */
+#define XBEE_MAX_RF_PAYLOAD 255
 
-/* Maximum packet size; datasheet basically says 100 payload bytes max */
-#define XBEE_MAX_DATA_LEN        128
-
+/* Maximum data size */
+#define XBEE_MAX_DATA_LEN   (XBEE_MAX_RF_PAYLOAD - 4)
 
 /* --- Bits in packets --- */
 
