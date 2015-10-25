@@ -34,11 +34,11 @@
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="No"/>
   <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
-  <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
+  <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="Yes"/>
   <Project Name="sysio_test_xbee_xPL" Path="sysio/test/xbee/xPL/sysio_test_xbee_xPL.project" Active="No"/>
   <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
   <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="Yes"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>

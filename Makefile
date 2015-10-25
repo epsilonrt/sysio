@@ -14,7 +14,7 @@ ARCH = ARCH_GENERIC_LINUX
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
-DEBUG = ON
+#DEBUG = ON
 
 #---------------- Install Options ----------------
 prefix=/usr/local
