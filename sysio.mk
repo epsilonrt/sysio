@@ -15,6 +15,7 @@ SYS_HAS_I2C = ON
 SYS_HAS_SERIAL = ON
 ARCH_DIR = sysio/src/arch/arm/rpi
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
+CFLAGS += -munaligned-access 
 endif
 
 ifeq ($(ARCH),ARCH_GENERIC_LINUX)

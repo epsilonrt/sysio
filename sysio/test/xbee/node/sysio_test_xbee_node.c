@@ -2,12 +2,30 @@
  * @file sysio_test_xbee_node.c
  * @brief Test noeud XBee
  * - Affiche le contenu des paquets de données reçus
- * - Transmet périodiquement un paquet de données de test
+ * - Transmet périodiquement un paquet de données de test au coordinateur
  * .
- *
  * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
+ * ----------------------------------------------------------------------------- 
+  Exemple de sortie correcte:
+  $ ./sysio_test_xbee_node /dev/ttyUSB1
+    *** SysIO XBee Node Test ***
+    My Ni String is 'NODE01'
+    Tx2>'Hello #1 from NODE01'
+    Tx2 Ok
+    Tx3>'Hello #2 from NODE01'
+    Tx3 Ok
+    Tx4>'Hello #3 from NODE01'
+    Tx4 Ok
+    Tx5>'Hello #4 from NODE01'
+    Tx5 Ok
+    Tx6>'Hello #5 from NODE01'
+    Tx6 Ok
+    ^C
+    /dev/ttyUSB1 closed.
+    Have a nice day !
+ * -----------------------------------------------------------------------------
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,9 +39,11 @@
 
 #include <assert.h>
 
+/* 
+ */
 /* constants ================================================================ */
 #define DEFAULT_BAUDRATE  38400
-#define TX_INTERVAL_DELAY  5
+#define TX_INTERVAL_DELAY  10
 
 /* private variables ======================================================== */
 static xXBee xbee;
