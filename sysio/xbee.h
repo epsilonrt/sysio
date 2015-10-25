@@ -362,15 +362,6 @@ typedef struct xXBeePkt {
 typedef struct xXBee xXBee;
 #else
 typedef struct xXBee {
-  pthread_mutex_t mutex;
-  int fd;
-  eXBeeSeries series;
-  void *user_context; // yours to pass data around with
-#ifdef XBEE_DEBUG
-  int rx_crc_error, rx_error, rx_dropped;
-  int tx_error, tx_dropped;
-#endif
-  // <WARNING> Ne pas déplacer les structures packed au début
   struct {
     uint8_t bytes_left;
     uint8_t bytes_rcvd;
@@ -381,6 +372,14 @@ typedef struct xXBee {
   struct {
     uint8_t frame_id;
   } __attribute__ ( (__packed__)) out;
+  int fd;
+  eXBeeSeries series;
+  void *user_context; // yours to pass data around with
+  pthread_mutex_t mutex;
+#ifdef XBEE_DEBUG
+  int rx_crc_error, rx_error, rx_dropped;
+  int tx_error, tx_dropped;
+#endif
 } __attribute__ ( (__packed__)) xXBee;
 #endif
 
