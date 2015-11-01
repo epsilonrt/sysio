@@ -26,8 +26,7 @@
 #define TX_INTERVAL_DELAY  5
 
 /* private variables ======================================================== */
-static xXBee xbee;
-static int fd;
+static xXBee * xbee;
 static const char * cDev;
 static char cMyNi[21];
 volatile int frame_id = 0;
@@ -64,9 +63,9 @@ main (int argc, char **argv) {
    * Init liaison série vers module XBee
    * Mode lecture/écriture, non bloquant, avec contrôle de flux matériel
    */
-  if ( (fd = iSerialOpen (cDev, &xIosSet)) < 0) {
+  if ( (xbee = xXBeeOpen (cDev, &xIosSet, XBEE_SERIES_S2)) == NULL) {
 
-    perror ("serialOpen failed !");
+    perror ("xXBeeOpen failed !");
     exit (EXIT_FAILURE);
   }
 
@@ -75,13 +74,11 @@ main (int argc, char **argv) {
   /*
    * Init XBee, mise en place des gestionnaires de réception
    */
-  ret = iXBeeInit (&xbee, XBEE_SERIES_S2, fd);
-  assert (ret == 0);
-  vXBeeSetCB (&xbee, XBEE_CB_DATA, iDataCB);
-  vXBeeSetCB (&xbee, XBEE_CB_TX_STATUS, iTxStatusCB);
-  vXBeeSetCB (&xbee, XBEE_CB_AT_LOCAL, iLocalAtCB);
+  vXBeeSetCB (xbee, XBEE_CB_DATA, iDataCB);
+  vXBeeSetCB (xbee, XBEE_CB_TX_STATUS, iTxStatusCB);
+  vXBeeSetCB (xbee, XBEE_CB_AT_LOCAL, iLocalAtCB);
 
-  ret = iXBeeSendAt (&xbee, XBEE_CMD_NODE_ID, NULL, 0);
+  ret = iXBeeSendAt (xbee, XBEE_CMD_NODE_ID, NULL, 0);
   assert (ret >= 0);
 
   signal (SIGTERM, vSigExitHandler);
@@ -92,7 +89,7 @@ main (int argc, char **argv) {
   for (;;) {
 
     // Scrute la réception des paquets
-    ret = iXBeePoll (&xbee, 10);
+    ret = iXBeePoll (xbee, 10);
     assert (ret == 0);
   }
 
@@ -182,7 +179,7 @@ iTxStatusCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 void
 vSigExitHandler (int sig) {
 
-  vSerialClose (fd);
+  iXBeeClose (xbee);
   printf ("\n%s closed.\nHave a nice day !\n", cDev);
   exit (EXIT_SUCCESS);
 }
@@ -195,7 +192,7 @@ vSigAlarmHandler (int sig) {
 
   snprintf (message, 32, "Hello #%d from %s", iCount++, cMyNi);
 
-  frame_id = iXBeeZbSendToCoordinator (&xbee, message, strlen (message));
+  frame_id = iXBeeZbSendToCoordinator (xbee, message, strlen (message));
   assert (frame_id >= 0);
   printf ("Tx%d>'%s'\n", frame_id, message);
   alarm (TX_INTERVAL_DELAY);
