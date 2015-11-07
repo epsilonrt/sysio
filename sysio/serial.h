@@ -80,7 +80,7 @@ typedef enum {
  * Configuration d'un port série
  */
 typedef struct xSerialIos {
-  int baud; /**< Vitesse de transmission, négative si erreur */
+  long baud; /**< Vitesse de transmission, négative si erreur */
   eSerialDataBits dbits; /**< Bits de données */
   eSerialParity parity; /**< Parité */
   eSerialStopBits sbits;/**< Bits de stop */
