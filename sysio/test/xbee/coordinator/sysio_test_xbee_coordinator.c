@@ -221,10 +221,10 @@ vSigExitHandler (int sig) {
 // -----------------------------------------------------------------------------
 void
 vSigAlarmHandler (int sig) {
-  char message[64];
+  char message[33];
   static int iCount = 1;
 
-  snprintf (message, 32, "Hello #%d from %s", iCount++, cMyNi);
+  snprintf (message, 32, "%s #%d", cMyNi, iCount++);
 
   frame_id = iXBeeZbSendBroadcast (xbee, message, strlen (message));
   assert (frame_id >= 0);

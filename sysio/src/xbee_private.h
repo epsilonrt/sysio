@@ -413,16 +413,6 @@ typedef struct xXBeeTxStatusPkt {
 /* private functions ======================================================== */
 
 /*
- * Receive data
- *
- * calling iXBeeRecvPktCB on each packet when it's done assembling; this should
- * be called with raw data from UART, etc.
- * as it comes in.  *** YOU NEED TO CALL THIS ***
- */
-void vXBeeIn (xXBee *xbee, const void *data, uint8_t len);
-
-
-/*
  * Queue a packet for transmission
  *
  * needs to queue packet to be sent to XBEE module; e.g. copy the packet to a
@@ -433,15 +423,6 @@ void vXBeeIn (xXBee *xbee, const void *data, uint8_t len);
  *   handed off.  This is to minimize copying of data.
  */
 int iXBeeOut (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
-
-/*
- * Handle an incoming packet
- *
- * the packet will be fully formed and verified
- * for proper construction before being passed off to this function.  This
- * function should dig into the packet & process based on its contents.
- */
-int iXBeeRecvPktCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
 
 /*
  * Generate & return next 8-bit frame ID
