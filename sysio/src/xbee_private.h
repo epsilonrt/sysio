@@ -88,7 +88,9 @@ __BEGIN_C_DECLS
 #define XBEE_PKT_START      0x7e
 
 /* Maximum RF payload bytes, the value may be read with AT command NP for Zb */
+#ifndef XBEE_MAX_RF_PAYLOAD
 #define XBEE_MAX_RF_PAYLOAD 255
+#endif
 
 /* Maximum data size */
 #define XBEE_MAX_DATA_LEN   (XBEE_MAX_RF_PAYLOAD - 4)
