@@ -21,7 +21,7 @@
   <Project Name="radio_test_cpp_ax25" Path="radio/test/cpp/ax25/radio_test_cpp_ax25.project" Active="No"/>
   <Project Name="radio_test_python_unit" Path="radio/test/python/unit/radio_test_python_unit.project" Active="No"/>
   <Project Name="sysio_test_serial" Path="sysio/test/serial/sysio_test_serial.project" Active="No"/>
-  <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
+  <Project Name="util_sping" Path="util/sping/util_sping.project" Active="Yes"/>
   <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
   <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
   <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
@@ -38,7 +38,7 @@
   <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
   <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="Yes"/>
+  <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>

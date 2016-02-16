@@ -121,7 +121,7 @@ VERSION=1.0.0
 #SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)
-SYSIO_ROOT = $(PROJECT_TOPDIR)/../sysio
+SYSIO_ROOT = $(PROJECT_TOPDIR)/../../../sysio
 endif
 #-----------------------------------------------
 

@@ -27,7 +27,7 @@
 /* constants ================================================================ */
 // #define VERSION 1.1
 #define AUTHORS "Pascal JEAN"
-#define WEBSITE "http://www.btssn.net/solarpi"
+#define WEBSITE "http://gitweb.epsilonrt.com/sysio.git"
 
 #define STX 2
 #define ETX 3
@@ -49,30 +49,19 @@
 #define DEFAULT_DATABIT  8
 #define DEFAULT_STOPBIT  1
 #define DEFAULT_PARITY  'N'
+#define DEFAULT_FLOW    SERIAL_FLOW_NONE
 #define DEFAULT_PACKET_SIZE 56
 #define DEFAULT_PACKET_COUNT    4
 #define DEFAULT_PACKET_TIMEOUT  500
 #define DEFAULT_PACKET_INTERVAL 1000
 
 /* extremum values ========================================================== */
-// Platform dependent !
-#ifdef ARCH_ARM_RASPBERRYPI
-// below is for Raspberry Pi
-#   define F_CPU 700000000UL // Raspberry Pi System Clock: 700 MHz
-#   define BAUDRATE(baudrate_reg) (unsigned int)(F_CPU/(8UL*(baudrate_reg+1UL)))
-//
-#   define MAX_BAUDRATE BAUDRATE(0)
-#   define MIN_BAUDRATE BAUDRATE(0xFFFF)
-#   define MIN_DATABIT 7
-#   define MAX_DATABIT 8
-#else
-#   define MAX_BAUDRATE 115200
-#   define MIN_BAUDRATE 50
-#   define MIN_DATABIT 5
-#   define MAX_DATABIT 8
-#   define STOPBIT_LIST { 1, 2 }
-#   define PARITY_LIST { 'N', 'E', 'O' }
-#endif
+#define MIN_DATABIT 5
+#define MAX_DATABIT 8
+#define STOPBIT_LIST { 1, 2 }
+#define PARITY_LIST { 'N', 'E', 'O' }
+#define MAX_BAUDRATE 921600
+#define MIN_BAUDRATE 50
 
 /* structures =============================================================== */
 typedef struct statistics {
@@ -87,6 +76,7 @@ static int iFd;
 static char *sDevice;
 static bool bDevAlloc;
 static char *sPingPacket;
+static bool bReceive = false;
 
 /* statistiques */
 static statistics xStats;
@@ -97,6 +87,7 @@ void vSigIntHandler (int);
 void vStatistics (void);
 void vVersion (void);
 void vHelp (FILE *stream, int exit_msg);
+int iCloseAll (void);
 
 /* main ===================================================================== */
 int
@@ -106,37 +97,24 @@ main (int argc, char **argv) {
   int iPacketSize, iPacketCount, iPacketTimeout, iPacketInterval;
   xSerialIos xIos;
 
-#ifndef ARCH_ARM_RASPBERRYPI
   const int iStopBitList[] = STOPBIT_LIST;
   const int iParityList[]  = PARITY_LIST;
-  const char *short_options = "b:d:t:p:s:c:W:i:hv";
+  const char *short_options = "b:d:t:p:s:c:W:i:f:rhv";
   static const struct option long_options[] = {
     {"baudrate",  required_argument, NULL, 'b'},
     {"databit",  required_argument, NULL, 'd'},
     {"stopbit",  required_argument, NULL, 't'},
     {"parity",  required_argument, NULL, 'p'},
+    {"flow",  required_argument, NULL, 'f'},
     {"packetsize",  required_argument, NULL, 's'},
     {"count",  required_argument, NULL, 'c'},
     {"timeout",  required_argument, NULL, 'W'},
     {"interval",  required_argument, NULL, 'i'},
+    {"receive",  no_argument, NULL, 'r'},
     {"help",  no_argument, NULL, 'h'},
     {"version",  no_argument, NULL, 'v'},
     {NULL, 0, NULL, 0} /* End of array need by getopt_long do not delete it*/
   };
-#else
-  const char *short_options = "b:d:s:c:W:i:hv";
-  static const struct option long_options[] = {
-    {"baudrate",  required_argument, NULL, 'b'},
-    {"databit",  required_argument, NULL, 'd'},
-    {"packetsize",  required_argument, NULL, 's'},
-    {"count",  required_argument, NULL, 'c'},
-    {"timeout",  required_argument, NULL, 'W'},
-    {"interval",  required_argument, NULL, 'i'},
-    {"help",  no_argument, NULL, 'h'},
-    {"version",  no_argument, NULL, 'v'},
-    {NULL, 0, NULL, 0} /* End of array need by getopt_long do not delete it*/
-  };
-#endif
 
   /* variables de travail */
   int i, iCount, iPongLength;
@@ -160,7 +138,7 @@ main (int argc, char **argv) {
   xIos.dbits =      DEFAULT_DATABIT;
   xIos.sbits =      DEFAULT_STOPBIT;
   xIos.parity  =    DEFAULT_PARITY;
-  xIos.flow =       SERIAL_FLOW_NONE;
+  xIos.flow =       DEFAULT_FLOW;
   xIos.flag =       0;
   iPacketSize =     DEFAULT_PACKET_SIZE;
   iPacketCount =    DEFAULT_PACKET_COUNT;
@@ -173,65 +151,93 @@ main (int argc, char **argv) {
     iNextOption = getopt_long (argc, argv, short_options, long_options, NULL);
 
     switch (iNextOption) {
+
       case 'b':
         xIos.baud = atoi (optarg);
         if ( ( (unsigned long) xIos.baud < MIN_BAUDRATE) ||
-             ( (unsigned long) xIos.baud > MAX_BAUDRATE)) {
+             ( (unsigned long) xIos.baud > MAX_BAUDRATE) ) {
           xIos.baud = DEFAULT_BAUDRATE;
-          fprintf (stderr, "Warning: baudrate out of range {%d,%d} !\n", MIN_BAUDRATE, MAX_BAUDRATE);
+          fprintf (stderr, "Warning: baudrate out of range {%d,%d} !\n",
+                   MIN_BAUDRATE, MAX_BAUDRATE);
         }
         //printf("baudrate=%d\n", xIos.baud);
         break;
+
       case 'd':
         xIos.dbits = atoi (optarg);
         if ( (xIos.dbits < MIN_DATABIT) ||
-             (xIos.dbits > MAX_DATABIT)) {
+             (xIos.dbits > MAX_DATABIT) ) {
           xIos.dbits = DEFAULT_DATABIT;
-          fprintf (stderr, "Warning: databit out of range {%d,%d} !\n", MIN_DATABIT, MAX_DATABIT);
+          fprintf (stderr, "Warning: databit out of range {%d,%d} !\n",
+                   MIN_DATABIT, MAX_DATABIT);
         }
-        /***************** TODO *****************/
-        fprintf (stderr, "databit: not implemented yet feature !\n");
         //printf("databit=%d\n", xIos.dbits);
         break;
-#ifndef ARCH_ARM_RASPBERRYPI
+
       case 't':
         xIos.sbits = atoi (optarg);
         xIos.sbits = iCheckValue (xIos.sbits, iStopBitList, DEFAULT_STOPBIT);
-        fprintf (stderr, "stopbit: not implemented yet feature !\n");
         //printf("stopbit=%d\n", xIos.sbits);
         break;
+
       case 'p':
         xIos.parity = atoi (optarg);
         xIos.parity = iCheckValue (xIos.parity, iParityList, DEFAULT_PARITY);
-        fprintf (stderr, "parity: not implemented yet feature !\n");
         //printf("parity=%c\n", xIos.parity);
         break;
-#endif
+
+      case 'f':
+        if (strcasecmp (optarg, "rtscts") == 0) {
+          xIos.flow = SERIAL_FLOW_RTSCTS;
+        }
+        else if (strcasecmp (optarg, "xonxoff") == 0) {
+          xIos.flow = SERIAL_FLOW_XONXOFF;
+        }
+        else if (strcasecmp (optarg, "rs485") == 0) {
+          xIos.flow = SERIAL_FLOW_RS485_RTS_AFTER_SEND;
+        }
+        else if (strcasecmp (optarg, "rs485on") == 0) {
+          xIos.flow = SERIAL_FLOW_RS485_RTS_ON_SEND;
+        }
+        break;
+
       case 's':
         iPacketSize = atoi (optarg);
-        if ( (iPacketSize < MIN_PACKET_SIZE) || (iPacketSize > MAX_PACKET_SIZE)) {
+        if ( (iPacketSize < MIN_PACKET_SIZE) ||
+             (iPacketSize > MAX_PACKET_SIZE) ) {
+
           iPacketSize = DEFAULT_PACKET_SIZE;
         }
-        printf ("packetsize=%d\n", iPacketSize);
+        //printf ("packetsize=%d\n", iPacketSize);
         break;
+
       case 'c':
         iPacketCount = atoi (optarg);
         //printf("count=%d\n", iPacketCount);
         break;
+
       case 'W':
         iPacketTimeout = atoi (optarg);
         //printf("timeout=%d\n", iPacketTimeout);
         break;
+
       case 'i':
         iPacketInterval = atoi (optarg);
         //printf("interval=%d\n", iPacketInterval);
         break;
+
+      case 'r':
+        bReceive = true;
+        break;
+
       case 'h':
         vHelp (stdout, EXIT_SUCCESS);
         break;
+
       case 'v':
         vVersion();
         break;
+
       case '?': /* An invalide option has been used,
         print help an exit with code EXIT_FAILURE */
         vHelp (stderr, EXIT_FAILURE);
@@ -255,131 +261,213 @@ main (int argc, char **argv) {
   iFd = iSerialOpen (sDevice, &xIos);
   if (iFd < 0) {
 
-    fprintf (stderr, "Unable to open %s device: %s\n", sDevice, strerror (errno));
+    fprintf (stderr, "Unable to open %s device: %s\n",
+             sDevice, strerror (errno) );
     if (bDevAlloc) {
       free (sDevice);
     }
     exit (EXIT_FAILURE);
   }
 
-  sPingPacket = malloc (iPacketSize + 2);
 
-  /* Init contenu paquet */
-  sPingPacket[0] = STX;
-  for (i = 1, c = 'A'; i <= iPacketSize; i++, c++) {
+  if (bReceive == false) {
 
-    if (c > 'Z') {
-      c = 'A';
-    }
-    sPingPacket[i] = c;
-  }
-  sPingPacket[iPacketSize + 1] = ETX;
+    /* Mode transmission */
+    sPingPacket = malloc (iPacketSize + 2);
 
-  tTransmittTime = ( (iPacketSize + 2) *
-                     (xIos.dbits + xIos.sbits + (xIos.parity == 'N' ? 0 : 1) + 1) *
-                     1E6) / xIos.baud;
-  printf ("SERIAL PING %d(%d) bytes of data. %d-%d%c%d. Timeout %d ms.\n",
-          iPacketSize,
-          iPacketSize + 2,
-          xIos.baud,
-          xIos.dbits,
-          xIos.parity,
-          xIos.sbits,
-          iPacketTimeout);
-  //printf ("delay=%lu\n", (unsigned long)tTransmittTime);
+    /* Init contenu paquet */
+    sPingPacket[0] = STX;
+    for (i = 1, c = 'A'; i <= iPacketSize; i++, c++) {
 
-  iCount = iPacketCount;
-  while (iCount) {
-
-    bBad = true;
-
-    i = write (iFd, sPingPacket, iPacketSize + 2);
-    xStats.iTxCount++;
-    if (i < 0) {
-      fprintf (stderr, "Unable to write %s device: %s\n", sDevice, strerror (errno));
-      delay_ms (300);
-      continue;
-    }
-
-    delay_us (tTransmittTime); // Durée pour l'envoi
-
-    gettimeofday (&tStart, NULL);
-    do {
-
-      if (ioctl (iFd, FIONREAD, &iPongLength) == -1) {
-        iPongLength = -1 ;
+      if (c > 'Z') {
+        c = 'A';
       }
-      gettimeofday (&tStop, NULL);
-      dRespTime  = (tStop.tv_sec - tStart.tv_sec) * 1000.0;      // sec to ms
-      dRespTime += (tStop.tv_usec - tStart.tv_usec) / 1000.0;   // us to ms
-      // Si réponse suffisament longue, sortie de boucle
-      if (iPongLength >= (iPacketSize + 2)) {
-        break;
-      }
+      sPingPacket[i] = c;
     }
-    while (dRespTime < (double) iPacketTimeout);
+    sPingPacket[iPacketSize + 1] = ETX;
 
-    xStats.dTimeSum += dRespTime;
+    tTransmittTime = ( (iPacketSize + 2) *
+                       (xIos.dbits + xIos.sbits +
+                        (xIos.parity == 'N' ? 0 : 1) + 1) *
+                       1E6) / xIos.baud;
+    printf ("SERIAL PING %d(%d) bytes of data. %ld-%d%c%d. Timeout %d ms.\n",
+            iPacketSize,
+            iPacketSize + 2,
+            xIos.baud,
+            xIos.dbits,
+            xIos.parity,
+            xIos.sbits,
+            iPacketTimeout);
+    //printf ("delay=%lu\n", (unsigned long)tTransmittTime);
 
-    if (iPongLength == 0) {
+    iCount = iPacketCount;
+    while (iCount) {
 
-      printf ("From %s seq=%d Destination Host Unreachable\n", sDevice, xStats.iTxCount);
-    }
-    else {
+      bBad = true;
 
-      printf ("%d bytes from %s: seq %d ", iPongLength, sDevice, xStats.iTxCount);
-      if (read (iFd, sPongPacket, iPongLength) == -1) {
-        fprintf (stderr, "Unable to read %s device: %s\n", sDevice, strerror (errno));
+      i = write (iFd, sPingPacket, iPacketSize + 2);
+      xStats.iTxCount++;
+      if (i < 0) {
+        fprintf (stderr, "Unable to write %s device: %s\n",
+                 sDevice, strerror (errno) );
+        delay_ms (300);
+        continue;
       }
 
-      if (iPongLength >= (iPacketSize + 2)) {
+      delay_us (tTransmittTime); // Durée pour l'envoi
 
-        if (strncmp (sPingPacket, sPongPacket, iPacketSize + 2) == 0) {
+      gettimeofday (&tStart, NULL);
+      do {
 
-          xStats.iRxCount++;
-          bBad = false;
+        if (ioctl (iFd, FIONREAD, &iPongLength) == -1) {
+          iPongLength = -1 ;
+        }
+        gettimeofday (&tStop, NULL);
+        dRespTime  = (tStop.tv_sec - tStart.tv_sec) * 1000.0;      // sec to ms
+        dRespTime += (tStop.tv_usec - tStart.tv_usec) / 1000.0;   // us to ms
+        // Si réponse suffisament longue, sortie de boucle
+        if (iPongLength >= (iPacketSize + 2) ) {
+          break;
         }
       }
-    }
+      while (dRespTime < (double) iPacketTimeout);
 
-    if (bBad) {
+      xStats.dTimeSum += dRespTime;
 
-      xStats.iErrorCount++;
-      if (iPongLength > 0) {
+      if (iPongLength == 0) {
 
-        if (dRespTime < (double) iPacketTimeout) {
-          printf ("Error: ");
+        printf ("From %s seq=%d Destination Host Unreachable\n",
+                sDevice, xStats.iTxCount);
+      }
+      else {
+
+        printf ("%d bytes from %s: seq %d ", iPongLength,
+                sDevice, xStats.iTxCount);
+        if (read (iFd, sPongPacket, iPongLength) == -1) {
+          fprintf (stderr, "Unable to read %s device: %s\n",
+                   sDevice, strerror (errno) );
         }
-        else {
-          printf ("Timeout: ");
-        }
-        p = sPongPacket;
-        while (iPongLength--) {
 
-          if (isprint (*p)) {
-            putchar (*p);
+        if (iPongLength >= (iPacketSize + 2) ) {
+
+          if (strncmp (sPingPacket, sPongPacket, iPacketSize + 2) == 0) {
+
+            xStats.iRxCount++;
+            bBad = false;
+          }
+        }
+      }
+
+      if (bBad) {
+
+        xStats.iErrorCount++;
+        if (iPongLength > 0) {
+
+          if (dRespTime < (double) iPacketTimeout) {
+            printf ("Error: ");
           }
           else {
-
-            printf ("\\x%02X\\", *p);
+            printf ("Timeout: ");
           }
-          p++;
+          p = sPongPacket;
+          while (iPongLength--) {
+
+            if (isprint (*p) ) {
+              putchar (*p);
+            }
+            else {
+
+              printf ("\\x%02X\\", *p);
+            }
+            p++;
+          }
+          putchar ('\n');
         }
-        putchar ('\n');
+      }
+      else {
+
+        printf ("time=%.3f ms\n", dRespTime);
+      }
+      if (iCount != -1) {
+
+        iCount--;
+      }
+
+      usleep (iPacketInterval * 1000);
+    }
+
+    vStatistics();
+  }
+  else {
+    bool bIsStarted = false;
+    iPongLength = 0;
+
+    printf ("Packet waiting... Press Ctrl+C to abort !\n");
+    /* Mode réception */
+    for (;;) {
+
+      i = read (iFd, &sPongPacket[iPongLength], 1);
+
+      if (i < 0) {
+
+        fprintf (stderr, "Unable to read %s device: %s\n",
+                 sDevice, strerror (errno) );
+        delay_ms (300);
+        continue;
+      }
+
+      if (i == 1) {
+
+        switch (sPongPacket[iPongLength]) {
+
+          case STX:
+            bIsStarted = true;
+            xStats.iRxCount++;
+            break;
+
+          case ETX:
+            if (bIsStarted) {
+
+              i = write (iFd, sPongPacket, iPongLength + 1);
+              if (i < 0) {
+                fprintf (stderr, "Unable to write %s device: %s\n",
+                         sDevice, strerror (errno) );
+                delay_ms (300);
+              }
+              putchar ('.');
+              fflush (stdout);
+            }
+            break;
+
+          default:
+            if (bIsStarted) {
+
+              if ( (sPongPacket[iPongLength] < 'A') ||
+                   (sPongPacket[iPongLength] > 'Z') ||
+                   (iPongLength >= sizeof (sPongPacket) ) ) {
+
+                i = write (iFd, sPongPacket, iPongLength + 1);
+                if (i < 0) {
+                  fprintf (stderr, "Unable to write %s device: %s\n",
+                           sDevice, strerror (errno) );
+                  delay_ms (300);
+                }
+                xStats.iErrorCount++;
+                putchar ('E');
+                fflush (stdout);
+              }
+              iPongLength++;
+            }
+            break;
+        }
       }
     }
-    else {
-
-      printf ("time=%.3f ms\n", dRespTime);
-    }
-    if (iCount != -1) {
-      iCount--;
-    }
-
-    usleep (iPacketInterval * 1000);
   }
+  if (iCloseAll() != 0) {
 
-  vStatistics();
+    perror ("close");
+    exit (EXIT_FAILURE);
+  }
   exit (EXIT_SUCCESS);
 }
 
@@ -387,19 +475,49 @@ main (int argc, char **argv) {
 void
 vStatistics (void) {
 
+  if (bReceive) {
 
-  printf ("--- %s ping statistics ---\n", sDevice);
-  printf ("%d packets transmitted, %d received, %d errors, %.1f%% packet loss, time sum. %.2fms - av. %.2fms\n",
-          xStats.iTxCount,
-          xStats.iRxCount,
-          xStats.iErrorCount,
-          (double) (xStats.iTxCount - xStats.iRxCount) * 100.0 / (double) xStats.iTxCount,
-          xStats.dTimeSum, xStats.dTimeSum / (double) xStats.iTxCount);
+    printf ("--- %s pong statistics ---\n", sDevice);
+    if (xStats.iRxCount) {
+      printf ("%d packets received, %d errors, %.1f%% packet loss\n",
+              xStats.iRxCount,
+              xStats.iErrorCount,
+              (double) (xStats.iRxCount - xStats.iErrorCount) * 100.0 /
+              (double) xStats.iRxCount);
+
+    }
+    else {
+      printf ("no packet received.\n");
+    }
+  }
+  else {
+    if (xStats.iTxCount) {
+      printf ("--- %s ping statistics ---\n", sDevice);
+      printf ("%d packets transmitted, %d received, %d errors, "
+              "%.1f%% packet loss, time sum. %.2fms - av. %.2fms\n",
+              xStats.iTxCount,
+              xStats.iRxCount,
+              xStats.iErrorCount,
+              (double) (xStats.iTxCount - xStats.iRxCount) * 100.0 /
+              (double) xStats.iTxCount,
+              xStats.dTimeSum, xStats.dTimeSum / (double) xStats.iTxCount);
+    }
+    else {
+      printf ("no packet transmitted.\n");
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+        int
+iCloseAll (void) {
+
   if (bDevAlloc) {
+
     free (sDevice);
   }
   free (sPingPacket);
-  vSerialClose (iFd);
+  return close (iFd);
 }
 
 // -----------------------------------------------------------------------------
@@ -408,6 +526,11 @@ vSigIntHandler (int sig) {
 
   putchar ('\n');
   vStatistics();
+  if (iCloseAll() != 0) {
+
+    perror ("close");
+    exit (EXIT_FAILURE);
+  }
   printf ("\n%s closed.\nHave a nice day !\n", sDevice);
   exit (EXIT_SUCCESS);
 }
@@ -426,46 +549,50 @@ void
 vHelp (FILE *stream, int exit_msg) {
   fprintf (stream, "usage : %s [ options ] [ device ] [ options ]\n\n", sMyName);
   fprintf (stream,
-           "Send ping packet to serial device. The packet contains a start byte (STX: 0x02), "
-           "packetsize bytes between 'A' and 'Z' and a trailing byte (ETX: 0x03).\n"
+           //01234567890123456789012345678901234567890123456789012345678901234567890123456789
+           "Send or receive ping packet to serial device. The packet contains a\n"
+           " start byte (STX: 0x02), packetsize bytes between 'A' and 'Z' and a\n"
+           " trailing byte (ETX: 0x03).\n\n"
            "  device          \tOptionnal serial device name.\n"
            "                  \tThe default is %s.\n\n"
            , DEFAULT_DEVICE);
   fprintf (stream, "valid options are :\n");
   fprintf (stream,
            //01234567890123456789012345678901234567890123456789012345678901234567890123456789
+           "  -r  --receive   \tWait packets and return them, otherwise,\n"
+           "                  \t send packets and wait for the response (default).\n"
            "  -b  --baudrate  \tSpecifies the baudrate.\n"
            "                  \tThe default is %d bauds. The range is from %d to %d bauds.\n"
-           "  -c  --count     \tStop after sending count packets.\n"
-           "                  \tThe default is %d.\n"
            "  -d  --databit   \tSpecifies the number of data bits.\n"
            "                  \tThe default is %d. The range is from %d to %d bits.\n"
-           "  -h  --help      \tPrint this message\n"
+           "  -p  --parity    \tSpecifies the parity.\n"
+           "                  \t\t{N, O, E}, the default is %c.\n"
+           "  -t  --stopbit   \tSpecifies the number of data bits.\n"
+           "                  \t\t{1, 2}, the default is %d.\n"
+           "  -f  --flow      \tSpecifies the flow control.\n"
+           "                  \t\t{none, rtscts, xonxoff, rs485, rs485on}\n"
+           "                  \tThe default is %s.\n"
+           "  -c  --count     \tStop after sending count packets.\n"
+           "                  \tThe default is %d.\n"
            "  -i  --interval  \tWait interval milliseconds between sending each packet.\n"
            "                  \tThe default is %d ms.\n"
-#ifndef ARCH_ARM_RASPBERRYPI
-           "  -p  --parity    \tSpecifies the parity.\n"
-           "                  \tThe default is %c.\n"
-           "  -t  --stopbit   \tSpecifies the number of data bits.\n"
-           "                  \tThe default is %d.\n"
-#endif
            "  -s  --packetsize\tSpecifies the number of data bytes to be sent.\n"
            "                  \tThe default is %d. The range is from %d to %d bytes.\n"
            "  -W  --timeout   \tTime to wait for a response, in milliseconds.\n"
            "                  \tThe default is %d ms.\n"
+           "  -h  --help      \tPrint this message\n"
            "  -v  --version   \tPrint version and exit\n"
            , DEFAULT_BAUDRATE
            , MIN_BAUDRATE
            , MAX_BAUDRATE
-           , DEFAULT_PACKET_COUNT
            , DEFAULT_DATABIT
            , MIN_DATABIT
            , MAX_DATABIT
-           , DEFAULT_PACKET_INTERVAL
-#ifndef ARCH_ARM_RASPBERRYPI
            , DEFAULT_PARITY
            , DEFAULT_STOPBIT
-#endif
+           , sSerialFlowToStr (DEFAULT_FLOW)
+           , DEFAULT_PACKET_COUNT
+           , DEFAULT_PACKET_INTERVAL
            , DEFAULT_PACKET_SIZE
            , MIN_PACKET_SIZE
            , MAX_PACKET_SIZE
