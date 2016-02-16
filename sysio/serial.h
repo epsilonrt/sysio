@@ -66,12 +66,16 @@ typedef enum {
 /**
  * @enum eSerialFlow
  * @brief Type de contrôle de flux
+ * 
+ * @warning Les modes RS485 ne sont pas gérés par termios (spécifiques à linux)
  */
 typedef enum {
 
-  SERIAL_FLOW_NONE = ' ',
-  SERIAL_FLOW_RTSCTS = 'H',
-  SERIAL_FLOW_XONXOFF = 'S',
+  SERIAL_FLOW_NONE = ' ', /**< Pas de contrôle de flux */
+  SERIAL_FLOW_RTSCTS = 'H', /**< Contrôle de flux matériel RTS/CTS */
+  SERIAL_FLOW_XONXOFF = 'S', /**< Contrôle de flux logiciel XON/XOFF */
+  SERIAL_FLOW_RS485_RTS_AFTER_SEND = 'R', /**< RS485 half-duplex, RTS au niveau logique 0 après transmission */
+  SERIAL_FLOW_RS485_RTS_ON_SEND = 'r', /**< RS485 half-duplex, RTS au niveau logique 0 pendant transmission */
   SERIAL_FLOW_UNKNOWN = -1
 } eSerialFlow;
 
@@ -128,7 +132,7 @@ int iSerialGetAttr (int fd, xSerialIos * xIos);
  * - D Data bits (5, 6, 7 ,8)
  * - P Parité (N, E, O)
  * - S Stop (1, 2)
- * - F Flow (H, S)
+ * - F Flow (H, S, R, r)
  * .
  * @return la représentation de la configuration sous forme de string, NULL si
  * erreur.
@@ -144,7 +148,11 @@ const char * sSerialAttrToStr (const xSerialIos * xIos);
 bool bSerialFdIsValid (int fd);
 
 /**
- *  Fermeture du port série
+ * Fermeture du port série
+ * 
+ * Equivaut à un appel de close() en ignorant la valeur retournée, il est donc
+ * préférable d'utiliser close() en vérifiant la valeur retournée (c.f. page
+ * man 2 close)!
  *
  * @param fd le descripteur de fichier du port
  */
@@ -271,7 +279,7 @@ const char * sSerialGetFlowStr (int fd);
  * - D Data bits (5, 6, 7 ,8)
  * - P Parité (N, E, O)
  * - S Stop (1, 2)
- * - F Flow (H, S)
+ * - F Flow (H, S, R, r)
  * .
  * @param fd le descripteur de fichier du port
  * @return la représentation de la configuration sous forme de string, NULL si
@@ -319,6 +327,8 @@ int iSerialTermiosSetStopBits (struct termios * ts, eSerialStopBits eStopBits);
 
 /**
  * Modification du contrôle de flux d'une structure termios
+ * La fonction règle ts à SERIAL_FLOW_NONE si un mode RS485 est demandé 
+ * (RS485 non géré par termios).
  */
 int iSerialTermiosSetFlow (struct termios * ts, eSerialFlow eFlow);
 
@@ -344,12 +354,16 @@ int iSerialTermiosGetParity (const struct termios * ts);
 
 /**
  * Contrôle de flux d'une structure termios
+ * La fonction retourne SERIAL_FLOW_NONE si un mode RS485 est en fonction 
+ * (RS485 non géré par termios).
  */
 int iSerialTermiosGetFlow (const struct termios * ts);
 
 /**
  *  Chaîne de caractère correspondant à une structure termios
  *
+ * La fonction affiche SERIAL_FLOW_NONE si un mode RS485 est en fonction 
+ * (RS485 non géré par termios).
  * Le format est BBBBBB-DPSF avec :
  * - BBBBBB Baudrate
  * - D Data bits (5, 6, 7 ,8)

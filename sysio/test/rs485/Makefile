@@ -5,7 +5,7 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = sysio_test_serial
+TARGET = sysio_test_rs485
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
@@ -39,7 +39,7 @@ DEBUG_OPT = 0
 #DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
-VIEW_GCC_LINE = ON
+VIEW_GCC_LINE = OFF
 
 # Désactive la suppression des variables et fonctions "inutiles"
 # Le linker vérifie d'une fonction ou une variable est appellée, si ce n'est pas
@@ -118,7 +118,7 @@ VERSION=1.0.0
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
-SYSIO_DEBUG_TEST = ON
+#SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)
 SYSIO_ROOT = $(PROJECT_TOPDIR)/../../../../sysio
@@ -146,8 +146,8 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
-RPI_CPU=$(shell $(SYSIO_ROOT)/util/bin/rpi-cpu)
-RPI_REV=$(shell $(SYSIO_ROOT)/util/bin/rpi-rev)
+RPI_CPU=$(shell rpi-cpu)
+RPI_REV=$(shell rpi-rev)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
@@ -329,7 +329,7 @@ distclean: distclean_list clean_list
 
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 TARGET $(INSTALL_BINDIR)
+	-install -m 0755 $(TARGET) $(INSTALL_BINDIR)
 
 uninstall:
 	@echo "$(MSG_UNINSTALL) $(TARGET)"

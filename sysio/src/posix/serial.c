@@ -12,10 +12,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <linux/serial.h>
+
 #include <sysio/serial.h>
 #include <sysio/delay.h>
 #include <sysio/log.h>
 
+/* constants ================================================================ */
+/* RS485 ioctls: */
+#define TIOCGRS485      0x542E
+#define TIOCSRS485      0x542F
 
 #ifdef ARCH_ARM_RASPBERRYPI
 // Le code ci-dessous est pour le Raspberry Pi
@@ -26,6 +34,9 @@
 /* constants ================================================================ */
 #define MAX_BAUDRATE BAUDRATE(0)
 #define MIN_BAUDRATE BAUDRATE(0xFFFF)
+/* RS485 ioctls: */
+#define TIOCGRS485      0x542E
+#define TIOCSRS485      0x542F
 
 /* private functions ======================================================== */
 
@@ -33,7 +44,7 @@
 static int
 iCheckBaudrate (unsigned long ulBaud) {
 
-  if ( (ulBaud < MIN_BAUDRATE) || (ulBaud > MAX_BAUDRATE)) {
+  if ( (ulBaud < MIN_BAUDRATE) || (ulBaud > MAX_BAUDRATE) ) {
 
     vLog (LOG_ERR, "Baudrate: %lu Bd out of range {%lu,%lu}",
           ulBaud, MIN_BAUDRATE, MAX_BAUDRATE);
@@ -56,12 +67,16 @@ iSerialSetAttr (int fd, const xSerialIos * xIos) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetAttr (&ts, xIos);
     if (iRet == 0) {
       tcflush (fd, TCIOFLUSH);
-      return tcsetattr (fd, TCSANOW, &ts);
+      iRet = tcsetattr (fd, TCSANOW, &ts);
+      if (iRet == 0) {
+        
+        return iSerialSetFlow (fd, xIos->flow);
+      }
     }
   }
   return iRet;
@@ -73,9 +88,12 @@ iSerialGetAttr (int fd, xSerialIos * xIos) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
-    return iSerialTermiosGetAttr (&ts, xIos);
+    if ( (iRet = iSerialTermiosGetAttr (&ts, xIos) ) == 0) {
+
+      xIos->flow = eSerialGetFlow (fd);
+    }
   }
   return iRet;
 
@@ -87,7 +105,7 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   struct termios ts;
   int fd, iRet;
 
-  if ( (fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY)) == -1) {
+  if ( (fd = open (device, O_RDWR | O_NOCTTY | O_NDELAY) ) == -1) {
     return -1;
   }
 
@@ -101,7 +119,7 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   ts.c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG);
   ts.c_oflag &= ~OPOST;
 
-  if ( (iRet = iSerialTermiosSetAttr (&ts, xIos)) < 0) {
+  if ( (iRet = iSerialTermiosSetAttr (&ts, xIos) ) < 0) {
 
     close (fd);
     return iRet;
@@ -114,10 +132,19 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
   tcflush (fd, TCIOFLUSH);
   tcsetattr (fd, TCSANOW, &ts);
 
-  ioctl (fd, TIOCMGET, &iRet);
-  iRet |= TIOCM_DTR;
-  iRet |= TIOCM_RTS;
-  ioctl (fd, TIOCMSET, &iRet);
+  if ( (iRet = iSerialSetFlow (fd, xIos->flow) ) < 0) {
+
+    close (fd);
+    return iRet;
+  }
+  if ( (xIos->flow != SERIAL_FLOW_RS485_RTS_AFTER_SEND) &&
+       (xIos->flow != SERIAL_FLOW_RS485_RTS_ON_SEND) ) {
+
+    ioctl (fd, TIOCMGET, &iRet);
+    iRet |= TIOCM_DTR;
+    iRet |= TIOCM_RTS;
+    ioctl (fd, TIOCMSET, &iRet);
+  }
 
   delay_ms (10);
 
@@ -144,15 +171,15 @@ iSerialPoll (int fd, int timeout_ms) {
   ret = select (FD_SETSIZE, &set, NULL, NULL, &timeout);
   if (ret == -1) {
     if (errno != EINTR) {
-      PERROR ("failed to poll serial port: %s", strerror (errno));
+      PERROR ("failed to poll serial port: %s", strerror (errno) );
     }
     else {
       ret = 0;
     }
   }
-  else if ( (ret > 0) && (FD_ISSET (fd, &set))) {
+  else if ( (ret > 0) && (FD_ISSET (fd, &set) ) ) {
     int available_data;
-    
+
     ret = ioctl (fd, FIONREAD, &available_data);
     if (ret == 0) {
       ret = available_data;
@@ -166,7 +193,7 @@ iSerialPoll (int fd, int timeout_ms) {
 bool
 bSerialFdIsValid (int fd) {
   struct termios ts;
-  
+
   return (tcgetattr (fd, &ts) == 0) ? true : false;
 }
 
@@ -181,7 +208,7 @@ vSerialFlush (int fd) {
 void
 vSerialClose (int fd) {
 
-  close (fd);
+  (void) close (fd);
 }
 
 // -----------------------------------------------------------------------------
@@ -251,7 +278,30 @@ eSerialGetFlow (int fd) {
 
   if (tcgetattr (fd, &ts) == 0) {
 
-    return iSerialTermiosGetFlow (&ts);
+    int f = iSerialTermiosGetFlow (&ts);
+    if (f == SERIAL_FLOW_NONE) {
+      struct serial_rs485 rs485conf;
+
+      if (ioctl (fd, TIOCGRS485, &rs485conf) == 0) {
+
+        if (rs485conf.flags & SER_RS485_ENABLED) {
+
+          if ( (rs485conf.flags & SER_RS485_RTS_AFTER_SEND) &&
+               ! (rs485conf.flags & SER_RS485_RTS_ON_SEND) ) {
+            f = SERIAL_FLOW_RS485_RTS_AFTER_SEND;
+          }
+          else if (! (rs485conf.flags & SER_RS485_RTS_AFTER_SEND) &&
+                   (rs485conf.flags & SER_RS485_RTS_ON_SEND) ) {
+
+            f = SERIAL_FLOW_RS485_RTS_ON_SEND;
+          }
+          else {
+            f = SERIAL_FLOW_UNKNOWN;
+          }
+        }
+      }
+    }
+    return f;
   }
   return -1;
 }
@@ -264,7 +314,7 @@ iSerialSetBaudrate (int fd, int iBaudrate) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetBaudrate (&ts, iBaudrate);
     if (iRet == 0) {
@@ -281,7 +331,7 @@ iSerialSetDataBits (int fd, eSerialDataBits eDataBits) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetDataBits (&ts, eDataBits);
     if (iRet == 0) {
@@ -298,7 +348,7 @@ iSerialSetStopBits (int fd, eSerialStopBits eStopBits) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetStopBits (&ts, eStopBits);
     if (iRet == 0) {
@@ -315,7 +365,7 @@ iSerialSetParity (int fd, eSerialParity eParity) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetParity (&ts, eParity);
     if (iRet == 0) {
@@ -332,12 +382,35 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
   struct termios ts;
   int iRet;
 
-  if ( (iRet = tcgetattr (fd, &ts)) == 0) {
+  if ( (iRet = tcgetattr (fd, &ts) ) == 0) {
 
     iRet = iSerialTermiosSetFlow (&ts, eFlow);
     if (iRet == 0) {
+
       tcflush (fd, TCIOFLUSH);
-      return tcsetattr (fd, TCSANOW, &ts);
+      iRet = tcsetattr (fd, TCSANOW, &ts);
+    }
+    if ( (iRet == 0) && ( (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) ||
+                          (eFlow == SERIAL_FLOW_RS485_RTS_ON_SEND) ) ) {
+      struct serial_rs485 rs485conf;
+      
+      memset (&rs485conf, 0, sizeof(rs485conf));
+
+      /* Enable RS485 mode: */
+      rs485conf.flags = SER_RS485_ENABLED;
+
+      if (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) {
+
+        /* Set logical level for RTS pin equal to 0 (asserted) after sending: */
+        rs485conf.flags |= SER_RS485_RTS_AFTER_SEND;
+      }
+      else {
+
+        /* Set logical level for RTS pin equal to 0 (asserted) when sending: */
+        rs485conf.flags |= SER_RS485_RTS_ON_SEND;
+      }
+
+      return ioctl (fd, TIOCSRS485, &rs485conf);
     }
   }
   return iRet;
@@ -348,17 +421,17 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
 const char *
 sSerialGetFlowStr (int fd) {
 
-  return sSerialFlowToStr (eSerialGetFlow (fd));
+  return sSerialFlowToStr (eSerialGetFlow (fd) );
 }
 
 // -----------------------------------------------------------------------------
 const char *
 sSerialAttrStr (int fd) {
-  struct termios ts;
+  xSerialIos xIos;
 
-  if (tcgetattr (fd, &ts) == 0) {
+  if (iSerialGetAttr (fd, &xIos) == 0) {
 
-    return sSerialTermiosToStr (&ts);
+    return sSerialAttrToStr (&xIos);
   }
   return NULL;
 }
@@ -547,6 +620,8 @@ iSerialTermiosSetFlow (struct termios * ts, eSerialFlow eFlow) {
     switch (eFlow) {
 
       case SERIAL_FLOW_NONE:
+      case SERIAL_FLOW_RS485_RTS_AFTER_SEND:
+      case SERIAL_FLOW_RS485_RTS_ON_SEND:
         ts->c_cflag &= ~CRTSCTS;
         ts->c_iflag &= ~ (IXON | IXOFF | IXANY);
         break;
@@ -617,7 +692,7 @@ int
 iSerialTermiosGetParity (const struct termios * ts) {
 
   if (ts) {
-    switch (ts->c_cflag & (PARENB | PARODD)) {
+    switch (ts->c_cflag & (PARENB | PARODD) ) {
       case PARENB:
         return SERIAL_PARITY_EVEN;
       case PARENB | PARODD:
@@ -638,7 +713,7 @@ iSerialTermiosGetFlow (const struct termios * ts) {
     if (ts->c_cflag & CRTSCTS) {
       return SERIAL_FLOW_RTSCTS;
     }
-    if (ts->c_iflag & (IXON | IXOFF | IXANY)) {
+    if (ts->c_iflag & (IXON | IXOFF | IXANY) ) {
       return SERIAL_FLOW_XONXOFF;
     }
     return SERIAL_FLOW_NONE;
