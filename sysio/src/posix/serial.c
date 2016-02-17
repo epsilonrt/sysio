@@ -74,7 +74,7 @@ iSerialSetAttr (int fd, const xSerialIos * xIos) {
       tcflush (fd, TCIOFLUSH);
       iRet = tcsetattr (fd, TCSANOW, &ts);
       if (iRet == 0) {
-        
+
         return iSerialSetFlow (fd, xIos->flow);
       }
     }
@@ -156,24 +156,35 @@ int
 iSerialPoll (int fd, int timeout_ms) {
   int ret;
   fd_set set;
-  struct timeval timeout;
-  long timeout_us = timeout_ms * 1000L;
 
   /* Initialize the file descriptor set. */
   FD_ZERO (&set);
   FD_SET (fd, &set);
 
-  /* Initialize the timeout data structure. */
-  timeout.tv_sec  = timeout_us / 1000000L;
-  timeout.tv_usec = timeout_us % 1000000L;
 
-  /* select returns 0 if timeout, 1 if input available, -1 if error. */
-  ret = select (FD_SETSIZE, &set, NULL, NULL, &timeout);
+  if (timeout_ms < 0) {
+
+    /* select returns 0 if timeout, 1 if input available, -1 if error. */
+    ret = select (FD_SETSIZE, &set, NULL, NULL, NULL);
+  }
+  else {
+    struct timeval timeout;
+    long timeout_us = timeout_ms * 1000L;
+    
+    /* Initialize the timeout data structure. */
+    timeout.tv_sec  = timeout_us / 1000000L;
+    timeout.tv_usec = timeout_us % 1000000L;
+    /* select returns 0 if timeout, 1 if input available, -1 if error. */
+    ret = select (FD_SETSIZE, &set, NULL, NULL, &timeout);
+  }
+
   if (ret == -1) {
     if (errno != EINTR) {
+
       PERROR ("failed to poll serial port: %s", strerror (errno) );
     }
     else {
+
       ret = 0;
     }
   }
@@ -182,6 +193,7 @@ iSerialPoll (int fd, int timeout_ms) {
 
     ret = ioctl (fd, FIONREAD, &available_data);
     if (ret == 0) {
+
       ret = available_data;
     }
   }
@@ -393,8 +405,8 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
     if ( (iRet == 0) && ( (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) ||
                           (eFlow == SERIAL_FLOW_RS485_RTS_ON_SEND) ) ) {
       struct serial_rs485 rs485conf;
-      
-      memset (&rs485conf, 0, sizeof(rs485conf));
+
+      memset (&rs485conf, 0, sizeof (rs485conf) );
 
       /* Enable RS485 mode: */
       rs485conf.flags = SER_RS485_ENABLED;

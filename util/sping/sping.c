@@ -29,8 +29,8 @@
 #define AUTHORS "Pascal JEAN"
 #define WEBSITE "http://gitweb.epsilonrt.com/sysio.git"
 
-#define STX 2
-#define ETX 3
+#define STX '<'
+#define ETX '>'
 
 /* Config. */
 #define MIN_PACKET_SIZE 1
@@ -290,14 +290,9 @@ main (int argc, char **argv) {
                        (xIos.dbits + xIos.sbits +
                         (xIos.parity == 'N' ? 0 : 1) + 1) *
                        1E6) / xIos.baud;
-    printf ("SERIAL PING %d(%d) bytes of data. %ld-%d%c%d. Timeout %d ms.\n",
+    printf ("SERIAL PING %d(%d) bytes of data. %s. Timeout %d ms.\n",
             iPacketSize,
-            iPacketSize + 2,
-            xIos.baud,
-            xIos.dbits,
-            xIos.parity,
-            xIos.sbits,
-            iPacketTimeout);
+            iPacketSize + 2, sSerialAttrToStr (&xIos), iPacketTimeout);
     //printf ("delay=%lu\n", (unsigned long)tTransmittTime);
 
     iCount = iPacketCount;
@@ -400,15 +395,31 @@ main (int argc, char **argv) {
   }
   else {
     bool bIsStarted = false;
-    iPongLength = 0;
+    int iAvailableSize, iReadSize, iRemainSize = sizeof (sPongPacket) - 1;
+    char * pcPkt, * pcEnd, * p = sPongPacket;
 
-    printf ("Packet waiting... Press Ctrl+C to abort !\n");
+    printf ("SERIAL PONG on %s %s\n"
+            "Packet waiting... Press Ctrl+C to abort !\n",
+            sDevice, sSerialAttrToStr (&xIos) );
+
     /* Mode réception */
     for (;;) {
 
-      i = read (iFd, &sPongPacket[iPongLength], 1);
+      /* Attente réception */
+      iAvailableSize = iSerialPoll (iFd, -1);
 
-      if (i < 0) {
+      if (iAvailableSize < 0) {
+
+        fprintf (stderr, "Unable to poll %s device: %s\n",
+                 sDevice, strerror (errno) );
+        delay_ms (300);
+        continue;
+      }
+
+      /* Lecture */
+      iAvailableSize = MIN (iAvailableSize, iRemainSize);
+      iReadSize = read (iFd, p,  iAvailableSize);
+      if (iReadSize < 0) {
 
         fprintf (stderr, "Unable to read %s device: %s\n",
                  sDevice, strerror (errno) );
@@ -416,53 +427,44 @@ main (int argc, char **argv) {
         continue;
       }
 
-      if (i == 1) {
+      if (iReadSize > 0) {
 
-        switch (sPongPacket[iPongLength]) {
+        /* Traitement des caractères reçus */
+        if (bIsStarted == false) {
 
-          case STX:
+          if ( (pcPkt = memchr (p, STX, iReadSize) ) ) {
+
             bIsStarted = true;
-            xStats.iRxCount++;
-            break;
-
-          case ETX:
-            if (bIsStarted) {
-
-              i = write (iFd, sPongPacket, iPongLength + 1);
-              if (i < 0) {
-                fprintf (stderr, "Unable to write %s device: %s\n",
-                         sDevice, strerror (errno) );
-                delay_ms (300);
-              }
-              putchar ('.');
-              fflush (stdout);
-            }
-            break;
-
-          default:
-            if (bIsStarted) {
-
-              if ( (sPongPacket[iPongLength] < 'A') ||
-                   (sPongPacket[iPongLength] > 'Z') ||
-                   (iPongLength >= sizeof (sPongPacket) ) ) {
-
-                i = write (iFd, sPongPacket, iPongLength + 1);
-                if (i < 0) {
-                  fprintf (stderr, "Unable to write %s device: %s\n",
-                           sDevice, strerror (errno) );
-                  delay_ms (300);
-                }
-                xStats.iErrorCount++;
-                putchar ('E');
-                fflush (stdout);
-              }
-              iPongLength++;
-            }
-            break;
+          }
         }
+        else {
+          if ( (pcEnd = memchr (p, ETX, iReadSize) ) ) {
+
+            * (++pcEnd) = '\0'; /* ajout null final */
+            printf ("%s\n", pcPkt);
+            //putchar ('.');
+            fflush (stdout);
+            
+            i = write (iFd, pcPkt, pcEnd - pcPkt);
+            if (i < 0) {
+              fprintf (stderr, "Unable to write %s device: %s\n",
+                       sDevice, strerror (errno) );
+              delay_ms (300);
+            }
+            
+            bIsStarted = false;
+            iRemainSize = sizeof (sPongPacket) - 1;
+            p = sPongPacket;
+            continue;
+          }
+        }
+        
+        iRemainSize -= iReadSize;
+        p += iReadSize;
       }
     }
   }
+
   if (iCloseAll() != 0) {
 
     perror ("close");
@@ -509,7 +511,7 @@ vStatistics (void) {
 }
 
 // -----------------------------------------------------------------------------
-        int
+int
 iCloseAll (void) {
 
   if (bDevAlloc) {

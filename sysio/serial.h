@@ -106,6 +106,44 @@ typedef struct xSerialIos {
  */
 int iSerialOpen (const char *device, xSerialIos * xIos);
 
+
+/**
+ * Fermeture du port série
+ * 
+ * Equivaut à un appel de close() en ignorant la valeur retournée, il est donc
+ * préférable d'utiliser close() en vérifiant la valeur retournée (c.f. page
+ * man 2 close)!
+ *
+ * @param fd le descripteur de fichier du port
+ */
+void vSerialClose (int fd);
+
+/**
+ *  Vide les buffers de réception et de transmission
+ *
+ * Le buffer de transmission est transmis, celui de réception est vidé.
+ *
+ * @param fd le descripteur de fichier du port
+ */
+void vSerialFlush (int fd);
+
+/**
+ * Retourne le nombre d'octets en attente de lecture
+ *
+ * @param fd le descripteur de fichier du port
+ * @return le nombre d'octets en attente de lecture, -1 si erreur
+ */
+int iSerialDataAvailable (int fd);
+
+/**
+ * Scrutation en réception du port série
+ *
+ * @param fd le descripteur de fichier du port
+ * @param timeout_ms temps d'attente maximal, une valeur négative pour l'infini
+ * @return le nombre d'octets en attente de lecture, -1 si erreur
+ */
+int iSerialPoll (int fd, int timeout_ms);
+
 /**
  * Modification de configuration d'un port série
  * 
@@ -146,43 +184,6 @@ const char * sSerialAttrToStr (const xSerialIos * xIos);
  * @return true si valide
  */
 bool bSerialFdIsValid (int fd);
-
-/**
- * Fermeture du port série
- * 
- * Equivaut à un appel de close() en ignorant la valeur retournée, il est donc
- * préférable d'utiliser close() en vérifiant la valeur retournée (c.f. page
- * man 2 close)!
- *
- * @param fd le descripteur de fichier du port
- */
-void vSerialClose (int fd);
-
-/**
- *  Vide les buffers de réception et de transmission
- *
- * Le buffer de transmission est transmis, celui de réception est vidé.
- *
- * @param fd le descripteur de fichier du port
- */
-void vSerialFlush (int fd);
-
-/**
- * Retourne le nombre d'octets en attente de lecture
- *
- * @param fd le descripteur de fichier du port
- * @return le nombre d'octets en attente de lecture, -1 si erreur
- */
-int iSerialDataAvailable (int fd);
-
-/**
- * Scrutation en réception du port série
- *
- * @param fd le descripteur de fichier du port
- * @param timeout_ms temps d'attente maximal
- * @return le nombre d'octets en attente de lecture, -1 si erreur
- */
-int iSerialPoll (int fd, int timeout_ms);
 
 /**
  *  Lecture de la vitesse de transmission

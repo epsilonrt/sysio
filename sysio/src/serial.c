@@ -20,8 +20,8 @@ static const char sNone[] = "none";
 const char *
 sSerialAttrToStr (const xSerialIos * xIos) {
   // BBBBBBBB-DPSF
-  static char str[14];
-  snprintf (str, 14, "%ld-%d%c%d%c",
+  static char str[16];
+  snprintf (str, 16, "%10ld-%1d%c%1d%c",
             xIos->baud,
             xIos->dbits,
             xIos->parity,
