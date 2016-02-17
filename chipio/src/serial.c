@@ -156,7 +156,7 @@ pvSerialThread (void * xContext) {
 
     /* Surveillance des octets reçus par la liaison série et envoi vers ptm
      * -----------------------------------------------------------------------*/
-    if (bIrqIsSet (port)) {
+    if (bIrqIsSet (port) ) {
       /* Interrruption active ou pas de broche d'interruption, on vient lire
        * le nombre de caractères en attente */
 
@@ -165,7 +165,7 @@ pvSerialThread (void * xContext) {
         uint8_t * p = buffer;
 
         vLedDebugSet (LED_YELLOW);
-        while (bIrqIsSet (port)) {
+        while (bIrqIsSet (port) ) {
 
           // Boucle de réception tant que la broche irq est active
           iBytesAvailable = iChipIoReadReg8 (port->chipio, eRegSerRxSr);
@@ -209,7 +209,7 @@ pvSerialThread (void * xContext) {
      * -----------------------------------------------------------------------*/
     iLen = 0;
 
-    while ( (iBytesAvailable = iSerialDataAvailable (port->fdm)) > 0) {
+    while ( (iBytesAvailable = iSerialDataAvailable (port->fdm) ) > 0) {
 
       // Des données sont disponibles pour envoi
 
@@ -219,7 +219,7 @@ pvSerialThread (void * xContext) {
         vLedDebugSet (LED_RED);
 
         iBlockSize = MIN (I2C_BLOCK_MAX, iBytesAvailable);
-        if ( (iLen = read (port->fdm, buffer, iBlockSize)) > 0) {
+        if ( (iLen = read (port->fdm, buffer, iBlockSize) ) > 0) {
 
           // on envoie un bloc de données
           iRet = iChipIoWriteRegBlock (port->chipio, eRegSerTx, buffer, iLen);
@@ -231,7 +231,7 @@ pvSerialThread (void * xContext) {
       }
       else {
 
-        uDelay = dSerialFrameDuration (port->fdm, MAX (iLen, I2C_BLOCK_MAX)) * 1000.;
+        uDelay = dSerialFrameDuration (port->fdm, MAX (iLen, I2C_BLOCK_MAX) ) * 1000.;
         delay_ms (uDelay);
       }
     }
@@ -253,31 +253,31 @@ xChipIoSerialNew (xChipIo * chip, xDin * xIrqPin) {
     PERROR ("Serial port is not available for this chip");
     return NULL;
   }
-  if ( ( (iChipIoAvailableOptions (chip) & eOptionSerialIrq) == 0) && (xIrqPin)) {
+  if ( ( (iChipIoAvailableOptions (chip) & eOptionSerialIrq) == 0) && (xIrqPin) ) {
 
     PERROR ("No interrupt pin for this serial port");
     return NULL;
   }
 
-  port = malloc (sizeof (xChipIoSerial));
+  port = malloc (sizeof (xChipIoSerial) );
   assert (port);
 
-  memset (port, 0, sizeof (xChipIoSerial));
+  memset (port, 0, sizeof (xChipIoSerial) );
   port->chipio = chip;
 
   // Création du pseudo-terminal maître
-  if ( (port->fdm = getpt ()) < 0) {
+  if ( (port->fdm = getpt () ) < 0) {
 
     goto open_error_exit;
   }
 
   // Ajout de l'interface esclave qui sera fournie à l'utilisateur
-  if ( (grantpt (port->fdm)) != 0) {
+  if ( (grantpt (port->fdm) ) != 0) {
 
     goto open_error_exit;
   }
 
-  if ( (unlockpt (port->fdm)) != 0) {
+  if ( (unlockpt (port->fdm) ) != 0) {
 
     goto open_error_exit;
   }
@@ -286,7 +286,7 @@ xChipIoSerialNew (xChipIo * chip, xDin * xIrqPin) {
    * canonique, c'est à dire que les échanges se font lignes par lignes */
   struct termios ts;
 
-  if (tcgetattr (port->fdm, &ts)) {
+  if (tcgetattr (port->fdm, &ts) ) {
 
     goto open_error_exit;
   }
@@ -327,27 +327,27 @@ void
 vChipIoSerialDelete (xChipIoSerial * port) {
   UNUSED_VAR (int, iRet);
 
-  assert (port);
-
-  // Arrêt du thread
-  iRet = pthread_cancel (port->thread);
-  assert (iRet == 0);
-  iRet = pthread_join (port->thread, NULL);
-  assert (iRet == 0);
-
-  iChipIoSerialFlush (port);
-
-  // Fermeture des éléments
-  if (port->irq) {
-
-    iRet = iDinClose (port->irq);
+  if (port) {
+    // Arrêt du thread
+    iRet = pthread_cancel (port->thread);
     assert (iRet == 0);
+    iRet = pthread_join (port->thread, NULL);
+    assert (iRet == 0);
+
+    iChipIoSerialFlush (port);
+
+    // Fermeture des éléments
+    if (port->irq) {
+
+      iRet = iDinClose (port->irq);
+      assert (iRet == 0);
+    }
+
+    iRet = close (port->fdm);
+    assert (iRet == 0);
+
+    free (port);
   }
-
-  iRet = close (port->fdm);
-  assert (iRet == 0);
-
-  free (port);
 }
 
 
@@ -441,11 +441,11 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
   int iRet;
   xSerialIos old;
 
-  if ( (iRet = iChipIoSerialGetAttr (port, &old)) == 0) {
+  if ( (iRet = iChipIoSerialGetAttr (port, &old) ) == 0) {
     bool bIsChanged = false;
 
     if (old.baud != ios->baud) {
-      if ( (iRet = iChipIoWriteReg16 (port->chipio, eRegSerBaud, ios->baud / 100)) != 0) {
+      if ( (iRet = iChipIoWriteReg16 (port->chipio, eRegSerBaud, ios->baud / 100) ) != 0) {
 
         return iRet;
       }
@@ -454,10 +454,10 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
       bIsChanged = true;
     }
 
-    if (memcmp (ios, &old, sizeof (xSerialIos))) {
+    if (memcmp (ios, &old, sizeof (xSerialIos) ) ) {
       int iSerCr;
 
-      if ( (iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr)) < 0) {
+      if ( (iSerCr = iChipIoReadReg16 (port->chipio, eRegSerCr) ) < 0) {
 
         return iSerCr;
       }
@@ -483,7 +483,7 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
             PERROR ("Illegal data bits: %d", ios->dbits);
             return -1;
         }
-        PDEBUG ("Data bits changed: %s", sSerialDataBitsToStr (ios->dbits));
+        PDEBUG ("Data bits changed: %s", sSerialDataBitsToStr (ios->dbits) );
       }
 
       if (ios->sbits != old.sbits) {
@@ -501,7 +501,7 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
             PERROR ("Illegal stop bits: %d", ios->sbits);
             return -1;
         }
-        PDEBUG ("Stop bits changed: %s", sSerialStopBitsToStr (ios->sbits));
+        PDEBUG ("Stop bits changed: %s", sSerialStopBitsToStr (ios->sbits) );
       }
 
       if (ios->parity != old.parity) {
@@ -522,7 +522,7 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
             PERROR ("Illegal parity: %d", ios->parity);
             return -1;
         }
-        PDEBUG ("Parity changed: %s", sSerialParityToStr (ios->parity));
+        PDEBUG ("Parity changed: %s", sSerialParityToStr (ios->parity) );
       }
 
       if (ios->flow != old.flow) {
@@ -543,7 +543,7 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
             PERROR ("Illegal flow control: %d", ios->flow);
             return -1;
         }
-        PDEBUG ("Flow control changed: %s", sSerialFlowToStr (ios->flow));
+        PDEBUG ("Flow control changed: %s", sSerialFlowToStr (ios->flow) );
       }
 
       bIsChanged = true;
@@ -552,7 +552,7 @@ iChipIoSerialSetAttr (xChipIoSerial * port, const xSerialIos * ios) {
     // Attente de la fin de la configuration
     while (bIsChanged == true) {
       delay_ms (THREAD_POLL_DELAY);
-      bIsChanged = iChipIsBusy(port);
+      bIsChanged = iChipIsBusy (port);
     }
   }
   return iRet;

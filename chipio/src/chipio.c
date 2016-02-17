@@ -27,12 +27,12 @@ typedef struct xChipIo {
 // -----------------------------------------------------------------------------
 xChipIo *
 xChipIoOpen (const char * sI2cBus, int iSlaveAddr) {
-  xChipIo * chip = malloc (sizeof (xChipIo));
+  xChipIo * chip = malloc (sizeof (xChipIo) );
 
   if (chip) {
     int iReg;
 
-    memset (chip, 0, sizeof (xChipIo));
+    memset (chip, 0, sizeof (xChipIo) );
     chip->fd = iI2cOpen (sI2cBus, iSlaveAddr);
     if (chip->fd < 0) {
 
@@ -60,14 +60,14 @@ open_error_exit:
 int
 iChipIoRevisionMajor (xChipIo * chip) {
 
-  return (unsigned)chip->ucRev >> 4;
+  return (unsigned) chip->ucRev >> 4;
 }
 
 // -----------------------------------------------------------------------------
 int
 iChipIoRevisionMinor (xChipIo * chip) {
 
-  return (unsigned)chip->ucRev & 0x0F;
+  return (unsigned) chip->ucRev & 0x0F;
 }
 
 // -----------------------------------------------------------------------------
@@ -80,10 +80,13 @@ iChipIoAvailableOptions (xChipIo * chip) {
 // -----------------------------------------------------------------------------
 int
 iChipIoClose (xChipIo * chip) {
-
-  int iRet = iI2cClose (chip->fd);
-  free (chip);
-  return iRet;
+  
+  if (chip) {
+    int iRet = iI2cClose (chip->fd);
+    free (chip);
+    return iRet;
+  }
+  return 0;
 }
 
 // -----------------------------------------------------------------------------
