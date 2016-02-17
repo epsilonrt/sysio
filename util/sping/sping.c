@@ -1,8 +1,8 @@
 /**
  * @file sping.c
- * @brief Ping sur liaison série asynchrone
+ * @brief Ping/Pong sur liaison série
  *
- * Copyright © 2013-2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * Copyright © 2013-2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
@@ -25,12 +25,11 @@
 #include "version-git.h"
 
 /* constants ================================================================ */
-// #define VERSION 1.1
 #define AUTHORS "Pascal JEAN"
 #define WEBSITE "http://gitweb.epsilonrt.com/sysio.git"
 
-#define STX '<'
-#define ETX '>'
+#define STX 2
+#define ETX 3
 
 /* Config. */
 #define MIN_PACKET_SIZE 1
@@ -398,6 +397,9 @@ main (int argc, char **argv) {
     int iAvailableSize, iReadSize, iRemainSize = sizeof (sPongPacket) - 1;
     char * pcPkt, * pcEnd, * p = sPongPacket;
 
+    /* évite core dump lors du printf en cas de paquet trop long */
+    sPongPacket[iRemainSize] = '\0';
+
     printf ("SERIAL PONG on %s %s\n"
             "Packet waiting... Press Ctrl+C to abort !\n",
             sDevice, sSerialAttrToStr (&xIos) );
@@ -435,30 +437,42 @@ main (int argc, char **argv) {
           if ( (pcPkt = memchr (p, STX, iReadSize) ) ) {
 
             bIsStarted = true;
+            xStats.iRxCount++;
           }
         }
         else {
-          if ( (pcEnd = memchr (p, ETX, iReadSize) ) ) {
+          if ( (pcEnd = memchr (p, ETX, iReadSize) ) || (iRemainSize == 0) ) {
 
-            * (++pcEnd) = '\0'; /* ajout null final */
-            printf ("%s\n", pcPkt);
-            //putchar ('.');
-            fflush (stdout);
-            
-            i = write (iFd, pcPkt, pcEnd - pcPkt);
-            if (i < 0) {
-              fprintf (stderr, "Unable to write %s device: %s\n",
-                       sDevice, strerror (errno) );
-              delay_ms (300);
+
+            if (pcEnd) {
+
+              i = write (iFd, pcPkt, pcEnd - pcPkt);
+              if (i < 0) {
+
+                fprintf (stderr, "Unable to write %s device: %s\n",
+                         sDevice, strerror (errno) );
+                delay_ms (300);
+              }
+              *pcEnd = '\0'; /* écrase ETX final */
             }
-            
+            else {
+
+              /* Overflow buffer réception */
+              xStats.iErrorCount++;
+            }
+
+            /* Affiche le paquet reçu sans STX ni ETX */
+            printf ("<%s>\n", pcPkt + 1);
+            fflush (stdout);
+
+            /* Réinitialise en attente de paquet */
             bIsStarted = false;
             iRemainSize = sizeof (sPongPacket) - 1;
             p = sPongPacket;
             continue;
           }
         }
-        
+
         iRemainSize -= iReadSize;
         p += iReadSize;
       }
@@ -480,19 +494,12 @@ vStatistics (void) {
   if (bReceive) {
 
     printf ("--- %s pong statistics ---\n", sDevice);
-    if (xStats.iRxCount) {
-      printf ("%d packets received, %d errors, %.1f%% packet loss\n",
-              xStats.iRxCount,
-              xStats.iErrorCount,
-              (double) (xStats.iRxCount - xStats.iErrorCount) * 100.0 /
-              (double) xStats.iRxCount);
-
-    }
-    else {
-      printf ("no packet received.\n");
-    }
+    printf ("%d packets received, %d errors.\n",
+            xStats.iRxCount,
+            xStats.iErrorCount);
   }
   else {
+    
     if (xStats.iTxCount) {
       printf ("--- %s ping statistics ---\n", sDevice);
       printf ("%d packets transmitted, %d received, %d errors, "
@@ -505,6 +512,7 @@ vStatistics (void) {
               xStats.dTimeSum, xStats.dTimeSum / (double) xStats.iTxCount);
     }
     else {
+      
       printf ("no packet transmitted.\n");
     }
   }
@@ -540,8 +548,8 @@ vSigIntHandler (int sig) {
 // -----------------------------------------------------------------------------
 void
 vVersion (void)  {
-  printf ("you are running version %.s\n", VERSION);
-  printf ("this program was developped by %s\n", AUTHORS);
+  printf ("you are running version %s\n", VERSION_SHORT);
+  printf ("this program was developped by %s.\n", AUTHORS);
   printf ("you can find some information on this project page at %s\n", WEBSITE);
   exit (EXIT_SUCCESS);
 }
