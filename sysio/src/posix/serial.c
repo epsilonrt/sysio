@@ -170,7 +170,7 @@ iSerialPoll (int fd, int timeout_ms) {
   else {
     struct timeval timeout;
     long timeout_us = timeout_ms * 1000L;
-    
+
     /* Initialize the timeout data structure. */
     timeout.tv_sec  = timeout_us / 1000000L;
     timeout.tv_usec = timeout_us % 1000000L;
@@ -402,27 +402,39 @@ iSerialSetFlow (int fd, eSerialFlow eFlow) {
       tcflush (fd, TCIOFLUSH);
       iRet = tcsetattr (fd, TCSANOW, &ts);
     }
-    if ( (iRet == 0) && ( (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) ||
-                          (eFlow == SERIAL_FLOW_RS485_RTS_ON_SEND) ) ) {
+
+    if  (iRet == 0) {
       struct serial_rs485 rs485conf;
 
       memset (&rs485conf, 0, sizeof (rs485conf) );
+      if ( (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) ||
+           (eFlow == SERIAL_FLOW_RS485_RTS_ON_SEND) )  {
 
-      /* Enable RS485 mode: */
-      rs485conf.flags = SER_RS485_ENABLED;
+        /* Mode RS485 demandé... */
+        
+        /* Enable RS485 mode: */
+        rs485conf.flags = SER_RS485_ENABLED;
 
-      if (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) {
+        if (eFlow == SERIAL_FLOW_RS485_RTS_AFTER_SEND) {
 
-        /* Set logical level for RTS pin equal to 0 (asserted) after sending: */
-        rs485conf.flags |= SER_RS485_RTS_AFTER_SEND;
+          /* Set logical level for RTS pin equal to 0 (asserted) after sending: */
+          rs485conf.flags |= SER_RS485_RTS_AFTER_SEND;
+        }
+        else {
+
+          /* Set logical level for RTS pin equal to 0 (asserted) when sending: */
+          rs485conf.flags |= SER_RS485_RTS_ON_SEND;
+        }
+        return ioctl (fd, TIOCSRS485, &rs485conf);
       }
       else {
-
-        /* Set logical level for RTS pin equal to 0 (asserted) when sending: */
-        rs485conf.flags |= SER_RS485_RTS_ON_SEND;
+        /*
+         * Désactive le mode RS485 en ignorant les erreurs (renvoyées par les
+         * drivers ne gérant pas le RS485)
+         */
+        (void) ioctl (fd, TIOCSRS485, &rs485conf);
       }
 
-      return ioctl (fd, TIOCSRS485, &rs485conf);
     }
   }
   return iRet;
