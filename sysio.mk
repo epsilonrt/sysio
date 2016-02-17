@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 VPATH+=:$(SYSIO_ROOT)
-EXTRA_INCDIRS += $(SYSIO_ROOT)
+EXTRA_INCDIRS += $(SYSIO_ROOT) $(SYSIO_ROOT)/3rdparty
 
 ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
 SYS  = SYS_LINUX
@@ -52,7 +52,8 @@ SYS_DIR = sysio/src/win32
 endif
 
 SRC += $(addprefix sysio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/*.c)))
-SRC += $(addprefix ssdv/src/, $(notdir $(wildcard $(SYSIO_ROOT)/ssdv/src/*.c)))
+SRC += $(addprefix 3rdparty/ssdv/src/, $(notdir $(wildcard $(SYSIO_ROOT)/3rdparty/ssdv/src/*.c)))
+SRC += $(addprefix 3rdparty/modbus/src/, $(notdir $(wildcard $(SYSIO_ROOT)/3rdparty/modbus/src/*.c)))
 SRC += $(addprefix $(SYS_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(SYS_DIR)/*.c)))
 
 ifeq ($(SYS_HAS_GPIO),ON)

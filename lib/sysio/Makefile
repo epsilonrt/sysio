@@ -366,7 +366,9 @@ endif
 	@-install -d -m 0755 $(INSTALL_INCDIR)/radio
 	@-install -m 0644 $(SYSIO_ROOT)/radio/*.h $(INSTALL_INCDIR)/radio
 	@-install -d -m 0755 $(INSTALL_INCDIR)/ssdv
-	@-install -m 0644 $(SYSIO_ROOT)/ssdv/*.h $(INSTALL_INCDIR)/ssdv
+	@-install -m 0644 $(SYSIO_ROOT)/3rdparty/ssdv/*.h $(INSTALL_INCDIR)/ssdv
+	@-install -d -m 0755 $(INSTALL_INCDIR)/modbus
+	@-install -m 0644 $(SYSIO_ROOT)/3rdparty/modbus/*.h $(INSTALL_INCDIR)/modbus
 
 ifeq ($(SYS_HAS_GPIO),ON)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/dinput.h $(INSTALL_INCDIR)/$(TARGET)
@@ -394,6 +396,7 @@ uninstall:
 	@-rm -fr $(INSTALL_INCDIR)/$(TARGET)
 	@-rm -fr $(INSTALL_INCDIR)/radio
 	@-rm -fr $(INSTALL_INCDIR)/ssdv
+	@-rm -fr $(INSTALL_INCDIR)/modbus
 	@-rm -fr $(INSTALL_INCDIR)/chipio
 
 version.h:
