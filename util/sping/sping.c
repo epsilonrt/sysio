@@ -446,7 +446,7 @@ main (int argc, char **argv) {
 
             if (pcEnd) {
 
-              i = write (iFd, pcPkt, pcEnd - pcPkt);
+              i = write (iFd, pcPkt, pcEnd - pcPkt + 1);
               if (i < 0) {
 
                 fprintf (stderr, "Unable to write %s device: %s\n",
