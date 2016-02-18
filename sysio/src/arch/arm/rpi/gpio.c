@@ -47,6 +47,8 @@ typedef struct xGpio {
 } xGpio;
 
 /* macros =================================================================== */
+#define BCM270X_GPIO_BASE(_iobase)  ((unsigned long)(_iobase) + 0x200000)
+
 #define GPIO_INP(g)   *(pIo(gpio.map, (g)/10)) &= ~(7<<(((g)%10)*3))
 #define GPIO_OUT(g)   *(pIo(gpio.map, (g)/10)) |=  (1<<(((g)%10)*3))
 #define GPIO_ALT(g,a) *(pIo(gpio.map, (g)/10)) |=  ((a)<<(((g)%10)*3))
@@ -56,22 +58,24 @@ typedef struct xGpio {
 static xGpio gpio;
 
 static const int iPinsPcbRev1[] =
-  {17,18,21,22,23,24,25,4,0,1,8,7,10,9,11,15};
+{17, 18, 21, 22, 23, 24, 25, 4, 0, 1, 8, 7, 10, 9, 11, 14, 15} ;
+
 static const int iPinsPcbRev2[] =
-  {17,18,27,22,23,24,25,4,2,3,8,7,10,9,11,14,16,28,29,30,31};
+{17, 18, 27, 22, 23, 24, 25,  4,  2, 3, 8, 7, 10, 9, 11, 14, 15, 28, 29, 30, 31, 
+  5,  6, 13, 19, 26, 12, 16, 20, 21, 0, 1} ;
 
 /* private functions ======================================================== */
 
 #if 0
 // -----------------------------------------------------------------------------
 static void
-vDumpSel(void) {
+vDumpSel (void) {
 
   for (int i = GFPSEL0; i <= GFPSEL5; i++) {
 
-    printf ("GFPSEL%d=%08X\n", i, *(pIo (gpio.map,  i)));
+    printf ("GFPSEL%d=%08X\n", i, * (pIo (gpio.map,  i) ) );
   }
-  putchar('\n');
+  putchar ('\n');
 }
 #else
 #define vDumpSel()
@@ -95,7 +99,7 @@ bIsOpen (void) {
 static int
 iSetMode (int p, eGpioMode eMode) {
 
-  if ((!bIsOpen()) || (p >= gpio.size)){
+  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
     return -1;
   }
   int i = 0;
@@ -122,7 +126,7 @@ iSetMode (int p, eGpioMode eMode) {
       vDumpSel();
       break;
     case eModePwm:
-      if (!bIsPwmPin(p)) {
+      if (!bIsPwmPin (p) ) {
 
         return -1;
       }
@@ -140,7 +144,7 @@ iSetMode (int p, eGpioMode eMode) {
 static int
 iSetPull (int p, eGpioPull ePull) {
 
-  if ((!bIsOpen()) || (p >= gpio.size)){
+  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
     return -1;
   }
 
@@ -152,11 +156,11 @@ iSetPull (int p, eGpioPull ePull) {
     g -= 32;
   }
 
-  *(pIo (gpio.map, GPPUD)) = ePull & 3;
+  * (pIo (gpio.map, GPPUD) ) = ePull & 3;
   delay_us (10);
   *puPudClk = 1 << g;
   delay_us (10);
-  *(pIo (gpio.map, GPPUD)) = ePullOff;
+  * (pIo (gpio.map, GPPUD) ) = ePullOff;
   *puPudClk = 0;
   return 0;
 }
@@ -166,13 +170,13 @@ static int
 iRelease (int p) {
   int i = -1;
 
-  if ((bIsOpen()) && (p < gpio.size)){
+  if ( (bIsOpen() ) && (p < gpio.size) ) {
 
     i = 0;
     if (gpio.pinmode_release[p] != -1) {
 
       i = iSetMode (p, gpio.pinmode_release[p]);
-      if ((i == 0) && (gpio.pinmode_release[p] == eModeInput)) {
+      if ( (i == 0) && (gpio.pinmode_release[p] == eModeInput) ) {
         i = iSetPull (p, ePullDown);
         gpio.pinmode_release[p] = -1;
       }
@@ -185,7 +189,7 @@ iRelease (int p) {
 static int
 iWrite (int p, bool bValue) {
 
-  if ((!bIsOpen()) || (p >= gpio.size)){
+  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
 
     return -1;
   }
@@ -214,7 +218,7 @@ iWrite (int p, bool bValue) {
 static int
 iRead (int p) {
 
-  if ((!bIsOpen()) || (p >= gpio.size)){
+  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
 
     return -1;
   }
@@ -226,16 +230,16 @@ iRead (int p) {
     g -= 32;
   }
 
-  int iValue = ((*puReg & (1 << g)) != 0) ? true : false;
+  int iValue = ( (*puReg & (1 << g) ) != 0) ? true : false;
   return iValue;
 }
 
 // -----------------------------------------------------------------------------
 static int
 iToggle (int p) {
-  int iValue = iRead(p);
+  int iValue = iRead (p);
 
-  if (iValue < 0){
+  if (iValue < 0) {
 
     return -1;
   }
@@ -250,52 +254,51 @@ iToggle (int p) {
 // -----------------------------------------------------------------------------
 static eGpioMode
 eGetMode (int p) {
-  if ((!bIsOpen()) || (p >= gpio.size)){
+  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
 
     return eModeError;
   }
 
-  return GPIO_MODE(gpio.pin[p]);
+  return GPIO_MODE (gpio.pin[p]);
 }
 
 /* internal public functions ================================================ */
 
 // -----------------------------------------------------------------------------
 xGpio *
-xGpioOpen (UNUSED_VAR(void *, setup)) {
+xGpioOpen (UNUSED_VAR (void *, setup) ) {
 
-  if (!bIsOpen()) {
-    int iRev = iRpiRev();
-
-    if (iRev <= 0) {
+  if (!bIsOpen() ) {
+    
+    if (!pxRpiInfo()) {
 
       PERROR ("It seems that this system is not a raspberry pi !\n");
       return 0;
     }
 
-    if (iRev <= 3) {
+    if (pxRpiInfo()->iGpioRev == 1) {
 
       gpio.pin = iPinsPcbRev1;
-      gpio.size = sizeof(iPinsPcbRev1) / sizeof(int);
+      gpio.size = sizeof (iPinsPcbRev1) / sizeof (int);
     }
     else {
 
       gpio.pin = iPinsPcbRev2;
-      gpio.size = sizeof(iPinsPcbRev2) / sizeof(int);
+      gpio.size = sizeof (iPinsPcbRev2) / sizeof (int);
     }
 
-    gpio.map = xIoMapOpen (BCM2708_GPIO_BASE, BCM2708_BLOCK_SIZE);
+    gpio.map = xIoMapOpen (BCM270X_GPIO_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE);
     if (gpio.map) {
 
-      gpio.pinmode = malloc (gpio.size * sizeof(int));
-      gpio.pinmode_release = malloc (gpio.size * sizeof(int));
-      if ((gpio.pinmode) && (gpio.pinmode_release)) {
+      gpio.pinmode = malloc (gpio.size * sizeof (int) );
+      gpio.pinmode_release = malloc (gpio.size * sizeof (int) );
+      if ( (gpio.pinmode) && (gpio.pinmode_release) ) {
 
-        memset (gpio.pinmode_release, -1, gpio.size * sizeof(int));
+        memset (gpio.pinmode_release, -1, gpio.size * sizeof (int) );
         // Lecture des modes actuels
         for (int p = 0; p < gpio.size; p++) {
 
-          gpio.pinmode[p] = GPIO_MODE(gpio.pin[p]);
+          gpio.pinmode[p] = GPIO_MODE (gpio.pin[p]);
         }
         gpio.link = 1;
         gpio.roc = true;
@@ -312,9 +315,9 @@ xGpioOpen (UNUSED_VAR(void *, setup)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioClose (UNUSED_VAR(xGpio *, unused)) {
+iGpioClose (UNUSED_VAR (xGpio *, unused) ) {
 
-  if (bIsOpen()) {
+  if (bIsOpen() ) {
     gpio.link--;
     if (gpio.link <= 0) {
       int error = 0;
@@ -323,12 +326,12 @@ iGpioClose (UNUSED_VAR(xGpio *, unused)) {
         // Fermeture effective lorsque le nombre  de liens est 0, si roc true
         for (int i = 0; i < gpio.size; i++) {
           // Release all used pins
-            (void)iRelease (i);
+          (void) iRelease (i);
         }
       }
       error = iIoMapClose (gpio.map);
       free (gpio.pinmode);
-      memset (&gpio, 0, sizeof (xGpio));
+      memset (&gpio, 0, sizeof (xGpio) );
       return error;
     }
   }
@@ -337,43 +340,43 @@ iGpioClose (UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioSetReleaseOnClose (bool enable, UNUSED_VAR(xGpio *, unused)) {
+iGpioSetReleaseOnClose (bool enable, UNUSED_VAR (xGpio *, unused) ) {
   gpio.roc = enable;
   return 0;
 }
 
 // -----------------------------------------------------------------------------
 bool
-bGpioGetReleaseOnClose (UNUSED_VAR(xGpio *, unused)) {
+bGpioGetReleaseOnClose (UNUSED_VAR (xGpio *, unused) ) {
   return gpio.roc;
 }
 
 // -----------------------------------------------------------------------------
 bool
-bGpioIsOpen (UNUSED_VAR(xGpio *, unused)) {
+bGpioIsOpen (UNUSED_VAR (xGpio *, unused) ) {
 
   return bIsOpen();
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioSetMode (int p, eGpioMode eMode, UNUSED_VAR(xGpio *, unused)) {
+iGpioSetMode (int p, eGpioMode eMode, UNUSED_VAR (xGpio *, unused) ) {
 
   return iSetMode (p, eMode);
 }
 
 // -----------------------------------------------------------------------------
 eGpioMode
-eGpioGetMode (int p, UNUSED_VAR(xGpio *, unused)) {
+eGpioGetMode (int p, UNUSED_VAR (xGpio *, unused) ) {
 
   return eGetMode (p);
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioGetSize (UNUSED_VAR(xGpio *, unused)) {
+iGpioGetSize (UNUSED_VAR (xGpio *, unused) ) {
 
-  if (!bIsOpen()) {
+  if (!bIsOpen() ) {
 
     return -1;
   }
@@ -382,44 +385,44 @@ iGpioGetSize (UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioRelease (int p, UNUSED_VAR(xGpio *, unused)) {
+iGpioRelease (int p, UNUSED_VAR (xGpio *, unused) ) {
 
   return iRelease (p);
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioSetPull (int p, eGpioPull ePull, UNUSED_VAR(xGpio *, unused)) {
+iGpioSetPull (int p, eGpioPull ePull, UNUSED_VAR (xGpio *, unused) ) {
 
   return iSetPull (p, ePull);
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioWrite (int p, bool bValue, UNUSED_VAR(xGpio *, unused)) {
+iGpioWrite (int p, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
   return iWrite (p, bValue);;
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioRead (int p, UNUSED_VAR(xGpio *, unused)) {
+iGpioRead (int p, UNUSED_VAR (xGpio *, unused) ) {
 
   return iRead (p);
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioToggle (int p, UNUSED_VAR(xGpio *, unused)) {
+iGpioToggle (int p, UNUSED_VAR (xGpio *, unused) ) {
 
   return iToggle (p);
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioReadAll (int iMask, UNUSED_VAR(xGpio *, unused)) {
+iGpioReadAll (int iMask, UNUSED_VAR (xGpio *, unused) ) {
 
-  if (bIsOpen()) {
+  if (bIsOpen() ) {
     int iValue = 0;
     int iBit = 1;
     int p = 0;
@@ -427,10 +430,10 @@ iGpioReadAll (int iMask, UNUSED_VAR(xGpio *, unused)) {
     if (iMask == 0) {
       iMask = -1;
     }
-    while ((iMask) && (p < gpio.size)) {
+    while ( (iMask) && (p < gpio.size) ) {
 
       if (iMask & iBit) {
-        switch (iRead (p)) {
+        switch (iRead (p) ) {
           case true:
             iValue |= iBit;
             break;
@@ -451,14 +454,14 @@ iGpioReadAll (int iMask, UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR(xGpio *, unused)) {
+iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
-  if (bIsOpen()) {
+  if (bIsOpen() ) {
     int p = 0;
 
-    while ((iMask) && (p < gpio.size)) {
+    while ( (iMask) && (p < gpio.size) ) {
 
-      if ((iMask & 1) && (gpio.pinmode[p] == eModeOutput)) {
+      if ( (iMask & 1) && (gpio.pinmode[p] == eModeOutput) ) {
 
         (void) iWrite (p, bValue);
       }
@@ -472,14 +475,14 @@ iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR(xGpio *, unused)) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioToggleAll (int iMask, UNUSED_VAR(xGpio *, unused)){
+iGpioToggleAll (int iMask, UNUSED_VAR (xGpio *, unused) ) {
 
-  if (bIsOpen()) {
+  if (bIsOpen() ) {
     int p = 0;
 
-    while ((iMask) && (p < gpio.size)) {
+    while ( (iMask) && (p < gpio.size) ) {
 
-      if ((iMask & 1) && (gpio.pinmode[p] == eModeOutput)) {
+      if ( (iMask & 1) && (gpio.pinmode[p] == eModeOutput) ) {
 
         (void) iToggle (p++);
       }

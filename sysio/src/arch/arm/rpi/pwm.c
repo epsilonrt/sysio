@@ -49,6 +49,11 @@ typedef struct xPwm {
 } xPwm;
 
 /* macros =================================================================== */
+#define BCM270X_PWM_FCLK 19200000.0
+
+#define BCM270X_PWM_BASE(_iobase)  ((unsigned long)(_iobase) + 0x20C000)
+#define BCM270X_CLK_BASE(_iobase)  ((unsigned long)(_iobase) + 0x101000)
+
 #define preg(__reg) (*((volatile unsigned int *)(pIo(pwm.pmap, (__reg)))))
 #define creg(__reg) (*((volatile unsigned int *)(pIo(pwm.cmap, (__reg)))))
 
@@ -68,7 +73,7 @@ bIsOpen (void) {
 // -----------------------------------------------------------------------------
 xPwm *
 xPwmOpen (int pin) {
-
+  
   if (bIsOpen()) {
     return &pwm;
   }
@@ -87,9 +92,9 @@ xPwmOpen (int pin) {
   }
 
   pwm.pin  = pin;
-  if ((pwm.pmap = xIoMapOpen (BCM2708_PWM_BASE, BCM2708_BLOCK_SIZE))) {
+  if ((pwm.pmap = xIoMapOpen (BCM270X_PWM_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
 
-    if ((pwm.cmap = xIoMapOpen (BCM2708_CLK_BASE, BCM2708_BLOCK_SIZE))) {
+    if ((pwm.cmap = xIoMapOpen (BCM270X_CLK_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
 
       return &pwm; // Success
     }
@@ -219,14 +224,14 @@ iPwmValue (UNUSED_VAR(xPwm *, unused)) {
 int
 iPwmDivisor (double dFreq) {
 
-  return BCM2708_PWM_FCLK / dFreq;
+  return BCM270X_PWM_FCLK / dFreq;
 }
 
 // -----------------------------------------------------------------------------
 double
 dPwmFreq (int iDiv) {
 
-  return BCM2708_PWM_FCLK / iDiv;
+  return BCM270X_PWM_FCLK / iDiv;
 }
 
 // -----------------------------------------------------------------------------
@@ -242,7 +247,7 @@ dPwmClockFreq (void) {
   int div = iPwmClockDiv();
 
   if (div > 0) {
-    return BCM2708_PWM_FCLK / div;
+    return BCM270X_PWM_FCLK / div;
   }
   return -1;
 }

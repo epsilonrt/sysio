@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" SWTLW="No">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
@@ -40,6 +40,7 @@
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
+  <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
@@ -111,6 +112,7 @@
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_rs485" ConfigName="Debug"/>
       <Project Name="libmodbus" ConfigName="Debug"/>
+      <Project Name="sysio_test_rpi" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="test_callback" ConfigName="Release"/>
@@ -182,6 +184,7 @@
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_rs485" ConfigName="Release"/>
       <Project Name="libmodbus" ConfigName="Release"/>
+      <Project Name="sysio_test_rpi" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -19,12 +19,55 @@ __BEGIN_C_DECLS
  *  @{
  */
 
+/**
+ * @brief Modèle de Raspberry Pi
+ */
+typedef enum  {
+  eRpiModelA,
+  eRpiModelB,
+  eRpiModelAPlus,
+  eRpiModelBPlus,
+  eRpiModelComputeModule,
+  eRpiModel2B,
+  eRpiModelZero,
+  eRpiModelUnknown = -1
+} eRpiModel;
+
+/**
+ * @brief Type de MCU SoC
+ */
+typedef enum  {
+  eRpiMcuBcm2708,
+  eRpiMcuBcm2709,
+  eRpiMcuUnknown = -1
+} eRpiMcu;
+
+/**
+ * @brief Information sur le Raspberry Pi
+ */
+typedef struct xRpi {
+  int iRev; /**< Numéro de révision identifiant le RPi */
+  eRpiModel eModel; /**< Modèle */
+  int iGpioRev; /**< Révision du GPIO */
+  eRpiMcu eMcu; /**< Type de MCU SoC */
+  int iMemMB; /**< Quantité de mémoire en MB */
+  int iPcbMajor; /**< Majeur du PCB */
+  int iPcbMinor; /**< Mineur du PCB */
+  const char * sManufacturer; /**< Nom du fabricant */
+} xRpi;
+
 /* internal public functions ================================================ */
 
 /**
   @brief Retourne la revision du raspberry
   @return la révision matérielle, 0 si le système n'est pas un rpi ou -1
   en cas d'erreur. \n
+ */
+int iRpiRev (void);
+
+/**
+ * @brief Lecture des informations sur le Raspberry Pi
+ * @return Pointeur sur les informations, NULL si erreur
   Board Revision History (from <A HREF="http://elinux.org/RPi_HardwareHistory">elinux.org</A>) : \n
   <hr>
   | Revision | Release Date | Model          | PCB Revision | Memory | Notes                     |
@@ -44,8 +87,13 @@ __BEGIN_C_DECLS
   | 0010     | Q3 2014      | B+             | 1.0          | 512MB  | Mfg by Sony               |
   | 0011     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Sony               |
   | 0012     | Q4 2014      | A+             | 1.0          | 256MB  | Mfg by Sony               |
+  | 0013     | Q1 2015      | B+             | 1.2          | 512MB  | ?                         |
+  | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
+  | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
+  | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
  */
-int iRpiRev (void);
+const xRpi * pxRpiInfo (void);
+
 
 /**
  *  @defgroup sysio_rpi_pin Raspberry Pi
@@ -75,7 +123,7 @@ int iRpiRev (void);
 
 #define UART_TXD  15
 #define UART_RXD  16
-
+// Model B Rev. 2 */
 #define GPIO_GEN7  17
 #define GPIO_GEN8  18
 #define GPIO_GEN9  19
@@ -83,22 +131,36 @@ int iRpiRev (void);
 
 /**
  *  @}
+ */
+
+#if defined(__DOXYGEN__)
+/**
+ * @brief Adresse de base des entrées-sorties
+ */
+static inline  unsigned long ulRpiIoBase(void);
+
+/**
  * @}
  */
 
-#if !defined(__DOXYGEN__)
+#else /* ! defined(__DOXYGEN__) */
 // -----------------------------------------------------------------------------
-
+/*
+  GPIO_PADS     = RASPBERRY_PI_PERI_BASE + 0x00100000 ;
+  GPIO_TIMER    = RASPBERRY_PI_PERI_BASE + 0x0000B000 ;
+ */
 /* bcm2708 internals ======================================================== */
-#define BCM2708_IO_BASE  (0x20000000)
-#define BCM2708_GPIO_BASE  (BCM2708_IO_BASE + 0x200000)
-#define BCM2708_PWM_BASE  (BCM2708_IO_BASE + 0x20C000)
-#define BCM2708_CLK_BASE  (BCM2708_IO_BASE + 0x101000)
-#define BCM2708_PAGE_SIZE  (4*1024)
-#define BCM2708_BLOCK_SIZE  (4*1024)
+#define BCM2708_IO_BASE    (0x20000000)
+#define BCM2709_IO_BASE    (0x3F000000)
+#define BCM270X_PAGE_SIZE  (4*1024)
+#define BCM270X_BLOCK_SIZE (4*1024)
 
-#define BCM2708_PWM_FCLK 19200000.0
 // -----------------------------------------------------------------------------
+INLINE unsigned long
+ulRpiIoBase(void) {
+  
+  return (pxRpiInfo()->eMcu == eRpiMcuBcm2708) ? BCM2708_IO_BASE : BCM2709_IO_BASE;
+}
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */
