@@ -32,11 +32,16 @@
 #define MODE1   (1 << 1)
 #define PWEN1   (1 << 0)
 #define MSEN1   (1 << 7)
+#define MODE2   (1 << 9)
+#define PWEN2   (1 << 8)
+#define MSEN2   (1 << 15)
 
 // Register offsets
 #define PWM_CTL     0
 #define PWM_RNG1    4
 #define PWM_DAT1    5
+#define PWM_RNG2    8
+#define PWM_DAT2    9
 
 #define PWMCLK_CNTL 40
 #define PWMCLK_DIV  41
