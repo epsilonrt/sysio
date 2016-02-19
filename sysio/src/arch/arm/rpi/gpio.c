@@ -16,6 +16,9 @@
 #include <sysio/log.h>
 
 /* constants ================================================================ */
+#define ITERATOR_FRONT -1
+#define ITERATOR_BACK  -2
+
 // Register offsets
 #define GFPSEL0     0
 #define GFPSEL1     1
@@ -34,35 +37,109 @@
 #define GPLEV1      14
 #define GPPUD       37
 #define GPPUDCLK0   38
+#define GPIO_SIZE   32
+
+/* TODO:
+ * Le BCM2708 a 54 broches mais seule 32 sont accessibles sur le RPi
+ * sauf à voir le modèle Compute Module !
+ */
+//#define GPIO_SIZE   54
 
 /* structures =============================================================== */
+typedef struct xPinList {
+  const int * pin;
+  int size; // Taille du tableau pointé par pin
+  int len;  // Nombre de broches valides
+  int first;// Premier numéro valide
+  int last; // Dernier numéro valide
+} xPinList;
+
 typedef struct xGpio {
   xIoMap * map;
-  const int * pin;
-  int size;
-  int * pinmode;
-  int * pinmode_release;
+  const xPinList * list;
+  int i; // iterateur utilisateur
+  int j; // iterateur interne
+  int pinmode[GPIO_SIZE];
+  int pinmode_release[GPIO_SIZE];
   int link;
   bool roc; // release on close
+  eGpioNumbering numbering;
 } xGpio;
 
+
 /* macros =================================================================== */
-#define BCM270X_GPIO_BASE(_iobase)  ((unsigned long)(_iobase) + 0x200000)
+#define GPIO_BASE(_iobase)  ((unsigned long)(_iobase) + 0x200000)
 
 #define GPIO_INP(g)   *(pIo(gpio.map, (g)/10)) &= ~(7<<(((g)%10)*3))
 #define GPIO_OUT(g)   *(pIo(gpio.map, (g)/10)) |=  (1<<(((g)%10)*3))
 #define GPIO_ALT(g,a) *(pIo(gpio.map, (g)/10)) |=  ((a)<<(((g)%10)*3))
 #define GPIO_MODE(g)  (((*(pIo(gpio.map, (g)/10))) >> (((g)%10)*3)) & 7)
 
-/* private variables ========================================================= */
-static xGpio gpio;
+/* private variables ======================================================== */
+static xGpio gpio = { .numbering = -1 }; // Un seul gpio sur RPi !
 
-static const int iPinsPcbRev1[] =
-{17, 18, 21, 22, 23, 24, 25, 4, 0, 1, 8, 7, 10, 9, 11, 14, 15} ;
+static const int iLogicalPinsRev1[] = {
+  17, 18, 21, 22, 23, 24, 25,  4,  0, 1, 8, 7, 10, 9, 11, 14, 15
+};
 
-static const int iPinsPcbRev2[] =
-{17, 18, 27, 22, 23, 24, 25,  4,  2, 3, 8, 7, 10, 9, 11, 14, 15, 28, 29, 30, 31, 
-  5,  6, 13, 19, 26, 12, 16, 20, 21, 0, 1} ;
+/*        XX                       X  X                                       */
+static const int iLogicalPinsRev2[] = {
+  17, 18, 27, 22, 23, 24, 25,  4,  2, 3, 8, 7, 10, 9, 11, 14, 15, 28, 29, 30, 31
+};
+
+static const int iLogicalPinsRev3[] = {
+  17, 18, 27, 22, 23, 24, 25,  4,  2, 3, 8, 7, 10, 9, 11, 14, 15, -1, -1, -1, -1,
+  5,  6, 13, 19, 26, 12, 16, 20, 21, 0, 1
+};
+
+static const xPinList pxLogicalPins[] = {
+  { .pin = iLogicalPinsRev1, .size = 17, .len = 17, .first = 0, .last = 16 },
+  { .pin = iLogicalPinsRev2, .size = 21, .len = 21, .first = 0, .last = 20 },
+  { .pin = iLogicalPinsRev3, .size = 32, .len = 28, .first = 0, .last = 31 }
+};
+
+static const int iPhysicalPinsRev1[] = {
+  -1, -1,  0, -1,  1, -1, 4, 14, -1, 15, 17, 18, 21, -1, 22, 23, -1, 24, 10,
+  -1,  9, 25, 11,  8, -1,  7
+};
+
+static const int iPhysicalPinsRev2[] = {
+  -1, -1,  2, -1,  3, -1, 4, 14, -1, 15, 17, 18, 27, -1, 22, 23, -1, 24, 10,
+  -1,  9, 25, 11,  8, -1, 7, /* P5 */ -1, -1, 28, 29, 30, 31, -1, -1,
+};
+
+static const int iPhysicalPinsRev3[] = {
+  -1, -1,  2, -1,  3, -1, 4, 14, -1, 15, 17, 18, 27, -1, 22, 23, -1, 24, 10,
+  -1,  9, 25, 11,  8, -1,  7,
+   0,  1,  5, -1,  6, 12, 13, -1, 19, 16, 26, 20, -1, 21
+};
+
+static const xPinList pxPhysicalPins[] = {
+  { .pin = iPhysicalPinsRev1, .size = 26, .len = 17, .first = 2, .last = 25 },
+  { .pin = iPhysicalPinsRev2, .size = 34, .len = 21, .first = 2, .last = 31 },
+  { .pin = iPhysicalPinsRev3, .size = 40, .len = 28, .first = 2, .last = 39 }
+};
+
+static const int iMcuPinsRev1[] = {
+  0, 1, -1, -1, 4, -1, -1, 7, 8, 9, 10, 11, -1, -1, 14, 15, -1, 17, 18, -1, -1,
+  21, 22, 23, 24, 25, -1, -1, -1, -1, -1, -1
+};
+
+static const int iMcuPinsRev2[] = {
+  -1, -1, 2, 3, 4, -1, -1, 7, 8, 9, 10, 11, -1, -1, 14, 15, -1, 17, 18, -1, -1,
+  -1, 22, 23, 24, 25 - 1, 27, 28, 29, 30, 31
+};
+
+static const int iMcuPinsRev3[] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  22, 23, 24, 25, 26, 27, -1, -1, -1, -1,
+};
+
+static const xPinList pxMcuPins[] = {
+  { .pin = iMcuPinsRev1, .size = 32, .len = 17, .first = 0, .last = 25 },
+  { .pin = iMcuPinsRev2, .size = 32, .len = 21, .first = 2, .last = 27 },
+  { .pin = iMcuPinsRev3, .size = 32, .len = 28, .first = 0, .last = 27 }
+};
 
 /* private functions ======================================================== */
 
@@ -83,27 +160,40 @@ vDumpSel (void) {
 
 // -----------------------------------------------------------------------------
 static bool
-bIsPwmPin (int p) {
-
-  return (p == GPIO_GEN1);
-}
-
-// -----------------------------------------------------------------------------
-static bool
 bIsOpen (void) {
 
   return bIoMapIsOpen (gpio.map);
 }
 
 // -----------------------------------------------------------------------------
-static int
-iSetMode (int p, eGpioMode eMode) {
+static bool
+bIsPwmPin (int g) {
+  /*
+   * TODO:
+   * BCM2708
+   *  - PWM0 BCM18 ALT5
+   * BCM2709 +
+   *  - PWM0 BCM12 ALT0
+   *  - PWM1 BCM13 ALT0
+   */
 
-  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
+
+  if ( (g == 18) || ( (pxRpiInfo()->eMcu == eRpiMcuBcm2709) && ( (g == 12) || (g == 13) ) ) ) {
+
+    return true;
+  }
+  return false;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iSetMode (int g, eGpioMode eMode) {
+  int i = 0;
+
+  if (g < 0) {
+
     return -1;
   }
-  int i = 0;
-  int g = gpio.pin[p];
 
   switch (eMode) {
     case eModeInput:
@@ -126,29 +216,28 @@ iSetMode (int p, eGpioMode eMode) {
       vDumpSel();
       break;
     case eModePwm:
-      if (!bIsPwmPin (p) ) {
+      if (!bIsPwmPin (g) ) {
 
         return -1;
       }
-      i = iSetMode (p, eModeAlt5);
+      i = iSetMode (g, eModeAlt5);
       break;
     default:
       return -1;
   }
-  gpio.pinmode_release[p] = gpio.pinmode[p];
-  gpio.pinmode[p] = eMode;
+  gpio.pinmode_release[g] = gpio.pinmode[g];
+  gpio.pinmode[g] = eMode;
   return i;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iSetPull (int p, eGpioPull ePull) {
+iSetPull (int g, eGpioPull ePull) {
 
-  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
+  if (g < 0) {
+
     return -1;
   }
-
-  int g = gpio.pin[p];
   volatile unsigned int * puPudClk = pIo (gpio.map, GPPUDCLK0);
   if (g > 31) {
 
@@ -167,34 +256,12 @@ iSetPull (int p, eGpioPull ePull) {
 
 // -----------------------------------------------------------------------------
 static int
-iRelease (int p) {
-  int i = -1;
+iWrite (int g, bool bValue) {
 
-  if ( (bIsOpen() ) && (p < gpio.size) ) {
-
-    i = 0;
-    if (gpio.pinmode_release[p] != -1) {
-
-      i = iSetMode (p, gpio.pinmode_release[p]);
-      if ( (i == 0) && (gpio.pinmode_release[p] == eModeInput) ) {
-        i = iSetPull (p, ePullDown);
-        gpio.pinmode_release[p] = -1;
-      }
-    }
-  }
-  return i;
-}
-
-// -----------------------------------------------------------------------------
-static int
-iWrite (int p, bool bValue) {
-
-  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
+  if (g < 0) {
 
     return -1;
   }
-
-  int g = gpio.pin[p];
   volatile unsigned int * puReg = pIo (gpio.map, 0);
 
   if (bValue) {
@@ -216,13 +283,13 @@ iWrite (int p, bool bValue) {
 
 // -----------------------------------------------------------------------------
 static int
-iRead (int p) {
+iRead (int g) {
 
-  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
+  if (g < 0) {
 
     return -1;
   }
-  int g = gpio.pin[p];
+
   volatile unsigned int * puReg = pIo (gpio.map, GPLEV0);
   if (g > 31) {
 
@@ -235,9 +302,41 @@ iRead (int p) {
 }
 
 // -----------------------------------------------------------------------------
+static eGpioMode
+eGetMode (int g) {
+
+  if (g < 0) {
+
+    return -1;
+  }
+
+  return GPIO_MODE (g);
+}
+
+// -----------------------------------------------------------------------------
 static int
-iToggle (int p) {
-  int iValue = iRead (p);
+iRelease (int g) {
+
+  if (g >= 0) {
+    int i = 0;
+
+    if (gpio.pinmode_release[g] != -1) {
+
+      i = iSetMode (g, gpio.pinmode_release[g]);
+      if ( (i == 0) && (gpio.pinmode_release[g] == eModeInput) ) {
+        i = iSetPull (g, ePullDown);
+        gpio.pinmode_release[g] = -1;
+      }
+    }
+    return i;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iToggle (int g) {
+  int iValue = iRead (g);
 
   if (iValue < 0) {
 
@@ -246,20 +345,145 @@ iToggle (int p) {
 
   if (iValue) {
 
-    return iWrite (p, false);
+    return iWrite (g, false);
   }
-  return iWrite (p, true);
+  return iWrite (g, true);
 }
 
 // -----------------------------------------------------------------------------
-static eGpioMode
-eGetMode (int p) {
-  if ( (!bIsOpen() ) || (p >= gpio.size) ) {
+static void
+vSetNumbering (eGpioNumbering eNum) {
+  if (eNum != gpio.numbering) {
+    switch (eNum) {
 
-    return eModeError;
+      case eNumberingLogical:
+        gpio.list = &pxLogicalPins[pxRpiInfo()->iGpioRev - 1];
+        break;
+
+      case eNumberingMcu:
+        gpio.list = &pxMcuPins[pxRpiInfo()->iGpioRev - 1];
+        break;
+
+      case eNumberingPhysical:
+        gpio.list = &pxPhysicalPins[pxRpiInfo()->iGpioRev - 1];
+        break;
+    }
+    gpio.i = gpio.j = ITERATOR_FRONT; // ToFront
+    gpio.numbering = eNum;
   }
+}
 
-  return GPIO_MODE (gpio.pin[p]);
+// -----------------------------------------------------------------------------
+static int
+iMcuPin (int n) {
+
+  if (gpio.list) {
+
+    if (gpio.numbering == eNumberingPhysical) {
+
+      n--;
+    }
+    if ( (n >= gpio.list->first) && (n <= gpio.list->last) ) {
+      return gpio.list->pin[n];
+    }
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iToFront (void) {
+
+  gpio.i = ITERATOR_FRONT;
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iToBack (void) {
+
+  gpio.i = ITERATOR_BACK;
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+static bool
+bHasNext (void) {
+
+  if (gpio.list) {
+    return gpio.i != gpio.list->last;
+  }
+  return false;
+}
+
+// -----------------------------------------------------------------------------
+static bool
+bHasPrevious (void) {
+
+  if (gpio.list) {
+    return gpio.i != gpio.list->first;
+  }
+  return false;
+}
+#define ITERATOR_FRONT -1
+#define ITERATOR_BACK  -2
+
+// -----------------------------------------------------------------------------
+static int
+iNext (void) {
+
+  if (gpio.list) {
+
+    do {
+
+      if (gpio.i == ITERATOR_FRONT) {
+
+        gpio.i = gpio.list->first;
+      }
+      else {
+
+        gpio.i++;
+      }
+
+      int p = (gpio.numbering == eNumberingPhysical) ? gpio.i + 1 : gpio.i;
+
+      if (iMcuPin (p) >= 0) {
+
+        return p;
+      }
+    }
+    while (bHasNext() );
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iPrevious (void) {
+
+  if (gpio.list) {
+
+    do {
+
+      if (gpio.i == ITERATOR_BACK) {
+
+        gpio.i = gpio.list->last;
+      }
+      else {
+
+        gpio.i--;
+      }
+
+      int p = (gpio.numbering == eNumberingPhysical) ? gpio.i + 1 : gpio.i;
+
+      if (iMcuPin (p) >= 0) {
+
+        return p;
+      }
+    }
+    while (bHasPrevious() );
+  }
+  return -1;
 }
 
 /* internal public functions ================================================ */
@@ -269,42 +493,27 @@ xGpio *
 xGpioOpen (UNUSED_VAR (void *, setup) ) {
 
   if (!bIsOpen() ) {
-    
-    if (!pxRpiInfo()) {
+
+    if (!pxRpiInfo() ) {
 
       PERROR ("It seems that this system is not a raspberry pi !\n");
       return 0;
     }
 
-    if (pxRpiInfo()->iGpioRev == 1) {
+    vSetNumbering (eNumberingLogical);
 
-      gpio.pin = iPinsPcbRev1;
-      gpio.size = sizeof (iPinsPcbRev1) / sizeof (int);
-    }
-    else {
-
-      gpio.pin = iPinsPcbRev2;
-      gpio.size = sizeof (iPinsPcbRev2) / sizeof (int);
-    }
-
-    gpio.map = xIoMapOpen (BCM270X_GPIO_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE);
+    gpio.map = xIoMapOpen (GPIO_BASE (ulRpiIoBase() ), BCM270X_BLOCK_SIZE);
     if (gpio.map) {
 
-      gpio.pinmode = malloc (gpio.size * sizeof (int) );
-      gpio.pinmode_release = malloc (gpio.size * sizeof (int) );
-      if ( (gpio.pinmode) && (gpio.pinmode_release) ) {
+      // Lecture des modes actuels
+      for (int g = 0; g < GPIO_SIZE; g++) {
 
-        memset (gpio.pinmode_release, -1, gpio.size * sizeof (int) );
-        // Lecture des modes actuels
-        for (int p = 0; p < gpio.size; p++) {
-
-          gpio.pinmode[p] = GPIO_MODE (gpio.pin[p]);
-        }
-        gpio.link = 1;
-        gpio.roc = true;
-        return &gpio;
+        gpio.pinmode_release[g] = -1;
+        gpio.pinmode[g] = GPIO_MODE (g);
       }
-      (void) iIoMapClose (gpio.map);
+      gpio.link = 1;
+      gpio.roc = true;
+      return &gpio;
     }
     // Sortie sur erreur
     return 0;
@@ -324,14 +533,14 @@ iGpioClose (UNUSED_VAR (xGpio *, unused) ) {
 
       if (gpio.roc) {
         // Fermeture effective lorsque le nombre  de liens est 0, si roc true
-        for (int i = 0; i < gpio.size; i++) {
+        for (int g = 0; g < GPIO_SIZE; g++) {
           // Release all used pins
-          (void) iRelease (i);
+          (void) iRelease (g);
         }
       }
       error = iIoMapClose (gpio.map);
-      free (gpio.pinmode);
       memset (&gpio, 0, sizeof (xGpio) );
+      gpio.numbering = -1;
       return error;
     }
   }
@@ -340,7 +549,23 @@ iGpioClose (UNUSED_VAR (xGpio *, unused) ) {
 
 // -----------------------------------------------------------------------------
 int
+iGpioSetNumbering (eGpioNumbering eNum, UNUSED_VAR (xGpio *, unused) ) {
+
+  vSetNumbering (eNum);
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+eGpioNumbering
+eGpioGetNumbering (UNUSED_VAR (xGpio *, unused) ) {
+
+  return gpio.numbering;
+}
+
+// -----------------------------------------------------------------------------
+int
 iGpioSetReleaseOnClose (bool enable, UNUSED_VAR (xGpio *, unused) ) {
+
   gpio.roc = enable;
   return 0;
 }
@@ -348,6 +573,7 @@ iGpioSetReleaseOnClose (bool enable, UNUSED_VAR (xGpio *, unused) ) {
 // -----------------------------------------------------------------------------
 bool
 bGpioGetReleaseOnClose (UNUSED_VAR (xGpio *, unused) ) {
+
   return gpio.roc;
 }
 
@@ -360,87 +586,140 @@ bGpioIsOpen (UNUSED_VAR (xGpio *, unused) ) {
 
 // -----------------------------------------------------------------------------
 int
+iGpioGetSize (UNUSED_VAR (xGpio *, unused) ) {
+
+  if (!bIsOpen() ) {
+    return -1;
+  }
+  return gpio.list->len;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioToFront (UNUSED_VAR (xGpio *, unused) ) {
+
+  return iToFront();
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioToBack (UNUSED_VAR (xGpio *, unused) ) {
+
+  return iToBack();
+}
+
+// -----------------------------------------------------------------------------
+bool
+bGpioHasNext (UNUSED_VAR (xGpio *, unused) ) {
+
+  return bHasNext();
+}
+
+// -----------------------------------------------------------------------------
+bool
+bGpioHasPrevious (UNUSED_VAR (xGpio *, unused) ) {
+
+  return bHasPrevious();
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioNext (UNUSED_VAR (xGpio *, unused) ) {
+
+  return iNext();
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioPrevious (UNUSED_VAR (xGpio *, unused) ) {
+
+  return iPrevious();
+}
+
+// -----------------------------------------------------------------------------
+int
 iGpioSetMode (int p, eGpioMode eMode, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iSetMode (p, eMode);
+  return iSetMode (iMcuPin (p), eMode);
 }
 
 // -----------------------------------------------------------------------------
 eGpioMode
 eGpioGetMode (int p, UNUSED_VAR (xGpio *, unused) ) {
 
-  return eGetMode (p);
-}
-
-// -----------------------------------------------------------------------------
-int
-iGpioGetSize (UNUSED_VAR (xGpio *, unused) ) {
-
-  if (!bIsOpen() ) {
-
-    return -1;
-  }
-  return gpio.size;
+  return eGetMode (iMcuPin (p) );
 }
 
 // -----------------------------------------------------------------------------
 int
 iGpioRelease (int p, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iRelease (p);
+  return iRelease (iMcuPin (p) );
 }
 
 // -----------------------------------------------------------------------------
 int
 iGpioSetPull (int p, eGpioPull ePull, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iSetPull (p, ePull);
+  return iSetPull (iMcuPin (p), ePull);
 }
 
 // -----------------------------------------------------------------------------
 int
 iGpioWrite (int p, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iWrite (p, bValue);;
+  return iWrite (iMcuPin (p), bValue);;
 }
 
 // -----------------------------------------------------------------------------
 int
 iGpioRead (int p, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iRead (p);
+  return iRead (iMcuPin (p) );
 }
 
 // -----------------------------------------------------------------------------
 int
 iGpioToggle (int p, UNUSED_VAR (xGpio *, unused) ) {
 
-  return iToggle (p);
+  return iToggle (iMcuPin (p) );
 }
 
 // -----------------------------------------------------------------------------
-int
-iGpioReadAll (int iMask, UNUSED_VAR (xGpio *, unused) ) {
+bool
+bGpioIsValid (int p, UNUSED_VAR (xGpio *, unused) ) {
+
+  return iMcuPin (p) >= 0;
+}
+
+// -----------------------------------------------------------------------------
+int64_t
+iGpioReadAll (int64_t iMask, UNUSED_VAR (xGpio *, unused) ) {
 
   if (bIsOpen() ) {
-    int iValue = 0;
-    int iBit = 1;
+    int64_t iValue = 0;
+    int64_t iBit = 1;
     int p = 0;
 
     if (iMask == 0) {
       iMask = -1;
     }
-    while ( (iMask) && (p < gpio.size) ) {
+
+    while ( (iMask) && (p < gpio.list->size) ) {
 
       if (iMask & iBit) {
-        switch (iRead (p) ) {
-          case true:
-            iValue |= iBit;
-            break;
-          case false:
-            break;
-          default:
-            return -1;
+
+        int g = iMcuPin (p);
+        if (g >= 0) {
+          switch (iRead (g) ) {
+            case true:
+              iValue |= iBit;
+              break;
+            case false:
+              break;
+            default:
+              return -1;
+          }
         }
         iMask &= ~iBit; // bit lu
       }
@@ -454,16 +733,19 @@ iGpioReadAll (int iMask, UNUSED_VAR (xGpio *, unused) ) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
+iGpioWriteAll (int64_t iMask, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
   if (bIsOpen() ) {
     int p = 0;
 
-    while ( (iMask) && (p < gpio.size) ) {
+    while ( (iMask) && (p < gpio.list->size) ) {
 
-      if ( (iMask & 1) && (gpio.pinmode[p] == eModeOutput) ) {
+      int g = iMcuPin (p);
+      if (g >= 0) {
+        if ( (iMask & 1) && (gpio.pinmode[g] == eModeOutput) ) {
 
-        (void) iWrite (p, bValue);
+          (void) iWrite (g, bValue);
+        }
       }
       p++;
       iMask >>= 1;
@@ -475,22 +757,61 @@ iGpioWriteAll (int iMask, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioToggleAll (int iMask, UNUSED_VAR (xGpio *, unused) ) {
+iGpioToggleAll (int64_t iMask, UNUSED_VAR (xGpio *, unused) ) {
 
   if (bIsOpen() ) {
     int p = 0;
 
-    while ( (iMask) && (p < gpio.size) ) {
+    while ( (iMask) && (p < gpio.list->size) ) {
 
-      if ( (iMask & 1) && (gpio.pinmode[p] == eModeOutput) ) {
+      int g = iMcuPin (p);
+      if (g >= 0) {
+        if ( (iMask & 1) && (gpio.pinmode[g] == eModeOutput) ) {
 
-        (void) iToggle (p++);
+          (void) iToggle (g);
+        }
       }
+      p++;
       iMask >>= 1;
     }
     return 0;
   }
   return -1;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sGpioModeToStr (eGpioMode mode) {
+
+  switch (mode) {
+    case eModeInput:
+      return "INPUT";
+      break;
+    case eModeOutput:
+      return "OUTPUT";
+      break;
+    case eModeAlt0:
+      return "ALT0";
+      break;
+    case eModeAlt1:
+      return "ALT1";
+      break;
+    case eModeAlt2:
+      return "ALT2";
+      break;
+    case eModeAlt3:
+      return "ALT3";
+      break;
+    case eModeAlt4:
+      return "ALT4";
+      break;
+    case eModeAlt5:
+      return "ALT5";
+      break;
+    default:
+      break;
+  }
+  return "!UNK!";
 }
 
 /* ========================================================================== */

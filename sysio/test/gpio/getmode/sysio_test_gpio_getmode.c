@@ -20,47 +20,47 @@ static xGpio * gpio;
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
+  int i;
+  int t = 1;
+  eGpioNumbering eNum = eNumberingLogical;
 
-  gpio = xGpioOpen(NULL);
+  printf ("GPIO get mode test\nTest %d> ", t);
+  gpio = xGpioOpen (NULL);
   assert (gpio != 0);
+  printf ("Success\n");
 
-  for (int i = 0; i < iGpioGetSize (gpio); i++) {
-    const char * name;
+  i = iGpioSetNumbering (eNumberingPhysical, gpio);
+  assert (i == 0);
 
-    eGpioMode mode= eGpioGetMode (i, gpio);
-    assert (mode != eModeError);
+  printf ("Test %d> ", ++t);
+  i = iGpioGetSize (gpio);
+  assert (i >= 0);
+  printf ("Success: %d pins available.\n", i);
 
-    switch (mode) {
-      case eModeInput:
-        name = "INPUT";
-        break;
-      case eModeOutput:
-        name = "OUTPUT";
-        break;
-      case eModeAlt0:
-        name = "ALT0";
-        break;
-      case eModeAlt1:
-        name = "ALT1";
-        break;
-      case eModeAlt2:
-        name = "ALT2";
-        break;
-      case eModeAlt3:
-        name = "ALT3";
-        break;
-      case eModeAlt4:
-        name = "ALT4";
-        break;
-      case eModeAlt5:
-        name = "ALT5";
-        break;
-      default:
-        return -1;
+  do {
+    printf ("\nTest %d> ", ++t);
+    i = iGpioSetNumbering (eNum, gpio);
+    assert (i == 0);
+    printf ("Success\n");
+
+    iGpioToFront (gpio);
+    while  (bGpioHasNext (gpio) ) {
+      eGpioMode mode;
+
+      i = iGpioNext (gpio);
+      mode = eGpioGetMode (i, gpio);
+      assert (mode != eModeError);
+
+      printf ("mode[%02d] -> %s\n", i, sGpioModeToStr (mode) );
     }
-    printf ("pin[%d]\t-> %s\n", i, name);
   }
-  assert (iGpioClose(gpio) == 0);
+  while (eNum++ != eNumberingPhysical);
+
+  printf ("Test %d> ", ++t);
+  i = iGpioClose (gpio);
+  assert (i == 0);
+  printf ("Success\n");
+  
   return 0;
 }
 

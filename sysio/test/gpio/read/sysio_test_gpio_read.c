@@ -13,51 +13,64 @@
 #include <sysio/gpio.h>
 #include <sysio/delay.h>
 
-/* constants ================================================================ */
-#define SW1         3
-#define SW2         4
-#define SW3         5
-#define SW_ALL      ((1 << SW1) | (1 << SW2) | (1 << SW3))
 
 /* private variables ======================================================== */
 static xGpio * gpio;
 
-/* private functions ======================================================== */
-// -----------------------------------------------------------------------------
-static void
-vSigIntHandler (int sig) {
-
-  assert (iGpioClose (gpio) == 0);
-  printf("\ngpio closed.\nHave a nice day !\n");
-  exit(EXIT_SUCCESS);
-}
 
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  int buttons;
+  int i, v;
+  int64_t m, n;
+  int t = 1;
+  eGpioNumbering eNum = eNumberingLogical;
 
-  gpio = xGpioOpen(NULL);
+  printf ("GPIO Read test\nTest %d> ", t);
+  gpio = xGpioOpen (NULL);
   assert (gpio != 0);
+  printf ("Success\n");
 
-  for (int i = SW1; i <= SW3; i++) {
-    assert (iGpioSetMode (i, eModeInput, gpio) == 0);
-    assert (iGpioSetPull (i, ePullUp, gpio) == 0);
-    assert (iGpioRead (i, gpio) == true);
+  printf ("Test %d> ", ++t);
+  i = iGpioGetSize (gpio);
+  assert (i >= 0);
+  printf ("Success: %d pins available.\n", i);
+
+  do {
+    m = 0;
+    printf ("\nTest %d> ", ++t);
+    i = iGpioSetNumbering (eNum, gpio);
+    assert (i == 0);
+    printf ("Success\n");
+
+    printf ("Test %d\n", ++t);
+    iGpioToFront(gpio);
+    while  (bGpioHasNext (gpio) ) {
+
+      i = iGpioNext (gpio);
+
+      v = iGpioRead (i, gpio);
+      assert (i >= 0);
+      printf ("read[%02d] -> %d\n", i, v);
+      if (v) {
+        m |= (1LL << i);
+      }
+    }
+    printf ("Success\n");
+
+    printf ("Test %d> ", ++t);
+    n = iGpioReadAll (-1, gpio);
+    printf ("n=%" PRIx64 " / m=%" PRIx64 " : ", n, m);
+    assert (n == m);
+    printf ("Success\n");
   }
-  assert (iGpioReadAll (SW_ALL, gpio) == SW_ALL);
+  while (eNum++ != eNumberingPhysical);
 
-  // vSigIntHandler() intercepte le CTRL+C
-  signal(SIGINT, vSigIntHandler);
-  printf("Press Ctrl+C to abort ...\n");
+  printf ("Test %d> ", ++t);
+  i = iGpioClose (gpio);
+  assert (i == 0);
+  printf ("Success\n");
 
-  for (;;) {
-
-    buttons = iGpioReadAll (SW_ALL, gpio);
-    assert (buttons >= 0);
-    buttons = (buttons ^ SW_ALL) >> SW1;
-    printf ("Buttons: 0x%X\r", buttons); fflush(stdout);
-  }
   return 0;
 }
 

@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <sysio/rpi.h>
 
-/* macros =================================================================== */
 /* constants ================================================================ */
 static const char sManUnknown[] = "Unknown";
 static const char sManSony[] = "Sony";
@@ -58,23 +57,23 @@ static const xRpi xRpiDb[] = {
     | 0012     | Q4 2014      | A+             | 1.0          | 256MB  | Mfg by Sony               |
     | 0013     | Q1 2015      | B+             | 1.2          | 512MB  | ?                         |
   */
-  {.iRev = 0x00000010, .eModel = eRpiModelBPlus,         .iGpioRev = 2, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
-  {.iRev = 0x00000011, .eModel = eRpiModelComputeModule, .iGpioRev = 2, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
-  {.iRev = 0x00000012, .eModel = eRpiModelAPlus,         .iGpioRev = 2, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
-  {.iRev = 0x00000013, .eModel = eRpiModelBPlus,         .iGpioRev = 2, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManUnknown},
+  {.iRev = 0x00000010, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
+  {.iRev = 0x00000011, .eModel = eRpiModelComputeModule, .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
+  {.iRev = 0x00000012, .eModel = eRpiModelAPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
+  {.iRev = 0x00000013, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManUnknown},
   /*
     | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
     | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
   */
-  {.iRev = 0x00a01041, .eModel = eRpiModel2B,            .iGpioRev = 2, .eMcu = eRpiMcuBcm2709, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManSony},
-  {.iRev = 0x00a21041, .eModel = eRpiModel2B,            .iGpioRev = 2, .eMcu = eRpiMcuBcm2709, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManEmbest},
+  {.iRev = 0x00a01041, .eModel = eRpiModel2B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2709, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManSony},
+  {.iRev = 0x00a21041, .eModel = eRpiModel2B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2709, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManEmbest},
   /*
 
     | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
    */
-  {.iRev = 0x00900092, .eModel = eRpiModelZero,          .iGpioRev = 2, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
+  {.iRev = 0x00900092, .eModel = eRpiModelZero,          .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
   /* Last element */
-  {.iRev = -1,         .eModel = eRpiModelUnknown,       .iGpioRev = 2, .eMcu = eRpiMcuUnknown, .iMemMB = -1, .iPcbMajor = -1, .iPcbMinor = -1, .sManufacturer = sManUnknown},
+  {.iRev = -1,         .eModel = eRpiModelUnknown,       .iGpioRev = -1, .eMcu = eRpiMcuUnknown, .iMemMB = -1, .iPcbMajor = -1, .iPcbMinor = -1, .sManufacturer = sManUnknown},
 };
 
 /* private variables ======================================================== */

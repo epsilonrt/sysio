@@ -47,6 +47,7 @@ __BEGIN_C_DECLS
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define BASENAME(f) (f)
 

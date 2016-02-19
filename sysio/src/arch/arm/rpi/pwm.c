@@ -20,6 +20,7 @@
 #define CLK_DIVISOR_DEFAULT 32
 #define CLK_DIVISOR_MIN     2
 #define CLK_DIVISOR_MAX     4095
+#define BCM270X_PWM_FCLK 19200000.0
 
 #define PASSWD  (0x5A000000)
 
@@ -49,10 +50,9 @@ typedef struct xPwm {
 } xPwm;
 
 /* macros =================================================================== */
-#define BCM270X_PWM_FCLK 19200000.0
 
-#define BCM270X_PWM_BASE(_iobase)  ((unsigned long)(_iobase) + 0x20C000)
-#define BCM270X_CLK_BASE(_iobase)  ((unsigned long)(_iobase) + 0x101000)
+#define PWM_BASE(_iobase)  ((unsigned long)(_iobase) + 0x20C000)
+#define CLK_BASE(_iobase)  ((unsigned long)(_iobase) + 0x101000)
 
 #define preg(__reg) (*((volatile unsigned int *)(pIo(pwm.pmap, (__reg)))))
 #define creg(__reg) (*((volatile unsigned int *)(pIo(pwm.cmap, (__reg)))))
@@ -92,9 +92,9 @@ xPwmOpen (int pin) {
   }
 
   pwm.pin  = pin;
-  if ((pwm.pmap = xIoMapOpen (BCM270X_PWM_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
+  if ((pwm.pmap = xIoMapOpen (PWM_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
 
-    if ((pwm.cmap = xIoMapOpen (BCM270X_CLK_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
+    if ((pwm.cmap = xIoMapOpen (CLK_BASE(ulRpiIoBase()), BCM270X_BLOCK_SIZE))) {
 
       return &pwm; // Success
     }

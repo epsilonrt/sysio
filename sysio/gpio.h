@@ -50,7 +50,7 @@ typedef enum  {
 } eGpioMode;
 
 /**
- * @enum eGpioMode
+ * @enum eGpioPull
  * @brief Activation des résistances de tirage
  */
 typedef enum  {
@@ -58,6 +58,16 @@ typedef enum  {
   ePullDown = 1,  /**< résistance de tirage à l'état bas */
   ePullUp   = 2   /**< résistance de tirage à l'état haut */
 } eGpioPull;
+
+/**
+ * @enum ePinNumbering
+ * @brief Numérotation des broches utilisées par le gpio
+ */
+typedef enum  {
+  eNumberingLogical   = 0,  /**< Numérotation logique spécifique définie pour la plateforme (défaut), débute à 0 */
+  eNumberingMcu       = 1,  /**< Numérotation du microcontroleur (BCM pour le RPi), débute à 0 */
+  eNumberingPhysical  = 2,  /**< Numérotation du connecteur GPIO de la carte, débute à 1 */
+} eGpioNumbering;
 
 /* structures =============================================================== */
 /**
@@ -96,6 +106,22 @@ int iGpioClose (xGpio * gpio);
 bool bGpioIsOpen (xGpio * gpio);
 
 /**
+ * @brief Modifie le type de numérotation
+ * 
+ * @param gpio pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+int iGpioSetNumbering (eGpioNumbering eNum, xGpio * gpio);
+
+/**
+ * @brief Type de numérotation
+ * 
+ * @param gpio pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+eGpioNumbering eGpioGetNumbering (xGpio * gpio);
+
+/**
  * @brief Modifie le type d'une broche
  *
  * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
@@ -121,6 +147,15 @@ int iGpioSetMode (int iPin, eGpioMode eMode, xGpio * gpio);
 eGpioMode eGpioGetMode (int iPin, xGpio * gpio);
 
 /**
+ * @brief Teste la validité d'un numéro de broche
+ *
+ * @param iPin le numéro de la broche (numérotation sélectionnée)
+ * @param gpio pointeur sur le GPIO
+ * @return true si numéro valide
+ */
+bool bGpioIsValid (int iPin, xGpio * gpio);
+
+/**
  * @brief Lecture du nombre de broches du port GPIO
  *
  * @param gpio pointeur sur le GPIO
@@ -128,6 +163,13 @@ eGpioMode eGpioGetMode (int iPin, xGpio * gpio);
  */
 int iGpioGetSize (xGpio * gpio);
 
+bool bGpioHasNext(xGpio * gpio);
+bool bGpioHasPrevious(xGpio * gpio);
+int iGpioNext(xGpio * gpio);
+int iGpioPrevious(xGpio * gpio);
+int iGpioToBack(xGpio * gpio);
+int iGpioToFront(xGpio * gpio);
+const char * sGpioModeToStr (eGpioMode eMode);
 /**
  * @brief Active ou désactive la résistance d'une broche
  *
@@ -167,12 +209,13 @@ int iGpioToggle (int iPin, xGpio * gpio);
  *
  * @param iMask masque de sélection des broches à modifier, un bit à 1 indique
  *        que la broche correspondante doit être modifiée (bit 0 pour la
- *        broche 0, bit 1 pour la broche 1 ...)
+ *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
+ *        broches.
  * @param bValue valeur binaire à appliquer aux broches
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
-int iGpioWriteAll (int iMask, bool bValue, xGpio * gpio);
+int iGpioWriteAll (int64_t iMask, bool bValue, xGpio * gpio);
 
 /**
  * @brief Bascule de l'état binaire de plusieurs sorties
@@ -181,11 +224,12 @@ int iGpioWriteAll (int iMask, bool bValue, xGpio * gpio);
  *
  * @param iMask masque de sélection des broches à modifier, un bit à 1 indique
  *        que la broche correspondante doit être modifiée (bit 0 pour la
- *        broche 0, bit 1 pour la broche 1 ...)
+ *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
+ *        broches.
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
-int iGpioToggleAll (int iMask, xGpio * gpio);
+int iGpioToggleAll (int64_t iMask, xGpio * gpio);
 
 /**
  * @brief Lecture de l'état binaire d'une broche
@@ -207,13 +251,13 @@ int iGpioRead (int iPin, xGpio * gpio);
  *
  * @param iMask masque de sélection des broches à lire, un bit à 1 indique
  *        que la broche correspondante doit être lue (bit 0 pour la
- *        broche 0, bit 1 pour la broche 1 ...). \n Pour lire toutes les broches
- *        iMask doit être mis à 0.
+ *        broche 0, bit 1 pour la broche 1 ...). -1 pour lire toutes les
+ *        broches.
  * @param gpio pointeur sur le GPIO
  * @return l'état des broches, chaque bit correspond à l'état de la broche
  * correspondante (bit 0 pour la broche 0, bit 1 pour la broche 1 ...)
  */
-int iGpioReadAll (int iMask, xGpio * gpio);
+int64_t iGpioReadAll (int64_t iMask, xGpio * gpio);
 
 /**
  * @brief Modifie la libération des broches à la fermeture

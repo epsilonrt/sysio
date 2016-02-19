@@ -25,7 +25,7 @@
   <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
   <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
   <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
-  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
+  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="Yes"/>
   <Project Name="sysio_test_dinput_callback" Path="sysio/test/dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
   <Project Name="sysio_test_dinput_poll" Path="sysio/test/dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
   <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
@@ -40,7 +40,7 @@
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
-  <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="Yes"/>
+  <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="test_callback" ConfigName="Debug"/>
