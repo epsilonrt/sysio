@@ -127,7 +127,7 @@ static const int iMcuPinsRev1[] = {
 
 static const int iMcuPinsRev2[] = {
   -1, -1, 2, 3, 4, -1, -1, 7, 8, 9, 10, 11, -1, -1, 14, 15, -1, 17, 18, -1, -1,
-  -1, 22, 23, 24, 25 - 1, 27, 28, 29, 30, 31
+  -1, 22, 23, 24, 25, -1, 27, 28, 29, 30, 31
 };
 
 static const int iMcuPinsRev3[] = {
@@ -137,7 +137,7 @@ static const int iMcuPinsRev3[] = {
 
 static const xPinList pxMcuPins[] = {
   { .pin = iMcuPinsRev1, .size = 32, .len = 17, .first = 0, .last = 25 },
-  { .pin = iMcuPinsRev2, .size = 32, .len = 21, .first = 2, .last = 27 },
+  { .pin = iMcuPinsRev2, .size = 32, .len = 21, .first = 2, .last = 31 },
   { .pin = iMcuPinsRev3, .size = 32, .len = 28, .first = 0, .last = 27 }
 };
 
