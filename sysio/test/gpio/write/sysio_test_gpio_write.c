@@ -41,7 +41,7 @@ static xGpio * gpio;
 int
 main (int argc, char **argv) {
   char text[5];
-  int i, v;
+  int i;
   int64_t m, n;
   int t = 1;
   const int * p;
@@ -91,32 +91,32 @@ main (int argc, char **argv) {
     printf ("\tTest %d> ", ++t);
     i = iGpioWrite (*p, false, gpio);
     assert (i == 0);
-    v = iGpioRead (*p, gpio);
-    assert (v == false);
+    i = iGpioRead (*p, gpio);
+    assert (i == false);
     printf ("\tSuccess\n");
 
     printf ("\tTest %d> ", ++t);
     i = iGpioWrite (*p, true, gpio);
     assert (i == 0);
-    v = iGpioRead (*p, gpio);
-    assert (v == true);
+    i = iGpioRead (*p, gpio);
+    assert (i == true);
     printf ("\tSuccess\n");
 
     printf ("\tTest %d> ", ++t);
     i = iGpioToggle (*p, gpio);
     assert (i == 0);
-    v = iGpioRead (*p, gpio);
-    assert (v == false);
+    i = iGpioRead (*p, gpio);
+    assert (i == false);
     printf ("\tSuccess\n");
 
     printf ("\tTest %d> ", ++t);
     i = iGpioToggle (*p, gpio);
     assert (i == 0);
-    v = iGpioRead (*p, gpio);
-    assert (v == true);
+    i = iGpioRead (*p, gpio);
+    assert (i == true);
     printf ("\tSuccess\n");
 
-    m |= 1 << *p;
+    m |= 1LL << *p;
     p++;
   }
 
