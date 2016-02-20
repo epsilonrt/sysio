@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" SWTLW="No">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="No"/>
+  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
-  <Project Name="sysio_demo_led" Path="sysio/demo/led/sysio_demo_led.project" Active="No"/>
-  <Project Name="sysio_demo_button" Path="sysio/demo/button/sysio_demo_button.project" Active="No"/>
-  <Project Name="sysio_demo_switch" Path="sysio/demo/switch/sysio_demo_switch.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="sysio_demo_rs485" Path="sysio/demo/rs485/sysio_demo_rs485.project" Active="No"/>
-  <Project Name="sysio_demo_xbee_coordinator" Path="sysio/demo/xbee/coordinator/sysio_demo_xbee_coordinator.project" Active="No"/>
-  <Project Name="sysio_demo_xbee_node" Path="sysio/demo/xbee/node/sysio_demo_xbee_node.project" Active="No"/>
-  <Project Name="sysio_demo_i2c" Path="sysio/demo/i2c/sysio_demo_i2c.project" Active="Yes"/>
+  <Project Name="sysio_demo_button" Path="demo/button/sysio_demo_button.project" Active="No"/>
+  <Project Name="sysio_demo_i2c" Path="demo/i2c/sysio_demo_i2c.project" Active="No"/>
+  <Project Name="sysio_demo_led" Path="demo/led/sysio_demo_led.project" Active="No"/>
+  <Project Name="sysio_demo_rs485" Path="demo/rs485/sysio_demo_rs485.project" Active="No"/>
+  <Project Name="sysio_demo_switch" Path="demo/switch/sysio_demo_switch.project" Active="No"/>
+  <Project Name="sysio_demo_xbee_coordinator" Path="demo/xbee/coordinator/sysio_demo_xbee_coordinator.project" Active="No"/>
+  <Project Name="sysio_demo_xbee_node" Path="demo/xbee/node/sysio_demo_xbee_node.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="libpython" ConfigName="Debug"/>
@@ -31,6 +31,13 @@
       <Project Name="sysio_demo_xbee_coordinator" ConfigName="Debug"/>
       <Project Name="sysio_demo_xbee_node" ConfigName="Debug"/>
       <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
+      <Project Name="sysio_demo_button" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
+      <Project Name="sysio_demo_led" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rs485" ConfigName="Debug"/>
+      <Project Name="sysio_demo_switch" ConfigName="Debug"/>
+      <Project Name="sysio_demo_xbee_coordinator" ConfigName="Debug"/>
+      <Project Name="sysio_demo_xbee_node" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="libsysio" ConfigName="Release"/>
@@ -48,6 +55,13 @@
       <Project Name="sysio_demo_xbee_coordinator" ConfigName="Release"/>
       <Project Name="sysio_demo_xbee_node" ConfigName="Release"/>
       <Project Name="sysio_demo_i2c" ConfigName="Release"/>
+      <Project Name="sysio_demo_button" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Release"/>
+      <Project Name="sysio_demo_led" ConfigName="Release"/>
+      <Project Name="sysio_demo_rs485" ConfigName="Release"/>
+      <Project Name="sysio_demo_switch" ConfigName="Release"/>
+      <Project Name="sysio_demo_xbee_coordinator" ConfigName="Release"/>
+      <Project Name="sysio_demo_xbee_node" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
