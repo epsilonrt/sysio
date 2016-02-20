@@ -15,7 +15,11 @@
 #include <sysio/pwm.h>
 #include <sysio/rpi.h>
 #include <sysio/log.h>
-
+/*
+ * 
+ * TODO: ajout de la deuxième voie pwm
+ * 
+ */
 /* constants ================================================================ */
 #define CLK_DIVISOR_DEFAULT 32
 #define CLK_DIVISOR_MIN     2

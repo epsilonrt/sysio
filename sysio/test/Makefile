@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = gpio pwm doutput dinput serial xbee rs485
+SUBDIRS = gpio pwm doutput dinput serial xbee rs485 dlist vector rpi
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

@@ -35,6 +35,7 @@ vSigIntHandler (int sig) {
 int
 main (int argc, char **argv) {
 
+  printf ("Doutput test\n\n");
   port = xDoutOpen (xMyLeds, 3);
   assert(port);
 

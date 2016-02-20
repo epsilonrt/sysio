@@ -68,7 +68,7 @@ CPPSRC =
 ASRC =
 
 # Place -D or -U options here for C sources
-CDEFS += -DDEBUG -UNDEBUG
+CDEFS += 
 
 # Place -D or -U options here for ASM sources
 ADEFS +=
@@ -205,7 +205,7 @@ TARGET_LIB_PATH = $(DESTDIR)/lib$(TARGET)
 ifeq ($(DEBUG),ON)
 CFLAGS += -g$(DEBUG_FORMAT) -O$(DEBUG_OPT) -DDEBUG
 else
-CFLAGS += -O$(OPT) -DNDEBUG
+CFLAGS += -O$(OPT) 
 endif
 
 CFLAGS += $(CDEFS)

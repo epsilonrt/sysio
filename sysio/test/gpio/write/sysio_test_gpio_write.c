@@ -48,6 +48,7 @@ main (int argc, char **argv) {
 
   p = iPhysList[pxRpiInfo()->iGpioRev - 1];
 
+  printf ("GPIO Write test\n\n");
   printf ("Test %d> ", t);
   gpio = xGpioOpen (NULL);
   assert (gpio != 0);
@@ -58,7 +59,7 @@ main (int argc, char **argv) {
   assert (i >= 0);
   printf ("Success: %d pins available.\n", i);
 
-  printf ("GPIO Write test\n\n\t\t\t<<<<<<<<<<<<<<<< ATTENTION >>>>>>>>>>>>>>>>\nLes broches {");
+  printf ("\n\n\t\t\t<<<<<<<<<<<<<<<< ATTENTION >>>>>>>>>>>>>>>>\nLes broches {");
   while (*p > 0) {
     printf (" %d,", *p++);
   }

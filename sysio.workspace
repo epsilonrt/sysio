@@ -22,7 +22,7 @@
   <Project Name="radio_test_python_unit" Path="radio/test/python/unit/radio_test_python_unit.project" Active="No"/>
   <Project Name="sysio_test_serial" Path="sysio/test/serial/sysio_test_serial.project" Active="No"/>
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
-  <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="Yes"/>
+  <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
   <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
   <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
   <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
@@ -30,7 +30,7 @@
   <Project Name="sysio_test_dinput_poll" Path="sysio/test/dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
   <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
   <Project Name="sysio_test_doutput" Path="sysio/test/doutput/sysio_test_doutput.project" Active="No"/>
-  <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
+  <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="Yes"/>
   <Project Name="chipio" Path="chipio/chipio.project" Active="No"/>
   <Project Name="chipio_test_adc" Path="chipio/test/adc/chipio_test_adc.project" Active="No"/>
   <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>

@@ -43,7 +43,7 @@ endif
 ifeq ($(SYS),SYS_LINUX)
 CDEFS += -DSYS_LINUX
 SYS_DIR = sysio/src/linux
-SYS_POSIX = ON
+SYS_UNIX = ON
 endif
 
 ifeq ($(SYS),SYS_WIN32)
@@ -65,8 +65,8 @@ SRC += $(addprefix sysio/src/i2c/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/i
 SRC += $(addprefix chipio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/chipio/src/*.c)))
 endif
 
-ifeq ($(SYS_POSIX),ON)
-SRC += $(addprefix sysio/src/posix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/posix/*.c)))
+ifeq ($(SYS_UNIX),ON)
+SRC += $(addprefix sysio/src/unix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/unix/*.c)))
 SRC += $(addprefix radio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/radio/src/*.c)))
 endif
 

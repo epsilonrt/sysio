@@ -6,8 +6,8 @@
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#ifndef _SYSIO_LED_H_
-#define _SYSIO_LED_H_
+#ifndef _SYSIO_DOUTPUT_H_
+#define _SYSIO_DOUTPUT_H_
 #include <sysio/gpio.h>
 
 __BEGIN_C_DECLS
@@ -139,4 +139,4 @@ int iDoutToggleAll (xDoutPort * port);
 
 /* ========================================================================== */
 __END_C_DECLS
-#endif /*_SYSIO_LED_H_ defined */
+#endif /*_SYSIO_DOUTPUT_H_ defined */

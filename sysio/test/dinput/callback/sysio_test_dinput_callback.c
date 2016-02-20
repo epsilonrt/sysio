@@ -8,17 +8,16 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <assert.h>
 #include <signal.h>
 #include <assert.h>
 #include <sysio/delay.h>
 #include <sysio/dinput.h>
 
-/* constants ================================================================ */
-#define BUTTONS 3
 
 /* private variables ======================================================== */
-static const xDin xMyButtons[BUTTONS] = {
+static const xDin xMyButtons[] = {
   { .num = 3, .act = false, .pull = ePullUp },
   { .num = 4, .act = false, .pull = ePullUp },
   { .num = 5, .act = false, .pull = ePullUp }};
@@ -48,18 +47,23 @@ iCallback (eDinEdge edge, void *udata) {
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  int id[BUTTONS] = { 0, 1, 2 };
+  int id[] = { 1, 2, 3 };
 
+  printf ("Dinput with callback test (monitoring by thread)\n\n");
+  
   port = xDinOpen (xMyButtons, 3);
   assert(port);
-  for (int i = 0; i < BUTTONS; i++) {
+  
+  printf("Press press buttons to test: ");
+  for (int i = 0; i < iDinPortSize(port); i++) {
 
     assert (iDinSetCallback (i, eEdgeBoth, iCallback, &id[i], port) == 0);
+    printf ("SW%d ", id[i]);
   }
 
   // vSigIntHandler() intercepte le CTRL+C
   signal(SIGINT, vSigIntHandler);
-  printf("Press Ctrl+C to abort ...\n");
+  printf("\nCtrl+C to abort ...\n");
 
   for (;;) {
 

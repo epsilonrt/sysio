@@ -30,6 +30,7 @@
   <Dependencies/>
   <VirtualDirectory Name="sysio_test_vector">
     <File Name="sysio_test_vector.c"/>
+    <File Name="Makefile"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
