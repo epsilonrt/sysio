@@ -90,7 +90,7 @@ main (int argc, char **argv) {
     }
     printf (",%d,%d,%d\n", pred, resistance, tvoc);
     fflush (stdout);
-    delay_ms (1000);
+    delay_ms (11000);
   }
 
   return 0;
