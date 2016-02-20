@@ -199,13 +199,13 @@ const xRpi * pxRpiInfo (void);
 #define UART_TXD0 15
 #define UART_RXD0 16
 
-// Model B PCB V 2.0
+// Models A & B PCB V 2.0 only
 #define GPIO_GEN7  17
 #define GPIO_GEN8  18
 #define GPIO_GEN9  19
 #define GPIO_GEN10 20
 
-// Models A+,B+,2B,Zero
+// Models A+, B+, 2B, Zero only
 #define GPIO_GEN11 21
 #define LAN_RUN    22
 #define GPIO_GEN12 23
@@ -215,6 +215,47 @@ const xRpi * pxRpiInfo (void);
 #define STATUS_LED 27
 #define GPIO_GEN17 28
 #define GPIO_GEN18 29
+
+#define GPIO17  0
+#define GPIO18  1
+#define GPIO27  2 // Models A & B PCB V2.0, A+, B+, 2B, Zero 
+#define GPIO22  3
+#define GPIO23  4
+#define GPIO24  5
+#define GPIO25  6
+#define GPIO4   7
+
+#define GPIO2   8  // Models A & B PCB V2.0, A+, B+, 2B, Zero 
+#define GPIO3   9  // Models A & B PCB V2.0, A+, B+, 2B, Zero 
+#define GPIO0   30
+#define GPIO1   31
+
+#define GPIO8   10
+#define GPIO7   11
+#define GPIO10  12
+#define GPIO9   13
+#define GPIO11  14
+
+#define GPIO14  15
+#define GPIO15  16
+
+// Models A & B PCB V 2.0 only
+#define GPIO28  17
+#define GPIO29  18
+#define GPIO30  19
+#define GPIO31  20
+
+// Models A+, B+, 2B, Zero only
+#define GPIO5   21
+#define GPIO6   22
+#define GPIO13  23
+#define GPIO19  24
+#define GPIO26  25
+#define GPIO12  26
+#define GPIO16  27
+#define GPIO20  28
+#define GPIO21  29
+
 /**
  *  @}
  */

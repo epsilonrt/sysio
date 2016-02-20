@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="chipio" Database="" SWTLW="No">
+  <Project Name="chipio_test_serial" Path="test/serial/chipio_test_serial.project" Active="No"/>
+  <Project Name="chipio" Path="chipio.project" Active="Yes"/>
+  <Project Name="chipio_test_adc" Path="test/adc/chipio_test_adc.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="chipio_test_serial" ConfigName="Debug"/>
+      <Project Name="chipio" ConfigName="Debug"/>
+      <Project Name="chipio_test_adc" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="chipio_test_serial" ConfigName="Release"/>
+      <Project Name="chipio" ConfigName="Release"/>
+      <Project Name="chipio_test_adc" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
