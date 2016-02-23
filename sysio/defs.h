@@ -158,6 +158,8 @@ int iSysIoSetStrError (const char *format, ...);
                BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__); \
 } while (0)
 
+#define PNOTICE(fmt,...) vLog (LOG_NOTICE, fmt, ##__VA_ARGS__)
+
 
 #ifdef DEBUG
 #define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__)

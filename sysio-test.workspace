@@ -7,7 +7,7 @@
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
   <Project Name="sysio_test_serial" Path="sysio/test/serial/sysio_test_serial.project" Active="No"/>
   <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
-  <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="Yes"/>
+  <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
   <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
   <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
   <Project Name="sysio_test_dinput_callback" Path="sysio/test/dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
@@ -17,7 +17,7 @@
   <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
   <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
   <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
-  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
+  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="Yes"/>
   <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
