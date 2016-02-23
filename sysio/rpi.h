@@ -15,77 +15,73 @@ __BEGIN_C_DECLS
 /**
  *  @defgroup sysio_rpi Raspberry Pi
  *
- *  Ce module fournit des éléments spécifiques au Raspberry Pi. La numérotation
- *  logique SysIo des broches de GPIO est la suivante: \n
-  <hr>
-
-  \n Connecteur J8 (Modèle A+, B+, 2B, Zero) \n
-  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
-  | :-- | :---- | :--------- | :------- | :--------  | :---- | :-- |
-  |     |       |    3V3     |  1 || 2  |    5V      |       |     |
-  |  2  |   8   | I2C_SDA1   |  3 || 4  |    5V      |       |     |
-  |  3  |   9   | I2C_SCL1   |  5 || 6  |    GND     |       |     |
-  |  4  |   7   | GPIO_GCLK  |  7 || 8  | UART_TXD0  |  15   | 14  |
-  |     |       |    GND     |  9 || 10 | UART_RXD0  |  16   | 15  |
-  | 17  |   0   | GPIO_GEN0  | 11 || 12 | GPIO_GEN1  |   1   | 18  |
-  | 27  |   2   | GPIO_GEN2  | 13 || 14 |    GND     |       |     |
-  | 22  |   3   | GPIO_GEN3  | 15 || 16 | GPIO_GEN4  |   4   | 23  |
-  |     |       |    3V3     | 17 || 18 | GPIO_GEN5  |   5   | 24  |
-  | 10  |  12   | SPI_MOSI   | 19 || 20 |    GND     |       |     |
-  |  9  |  13   | SPI_MISO   | 21 || 22 | GPIO_GEN6  |   6   | 25  |
-  | 11  |  14   | SPI_SCLK   | 23 || 24 | SPI_CE0_N  |  10   |  8  |
-  |     |       |    GND     | 25 || 26 | SPI_CE1_N  |  11   |  7  |
-  |  0  |  30   | I2C_SDA0   | 27 || 28 | I2C_SCL0   |  31   |  1  |
-  |  5  |  21   | GPIO_GEN11 | 29 || 30 |    GND     |       |     |
-  |  6  |  22   | LAN_RUN    | 31 || 32 | GPIO_GEN15 |       | 12  |
-  | 13  |  23   | GPIO_GEN12 | 33 || 34 |    GND     |       |     |
-  | 19  |  24   | GPIO_GEN13 | 35 || 36 | STATUS_LED |       | 16  |
-  | 26  |  25   | GPIO_GEN14 | 37 || 38 | GPIO_GEN17 |       | 20  |
-  |     |       |    GND     | 39 || 40 | GPIO_GEN18 |       | 21  |
-
-  \n Connecteur P1 (Modèle A et B PCB V2.0) \n
-  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
-  | :-- | :---- | :--------- | :------- | :--------  | :---- | :-- |
-  |     |       |    3V3     |  1 || 2  |    5V      |       |     |
-  |  2  |   8   | I2C_SDA1   |  3 || 4  |    5V      |       |     |
-  |  3  |   9   | I2C_SCL1   |  5 || 6  |    GND     |       |     |
-  |  4  |   7   | GPIO_GCLK  |  7 || 8  | UART_TXD0  |  15   | 14  |
-  |     |       |    GND     |  9 || 10 | UART_RXD0  |  16   | 15  |
-  | 17  |   0   | GPIO_GEN0  | 11 || 12 | GPIO_GEN1  |   1   | 18  |
-  | 27  |   2   | GPIO_GEN2  | 13 || 14 |    GND     |       |     |
-  | 22  |   3   | GPIO_GEN3  | 15 || 16 | GPIO_GEN4  |   4   | 23  |
-  |     |       |    3V3     | 17 || 18 | GPIO_GEN5  |   5   | 24  |
-  | 10  |  12   | SPI_MOSI   | 19 || 20 |    GND     |       |     |
-  |  9  |  13   | SPI_MISO   | 21 || 22 | GPIO_GEN6  |   6   | 25  |
-  | 11  |  14   | SPI_SCLK   | 23 || 24 | SPI_CE0_N  |  10   |  8  |
-  |     |       |    GND     | 25 || 26 | SPI_CE1_N  |  11   |  7  |
-
-  \n Connecteur P5 (Modèle A et B PCB V2.0), la broche Physical 27 correspond 
-  à la broche 1 du connecteur P5: \n
-  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
-  | :-- | :---- | :--------- | :------- | :--------- | :---- | :-- |
-  |     |       |    5V      | 27 || 28 |    3V3     |       |     |
-  | 28  |  17   | GPIO_GEN7  | 29 || 30 | GPIO_GEN8  |  18   | 29  |
-  | 30  |  19   | GPIO_GEN9  | 31 || 32 | GPIO_GEN10 |  20   | 31  |
-  |     |       |    GND     | 33 || 33 |    GND     |       |     |
-
-  \n Connecteur P1 (Modèle B PCB V1.0, Q3 2012, Board Rev <= 3) \n
-  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
-  | :-- | :---- | :--------- | :------- | :--------  | :---- | :-- |
-  |     |       |    3V3     |  1 || 2  |    5V      |       |     |
-  |  0  |   8   | I2C_SDA    |  3 || 4  |    5V      |       |     |
-  |  1  |   9   | I2C_SCL    |  5 || 6  |    GND     |       |     |
-  |  4  |   7   | GPIO_GCLK  |  7 || 8  | UART_TXD0  |  15   | 14  |
-  |     |       |    GND     |  9 || 10 | UART_RXD0  |  16   | 15  |
-  | 17  |   0   | GPIO_GEN0  | 11 || 12 | GPIO_GEN1  |   1   | 18  |
-  | 21  |   2   | GPIO_GEN2  | 13 || 14 |    GND     |       |     |
-  | 22  |   3   | GPIO_GEN3  | 15 || 16 | GPIO_GEN4  |   4   | 23  |
-  |     |       |    3V3     | 17 || 18 | GPIO_GEN5  |   5   | 24  |
-  | 10  |  12   | SPI_MOSI   | 19 || 20 |    GND     |       |     |
-  |  9  |  13   | SPI_MISO   | 21 || 22 | GPIO_GEN6  |   6   | 25  |
-  | 11  |  14   | SPI_SCLK   | 23 || 24 | SPI_CE0_N  |  10   |  8  |
-  |     |       |    GND     | 25 || 26 | SPI_CE1_N  |  11   |  7  |
+ *  Ce module fournit des éléments spécifiques au Raspberry Pi.
  *  @{
+ * La numérotation logique SysIo des broches de GPIO est la suivante: \n
+
+  \n Connecteur J8 (Modèle A+, B+, 2B, Zero) \n  <hr>
+  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
+  | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |
+  |     |       |    3V3     |  1 - 2   |    5V      |       |     |
+  |  2  |   8   | I2C_SDA1   |  3 - 4   |    5V      |       |     |
+  |  3  |   9   | I2C_SCL1   |  5 - 6   |    GND     |       |     |
+  |  4  |   7   | GPIO_GCLK  |  7 - 8   | UART_TXD0  |  15   | 14  |
+  |     |       |    GND     |  9 - 10  | UART_RXD0  |  16   | 15  |
+  | 17  |   0   | GPIO_GEN0  | 11 - 12  | GPIO_GEN1  |   1   | 18  |
+  | 27  |   2   | GPIO_GEN2  | 13 - 14  |    GND     |       |     |
+  | 22  |   3   | GPIO_GEN3  | 15 - 16  | GPIO_GEN4  |   4   | 23  |
+  |     |       |    3V3     | 17 - 18  | GPIO_GEN5  |   5   | 24  |
+  | 10  |  12   | SPI_MOSI   | 19 - 20  |    GND     |       |     |
+  |  9  |  13   | SPI_MISO   | 21 - 22  | GPIO_GEN6  |   6   | 25  |
+  | 11  |  14   | SPI_SCLK   | 23 - 24  | SPI_CE0_N  |  10   |  8  |
+  |     |       |    GND     | 25 - 26  | SPI_CE1_N  |  11   |  7  |
+  |  0  |  30   | I2C_SDA0   | 27 - 28  | I2C_SCL0   |  31   |  1  |
+  |  5  |  21   | GPIO_GEN11 | 29 - 30  |    GND     |       |     |
+  |  6  |  22   | LAN_RUN    | 31 - 32  | GPIO_GEN15 |       | 12  |
+  | 13  |  23   | GPIO_GEN12 | 33 - 34  |    GND     |       |     |
+  | 19  |  24   | GPIO_GEN13 | 35 - 36  | STATUS_LED |       | 16  |
+  | 26  |  25   | GPIO_GEN14 | 37 - 38  | GPIO_GEN17 |       | 20  |
+  |     |       |    GND     | 39 - 40  | GPIO_GEN18 |       | 21  |
+  \n Connecteur P1 (Modèle A et B PCB V2.0) \n  <hr>
+  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
+  | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |
+  |     |       |    3V3     |  1 -  2  |    5V      |       |     |
+  |  2  |   8   | I2C_SDA1   |  3 -  4  |    5V      |       |     |
+  |  3  |   9   | I2C_SCL1   |  5 -  6  |    GND     |       |     |
+  |  4  |   7   | GPIO_GCLK  |  7 -  8  | UART_TXD0  |  15   | 14  |
+  |     |       |    GND     |  9 -  10 | UART_RXD0  |  16   | 15  |
+  | 17  |   0   | GPIO_GEN0  | 11 -  12 | GPIO_GEN1  |   1   | 18  |
+  | 27  |   2   | GPIO_GEN2  | 13 -  14 |    GND     |       |     |
+  | 22  |   3   | GPIO_GEN3  | 15 -  16 | GPIO_GEN4  |   4   | 23  |
+  |     |       |    3V3     | 17 -  18 | GPIO_GEN5  |   5   | 24  |
+  | 10  |  12   | SPI_MOSI   | 19 -  20 |    GND     |       |     |
+  |  9  |  13   | SPI_MISO   | 21 -  22 | GPIO_GEN6  |   6   | 25  |
+  | 11  |  14   | SPI_SCLK   | 23 -  24 | SPI_CE0_N  |  10   |  8  |
+  |     |       |    GND     | 25 -  26 | SPI_CE1_N  |  11   |  7  |
+  \n Connecteur P5 (Modèle A et B PCB V2.0), la broche Physical 27 correspond 
+  à la broche 1 du connecteur P5: \n  <hr>
+  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
+  | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |
+  |     |       |    5V      | 27 -  28 |    3V3     |       |     |
+  | 28  |  17   | GPIO_GEN7  | 29 -  30 | GPIO_GEN8  |  18   | 29  |
+  | 30  |  19   | GPIO_GEN9  | 31 -  32 | GPIO_GEN10 |  20   | 31  |
+  |     |       |    GND     | 33 -  33 |    GND     |       |     |
+  \n Connecteur P1 (Modèle B PCB V1.0, Q3 2012, Board Rev <= 3) \n  <hr>
+  | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
+  | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |
+  |     |       |    3V3     |  1 -  2  |    5V      |       |     |
+  |  0  |   8   | I2C_SDA    |  3 -  4  |    5V      |       |     |
+  |  1  |   9   | I2C_SCL    |  5 -  6  |    GND     |       |     |
+  |  4  |   7   | GPIO_GCLK  |  7 -  8  | UART_TXD0  |  15   | 14  |
+  |     |       |    GND     |  9 -  10 | UART_RXD0  |  16   | 15  |
+  | 17  |   0   | GPIO_GEN0  | 11 -  12 | GPIO_GEN1  |   1   | 18  |
+  | 21  |   2   | GPIO_GEN2  | 13 -  14 |    GND     |       |     |
+  | 22  |   3   | GPIO_GEN3  | 15 -  16 | GPIO_GEN4  |   4   | 23  |
+  |     |       |    3V3     | 17 -  18 | GPIO_GEN5  |   5   | 24  |
+  | 10  |  12   | SPI_MOSI   | 19 -  20 |    GND     |       |     |
+  |  9  |  13   | SPI_MISO   | 21 -  22 | GPIO_GEN6  |   6   | 25  |
+  | 11  |  14   | SPI_SCLK   | 23 -  24 | SPI_CE0_N  |  10   |  8  |
+  |     |       |    GND     | 25 -  26 | SPI_CE1_N  |  11   |  7  |
  */
 
 /**
@@ -164,13 +160,6 @@ int iRpiRev (void);
 const xRpi * pxRpiInfo (void);
 
 
-/**
- *  @defgroup sysio_rpi_pin Raspberry Pi
- *
- *  Ce module décrit la numérotation logique des broches matérielles du
- *  Raspberry Pi
- *  @{
- */
 /* constants ================================================================ */
 #define GPIO_GEN0  0
 #define GPIO_GEN1  1
