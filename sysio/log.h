@@ -121,12 +121,12 @@ void assert(scalar expression);
 void assert_perror(int errnum);
 
 /**
- * @brieh Bit correspondant à la priorité p
+ * @brief Masque de validation du bit correspondant à la priorité p
  */
 #define LOG_MASK(p)
 
 /**
- * @brieh Masque de toutes les priorités jusqu'à p incluses
+ * @brief Masque de validation de toutes les priorités jusqu'à p incluses
  */
 #define LOG_UPTO(p)
 
