@@ -20,9 +20,9 @@ int iXBeeZbSend (xXBee *xbee,
                  uint8_t len,
                  const uint8_t addr64[8],
                  const uint8_t addr16[2], uint8_t opt, uint8_t radius) {
+  int ret = -1;
 
   if ( (xbee) && (data) && (addr64) && (addr16)) {
-    int ret;
     uint8_t frame_id;
     xXBeeZbTxReqPkt *pkt;
     const uint16_t pkt_size = len + sizeof (xXBeeZbTxReqPkt) + 1;
@@ -54,7 +54,7 @@ int iXBeeZbSend (xXBee *xbee,
     }
   }
   else {
-    
+
     ret = -EINVAL;
   }
 
