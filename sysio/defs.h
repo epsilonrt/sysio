@@ -165,7 +165,7 @@ int iSysIoSetStrError (const char *format, ...);
 #define PINFO(fmt,...) vLog (LOG_INFO, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #define PDEBUG(fmt,...) vLog (LOG_DEBUG, "%s:%d: %s(): " fmt, BASENAME(__FILE__), __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
-#define PDEBUG(fmt,...)
+#define PDEBUG(fmt,...)  vLog (LOG_DEBUG, fmt, ##__VA_ARGS__)
 #define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
 #endif
 
