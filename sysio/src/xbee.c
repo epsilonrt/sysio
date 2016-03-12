@@ -1180,6 +1180,7 @@ iXBeeClose (xXBee *xbee) {
   
   if (xbee) {
     
+    vSerialFlush (xbee->fd);
     vSerialClose (xbee->fd);
     free(xbee);
     return 0;
