@@ -16,8 +16,16 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with SysIO.  If not, see <http://www.gnu.org/licenses/lgpl.html>
 
+usage()
+{
+  echo "$0 filename.ext"
+  echo "    extension provided (.ext) must be .h (for build C/C++ Header) or .mk (for Makefile)"
+  echo 
+}
+
 if [ $# -lt 1 ]; then
-  echo "You must provide the name of the file to be created"
+  echo "$0 error: you must provide the name of the file to be created"
+  usage
   exit -1
 fi
 
@@ -31,8 +39,10 @@ if [ -x "$(command -v git 2> /dev/null)" ]; then
   if [ $? -eq 0 ]; then
     HASGIT=1
     VERSION=${VERSION#v}
+    VERSION=${VERSION#V}
   else
-    echo "Error: git failed to find the project version !"
+    echo "$0 error: git failed to find the project version !"
+    usage
   fi
 fi
 
@@ -50,14 +60,24 @@ else
 fi
 
 VERSION_SHORT=${VERSION%%-g*}
+VERSION_SHORT_DOT=${VERSION_SHORT//-/.}
+VERSION_TINY=${VERSION%%-*}
+
 case "$EXT" in
 
   h)  VERSION_CORE=${VERSION_SHORT%%-*}
+      VERSION_MAJOR=${VERSION_SHORT%%.*}
+      VERSION_MAJOR=${VERSION_MAJOR%%[A-Za-z]*}
+      VERSION_MINOR=${VERSION_CORE##*.}
+      VERSION_MINOR=${VERSION_MINOR%%[A-Za-z]*}
+      VERSION_PATCH=${VERSION_SHORT##*-}
+      VERSION_PATCH=${VERSION_PATCH%%[A-Za-z]*}
       echo "#define VERSION \"$VERSION\"" > ${OUTPUT}
-      echo "#define VERSION_SHORT \"$VERSION_SHORT\"" >> ${OUTPUT}
-      echo "#define VERSION_MAJOR ${VERSION_SHORT%%.*}" >> ${OUTPUT}
-      echo "#define VERSION_MINOR ${VERSION_CORE##*.}" >> ${OUTPUT}
-      echo "#define VERSION_PATCH ${VERSION_SHORT##*-}" >> ${OUTPUT}
+      echo "#define VERSION_SHORT \"$VERSION_SHORT_DOT\"" >> ${OUTPUT}
+      echo "#define VERSION_TINY \"$VERSION_TINY\"" >> ${OUTPUT}
+      echo "#define VERSION_MAJOR $VERSION_MAJOR" >> ${OUTPUT}
+      echo "#define VERSION_MINOR $VERSION_MINOR" >> ${OUTPUT}
+      echo "#define VERSION_PATCH $VERSION_PATCH" >> ${OUTPUT}
       if [[ $VERSION == *-g* ]]; then
         echo "#define VERSION_SHA1 0x${VERSION##*-g}" >> ${OUTPUT}
       else
@@ -65,9 +85,10 @@ case "$EXT" in
       fi
       ;;
   mk) VERSION=${VERSION%%-*}
-      echo "$VERSION_SHORT" > ${OUTPUT}
+      echo "$VERSION_SHORT_DOT" > ${OUTPUT}
       ;;
-  *)  echo "$0: unknown file extension !"
+  *)  echo "$0 error: unknown file extension !"
+      usage
       exit -1
       ;;
 esac
