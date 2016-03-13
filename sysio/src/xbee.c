@@ -598,6 +598,21 @@ iXBeePktParamGetUShort (uint16_t * usDest, xXBeePkt *pkt, int iOffset) {
 }
 
 // -----------------------------------------------------------------------------
+int
+iXBeePktParamGetUByte (uint8_t * ucDest, xXBeePkt *pkt, int iOffset) {
+  int iLen;
+
+  iLen = iXBeePktParamLen (pkt) - iOffset;
+
+  if (iLen >= sizeof (uint8_t)) {
+
+    *ucDest = *(pucXBeePktParam (pkt) + iOffset);
+    return 0;
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
 uint8_t *
 pucXBeePktParam (xXBeePkt *pkt) {
 
