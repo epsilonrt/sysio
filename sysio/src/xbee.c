@@ -606,7 +606,7 @@ iXBeePktParamGetUByte (uint8_t * ucDest, xXBeePkt *pkt, int iOffset) {
 
   if (iLen >= sizeof (uint8_t)) {
 
-    *ucDest = *(pucXBeePktParam (pkt) + iOffset);
+    *ucDest = * (pucXBeePktParam (pkt) + iOffset);
     return 0;
   }
   return -1;
@@ -1190,14 +1190,14 @@ xXBeeOpen (const char * pcDevice, xSerialIos * xIos, eXBeeSeries series) {
 
 /* -----------------------------------------------------------------------------
  */
-int 
+int
 iXBeeClose (xXBee *xbee) {
-  
+
   if (xbee) {
-    
+
     vSerialFlush (xbee->fd);
     vSerialClose (xbee->fd);
-    free(xbee);
+    free (xbee);
     return 0;
   }
   return -1;
@@ -1280,6 +1280,50 @@ ucXBeeNextFrameId (xXBee *xbee) {
 
   pthread_mutex_unlock (&xbee->mutex);
   return frame_id;
+}
+
+/* -----------------------------------------------------------------------------
+ * Return an explicit string due to an association status
+ */
+const char *
+sXBeeAssociationStatusToString (uint8_t status) {
+
+  switch (status) {
+    case 0x00:
+      return "Successfully formed or joined a network.";
+    case 0x21:
+      return "Scan found no PANs";
+    case 0x22:
+      return "Scan found no valid PANs based on current SC and ID settings";
+    case 0x23:
+      return "Valid Coordinator or Routers found, but they are not allowing joining (NJ expired)";
+    case 0x24:
+      return "No joinable beacons were found";
+    case 0x25:
+      return "Unexpected state, node should not be attempting to join at this time";
+    case 0x27:
+      return "Node Joining attempt failed (typically due to incompatible security settings)";
+    case 0x2A:
+      return "Coordinator Start attempt failed";
+    case 0x2B:
+      return "Checking for an existing coordinator";
+    case 0x2C:
+      return "Attempt to leave the network failed";
+    case 0xAB:
+      return "Attempted to join a device that did not respond.";
+    case 0xAC:
+      return "Secure join error - network security key received unsecured";
+    case 0xAD:
+      return "Secure join error - network security key not received";
+    case 0xAF:
+      return "Secure join error - joining device does not have the right preconfigured link key";
+    case 0xFF:
+      return "Scanning for a ZigBee network";
+    default:
+      break;
+  }
+
+  return "Unknown status";
 }
 
 /* ========================================================================== */

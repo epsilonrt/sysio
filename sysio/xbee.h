@@ -849,6 +849,13 @@ const uint8_t * pucXBeeAddr64Coordinator (void);
  */
 const uint8_t * pucXBeeAddr64Broadcast (void);
 
+/**
+ * @brief Message explicite associé à un status d'asssociation (Commande AT AI)
+ * @param status status d'asssociation
+ * @return message explicite
+ */
+const char * sXBeeAssociationStatusToString (uint8_t status);
+
 /*==============================================================================
  *
  * TODO: Partie non finalisée par manque de temps
