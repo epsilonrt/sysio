@@ -851,10 +851,24 @@ const uint8_t * pucXBeeAddr64Broadcast (void);
 
 /**
  * @brief Message explicite associé à un status d'asssociation (Commande AT AI)
- * @param status status d'asssociation
- * @return message explicite
+ * @param status status
+ * @return message
  */
 const char * sXBeeAssociationStatusToString (uint8_t status);
+
+/**
+ * @brief Message explicite associé à un status de transmission (message 0x8B)
+ * @param status status
+ * @return message
+ */
+const char * sXBeeTransmitStatusToString (uint8_t status);
+
+/**
+ * @brief Message explicite associé à un status de modem (message 0x8A)
+ * @param status status
+ * @return message
+ */
+const char * sXBeeModemStatusToString (uint8_t status);
 
 /*==============================================================================
  *

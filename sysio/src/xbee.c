@@ -1282,6 +1282,8 @@ ucXBeeNextFrameId (xXBee *xbee) {
   return frame_id;
 }
 
+static const char sUnknownStatus[] =  "Unknown status";
+
 /* -----------------------------------------------------------------------------
  * Return an explicit string due to an association status
  */
@@ -1323,7 +1325,84 @@ sXBeeAssociationStatusToString (uint8_t status) {
       break;
   }
 
-  return "Unknown status";
+  return sUnknownStatus;
+}
+
+/* -----------------------------------------------------------------------------
+ * Return an explicit string due to a transmit status
+ */
+const char *
+sXBeeTransmitStatusToString (uint8_t status) {
+  switch (status) {
+    case 0x01:
+      return "MAC ACK Failure";
+    case 0x02:
+      return "CCA Failure";
+    case 0x15:
+      return "Invalid destination endpoint";
+    case 0x21:
+      return "Network ACK Failure";
+    case 0x22:
+      return "Not Joined to Network";
+    case 0x23:
+      return "Self-addressed";
+    case 0x24:
+      return "Address Not Found";
+    case 0x25:
+      return "Route Not Found";
+    case 0x26:
+      return "Broadcast source failed to hear a neighbor relay the message";
+    case 0x2B:
+      return "Invalid binding table index";
+    case 0x2C:
+      return "Resource error lack of free buffers, timers, etc.";
+    case 0x2D:
+      return "Attempted broadcast with APS transmission";
+    case 0x2E:
+      return "Attempted unicast with APS transmission, but EE=0";
+    case 0x32:
+      return "Resource error lack of free buffers, timers, etc.";
+    case 0x74:
+      return "Data payload too large";
+    default:
+      break;
+  }
+
+  return sUnknownStatus;
+}
+
+/* -----------------------------------------------------------------------------
+ * Return an explicit string due to a modem status
+ */
+const char *
+sXBeeModemStatusToString (uint8_t status) {
+  
+  switch (status) {
+    case 0:
+      return "Hardware reset";
+    case 1:
+      return "Watchdog timer reset";
+    case 2:
+      return "Joined network";
+    case 3:
+      return "Disassociated";
+    case 6:
+      return "Coordinator started";
+    case 7:
+      return "Network security key was updated";
+    case 0x0D:
+      return "Voltage supply limit exceeded";
+    case 0x11:
+      return "Modem configuration changed while join in progress";
+    default:
+      break;
+  }
+  
+  if (status >= 0x80) {
+    
+    return "Stack error";
+  }
+  return sUnknownStatus;
 }
 
 /* ========================================================================== */
