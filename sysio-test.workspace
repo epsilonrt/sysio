@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="sysio-test" Database="" SWTLW="No">
+<CodeLite_Workspace Name="sysio-test" Database="">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="No"/>
+  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -17,14 +17,15 @@
   <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
   <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
   <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
-  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="Yes"/>
+  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
   <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
   <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="No"/>
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Environment/>
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -50,6 +51,7 @@
       <Project Name="util_sping" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>

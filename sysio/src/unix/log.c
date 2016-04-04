@@ -49,14 +49,17 @@ static char sError[ERROR_BUFFER_SIZE];
  * Rune Saetre <rst@folesvaert.no>
  *
  */
-static char*
-get_priority_name(int pri) {
+static char *
+get_priority_name (int pri) {
   CODE* n = prioritynames;
 
-  while(  (n->c_name) && (n->c_val!=pri) )
+  while ( (n->c_name) && (n->c_val != pri)) {
+    
     n++;
+  }
   return n->c_name;
 }
+
 // -----------------------------------------------------------------------------
 
 /* internal public functions ================================================ */
@@ -77,7 +80,7 @@ void vLogDaemonize (bool daemonize) {
     xMyLog.bIsDaemon = daemonize;
     if (daemonize) {
 
-      (void)setlogmask (xMyLog.iMask);
+      (void) setlogmask (xMyLog.iMask);
       openlog (__progname, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
     }
   }
@@ -102,11 +105,17 @@ iLogMask (void) {
 }
 
 // -----------------------------------------------------------------------------
+const char *
+sLogPriorityStr (int pri) {
+  
+  return (const char *) get_priority_name (pri);
+}
+// -----------------------------------------------------------------------------
 void
 vLog (int priority, const char *format, ...) {
   va_list va;
 
-  va_start(va, format);
+  va_start (va, format);
   if (xMyLog.bIsInit) {
 
     if (xMyLog.bIsDaemon) {
@@ -115,24 +124,24 @@ vLog (int priority, const char *format, ...) {
     }
     else {
 
-      if (xMyLog.iMask & LOG_MASK(priority)) {
+      if (xMyLog.iMask & LOG_MASK (priority)) {
 
-        (void)fprintf(stderr,"%s(%s): ", __progname, get_priority_name(priority));
-        (void)vfprintf(stderr, format, va);
-        (void)fputc('\n', stderr);
+        (void) fprintf (stderr, "%s(%s): ", __progname, get_priority_name (priority));
+        (void) vfprintf (stderr, format, va);
+        (void) fputc ('\n', stderr);
         fflush (stderr);
       }
     }
   }
   else {
 
-    (void)fprintf(stderr,"%s(%s): ", __progname, get_priority_name(priority));
-    (void)vfprintf(stderr, format, va);
-    (void)fputc('\n', stderr);
+    (void) fprintf (stderr, "%s(%s): ", __progname, get_priority_name (priority));
+    (void) vfprintf (stderr, format, va);
+    (void) fputc ('\n', stderr);
     fflush (stderr);
   }
 
-  va_end(va);
+  va_end (va);
 }
 
 
@@ -168,36 +177,36 @@ bSysIoLogAssert (void) {
 /* private functions ======================================================== */
 
 void __vLogAssertFail (__const char *__assertion, __const char *__file,
-         unsigned int __line, __const char *__function) {
+                       unsigned int __line, __const char *__function) {
 
   if (xMyLog.bIsInit) {
 
     vLog (LOG_CRIT, "%s:%d: %s: Assertion '%s' failed.",
-              __file, __line, __function, __assertion);
+          __file, __line, __function, __assertion);
   }
   else {
 
-    (void)fprintf(stderr, "%s(%s): %s:%d: %s: Assertion '%s' failed.\n",
-              __progname, get_priority_name(LOG_CRIT),
-              __file, __line, __function, __assertion);
+    (void) fprintf (stderr, "%s(%s): %s:%d: %s: Assertion '%s' failed.\n",
+                    __progname, get_priority_name (LOG_CRIT),
+                    __file, __line, __function, __assertion);
   }
   abort();
 }
 
 void __vLogAssertPerrorFail (int __errnum, __const char *__file,
-          unsigned int __line, __const char *__function) {
+                             unsigned int __line, __const char *__function) {
 
 
   if (xMyLog.bIsInit) {
 
     vLog (LOG_CRIT, "%s:%d: %s: %s.",
-              __file, __line, __function, strerror(__errnum));
+          __file, __line, __function, strerror (__errnum));
   }
   else {
 
-    (void)fprintf(stderr, "%s(%s): %s:%d: %s: %s.\n",
-              __progname, get_priority_name(LOG_CRIT),
-              __file, __line, __function, strerror(__errnum));
+    (void) fprintf (stderr, "%s(%s): %s:%d: %s: %s.\n",
+                    __progname, get_priority_name (LOG_CRIT),
+                    __file, __line, __function, strerror (__errnum));
   }
   abort();
 }

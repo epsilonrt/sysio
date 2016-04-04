@@ -90,6 +90,14 @@ int  iLogMask (void);
  */
 void vLog (int priority, const char *format, ...);
 
+/**
+ * @brief Chaîne de caractère associée à une priorité
+ * 
+ * @param priority priorité du message
+ * @return Chaîne de caractère associée à priority (ie error, warning, notice ...)
+ */
+const char * sLogPriorityStr (int priority);
+
 #if defined(__DOXYGEN__)
 
 /**
