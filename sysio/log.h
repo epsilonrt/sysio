@@ -98,6 +98,14 @@ void vLog (int priority, const char *format, ...);
  */
 const char * sLogPriorityStr (int priority);
 
+/**
+ * @brief Indique si les messages sont redirigés vers les journaux systèmes
+ * 
+ * @return true si les messages sont redirigés vers les journaux systèmes, false
+ * si les messages sont redirigés vers les sorties stdout, stderr.
+ */
+bool bLogIsDaemonized (void);
+
 #if defined(__DOXYGEN__)
 
 /**

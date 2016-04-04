@@ -91,6 +91,13 @@ void vLogDaemonize (bool daemonize) {
 }
 
 // -----------------------------------------------------------------------------
+bool
+bLogIsDaemonized (void) {
+  
+  return xMyLog.bIsDaemon;
+}
+
+// -----------------------------------------------------------------------------
 void
 vLogSetMask (int mask) {
 
