@@ -169,6 +169,8 @@ int iSysIoSetStrError (const char *format, ...);
 #define PINFO(fmt,...) vLog (LOG_INFO, fmt, ##__VA_ARGS__)
 #endif
 
+#include <sysio/log.h>
+
   /* GCC attributes */
 #define FORMAT(type,fmt,first)  __attribute__((__format__(type, fmt, first)))
 #define NORETURN                __attribute__((__noreturn__))

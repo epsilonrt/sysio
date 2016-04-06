@@ -151,6 +151,107 @@ int iI2cWriteReg16     (int fd, uint8_t reg, uint16_t data);
 int iI2cWriteRegBlock  (int fd, uint8_t reg, const uint8_t * buffer, uint8_t size);
 
 /**
+ *  @defgroup sysio_i2c_mem Mémoires I2C
+ *
+ *  Ce module fournit les fonctions permettant d'accéder à des mémoires I2c.
+ *  Ce module gère les mémoires entre 1 kbits et 4MBits (128 octets à 512 ko).
+ *  @{
+ */
+
+#define I2CMEM_FLAG_ADDR16    0x80  /**< pointeur d'adresse sur 16 bits */
+#define I2CMEM_FLAG_READONLY  0x40  /**< mémoire en lecture seule */
+
+/**
+ * @brief contexte pour gérer les mémoire I2C
+ * Opaque pour l'utilisateur
+ */
+struct xI2cMem;
+
+typedef struct xI2cMem xI2cMem;
+
+/**
+ * @brief Ouverture d'une mémoire sur bus I2c
+ *
+ * @param device nom du fichier d'accès au bus I2C (par exemple /dev/i2c-1)
+ * @param i2caddr adresse du circuit I2C (alignée à droite)
+ * @param mem_size taille de la mémoire
+ * @param page_size taille de la page en écriture
+ * @param flags drapeaux cf I2CMEM_FLAG_ADDR16, I2CMEM_FLAG_READONLY
+ * @return pointeur sur le contexte de la mémoire, NULL si erreur
+ */
+xI2cMem * xI2cMemOpen (const char * device, int i2caddr, uint32_t mem_size, uint16_t page_size, uint8_t flags);
+
+/**
+ * @brief Adresse I2c de la mémoire
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @return adresse I2c alignée à droite
+ */
+int iI2cMemAddr (const xI2cMem * mem);
+
+/**
+ * @brief Taille de la mémoire
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @return taille
+ */
+uint32_t ulI2cMemSize (const xI2cMem * mem);
+
+/**
+ * @brief Taile de la page mémoire pour l'écriture
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @return taille
+ */
+uint16_t usI2cMemPageSize (const xI2cMem * mem);
+
+/**
+ * @brief Drapeaux de la mémoire
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @return drapeaux
+ */
+uint8_t ucI2cMemFlags (const xI2cMem * mem);
+
+
+/**
+ * @brief Fermeture d'une mémoire sur bus I2c
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @return 0, -1 si erreur
+ */
+int iI2cMemClose (xI2cMem * mem);
+
+
+/**
+ * @brief Ecriture dans une mémoire sur bus I2c
+ *
+ * L'écriture se fait page par page,
+ * @param mem pointeur sur le contexte de la mémoire
+ * @param offset adresse du premier octet à écrire
+ * @param buffer pointeur vers les octets à écrire
+ * @param size nombre d'octets à écrire
+ * @return 0, -1 si erreur
+ */
+int iI2cMemWrite  (xI2cMem * mem, uint32_t offset, const uint8_t * buffer, uint16_t size);
+
+
+/**
+ * @brief Lecture dans une mémoire sur bus I2c
+ *
+ * @param mem pointeur sur le contexte de la mémoire
+ * @param offset adresse du premier octet à lire
+ * @param buffer pointeur vers une zone pour stocker les octets lus
+ * @param size nombre d'octets à lire
+ * @return le nombre d'octets lus, -1 si erreur
+ */
+int iI2cMemRead  (xI2cMem * mem, uint32_t offset, uint8_t * buffer, uint16_t size);
+
+/**
+ * @}
+ */
+
+/**
  * @}
  */
 
