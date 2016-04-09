@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio-test" Database="">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
+  <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -19,12 +19,14 @@
   <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
   <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
   <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
   <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="No"/>
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
+  <Project Name="sysio_test_tinfo" Path="sysio/test/tinfo/sysio_test_tinfo.project" Active="Yes"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="ssend" Path="util/ssend/ssend.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
@@ -45,10 +47,12 @@
       <Project Name="sysio_test_xbee_coordinator" ConfigName="Debug"/>
       <Project Name="sysio_test_dlist" ConfigName="Debug"/>
       <Project Name="sysio_test_vector" ConfigName="Debug"/>
-      <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_rs485" ConfigName="Debug"/>
       <Project Name="sysio_test_rpi" ConfigName="Debug"/>
       <Project Name="util_sping" ConfigName="Debug"/>
+      <Project Name="sysio_test_tinfo" ConfigName="Debug"/>
+      <Project Name="sysio" ConfigName="Debug"/>
+      <Project Name="ssend" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -70,11 +74,13 @@
       <Project Name="sysio_test_xbee_coordinator" ConfigName="Release"/>
       <Project Name="sysio_test_dlist" ConfigName="Release"/>
       <Project Name="sysio_test_vector" ConfigName="Release"/>
-      <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_rs485" ConfigName="Release"/>
       <Project Name="sysio_test_rpi" ConfigName="Release"/>
       <Project Name="sysio_test_serial" ConfigName="Release"/>
       <Project Name="util_sping" ConfigName="Release"/>
+      <Project Name="sysio_test_tinfo" ConfigName="Release"/>
+      <Project Name="sysio" ConfigName="Release"/>
+      <Project Name="ssend" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

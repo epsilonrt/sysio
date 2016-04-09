@@ -116,8 +116,9 @@ iSerialOpen (const char *device, xSerialIos * xIos) {
 
   cfmakeraw (&ts);
   ts.c_cflag |= (CLOCAL | CREAD);
-  ts.c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG);
+  ts.c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG | IEXTEN);
   ts.c_oflag &= ~OPOST;
+  //ts.c_iflag &= ~(INLCR);
 
   if ( (iRet = iSerialTermiosSetAttr (&ts, xIos) ) < 0) {
 

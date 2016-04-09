@@ -52,6 +52,20 @@ char * strcpylwr (char * dst, const char * src);
  */
 char * strcpyupr (char * dst, const char * src);
 
+/** 
+ * @brief Convertion d'un string en entier long
+ * 
+ * @param str string commençant par la représentation d'un nombre entier.
+ * @param n pointeur sur le nombre entier long résultat, si aucune conversion 
+ * valide n'a pu être effectuée (-1), la valeur pointée n'est pas modifiée.
+ * @param base base du nombre, si base vaut 0 ou  16, la chaîne peut inclure un 
+ * préfixe « 0x » et le nombre sera interprété en base 16. Sinon, une base 
+ * valant zéro est interprétée comme 10 (décimale) sauf si le caractère suivant 
+ * est « 0 », auquel cas la base est 8 (octale).
+ * @return 0, -1 si erreur
+ */
+int iStrToLong (const char * str, long * n, int base);
+
 /**
  *  @}
  * @}
