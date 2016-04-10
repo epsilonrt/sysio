@@ -17,6 +17,8 @@ __BEGIN_C_DECLS
  *
  *  Ce module fournit les fonctions permettant d'accéder au bus I2C.
  *  @{
+ *  @example i2c/sysio_demo_i2c.c
+ *  Accès aux registres d'un capteur IAQ 'qualité de l'air)
  */
 
 /* constants ================================================================ */

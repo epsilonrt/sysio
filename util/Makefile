@@ -3,7 +3,7 @@
 # All rights reserved.                                                        #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = sping
+SUBDIRS = sping ssend
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)

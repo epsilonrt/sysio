@@ -18,11 +18,11 @@ __BEGIN_C_DECLS
  *  Ce module fournit les fonctions permettant de contrôler les broches
  *  d'entrées-sorties à usage général.
  *  @{
- *  @example gpio/write/write.c
+ *  @example gpio/write/sysio_test_gpio_write.c
  *  Allumage de leds
- *  @example gpio/read/read.c
+ *  @example gpio/read/sysio_test_gpio_read.c
  *  Lecture de boutons poussoirs
- *  @example gpio/getmode/getmode.c
+ *  @example gpio/getmode/sysio_test_gpio_getmode.c
  *  Lecture du mode de toutes les broches du GPIO
  */
 

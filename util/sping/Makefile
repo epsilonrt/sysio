@@ -11,8 +11,8 @@ TARGET = sping
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
-ARCH = ARCH_ARM_RASPBERRYPI
-#ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = ON

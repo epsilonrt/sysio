@@ -21,7 +21,8 @@ __BEGIN_C_DECLS
  *  correspond au nombre de cycles d'horloge à l'état haut alors que "range"
  *  correspond à la période du signal généré en nombre de cycles d'horloge.
  *  @{
- *  @example pwm/pwm.c
+ *  @example pwm/sysio_test_pwm.c
+ *  Test sortie PWM
  */
 
 /* structures =============================================================== */

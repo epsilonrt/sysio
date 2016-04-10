@@ -26,15 +26,6 @@
  }]]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="doc">
-    <VirtualDirectory Name="linux">
-      <File Name="doc/linux/dev-interface"/>
-    </VirtualDirectory>
-    <File Name="doc/Doxyfile"/>
-    <File Name="doc/DoxygenLayout.xml"/>
-    <File Name="doc/main_page.dox"/>
-    <File Name="sysio/tinfo.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="util">
     <VirtualDirectory Name="bin">
       <File Name="util/bin/sysio-ver"/>
@@ -217,6 +208,7 @@
     <File Name="sysio/dlist.h"/>
     <File Name="sysio/vector.h"/>
     <File Name="sysio/string.h"/>
+    <File Name="sysio/tinfo.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

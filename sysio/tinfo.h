@@ -22,8 +22,8 @@ __BEGIN_C_DECLS
  *  télé-information client des appareils de comptage électroniques utilisés par
  *  ERDF. \n
  *  Il est compatible avec les trames émises par : \n
- *  - le compteur « Blue » électronique monophasé multitarif (CBEMM : 2 paliers différents),
- *  - le compteur « Blue » électronique triphasé multitarif (CBETM).
+ *  - le compteur « Bleu » électronique monophasé multitarif (CBEMM : 2 paliers différents),
+ *  - le compteur « Bleu » électronique triphasé multitarif (CBETM).
  *  .
  * Il pourra évoluer pour prendre en charge d'autres compteurs (Jaune, ...). \n
  * L'analyse utilise le document ERDF-NOI-CPT_02E, Version 5. \n
@@ -34,6 +34,8 @@ __BEGIN_C_DECLS
  * un signal conforme au paragraphe 1.5 document ERDF-NOI-CPT_02E et reliée
  * au port série fourni lors de l'ouverture.
  *  @{
+ *  @example tinfo/sysio_demo_tinfo.c
+ *  Affiche les trames reçues.
  */
 
 /* constants ================================================================ */

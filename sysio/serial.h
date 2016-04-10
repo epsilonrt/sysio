@@ -20,6 +20,11 @@ __BEGIN_C_DECLS
  *
  *  Ce module fournit les fonctions permettant de contrôler une liaison série.
  *  @{
+ *  @example serial/sysio_demo_serial.c
+ *  Transmet tous les caractères tapés sur la liaison série et affiche les
+ *  caractères reçus.
+ *  @example rs485/sysio_demo_rs485.c
+ *  Transmet l'alphabet sur la liaison RS485 toutes les secondes
  */
 
 /**

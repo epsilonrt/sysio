@@ -11,11 +11,11 @@ TARGET = ssend
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
-ARCH = ARCH_ARM_RASPBERRYPI
-#ARCH = ARCH_GENERIC_LINUX
+#ARCH = ARCH_ARM_RASPBERRYPI
+ARCH = ARCH_GENERIC_LINUX
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
-GIT_VERSION = OFF
+GIT_VERSION = ON
 
 # Niveau d'optimisation de GCC =  [0, 1, 2, 3, s].
 #     0 = pas d'optimisation (pour debug).

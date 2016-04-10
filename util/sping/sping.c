@@ -35,8 +35,6 @@
 #define MIN_PACKET_SIZE 1
 #define MAX_PACKET_SIZE 512
 
-/* macros =================================================================== */
-
 /* default values =========================================================== */
 #ifdef ARCH_ARM_RASPBERRYPI
 #define DEFAULT_DEVICE "/dev/ttyAMA0"
