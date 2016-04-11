@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
+  <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -14,7 +14,7 @@
   <Project Name="sysio_demo_switch" Path="demo/switch/sysio_demo_switch.project" Active="No"/>
   <Project Name="sysio_demo_xbee_coordinator" Path="demo/xbee/coordinator/sysio_demo_xbee_coordinator.project" Active="No"/>
   <Project Name="sysio_demo_xbee_node" Path="demo/xbee/node/sysio_demo_xbee_node.project" Active="No"/>
-  <Project Name="sysio_demo_tinfo" Path="demo/tinfo/sysio_demo_tinfo.project" Active="No"/>
+  <Project Name="sysio_demo_tinfo" Path="demo/tinfo/sysio_demo_tinfo.project" Active="Yes"/>
   <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
   <Project Name="sysio_demo_eeprom" Path="demo/eeprom/sysio_demo_eeprom.project" Active="No"/>
   <Project Name="sysio_demo_serial" Path="demo/serial/sysio_demo_serial.project" Active="No"/>

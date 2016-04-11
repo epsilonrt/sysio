@@ -49,8 +49,17 @@ static const char * sTempoColorList[] = {
   "BLEU", "BLAN", "ROUG"
 };
 
-static const char * sOpTarifList[] = {
-  "BASE", "HC", "EJP", "TEMPO"
+static const char * sTempoColorStrList[] = {
+  "Bleu", "Blanc", "Rouge"
+};
+
+static const char * sOpTarifStrList[] = {
+  "Base", "hC", "EJP", "Tempo"
+};
+
+static const char * sPtecStrList[] = {
+  "Th", "hC", "hP", "hN", "hPM",
+  "hCjB",  "hCjW", "hCjR", "hPjB", "hPjW", "hPjR"
 };
 
 /* structures =============================================================== */
@@ -200,7 +209,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
         int phi = data[5] - '1';
         if ( (phi >= 0) && (phi <= 2)) {
 
-          f->blue.flag |= eTinfoFlagTri;
+          f->blue.nph = 3;
           f->blue.iinst[phi] = n;
           TINFO_DEBUG ("IINST[%d]=%d A", phi + 1, f->blue.iinst[phi]);
         }
@@ -211,6 +220,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
       }
       else {
 
+        f->blue.nph = 1;
         f->blue.iinst[0] = n;
         TINFO_DEBUG ("IINST=%d A", f->blue.iinst[0]);
       }
@@ -228,7 +238,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
         int phi = data[4] - '1';
         if ( (phi >= 0) && (phi <= 2)) {
 
-          f->blue.flag |= eTinfoFlagTri;
+          f->blue.nph = 3;
           f->blue.imax[phi] = n;
           TINFO_DEBUG ("IMAX[%d]=%d A", phi + 1, f->blue.imax[phi]);
         }
@@ -239,6 +249,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
       }
       else {
 
+        f->blue.nph = 1;
         f->blue.imax[0] = n;
         TINFO_DEBUG ("IMAX=%d A", f->blue.imax[0]);
       }
@@ -257,7 +268,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
   }
 
   // Données spécifiques à un type d'alimentation mono/triphasé
-  if (f->blue.flag & eTinfoFlagTri) {
+  if (f->blue.nph == 3) {
 
     // Triphasé
     if (strcmp (label, "PMAX") == 0) {
@@ -486,7 +497,8 @@ prvvReadItem (xTinfo * t, xTinfoFrame * f , char * label) {
     else if (strncmp (label, "ADIR", 4) == 0) {
 
       f->raw.frame = eTinfoFrameBlue;
-      f->blue_short.flag |= (eTinfoFlagShort | eTinfoFlagTri | eTinfoFlagAdps);
+      f->blue_short.flag |= (eTinfoFlagShort | eTinfoFlagAdps);
+      f->blue_short.nph = 3;
       TINFO_DEBUG ("<< Blue Frame (short)>>");
       prvvReadBlueShortItem (t, f, label, data);
     }
@@ -789,7 +801,7 @@ sTinfoPetcToStr (eTinfoPtec p) {
 
   if ( (p >= eTinfoPtecTh) && (p <= eTinfoPtecHpJr)) {
 
-    return sPtecList[p - 1];
+    return sPtecStrList[p - 1];
   }
   return sUnknown;
 }
@@ -800,7 +812,7 @@ sTinfoTempoColorToStr (eTinfoTempoColor c) {
 
   if ( (c >= eTinfoColorBlue) && (c <= eTinfoColorRed)) {
 
-    return sTempoColorList[c - 1];
+    return sTempoColorStrList[c - 1];
   }
   return sUnknown;
 }
@@ -811,7 +823,7 @@ sTinfoOpTarifToStr (eTinfoOpTarif t) {
 
   if ( (t >= eTinfoOpTarifBase) && (t <= eTinfoOpTarifTempo)) {
 
-    return sOpTarifList[t - 1];
+    return sOpTarifStrList[t - 1];
   }
   return sUnknown;
 }

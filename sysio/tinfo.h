@@ -75,8 +75,7 @@ typedef enum  {
  * @brief Drapeaux
  */
 typedef enum  {
-  eTinfoFlagTri           = 0x0001, /**< Triphasé */
-  eTinfoFlagShort         = 0x0002, /**< Trame courte (Triphasé, Dépassement puissance) */
+  eTinfoFlagShort         = 0x0001, /**< Trame courte (Triphasé, Dépassement puissance) */
   eTinfoFlagAdps          = 0x0100, /**< Avertissement de Dépassement De Puissance Souscrite */
   eTinfoFlagNewPetc       = 0x0200, /**< Changement de période de tarification */
   eTinfoFlagTempoNewColor = 0x0400, /**< Changement de couleur de jour Tempo */
@@ -93,12 +92,12 @@ typedef enum  {
   eTinfoPtecHp, /**< Heures Pleines */
   eTinfoPtecHn, /**< Heures Normales */
   eTinfoPtecPm, /**< Heures de Pointe Mobile */
-  eTinfoPtecHcJb, /**< Heures Creuses Jours Bleus */
-  eTinfoPtecHcJw, /**< Heures Creuses Jours Blancs (White) */
-  eTinfoPtecHcJr, /**< Heures Creuses Jours Rouges */
-  eTinfoPtecHpJb, /**< Heures Pleines Jours Bleus */
-  eTinfoPtecHpJw, /**< Heures Pleines Jours Blancs (White) */
-  eTinfoPtecHpJr  /**< Heures Pleines Jours Rouges*/
+  eTinfoPtecHcJb, /**< Heures Creuses, Jours Bleus */
+  eTinfoPtecHcJw, /**< Heures Creuses, Jours Blancs (White) */
+  eTinfoPtecHcJr, /**< Heures Creuses, Jours Rouges */
+  eTinfoPtecHpJb, /**< Heures Pleines, Jours Bleus */
+  eTinfoPtecHpJw, /**< Heures Pleines, Jours Blancs (White) */
+  eTinfoPtecHpJr  /**< Heures Pleines, Jours Rouges*/
 } eTinfoPtec;
 
 /**
@@ -132,7 +131,7 @@ typedef enum {
  * @brief Données de la trame spécifiques à l'option de base
  */
 struct xTinfoBase {
-  unsigned long index; /**< index en Wh */
+  unsigned long index; /**< Index en Wh */
 };
 
 /**
@@ -190,6 +189,7 @@ struct xTinfoFrameBlue  {
   eTinfoOpTarif optarif; /**< Option tarifaire choisie */
   eTinfoPtec ptec; /**< Période Tarifaire en cours */
   unsigned isousc; /**< Intensité souscrite en A */
+  unsigned nph; /**< Nombre de phases (1 pour monophasé, 3 pour le triphasé) */
   unsigned iinst[3]; /**< Intensités Instantanées en A (index 0 pour le monophasé) */
   unsigned adps; /**<  Avertissement de Dépassement De Puissance Souscrite en A (monophasé) */
   unsigned imax[3]; /**< Intensités maximales appelées (index 0 pour le monophasé) */
@@ -208,6 +208,7 @@ struct xTinfoFrameBlueShort  {
   eTinfoFrame frame; /**< Type de trame (eTinfoFrameBlue) */
   eTinfoFlag flag; /**< Drapeaux */
   unsigned long adco; /**< Adresse du compteur */
+  unsigned nph; /**< Nombre de phases: toujours 3 puisque triphasé */
   unsigned iinst[3]; /**< Intensités Instantanées en A */
   unsigned adir[3]; /**< Avertissement de Dépassement d'intensité de réglage par phase */
 };
