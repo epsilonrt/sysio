@@ -24,7 +24,6 @@
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
   <Project Name="sysio_test_tinfo" Path="sysio/test/tinfo/sysio_test_tinfo.project" Active="Yes"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="ssend" Path="util/ssend/ssend.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>

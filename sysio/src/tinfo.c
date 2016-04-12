@@ -624,7 +624,7 @@ prviSplitFrame (xTinfo * t) {
 // d'erreur, on la passera à prviSplitFrame()
 static int
 prviProbeFrame (xTinfo * t) {
-  char checksum;
+  char checksum = 0;
 
   // Vérification des checksums de chaque groupe
   for (int i = 1; i < (t->buflen - 1); i++) {
