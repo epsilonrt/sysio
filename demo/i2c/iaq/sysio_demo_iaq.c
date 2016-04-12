@@ -1,5 +1,5 @@
 /*
- * sysio_demo_i2c.c
+ * sysio_demo_iaq.c
  * Démo i2c, accès aux registres d'un capteur IAQ
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
