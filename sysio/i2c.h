@@ -23,7 +23,7 @@ __BEGIN_C_DECLS
  *  Ecriture dans de tout l'espace d'une mémoire EEPROM I2c, page par page,
  *  avec une séquence d'octets aléatoires, après écriture, la page est lue et
  *  vérifiée.
- *  @example i2c/rtc/sysio_demo_rtcc
+ *  @example i2c/rtc/sysio_demo_rtc.c
  *  Accès aux registres d'une RTC BQ32000
  */
 

@@ -1,6 +1,6 @@
 /*
- * rtc_test.c
- * BQ32000 RTC test
+ * sysio_demo_rtc.c
+ * BQ32000 RTC Demo
  *
  * Reads and displays the RTC registers:
  * n Addr Name        Description
@@ -15,7 +15,7 @@
  * 8 0x08 TCH2        Trickle charge enable
  * 9 0x09 CFG2        Configuration 2
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
+ * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
 #include <stdlib.h>
