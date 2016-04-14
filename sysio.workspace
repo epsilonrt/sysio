@@ -16,10 +16,12 @@
   <Project Name="sysio_demo_tinfo" Path="demo/tinfo/sysio_demo_tinfo.project" Active="No"/>
   <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
   <Project Name="sysio_demo_serial" Path="demo/serial/sysio_demo_serial.project" Active="No"/>
-  <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="Yes"/>
+  <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="sysio_demo_eeprom" Path="demo/i2c/eeprom/sysio_demo_eeprom.project" Active="No"/>
-  <Project Name="sysio_demo_iaq" Path="demo/i2c/iaq/sysio_demo_iaq.project" Active="No"/>
+  <Project Name="sysio_demo_iaq" Path="demo/i2c/iaq/sysio_demo_iaq.project" Active="Yes"/>
   <Project Name="sysio_demo_rtc" Path="demo/i2c/rtc/sysio_demo_rtc.project" Active="No"/>
+  <Project Name="sysio_demo_hih6130" Path="demo/i2c/hih6130/sysio_demo_hih6130.project" Active="No"/>
+  <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="libpython" ConfigName="Debug"/>
@@ -52,6 +54,8 @@
       <Project Name="sysio_demo_eeprom" ConfigName="Debug"/>
       <Project Name="sysio_demo_iaq" ConfigName="Debug"/>
       <Project Name="sysio_demo_rtc" ConfigName="Debug"/>
+      <Project Name="sysio_demo_hih6130" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="libsysio" ConfigName="Release"/>
@@ -84,6 +88,8 @@
       <Project Name="sysio_demo_eeprom" ConfigName="Release"/>
       <Project Name="sysio_demo_iaq" ConfigName="Release"/>
       <Project Name="sysio_demo_rtc" ConfigName="Release"/>
+      <Project Name="sysio_demo_hih6130" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

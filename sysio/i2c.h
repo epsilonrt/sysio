@@ -169,6 +169,7 @@ int iI2cWriteRegBlock  (int fd, uint8_t reg, const uint8_t * buffer, uint8_t siz
 #define I2CMEM_FLAG_ADDR16    0x80  /**< pointeur d'adresse sur 16 bits */
 #define I2CMEM_FLAG_READONLY  0x40  /**< mémoire en lecture seule */
 
+/* structures =============================================================== */
 /**
  * @brief contexte pour gérer les mémoire I2C
  * Opaque pour l'utilisateur

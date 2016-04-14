@@ -1,17 +1,17 @@
 /*
- * Démonstration utilisation capteur IAQ
+ * Démonstration utilisation capteur HIH6130
  * Effectue des mesures et les affichent sur le terminal, les valeurs
  * sont affichées de façon tabulaire afin de pouvoir être traitée par un
  * tableur, voilà un exemple d'affichage:
- *  IAQ Demo
- *  Co2(ppm) Voc(ppb)
+ *  # HIH6130 Demo
+ *  # T(oC) H(%)
  *  21.2 53.5
  *  ...
- * Le logiciel KST https://kst-plot.kde.org/ peut être utilisé pour afficher les
+ * Le logiciel KST https://kst-plot.kde.org/ peut être utilisé pour afficher les 
  * mesures sous forme de graphe.
  */
 #include <sysio/delay.h>
-#include <sysio/iaq.h>
+#include <sysio/hih6130.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <assert.h>
@@ -21,7 +21,7 @@
 #define DEFAULT_I2C_BUS       "/dev/i2c-1"
 
 /* private variables ======================================================== */
-xIaq * sensor;
+xHih6130 * sensor;
 
 /* private functions ======================================================== */
 // -----------------------------------------------------------------------------
@@ -30,8 +30,8 @@ vSigIntHandler (int sig) {
 
   if ( (sig == SIGINT) || (sig == SIGTERM)) {
 
-    if (iIaqClose (sensor) != 0) {
-      perror ("iIaqClose");
+    if (iHih6130Close (sensor) != 0) {
+      perror ("iHih6130Close");
       exit (EXIT_FAILURE);
     }
     printf ("\n# everything was closed.\n# Have a nice day !\n");
@@ -43,12 +43,11 @@ vSigIntHandler (int sig) {
 int
 main (void) {
   int ret;
-  bool bIsWarmUp = false;
-  xIaqData data;
+  xHih6130Data data;
 
-  printf ("\n# IAQ Demo\n");
+  printf ("\n# HIH6130 Demo\n");
 
-  sensor = xIaqOpen (DEFAULT_I2C_BUS, IAQ_I2CADDR);
+  sensor = xHih6130Open (DEFAULT_I2C_BUS, HIH6130_I2CADDR);
   assert (sensor);
 
   // vSigIntHandler() intercepte le CTRL+C
@@ -56,32 +55,28 @@ main (void) {
   signal (SIGTERM, vSigIntHandler);
   printf ("# Press Ctrl+C to abort ...\n");
   // Affichage entête
-  printf ("# Co2(ppm) Voc(ppb)\n");
+  printf ("# T(°C) H(%%)\n");
 
   for (;;) {
 
 
     // Test 1 - Mesure
-    ret = iIaqRead (sensor, &data);
+    // Démarrage mesure et vérification succès
+    ret = iHih6130Start (sensor);
+    assert (ret == 0);
 
-    switch (ret) {
-      case 0:
-        printf ("%d %d\n", data.usCo2, data.usTvoc);
-        break;
-        
-      case IAQ_WARMUP:
-        if (bIsWarmUp == false) {
-          printf ("# Warming, please wait of about 5 minutes...\n");
-          bIsWarmUp = true;
-        }
-        break;
-        
-      default:
-        printf ("iIaqRead() return %d\n", ret);
-        break;
+    do {
+
+      // Lecture
+      ret = iHih6130Read (sensor, &data);
+      // Vérif absence d'erreur
+      assert (ret >= 0);
     }
+    while (ret == HIH6130_BUSY);
 
-    delay_ms (11000);
+    // Affichage mesures
+    printf ("%.1f %.1f\n", data.dTemp, data.dHum);
+    delay_ms (1000);
   }
   return 0;
 }
