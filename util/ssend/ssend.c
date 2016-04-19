@@ -1,10 +1,10 @@
 /*
- * serial_test.c
- * Serial port test
- * - Transmits all the keys pressed on the serial port (no echo)
- * - Displays all characters received from the serial port
+ * ssend.c
+ * Send a file to the serial port (as binary).
  *
- * Licensed under the Apache License, Version 2.0 (the "License")
+ * Copyright © 2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
 #include <stdlib.h>

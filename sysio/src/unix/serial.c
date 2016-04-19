@@ -25,7 +25,8 @@
 #define TIOCGRS485      0x542E
 #define TIOCSRS485      0x542F
 
-#ifdef ARCH_ARM_RASPBERRYPI
+//#ifdef ARCH_ARM_RASPBERRYPI
+#if 0
 // Le code ci-dessous est pour le Raspberry Pi
 /* macros =================================================================== */
 #define F_CPU 700000000UL // Raspberry Pi System Clock: 700 MHz
