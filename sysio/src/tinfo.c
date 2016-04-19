@@ -70,13 +70,18 @@ struct xTinfo {
   void * uctx;
 
   // Variables de travail
-  int serial;
+  int serial; // file descriptor
   char buf[TINFO_BUFFER_SIZE];
   int buflen;
+  char pchar; // caractère précédent pour détection séquence ETX/STX
+  bool started; // séquence ETX/STX détectée
+  time_t time; // heure du dernier STX
+  
+  // Paramètres issus de l'analyse
   char ht;
-  eTinfoTempoColor demain;
-  eTinfoPtec ptec;
-  unsigned motdetat;
+  eTinfoTempoColor demain; // pour détecter le changement de couleur
+  eTinfoPtec ptec; // pour détecter le changement de période en cours
+  unsigned motdetat; // pour détecter le changement d'état
 };
 
 /* private functions ======================================================== */
@@ -85,6 +90,7 @@ static void
 prvvReadBlueShortItem (xTinfo * t, xTinfoFrame * f ,
                        const char * label, const char * data) {
   long n;
+  long long adco;
 
   if (strncmp (label, "ADIR", 4) == 0) {
     // 3 chiffres décimaux, A
@@ -92,7 +98,7 @@ prvvReadBlueShortItem (xTinfo * t, xTinfoFrame * f ,
     if (iStrToLong (data, &n, 10) == 0) {
       int phi = data[4] - '1';
 
-      if ( (phi >= 0) && (phi <= 2)) {
+      if ( (phi >= 0) && (phi <= 2) ) {
 
         f->blue_short.adir[phi] = n;
         TINFO_DEBUG ("ADIR[%d]=%d A", phi + 1, f->blue_short.adir[phi]);
@@ -106,9 +112,9 @@ prvvReadBlueShortItem (xTinfo * t, xTinfoFrame * f ,
   else if (strcmp (label, "ADCO") == 0) {
     // 12 chiffres décimaux
 
-    if (iStrToLong (data, &n, 10) == 0) {
+    if (iStrToLongLong (data, &adco, 10) == 0) {
 
-      f->blue_short.adco = n;
+      f->blue_short.adco = adco;
       TINFO_DEBUG ("ADCO=%012ld", f->blue_short.adco);
     }
   }
@@ -118,7 +124,7 @@ prvvReadBlueShortItem (xTinfo * t, xTinfoFrame * f ,
     if (iStrToLong (data, &n, 10) == 0) {
       int phi = data[5] - '1';
 
-      if ( (phi >= 0) && (phi <= 2)) {
+      if ( (phi >= 0) && (phi <= 2) ) {
 
         f->blue_short.iinst[phi] = n;
         TINFO_DEBUG ("IINST[%d]=%d A", phi + 1, f->blue_short.iinst[phi]);
@@ -160,7 +166,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
       TINFO_DEBUG ("TEMPO.PGM2=%c", f->blue.tarif.tempo.pgm2);
     }
 
-    TINFO_DEBUG ("OPTARIF=%s", sTinfoOpTarifToStr (f->blue.optarif));
+    TINFO_DEBUG ("OPTARIF=%s", sTinfoOpTarifToStr (f->blue.optarif) );
     return;
   }
 
@@ -182,7 +188,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
       if (strcmp (sPtecList[ptec - 1], data) == 0) {
 
         f->blue.ptec = ptec;
-        TINFO_DEBUG ("PTEC=%s", sTinfoPetcToStr (f->blue.ptec));
+        TINFO_DEBUG ("PTEC=%s", sTinfoPetcToStr (f->blue.ptec) );
         break;
       }
     }
@@ -207,7 +213,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
         // Triphasé
 
         int phi = data[5] - '1';
-        if ( (phi >= 0) && (phi <= 2)) {
+        if ( (phi >= 0) && (phi <= 2) ) {
 
           f->blue.nph = 3;
           f->blue.iinst[phi] = n;
@@ -236,7 +242,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
         // Triphasé
 
         int phi = data[4] - '1';
-        if ( (phi >= 0) && (phi <= 2)) {
+        if ( (phi >= 0) && (phi <= 2) ) {
 
           f->blue.nph = 3;
           f->blue.imax[phi] = n;
@@ -455,7 +461,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
           if (strcmp (sTempoColorList[color - 1], data) == 0) {
 
             f->blue.tarif.tempo.demain = color;
-            TINFO_DEBUG ("DEMAIN=%s", sTinfoTempoColorToStr (color));
+            TINFO_DEBUG ("DEMAIN=%s", sTinfoTempoColorToStr (color) );
             break;
           }
         }
@@ -471,7 +477,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
 static void
 prvvReadItem (xTinfo * t, xTinfoFrame * f , char * label) {
   char * sep, * data;
-  long n;
+  long long adco;
 
   // Remplace le spérateur entre étiquette et données par \0
   sep = strchr (label, t->ht);
@@ -486,17 +492,19 @@ prvvReadItem (xTinfo * t, xTinfoFrame * f , char * label) {
     if (strcmp (label, "ADCO") == 0) {
       // 12 chiffres décimaux
 
-      if (iStrToLong (data, &n, 10) == 0) {
+      if (iStrToLongLong (data, &adco, 10) == 0) {
 
         f->raw.frame = eTinfoFrameBlue;
-        f->blue.adco = n;
+        f->blue.adco = adco;
+        f->blue.time = t->time;
         TINFO_DEBUG ("<< Blue Frame >>");
-        TINFO_DEBUG ("ADCO=%012ld", f->blue.adco);
+        TINFO_DEBUG ("ADCO=%012lld", f->blue.adco);
       }
     }
     else if (strncmp (label, "ADIR", 4) == 0) {
 
       f->raw.frame = eTinfoFrameBlue;
+      f->blue.time = t->time;
       f->blue_short.flag |= (eTinfoFlagShort | eTinfoFlagAdps);
       f->blue_short.nph = 3;
       TINFO_DEBUG ("<< Blue Frame (short)>>");
@@ -527,7 +535,7 @@ prviSplitFrame (xTinfo * t) {
   char * group = t->buf;
   bool bFrameHasBeenProcessed = false;
 
-  memset (&f, 0, sizeof (f));
+  memset (&f, 0, sizeof (f) );
 
   while (group) {
 
@@ -572,7 +580,7 @@ prviSplitFrame (xTinfo * t) {
       t->ptec = f.blue.ptec;
       f.blue.flag |= eTinfoFlagNewPetc;
       TINFO_DEBUG ("<< Changement Période Tarifaire En Cours: %s >>",
-                   sTinfoPetcToStr (t->ptec));
+                   sTinfoPetcToStr (t->ptec) );
       if (t->cb[eTinfoCbPetc]) {
 
         ret = t->cb[eTinfoCbPetc] (t, &f);
@@ -600,7 +608,7 @@ prviSplitFrame (xTinfo * t) {
         t->demain =  f.blue.tarif.tempo.demain;
         f.blue.flag |= eTinfoFlagTempoNewColor;
         TINFO_DEBUG ("<< Changement couleur demain: %s >>",
-                     sTinfoTempoColorToStr (t->demain));
+                     sTinfoTempoColorToStr (t->demain) );
         if (t->cb[eTinfoCbTempo]) {
 
           ret = t->cb[eTinfoCbTempo] (t, &f);
@@ -610,7 +618,7 @@ prviSplitFrame (xTinfo * t) {
     }
   }
 
-  if ( (bFrameHasBeenProcessed == false) && (t->cb[eTinfoCbFrame])) {
+  if ( (bFrameHasBeenProcessed == false) && (t->cb[eTinfoCbFrame]) ) {
 
     ret = t->cb[eTinfoCbFrame] (t, &f);
   }
@@ -676,18 +684,28 @@ prviProbeBuffer (xTinfo * t, char * buffer, int len) {
   int i;
 
   if (t->buflen == 0) {
-    bool bStxFound = false;
+
+    t->started = false;
 
     for (i = 0; i < len; i++) {
+      
+      // Recherche la séquence ETX/STX
+      if ( (t->pchar == ETX) && (buffer[i] == STX) ) {
 
-      if (buffer[i] == STX) {
-
-        bStxFound = true;
+        
+        t->time = time(NULL);
+        t->started = true;
+        t->pchar = 0;
         TINFO_DEBUG ("STX found");
       }
-      if (bStxFound) {
+      
+      if (t->started) {
 
         t->buf[t->buflen++] = buffer[i];
+      }
+      else {
+        
+        t->pchar = buffer[i];
       }
     }
   }
@@ -700,7 +718,9 @@ prviProbeBuffer (xTinfo * t, char * buffer, int len) {
       if (buffer[i] == ETX) {
 
         // Trame complète
+        t->pchar = ETX; // évite de perdre la prochaine trame
         TINFO_DEBUG ("ETX found");
+        // On va vérifier les checksums de la trame
         return prviProbeFrame (t);
       }
       else if (buffer[i] == EOT) {
@@ -727,7 +747,7 @@ xTinfoOpen (const char * port, unsigned long baudrate) {
     .flow = SERIAL_FLOW_NONE
   };
 
-  t = calloc (1, sizeof (xTinfo));
+  t = calloc (1, sizeof (xTinfo) );
   assert (t);
 
   ios.baud = baudrate;
@@ -799,7 +819,7 @@ vTinfoSetUserContext (xTinfo * t, void * uctx) {
 const char *
 sTinfoPetcToStr (eTinfoPtec p) {
 
-  if ( (p >= eTinfoPtecTh) && (p <= eTinfoPtecHpJr)) {
+  if ( (p >= eTinfoPtecTh) && (p <= eTinfoPtecHpJr) ) {
 
     return sPtecStrList[p - 1];
   }
@@ -810,7 +830,7 @@ sTinfoPetcToStr (eTinfoPtec p) {
 const char *
 sTinfoTempoColorToStr (eTinfoTempoColor c) {
 
-  if ( (c >= eTinfoColorBlue) && (c <= eTinfoColorRed)) {
+  if ( (c >= eTinfoColorBlue) && (c <= eTinfoColorRed) ) {
 
     return sTempoColorStrList[c - 1];
   }
@@ -821,7 +841,7 @@ sTinfoTempoColorToStr (eTinfoTempoColor c) {
 const char *
 sTinfoOpTarifToStr (eTinfoOpTarif t) {
 
-  if ( (t >= eTinfoOpTarifBase) && (t <= eTinfoOpTarifTempo)) {
+  if ( (t >= eTinfoOpTarifBase) && (t <= eTinfoOpTarifTempo) ) {
 
     return sOpTarifStrList[t - 1];
   }

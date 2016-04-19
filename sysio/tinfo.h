@@ -14,6 +14,7 @@ __BEGIN_C_DECLS
 /* ========================================================================== */
 #include <errno.h>
 #include <stdio.h>
+#include <time.h>
 
 /**
  *  @defgroup sysio_tinfo Télé-information client ERDF
@@ -184,8 +185,9 @@ union uTinfoTarif {
  */
 struct xTinfoFrameBlue  {
   eTinfoFrame frame;  /**< Type de trame (eTinfoFrameBlue) */
+  time_t time; /**< date/heure de réception du STX */
   eTinfoFlag flag;    /**< Drapeaux */
-  unsigned long adco; /**< Adresse du compteur */
+  unsigned long long adco; /**< Adresse du compteur */
   eTinfoOpTarif optarif; /**< Option tarifaire choisie */
   eTinfoPtec ptec; /**< Période Tarifaire en cours */
   unsigned isousc; /**< Intensité souscrite en A */
@@ -206,6 +208,7 @@ struct xTinfoFrameBlue  {
  */
 struct xTinfoFrameBlueShort  {
   eTinfoFrame frame; /**< Type de trame (eTinfoFrameBlue) */
+  time_t time; /**< date/heure de réception du STX */
   eTinfoFlag flag; /**< Drapeaux */
   unsigned long adco; /**< Adresse du compteur */
   unsigned nph; /**< Nombre de phases: toujours 3 puisque triphasé */
@@ -219,6 +222,7 @@ struct xTinfoFrameBlueShort  {
  */
 struct xTinfoFrameRaw  {
   eTinfoFrame frame; /**< Type de trame (eTinfoFrameBlue) */ 
+  time_t time; /**< date/heure de réception du STX */
   uint8_t raw[1]; /**< Accès aux données par octets (usage réservé) */
 };
 

@@ -103,4 +103,29 @@ iStrToLong (const char * str, long * l, int base) {
   return 0;
 }
 
+// -----------------------------------------------------------------------------
+int
+iStrToLongLong (const char * str, long long * ll, int base) {
+  char *endptr;
+  long long val;
+
+  errno = 0;    /* Pour distinguer la réussite/échec après l'appel */
+  val = strtoll (str, &endptr, base);
+  
+  if ( (errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN))
+       || (errno != 0 && val == 0)) {
+         
+    return -1;
+  }
+
+  if (endptr == str) {
+    
+    return -1;
+  }
+
+  /* Si nous sommes ici, strtoll() a analysé un nombre avec succès */
+  *ll = val;
+  return 0;
+}
+
 /* ========================================================================== */

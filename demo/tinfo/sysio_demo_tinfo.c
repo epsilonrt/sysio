@@ -26,8 +26,10 @@ static int
 iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
 
   if (f->raw.frame == eTinfoFrameBlue) {
-    printf ("\n--------------------------------<<< Compteur Bleu >>>--------------------------------\n");
-    printf ("Adresse du compteur: %012ld\n", f->blue.adco);
+
+    printf ("\n%s", ctime (&f->blue.time) );
+    printf ("--------------------------------<<< Compteur Bleu >>>--------------------------------\n");
+    printf ("Adresse du compteur: %012lld\n", f->blue.adco);
     printf ("Intensité souscrite (A): %d\n\n", f->blue.isousc);
 
 
@@ -57,8 +59,8 @@ iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
       printf ("Intensité maximale appelée Ph. %d (A): %d\n", i + 1, f->blue.imax[i]);
     }
 
-    printf ("\nOption tarifaire choisie    : %s\n", sTinfoOpTarifToStr (f->blue.optarif));
-    printf ("Période Tarifaire en cours  : %s\n", sTinfoPetcToStr (f->blue.ptec));
+    printf ("\nOption tarifaire choisie    : %s\n", sTinfoOpTarifToStr (f->blue.optarif) );
+    printf ("Période Tarifaire en cours  : %s\n", sTinfoPetcToStr (f->blue.ptec) );
     switch (f->blue.optarif) {
 
       case eTinfoOpTarifBase:
@@ -77,7 +79,7 @@ iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
         break;
 
       case eTinfoOpTarifTempo:
-        printf ("Couleur de demain: %s\n", sTinfoTempoColorToStr (f->blue.tarif.tempo.demain));
+        printf ("Couleur de demain: %s\n", sTinfoTempoColorToStr (f->blue.tarif.tempo.demain) );
         printf ("Index Heures Creuses, Jours Bleus  (Wh): %ld\n", f->blue.tarif.tempo.index_hcjb);
         printf ("Index Heures Pleines, Jours Bleus  (Wh): %ld\n", f->blue.tarif.tempo.index_hpjb);
         printf ("Index Heures Creuses, Jours Blancs (Wh): %ld\n", f->blue.tarif.tempo.index_hcjw);
@@ -99,7 +101,7 @@ static int
 iNewPetcCB (struct xTinfo * t, union xTinfoFrame * f) {
 
   printf ("Changement Période Tarifaire En Cours: %s\n",
-          sTinfoPetcToStr (f->blue.ptec));
+          sTinfoPetcToStr (f->blue.ptec) );
   return 0;
 }
 
@@ -108,8 +110,8 @@ iNewPetcCB (struct xTinfo * t, union xTinfoFrame * f) {
 static void
 vSigIntHandler (int sig) {
 
-  if ( (sig == SIGINT) || (sig == SIGTERM)) {
-    if (iTinfoClose (tinfo)) {
+  if ( (sig == SIGINT) || (sig == SIGTERM) ) {
+    if (iTinfoClose (tinfo) ) {
 
       perror ("iTinfoClose");
       exit (EXIT_FAILURE);
@@ -151,7 +153,7 @@ main (int argc, char **argv) {
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);
 
-  printf ("Démo Liaison de télé-information\nAppuyez sur Ctrl+C pour arrêter ...\n");
+  printf ("Test Liaison de télé-information\nAppuyez sur Ctrl+C pour arrêter ...\n");
 
   for (;;) {
 

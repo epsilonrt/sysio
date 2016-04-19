@@ -24,9 +24,9 @@
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
   <Project Name="sysio_test_tinfo" Path="sysio/test/tinfo/sysio_test_tinfo.project" Active="Yes"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Environment/>
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -52,9 +52,9 @@
       <Project Name="sysio_test_tinfo" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="ssend" ConfigName="Debug"/>
+      <Project Name="util_ssend" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
-      <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>
@@ -80,6 +80,7 @@
       <Project Name="sysio_test_tinfo" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="ssend" ConfigName="Release"/>
+      <Project Name="util_ssend" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
