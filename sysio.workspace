@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
-  <Project Name="lib" Path="lib/lib.project" Active="No"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -22,8 +22,10 @@
   <Project Name="sysio_demo_rtc" Path="demo/i2c/rtc/sysio_demo_rtc.project" Active="No"/>
   <Project Name="sysio_demo_hih6130" Path="demo/i2c/hih6130/sysio_demo_hih6130.project" Active="No"/>
   <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
+  <Project Name="modbus_demo_rtu_master" Path="demo/modbus/rtu/modbus_demo_rtu_master.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -56,8 +58,10 @@
       <Project Name="sysio_demo_rtc" ConfigName="Debug"/>
       <Project Name="sysio_demo_hih6130" ConfigName="Debug"/>
       <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
+      <Project Name="modbus_demo_rtu_master" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>
@@ -90,6 +94,7 @@
       <Project Name="sysio_demo_rtc" ConfigName="Release"/>
       <Project Name="sysio_demo_hih6130" ConfigName="Release"/>
       <Project Name="sysio_demo_i2c" ConfigName="Release"/>
+      <Project Name="modbus_demo_rtu_master" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
