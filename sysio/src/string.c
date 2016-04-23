@@ -80,6 +80,30 @@ strcpylwr (char * dst, const char * src) {
 
 // -----------------------------------------------------------------------------
 int
+iStrToDouble (const char * str, double * d) {
+  char *endptr;
+  double val;
+
+  errno = 0;    /* Pour distinguer la réussite/échec après l'appel */
+  val = strtod (str, &endptr);
+  
+  if (errno == ERANGE) {
+         
+    return -1;
+  }
+
+  if (endptr == str) {
+    
+    return -1;
+  }
+
+  /* Si nous sommes ici, strtol() a analysé un nombre avec succès */
+  *d = val;
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+int
 iStrToLong (const char * str, long * l, int base) {
   char *endptr;
   long val;

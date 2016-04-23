@@ -80,6 +80,16 @@ int iStrToLong (const char * str, long * n, int base);
  */
 int iStrToLongLong (const char * str, long long * n, int base);
 
+/** 
+ * @brief Convertion d'un string en double
+ * 
+ * @param str string commençant par la représentation d'un décimal.
+ * @param n pointeur sur le nombre décimal résultat, si aucune conversion 
+ * valide n'a pu être effectuée (-1), la valeur pointée n'est pas modifiée.
+ * @return 0, -1 si erreur
+ */
+int iStrToDouble (const char * str, double * n);
+
 /**
  *  @}
  * @}
