@@ -36,7 +36,14 @@ __BEGIN_C_DECLS
  */
 #define IAQ_I2CADDR  0x5A
 
+/**
+ * @brief indique que le capteur est occupée
+ */
 #define IAQ_BUSY  0x01
+
+/**
+ * @brief indique que le capteur est en phase de préchaufage (~5min)
+ */
 #define IAQ_WARMUP 0x10 // (module in warm up phase)
 
 /* structures =============================================================== */
@@ -85,7 +92,8 @@ int iIaqClose (xIaq * sensor);
  * @param sensor pointeur sur le contexte du circuit IAQ
  * @param data Pointeur sur une variable qui contiendra les derniers résultats
  * @return 0 en cas de succès, IAQ_BUSY tant que la mesure n'est pas
- * terminée, une valeur négative en cas d'erreur.
+ * terminée, IAQ_WARMUP tant que le capteur est en préchauffage, une valeur 
+ * négative en cas d'erreur.
  */
 int iIaqRead (xIaq * sensor, xIaqData * data);
 
