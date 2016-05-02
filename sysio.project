@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="sysio" InternalType="">
+  <VirtualDirectory Name="util">
+    <VirtualDirectory Name="template">
+      <VirtualDirectory Name="cpp">
+        <File Name="util/template/cpp/template.cpp"/>
+        <File Name="util/template/cpp/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="module">
+        <File Name="util/template/module/module.h"/>
+        <File Name="util/template/module/module.c"/>
+      </VirtualDirectory>
+      <File Name="util/template/Makefile"/>
+      <File Name="util/template/template.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="bin">
+      <File Name="util/bin/rpi-cpu"/>
+      <File Name="util/bin/rpi-rev"/>
+      <File Name="util/bin/sysio-ver"/>
+      <File Name="util/bin/sysio-prj"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="ssend">
+      <File Name="util/ssend/version-git.h"/>
+      <File Name="util/ssend/ssend.c"/>
+      <File Name="util/ssend/ssend"/>
+      <File Name="util/ssend/Makefile"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="sping">
+      <File Name="util/sping/sping.c"/>
+      <File Name="util/sping/version-git.h"/>
+      <File Name="util/sping/sping"/>
+      <File Name="util/sping/Makefile"/>
+    </VirtualDirectory>
+    <File Name="util/Makefile"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -26,33 +59,6 @@
  }]]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="util">
-    <VirtualDirectory Name="bin">
-      <File Name="util/bin/sysio-ver"/>
-      <File Name="util/bin/sysio-prj"/>
-      <File Name="util/bin/rpi-cpu"/>
-      <File Name="util/bin/rpi-rev"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="template">
-      <File Name="util/template/Makefile"/>
-      <File Name="util/template/template.c"/>
-      <VirtualDirectory Name="cpp">
-        <File Name="util/template/cpp/template.cpp"/>
-        <File Name="util/template/cpp/Makefile"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="module">
-        <File Name="util/template/module/module.h"/>
-        <File Name="util/template/module/module.c"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="sping">
-      <File Name="util/sping/sping.c"/>
-      <File Name="util/sping/version-git.h"/>
-      <File Name="util/sping/sping"/>
-      <File Name="util/sping/Makefile"/>
-    </VirtualDirectory>
-    <File Name="util/Makefile"/>
-  </VirtualDirectory>
   <Description/>
   <Dependencies/>
   <Settings Type="Executable">
@@ -144,7 +150,93 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <VirtualDirectory Name="sysio">
+    <VirtualDirectory Name="test">
+      <VirtualDirectory Name="xbee">
+        <VirtualDirectory Name="node">
+          <File Name="sysio/test/xbee/node/sysio_test_xbee_node.c"/>
+          <File Name="sysio/test/xbee/node/sysio_test_xbee_node"/>
+          <File Name="sysio/test/xbee/node/Makefile"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="coordinator">
+          <File Name="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.c"/>
+          <File Name="sysio/test/xbee/coordinator/Makefile"/>
+          <File Name="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator"/>
+        </VirtualDirectory>
+        <File Name="sysio/test/xbee/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="dinput">
+        <VirtualDirectory Name="group">
+          <File Name="sysio/test/dinput/group/sysio_test_dinput_group.c"/>
+          <File Name="sysio/test/dinput/group/Makefile"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="poll">
+          <File Name="sysio/test/dinput/poll/sysio_test_dinput_poll.c"/>
+          <File Name="sysio/test/dinput/poll/Makefile"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="callback">
+          <File Name="sysio/test/dinput/callback/Makefile"/>
+          <File Name="sysio/test/dinput/callback/sysio_test_dinput_callback.c"/>
+        </VirtualDirectory>
+        <File Name="sysio/test/dinput/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="gpio">
+        <VirtualDirectory Name="read">
+          <File Name="sysio/test/gpio/read/sysio_test_gpio_read.c"/>
+          <File Name="sysio/test/gpio/read/Makefile"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="getmode">
+          <File Name="sysio/test/gpio/getmode/sysio_test_gpio_getmode.c"/>
+          <File Name="sysio/test/gpio/getmode/Makefile"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="write">
+          <File Name="sysio/test/gpio/write/Makefile"/>
+          <File Name="sysio/test/gpio/write/sysio_test_gpio_write.c"/>
+        </VirtualDirectory>
+        <File Name="sysio/test/gpio/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="tinfo">
+        <File Name="sysio/test/tinfo/sysio_test_tinfo.c"/>
+        <File Name="sysio/test/tinfo/badframe.txt"/>
+        <File Name="sysio/test/tinfo/capture.txt"/>
+        <File Name="sysio/test/tinfo/Makefile"/>
+        <File Name="sysio/test/tinfo/frame.txt"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="serial">
+        <File Name="sysio/test/serial/sysio_test_serial"/>
+        <File Name="sysio/test/serial/sysio_test_serial.c"/>
+        <File Name="sysio/test/serial/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="vector">
+        <File Name="sysio/test/vector/sysio_test_vector.c"/>
+        <File Name="sysio/test/vector/sysio_test_vector"/>
+        <File Name="sysio/test/vector/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="doutput">
+        <File Name="sysio/test/doutput/sysio_test_doutput.c"/>
+        <File Name="sysio/test/doutput/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="rpi">
+        <File Name="sysio/test/rpi/sysio_test_rpi.c"/>
+        <File Name="sysio/test/rpi/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="dlist">
+        <File Name="sysio/test/dlist/sysio_test_dlist.c"/>
+        <File Name="sysio/test/dlist/sysio_test_dlist"/>
+        <File Name="sysio/test/dlist/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="pwm">
+        <File Name="sysio/test/pwm/sysio_test_pwm.c"/>
+        <File Name="sysio/test/pwm/Makefile"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="rs485">
+        <File Name="sysio/test/rs485/sysio_test_rs485.c"/>
+        <File Name="sysio/test/rs485/Makefile"/>
+      </VirtualDirectory>
+      <File Name="sysio/test/Makefile"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="src">
       <VirtualDirectory Name="arch">
         <VirtualDirectory Name="arm">
@@ -152,7 +244,6 @@
             <File Name="sysio/src/arch/arm/rpi/rpi.c"/>
             <File Name="sysio/src/arch/arm/rpi/gpio.c"/>
             <File Name="sysio/src/arch/arm/rpi/pwm.c"/>
-            <File Name="sysio/test/vector/Makefile"/>
           </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
@@ -160,31 +251,31 @@
         <File Name="sysio/src/gpio/doutput.c"/>
         <File Name="sysio/src/gpio/dinput.c"/>
       </VirtualDirectory>
-      <VirtualDirectory Name="i2c">
-        <File Name="sysio/src/i2c/i2c.c"/>
-        <File Name="sysio/src/i2c/i2c-dev.h"/>
-        <File Name="sysio/src/i2c/hih6130.c"/>
-        <File Name="sysio/src/i2c/iaq.c"/>
-      </VirtualDirectory>
-      <File Name="sysio/src/serial-wrapper.cpp"/>
-      <File Name="sysio/src/serial.c"/>
       <VirtualDirectory Name="win32">
         <File Name="sysio/src/win32/delay.c"/>
       </VirtualDirectory>
-      <File Name="sysio/src/xbee.c"/>
-      <File Name="sysio/src/xbee1.c"/>
-      <File Name="sysio/src/xbee2.c"/>
-      <File Name="sysio/src/xbee_private.h"/>
-      <File Name="sysio/src/dlist.c"/>
-      <File Name="sysio/src/vector.c"/>
-      <File Name="sysio/src/string.c"/>
-      <File Name="sysio/src/tinfo.c"/>
+      <VirtualDirectory Name="i2c">
+        <File Name="sysio/src/i2c/i2c.c"/>
+        <File Name="sysio/src/i2c/iaq.c"/>
+        <File Name="sysio/src/i2c/i2c-dev.h"/>
+        <File Name="sysio/src/i2c/hih6130.c"/>
+      </VirtualDirectory>
       <VirtualDirectory Name="unix">
         <File Name="sysio/src/unix/iomap.c"/>
         <File Name="sysio/src/unix/serial.c"/>
         <File Name="sysio/src/unix/delay.c"/>
         <File Name="sysio/src/unix/log.c"/>
       </VirtualDirectory>
+      <File Name="sysio/src/xbee.c"/>
+      <File Name="sysio/src/serial.c"/>
+      <File Name="sysio/src/dlist.c"/>
+      <File Name="sysio/src/tinfo.c"/>
+      <File Name="sysio/src/vector.c"/>
+      <File Name="sysio/src/xbee2.c"/>
+      <File Name="sysio/src/xbee1.c"/>
+      <File Name="sysio/src/string.c"/>
+      <File Name="sysio/src/serial-wrapper.cpp"/>
+      <File Name="sysio/src/xbee_private.h"/>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -195,25 +286,24 @@
     <File Name="TODO"/>
     <File Name="LICENSE"/>
     <File Name="sysio/delay.h"/>
+    <File Name="sysio/hih6130.h"/>
     <File Name="sysio/doutput.h"/>
+    <File Name="sysio/dlist.h"/>
     <File Name="sysio/defs.h"/>
+    <File Name="sysio/vector.h"/>
+    <File Name="sysio/iaq.h"/>
+    <File Name="sysio/string.h"/>
     <File Name="sysio/rpi.h"/>
     <File Name="sysio/i2c.h"/>
+    <File Name="sysio/tinfo.h"/>
     <File Name="sysio/pwm.h"/>
     <File Name="sysio/serial.hpp"/>
     <File Name="sysio/gpio.h"/>
     <File Name="sysio/dinput.h"/>
+    <File Name="sysio/xbee.h"/>
+    <File Name="sysio/compat.h"/>
     <File Name="sysio/iomap.h"/>
     <File Name="sysio/serial.h"/>
     <File Name="sysio/log.h"/>
-    <File Name="sysio/xbee.h"/>
-    <File Name="sysio/dlist.h"/>
-    <File Name="sysio/vector.h"/>
-    <File Name="sysio/string.h"/>
-    <File Name="sysio/tinfo.h"/>
-    <File Name="sysio/hih6130.h"/>
-    <File Name="sysio/iaq.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>
