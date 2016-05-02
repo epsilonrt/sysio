@@ -26,6 +26,7 @@
   <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
+  <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
@@ -56,6 +57,7 @@
       <Project Name="util_ssend" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_doc" ConfigName="Debug"/>
+      <Project Name="radio" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -86,6 +88,7 @@
       <Project Name="util_ssend" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_doc" ConfigName="Release"/>
+      <Project Name="radio" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

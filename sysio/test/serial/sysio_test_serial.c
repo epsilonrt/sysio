@@ -9,8 +9,7 @@
  * - si caractère incorrect reçu: allume la led rouge (ou affiche E)
  * - si aucun caractère au bout du timeout: allume la led jaune (ou affiche T)
  *
- * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>

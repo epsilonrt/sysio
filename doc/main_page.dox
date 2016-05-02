@@ -2,8 +2,7 @@
 
 @file main_page.dox
 @brief Page de garde de la documentation
-  Copyright © 2015-2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
-  All rights reserved.
+  Copyright © 2015-2016 epsilonRT, All rights reserved.
   This software is governed by the CeCILL license <http://www.cecill.info>
 
 @mainpage Présentation
@@ -24,10 +23,10 @@
 
   Vous pouvez récupérer la toute dernière version de développement grâce à git :\n
 @code
-$ git clone git://www.epsilonrt.com/sysio
+$ git clone http://github.com/epsilonrt/sysio.git
 @endcode
 
-  @author Pascal Jean, epsilonRT \htmlonly &#60;<a href="mailto:&#101;&#112;&#115;&#105;&#108;&#111;&#110;&#114;&#116;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#101;&#112;&#115;&#105;&#108;&#111;&#110;&#114;&#116;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>&#62;\endhtmlonly \n Copyright © 2009-2014 All rights reserved.
+  @author epsilonRT \htmlonly &#60;<a href="mailto:&#101;&#112;&#115;&#105;&#108;&#111;&#110;&#114;&#116;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">&#101;&#112;&#115;&#105;&#108;&#111;&#110;&#114;&#116;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;</a>&#62;\endhtmlonly \n Copyright © 2009-2014 All rights reserved.
 
   Ce projet est en perpétuelle évolution et nécessite un travail important, si vous souhaitez me soutenir, n'hésitez pas à me faire un don !
 

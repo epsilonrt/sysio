@@ -2,8 +2,7 @@
  * @file sysio/hih6130.h
  * @brief Capteur I2c HIH6130 de Honeywell (Implémentation)
  *
- * Copyright © 2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2016 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <math.h>

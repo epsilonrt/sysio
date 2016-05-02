@@ -3,7 +3,7 @@
  * Maxstream XBee module private Header
  * 
  * Copyright © 2006-2008 Tymm Twillman <tymm@booyaka.com>
- * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
+ * Copyright © 2015 epsilonRT, All rights reserved.
  * All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  * 

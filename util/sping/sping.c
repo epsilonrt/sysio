@@ -2,8 +2,7 @@
  * @file sping.c
  * @brief Ping/Pong sur liaison série
  *
- * Copyright © 2013-2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2013-2016 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
@@ -25,8 +24,8 @@
 #include "version-git.h"
 
 /* constants ================================================================ */
-#define AUTHORS "Pascal JEAN"
-#define WEBSITE "http://gitweb.epsilonrt.com/sysio.git"
+#define AUTHORS "epsilonRT"
+#define WEBSITE "http://www.epsilonrt.com/sysio"
 
 #define STX 2
 #define ETX 3

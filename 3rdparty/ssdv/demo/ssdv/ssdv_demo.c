@@ -2,8 +2,7 @@
  * @file demo_ssdv.c
  * @brief SSDV radio demo.
  * 
- * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
@@ -79,7 +78,7 @@ main (int argc, char **argv) {
   SDL_Event event;
 
   printf ("LibRadio Ssdv embedded frame test\n");
-  printf ("Copyright (c) 2015 Pascal JEAN <pascal.jean@btssn.net>\n\n");
+  printf ("Copyright (c) 2015 epsilonRT, All rights reserved.\n\n");
 
   vSetup (argc, argv);
   printf ("The ssdv test is in progress on %s.\nPress CTRL+C to quit\n\n", DEVICE_NAME);

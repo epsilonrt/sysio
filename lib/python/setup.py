@@ -3,8 +3,7 @@
 #
 #  setup.py
 #-----------------------------------------------------------------------------#
-# Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>     #
-# All rights reserved.                                                        #
+# Copyright © 2015 epsilonRT All rights reserved.                             #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 #-----------------------------------------------------------------------------#
 
@@ -20,8 +19,8 @@ module_swig = Extension('_sysio',
 setup (name = 'sysio',
        version = '1.0',
        description = 'Extended I/O system library',
-       author = 'Pascal JEAN aka epsilonrt',
-       author_email = 'pjean@btssn.net',
+       author = 'epsilonRT',
+       author_email = 'epsilonrt <--//\\--> gmail.com',
        url = 'http://www.btssn.net',
        license = 'CeCILL license Version 2.1 <http://www.cecill.info>',
        ext_modules = [module_swig],

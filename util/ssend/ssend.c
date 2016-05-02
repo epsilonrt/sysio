@@ -2,8 +2,7 @@
  * ssend.c
  * Send a file to the serial port (as binary).
  *
- * Copyright © 2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2016 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdio.h>
@@ -20,8 +19,8 @@
 #include "version-git.h"
 
 /* constants ================================================================ */
-#define AUTHORS "Pascal JEAN"
-#define WEBSITE "http://gitweb.epsilonrt.com/sysio.git"
+#define AUTHORS "epsilonRT"
+#define WEBSITE "http://www.epsilonrt.com/sysio"
 
 /* default values =========================================================== */
 #ifdef ARCH_ARM_RASPBERRYPI

@@ -2,8 +2,7 @@
  * @file sysio/chipio/chipio.h
  * @brief Circuit d'entrées-sorties universel
  *
- * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #ifndef _SYSIO_CHIPIO_H_

@@ -1,8 +1,7 @@
 /*
  * sysio/posix/serial.c
  * @brief Liaison série (Implémentation)
- * Copyright © 2014 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2014 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <unistd.h>

@@ -2,8 +2,7 @@
  * @file tinfo.h
  * @brief Télé-information client des compteurs utilisés par ERDF
  *
- * Copyright © 2016 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2016 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #ifndef _SYSIO_TINFO_H_

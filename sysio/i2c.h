@@ -2,8 +2,7 @@
  * @file sysio/i2c.h
  * @brief Bus I²C
  *
- * Copyright © 2015 Pascal JEAN aka epsilonRT <pascal.jean--AT--btssn.net>
- * All rights reserved.
+ * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #ifndef _SYSIO_I2C_H_
