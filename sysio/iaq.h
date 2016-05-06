@@ -23,7 +23,6 @@ __BEGIN_C_DECLS
  *  @example i2c/iaq/sysio_demo_iaq.c
  *  Affichage du taux de CO2 en ppm (partie par million) et du taux de
  *  composés volatiles en ppb (partie par milliard).
- *  @{
  */
 
 /* constants ================================================================ */
@@ -95,6 +94,10 @@ int iIaqClose (xIaq * sensor);
  * négative en cas d'erreur.
  */
 int iIaqRead (xIaq * sensor, xIaqData * data);
+
+/**
+ * @}
+ */
 
 /* ========================================================================== */
 __END_C_DECLS

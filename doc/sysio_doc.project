@@ -32,7 +32,10 @@
     <File Name="Makefile"/>
     <File Name="Doxyfile.in"/>
     <File Name="DoxygenLayout.xml"/>
-    <File Name="main_page.dox"/>
+    <File Name="build_main_page.sh"/>
+    <File Name="main_page_footer.dox"/>
+    <File Name="main_page_header.dox"/>
+    <File Name="../README.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

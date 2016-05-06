@@ -21,7 +21,6 @@ __BEGIN_C_DECLS
  *  @{
  *  @example i2c/hih6130/sysio_demo_hih6130.c
  *  Affichage de la température et de l'humidité
- *  @{
  */
 
 /* constants ================================================================ */
@@ -93,6 +92,10 @@ int iHih6130Start (xHih6130 * sensor);
  * terminée, une valeur négative en cas d'erreur.
  */
 int iHih6130Read (xHih6130 * sensor, xHih6130Data * data);
+
+/**
+ * @}
+ */
 
 /* ========================================================================== */
 __END_C_DECLS

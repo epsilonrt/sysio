@@ -4,6 +4,10 @@
 ---
 Copyright 2015-2016 (c), epsilonRT
 
+<a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html">
+  <img src="https://raw.githubusercontent.com/epsilonrt/gxPL/master/doc/images/osi.png" alt="osi.png" align="right" valign="top">
+</a>
+
 SysIo est un projet Open Source sous 
 [CeCILL Free Software License Version 2.1](http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html)
 dont l'objectif est d'offrir une bibliothèque C, C++ et Python pour accèder

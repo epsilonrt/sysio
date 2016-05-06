@@ -5,7 +5,7 @@
 
 PROJECT_NAME = sysio
 
-# Chemin relatif du répertoire racine de xPL4Linux
+# Chemin relatif du répertoire racine de SysIo
 PROJECT_TOPDIR = ..
 
 #---------------- Install Options ----------------
@@ -24,6 +24,10 @@ all: doc
 rebuild: distclean doc
 version: version.mk
 doc: html
+
+main_page.dox: main_page_header.dox main_page_footer.dox ../README.md
+	@echo "$(MSG_MAIN)"
+	@./build_main_page.sh
 
 version.mk: 
 	@$(PROJECT_TOPDIR)/util/bin/sysio-ver $@
@@ -48,12 +52,12 @@ browser: html
 clean: 
 	@echo "$(MSG_CLEAN)"
 	@-rm -fr html
-	@-rm -f Doxyfile
+	@-rm -f Doxyfile main_page.dox .version version.mk
 
 distclean: clean
 	@echo "$(MSG_DISTCLEAN)"
 	@-rm -f $(PROJECT_NAME)-doc-html-*.tar.gz
-	@-rm -f version.mk .version $(PROJECT_NAME).tag *.db
+	@-rm -f *.tag *.db
 
 install: tar uninstall
 	@echo "$(MSG_INSTALL) $(TARGET) doc in $(INSTALL_DOCDIR)"
