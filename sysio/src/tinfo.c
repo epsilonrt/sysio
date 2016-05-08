@@ -199,6 +199,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
     if (iStrToLong (data, &n, 10) == 0) {
 
       f->blue.papp = n;
+      f->blue.flag |= eTinfoFlagPapp;
       TINFO_DEBUG ("PAPP=%d VA", f->blue.papp);
     }
     return;

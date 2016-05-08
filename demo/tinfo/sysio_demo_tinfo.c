@@ -47,7 +47,7 @@ iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
       }
     }
     // La puissance apparente n'est pas présente pour tous les compteurs
-    if (f->blue.papp > 0) {
+    if (f->blue.flag & eTinfoFlagPapp) {
 
       printf ("Puissance apparente (VA): %d\n", f->blue.papp);
     }

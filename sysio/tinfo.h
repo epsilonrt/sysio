@@ -72,10 +72,11 @@ typedef enum  {
 } eTinfoOpTarif;
 
 /**
- * @brief Drapeaux
+ * @brief Drapeaux de la trame
  */
 typedef enum  {
   eTinfoFlagShort         = 0x0001, /**< Trame courte (Triphasé, Dépassement puissance) */
+  eTinfoFlagPapp          = 0x0002, /**< Trame contenant une puissance apparente */
   eTinfoFlagAdps          = 0x0100, /**< Avertissement de Dépassement De Puissance Souscrite */
   eTinfoFlagNewPetc       = 0x0200, /**< Changement de période de tarification */
   eTinfoFlagTempoNewColor = 0x0400, /**< Changement de couleur de jour Tempo */
