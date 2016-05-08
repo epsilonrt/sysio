@@ -321,19 +321,54 @@ void vTinfoSetUserContext (xTinfo *tinfo, void * udata);
 
 /**
  * @brief Chaîne de caractère correspondant à une période de tarification
+ * 
+ * @param ptec période tarifaire en cours
+ * @return chaîne de caractère string ci-dessous: \n
+  | string | ptec           | période tarifaire en cours            | 
+  | :----- | :------------- | :------------------------------------ |
+  | th     | eTinfoPtecTh   |  Toutes les Heures                    | 
+  | hc     | eTinfoPtecHc   |  Heures Creuses                       | 
+  | hp     | eTinfoPtecHp   |  Heures Pleines                       | 
+  | hn     | eTinfoPtecHn   |  Heures Normales                      | 
+  | hpm    | eTinfoPtecPm   |  Heures de Pointe Mobile              | 
+  | hcjb   | eTinfoPtecHcJb |  Heures Creuses, Jours Bleus          | 
+  | hcjw   | eTinfoPtecHcJw |  Heures Creuses, Jours Blancs (White) | 
+  | hcjr   | eTinfoPtecHcJr |  Heures Creuses, Jours Rouges         | 
+  | hpjb   | eTinfoPtecHpJb |  Heures Pleines, Jours Bleus          | 
+  | hpjw   | eTinfoPtecHpJw |  Heures Pleines, Jours Blancs (White) | 
+  | hpjr   | eTinfoPtecHpJr |  Heures Pleines, Jours Rouges         | 
+  | ----   | autre valeur   |  Valeur inconnue (4 tirets -)         | 
  */
-const char * sTinfoPetcToStr (eTinfoPtec p);
+const char * sTinfoPtecToStr (eTinfoPtec ptec);
 
 /**
  * @brief Chaîne de caractère correspondant à une couleur Tempo
+ * 
+ * @param color couleur tempo du jour
+ * @return chaîne de caractère string ci-dessous: \n
+  | string | color            | couleur tempo du jour         | 
+  | :----- | :--------------- | :---------------------------- |
+  | bleu   | eTinfoColorBlue  |  Bleu                         | 
+  | blanc  | eTinfoColorWhite |  Blanc                        | 
+  | rouge  | eTinfoColorRed   |  Rouge                        | 
+  | ----   | autre valeur     |  Valeur inconnue (4 tirets -) | 
  */
-const char * sTinfoTempoColorToStr (eTinfoTempoColor c);
+const char * sTinfoTempoColorToStr (eTinfoTempoColor color);
 
 /**
  * @brief Chaîne de caractère correspondant à une option tarifaire
+ * 
+ * @param tarif option tarifaire
+ * @return chaîne de caractère string ci-dessous: \n
+  | string | tarif              | Option tarifaire                        | 
+  | :----- | :----------------- | :-------------------------------------- |
+  | base   | eTinfoOpTarifBase  |  de Base                                | 
+  | hc     | eTinfoOpTarifHc    |  Heures creuses                         | 
+  | ejp    | eTinfoOpTarifEjp   |  EJP (Effacecement des Jours de Pointe) | 
+  | tempo  | eTinfoOpTarifTempo |  Tempo                                  | 
+  | ----   | autre valeur       |  Valeur inconnue (4 tirets -)           | 
  */
-const char * sTinfoOpTarifToStr (eTinfoOpTarif t);
-
+const char * sTinfoOpTarifToStr (eTinfoOpTarif tarif);
 
 /**
  * @}

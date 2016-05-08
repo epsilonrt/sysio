@@ -99,7 +99,7 @@ static int
 iNewPetcCB (struct xTinfo * t, union xTinfoFrame * f) {
 
   printf ("Changement Période Tarifaire En Cours: %s\n",
-          sTinfoPetcToStr (f->blue.ptec) );
+          sTinfoPtecToStr (f->blue.ptec) );
   return 0;
 }
 

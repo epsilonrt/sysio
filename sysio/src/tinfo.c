@@ -49,16 +49,16 @@ static const char * sTempoColorList[] = {
 };
 
 static const char * sTempoColorStrList[] = {
-  "Bleu", "Blanc", "Rouge"
+  "bleu", "blanc", "rouge"
 };
 
 static const char * sOpTarifStrList[] = {
-  "Base", "hC", "EJP", "Tempo"
+  "base", "hc", "ejp", "tempo"
 };
 
 static const char * sPtecStrList[] = {
-  "Th", "hC", "hP", "hN", "hPM",
-  "hCjB",  "hCjW", "hCjR", "hPjB", "hPjW", "hPjR"
+  "th", "hc", "hp", "hn", "hpm",
+  "hcjb",  "hcjw", "hcjr", "hpjb", "hpjw", "hpjr"
 };
 
 /* structures =============================================================== */
@@ -187,7 +187,7 @@ prvvReadBlueItem (xTinfo * t, xTinfoFrame * f ,
       if (strcmp (sPtecList[ptec - 1], data) == 0) {
 
         f->blue.ptec = ptec;
-        TINFO_DEBUG ("PTEC=%s", sTinfoPetcToStr (f->blue.ptec) );
+        TINFO_DEBUG ("PTEC=%s", sTinfoPtecToStr (f->blue.ptec) );
         break;
       }
     }
@@ -579,7 +579,7 @@ prviSplitFrame (xTinfo * t) {
       t->ptec = f.blue.ptec;
       f.blue.flag |= eTinfoFlagNewPetc;
       TINFO_DEBUG ("<< Changement Période Tarifaire En Cours: %s >>",
-                   sTinfoPetcToStr (t->ptec) );
+                   sTinfoPtecToStr (t->ptec) );
       if (t->cb[eTinfoCbPetc]) {
 
         ret = t->cb[eTinfoCbPetc] (t, &f);
@@ -816,7 +816,7 @@ vTinfoSetUserContext (xTinfo * t, void * uctx) {
 
 // -----------------------------------------------------------------------------
 const char *
-sTinfoPetcToStr (eTinfoPtec p) {
+sTinfoPtecToStr (eTinfoPtec p) {
 
   if ( (p >= eTinfoPtecTh) && (p <= eTinfoPtecHpJr) ) {
 
