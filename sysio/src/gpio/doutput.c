@@ -150,4 +150,36 @@ iDoutToggleAll (xDoutPort * port) {
   return iGpioToggleAll (port->clr_mask | port->set_mask, port->gpio);
 }
 
+// -----------------------------------------------------------------------------
+int
+iDoutRead (unsigned i, xDoutPort *port) {
+  assert (port);
+
+  if (i >= port->size) {
+    return -1;
+  }
+
+  return (iGpioRead (port->pins[i].num, port->gpio) == port->pins[i].act) ? true : false;
+}
+
+// -----------------------------------------------------------------------------
+int
+iDoutReadAll (xDoutPort *port) {
+  int mask = 0;
+
+  for (unsigned i = 0; i < port->size; i++) {
+
+    switch (iDoutRead (i, port)) {
+      case true:
+        mask |= _BV (i);
+        break;
+      case false:
+        break;
+      default:
+        return -1;
+    }
+  }
+  return mask;
+}
+
 /* ========================================================================== */

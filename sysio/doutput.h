@@ -104,6 +104,18 @@ int iDoutSet (unsigned output, xDoutPort * port);
 int iDoutToggle (unsigned output, xDoutPort * port);
 
 /**
+ * @brief Lecture de l'état d'une sortie
+ *
+ * Le niveau électrique réel dépend du niveau d'activation défini dans le
+ * tableau pins passé à l'ouverture du port.
+ *
+ * @param output le numéro logique de la sortie
+ * @param port le port de sortie
+ * @return true si active, false si inactive, -1 si erreur
+ */
+int iDoutRead (unsigned output, xDoutPort * port);
+
+/**
  * @brief Désactive toutes les sorties
  *
  * Le niveau électrique réel de chaque sortie dépend de leur niveau d'activation
@@ -132,6 +144,19 @@ int iDoutSetAll (xDoutPort * port);
  * @return 0, -1 si erreur
  */
 int iDoutToggleAll (xDoutPort * port);
+
+/**
+ * @brief Lecture de l'état de toutes les entrées
+ *
+ * Le niveau électrique réel de chaque broche dépend de leur niveau d'activation
+ * défini dans le tableau pins passé à l'ouverture du port.
+ *
+ * @param port le port de sortie
+ * @return masque de bits correspondant à l'état des entrées, le bit 0
+ *          correspond à la sortie 0 (0: inactive, 1:active), le bit 1 à la sortie
+ *          1 etc ... (-1 si erreur)
+ */
+int iDoutReadAll (xDoutPort * port);
 
 /**
  * @}
