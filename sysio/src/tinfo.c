@@ -578,12 +578,12 @@ prviSplitFrame (xTinfo * t) {
     if (t->ptec != f.blue.ptec) {
 
       t->ptec = f.blue.ptec;
-      f.blue.flag |= eTinfoFlagNewPetc;
+      f.blue.flag |= eTinfoFlagNewPtec;
       TINFO_DEBUG ("<< Changement Période Tarifaire En Cours: %s >>",
                    sTinfoPtecToStr (t->ptec) );
-      if (t->cb[eTinfoCbPetc]) {
+      if (t->cb[eTinfoCbPtec]) {
 
-        ret = t->cb[eTinfoCbPetc] (t, &f);
+        ret = t->cb[eTinfoCbPtec] (t, &f);
         bFrameHasBeenProcessed = true;
       }
     }

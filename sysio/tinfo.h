@@ -78,7 +78,7 @@ typedef enum  {
   eTinfoFlagShort         = 0x0001, /**< Trame courte (Triphasé, Dépassement puissance) */
   eTinfoFlagPapp          = 0x0002, /**< Trame contenant une puissance apparente */
   eTinfoFlagAdps          = 0x0100, /**< Avertissement de Dépassement De Puissance Souscrite */
-  eTinfoFlagNewPetc       = 0x0200, /**< Changement de période de tarification */
+  eTinfoFlagNewPtec       = 0x0200, /**< Changement de période de tarification */
   eTinfoFlagTempoNewColor = 0x0400, /**< Changement de couleur de jour Tempo */
   eTinfoFlagNewMotEtat    = 0x0800, /**< Changement de mot d'état */
 } eTinfoFlag;
@@ -117,7 +117,7 @@ typedef enum  {
 typedef enum {
   eTinfoCbFrame   = 0, /**< Réception d'une trame */
   eTinfoCbAdps    = 1, /**< Avertissement de Dépassement de Puissance Souscrite */
-  eTinfoCbPetc    = 2, /**< Changement de période tarifaire */
+  eTinfoCbPtec    = 2, /**< Changement de période tarifaire */
   eTinfoCbMotEtat = 3, /**< Changement du mot d'état */
   eTinfoCbTempo   = 4, /**< Changement de la couleur du jour du lendemain (tempo) */
 #ifndef __DOXYGEN__

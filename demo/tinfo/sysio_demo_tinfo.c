@@ -60,7 +60,7 @@ iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
     }
 
     printf ("\nOption tarifaire choisie    : %s\n", sTinfoOpTarifToStr (f->blue.optarif) );
-    printf ("Période Tarifaire en cours  : %s\n", sTinfoPetcToStr (f->blue.ptec) );
+    printf ("Période Tarifaire en cours  : %s\n", sTinfoPtecToStr (f->blue.ptec) );
     switch (f->blue.optarif) {
 
       case eTinfoOpTarifBase:
@@ -98,7 +98,7 @@ iFrameCB (struct xTinfo * t, union xTinfoFrame * f) {
 // -----------------------------------------------------------------------------
 // Gestionnaire de réception de trames de changement de période tarifaire (HC...)
 static int
-iNewPetcCB (struct xTinfo * t, union xTinfoFrame * f) {
+iNewPtecCB (struct xTinfo * t, union xTinfoFrame * f) {
 
   printf ("Changement Période Tarifaire En Cours: %s\n",
           sTinfoPtecToStr (f->blue.ptec) );
@@ -148,7 +148,7 @@ main (int argc, char **argv) {
 
   // Installation des gestionnaires d'événements
   vTinfoSetCB (tinfo, eTinfoCbFrame, iFrameCB);
-  vTinfoSetCB (tinfo, eTinfoCbPetc, iNewPetcCB);
+  vTinfoSetCB (tinfo, eTinfoCbPtec, iNewPtecCB);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);
