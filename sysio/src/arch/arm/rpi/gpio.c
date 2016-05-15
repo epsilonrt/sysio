@@ -699,12 +699,13 @@ iGpioReadAll (int64_t iMask, UNUSED_VAR (xGpio *, unused) ) {
     int64_t iValue = 0;
     int64_t iBit = 1;
     int p = 0;
+    int size = gpio.list->size + (gpio.numbering == eNumberingPhysical ? 1 : 0);
 
     if (iMask == 0) {
       iMask = -1;
     }
 
-    while ( (iMask) && (p < gpio.list->size) ) {
+    while ( (iMask) && (p < size) ) {
 
       if (iMask & iBit) {
 
@@ -736,8 +737,9 @@ iGpioWriteAll (int64_t iMask, bool bValue, UNUSED_VAR (xGpio *, unused) ) {
 
   if (bIsOpen() ) {
     int p = 0;
+    int size = gpio.list->size + (gpio.numbering == eNumberingPhysical ? 1 : 0);
 
-    while ( (iMask) && (p < gpio.list->size) ) {
+    while ( (iMask) && (p < size) ) {
 
       int g = iMcuPin (p);
       if (g >= 0) {
@@ -760,8 +762,9 @@ iGpioToggleAll (int64_t iMask, UNUSED_VAR (xGpio *, unused) ) {
 
   if (bIsOpen() ) {
     int p = 0;
+    int size = gpio.list->size + (gpio.numbering == eNumberingPhysical ? 1 : 0);
 
-    while ( (iMask) && (p < gpio.list->size) ) {
+    while ( (iMask) && (p < size) ) {
 
       int g = iMcuPin (p);
       if (g >= 0) {
