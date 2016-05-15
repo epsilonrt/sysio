@@ -18,7 +18,7 @@ __BEGIN_C_DECLS
  *  @{
  * La numérotation logique SysIo des broches de GPIO est la suivante: \n
 
-  \n Connecteur J8 (Modèle A+, B+, 2B, Zero) \n  <hr>
+  \n Connecteur J8 (Modèle A+, B+, 2B, 3B, Zero) \n  <hr>
   | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
   | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |
   |     |       |    3V3     |  1 - 2   |    5V      |       |     |
@@ -94,6 +94,7 @@ typedef enum  {
   eRpiModelComputeModule,
   eRpiModel2B,
   eRpiModelZero,
+  eRpiModel3B,
   eRpiModelUnknown = -1
 } eRpiModel;
 
@@ -103,6 +104,7 @@ typedef enum  {
 typedef enum  {
   eRpiMcuBcm2708,
   eRpiMcuBcm2709,
+  eRpiMcuBcm2710,
   eRpiMcuUnknown = -1
 } eRpiMcu;
 
@@ -155,8 +157,26 @@ int iRpiRev (void);
   | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
   | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
   | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
+  | a02082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony               |
+  | a22082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg ?                     |
  */
 const xRpi * pxRpiInfo (void);
+
+/**
+ * @brief Chaîne de caractères correspondant à un modèle
+ * 
+ * @param eModel modèle
+ * @return string correspondante
+ */
+const char * sRpiModelToStr (eRpiModel eModel);
+
+/**
+ * @brief Chaîne de caractères correspondant à un mcu
+ * 
+ * @param eMcu mcu
+ * @return string correspondante
+ */
+const char * sRpiMcuToStr (eRpiMcu eMcu);
 
 
 /* constants ================================================================ */
@@ -193,7 +213,7 @@ const xRpi * pxRpiInfo (void);
 #define GPIO_GEN9  19
 #define GPIO_GEN10 20
 
-// Models A+, B+, 2B, Zero only
+// Models A+, B+, 2B, 3B, Zero only
 #define GPIO_GEN11 21
 #define LAN_RUN    22
 #define GPIO_GEN12 23
@@ -206,15 +226,15 @@ const xRpi * pxRpiInfo (void);
 
 #define GPIO17  0
 #define GPIO18  1
-#define GPIO27  2 // Models A & B PCB V2.0, A+, B+, 2B, Zero 
+#define GPIO27  2 // Models A & B PCB V2.0, A+, B+, 2B, 3B, Zero 
 #define GPIO22  3
 #define GPIO23  4
 #define GPIO24  5
 #define GPIO25  6
 #define GPIO4   7
 
-#define GPIO2   8  // Models A & B PCB V2.0, A+, B+, 2B, Zero 
-#define GPIO3   9  // Models A & B PCB V2.0, A+, B+, 2B, Zero 
+#define GPIO2   8  // Models A & B PCB V2.0, A+, B+, 2B, 3B, Zero 
+#define GPIO3   9  // Models A & B PCB V2.0, A+, B+, 2B, 3B, Zero 
 #define GPIO0   30
 #define GPIO1   31
 
@@ -233,7 +253,7 @@ const xRpi * pxRpiInfo (void);
 #define GPIO30  19
 #define GPIO31  20
 
-// Models A+, B+, 2B, Zero only
+// Models A+, B+, 2B, 3B, Zero only
 #define GPIO5   21
 #define GPIO6   22
 #define GPIO13  23

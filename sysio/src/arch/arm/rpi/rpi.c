@@ -10,11 +10,28 @@
 #include <sysio/rpi.h>
 
 /* constants ================================================================ */
-static const char sManUnknown[] = "Unknown";
 static const char sManSony[] = "Sony";
 static const char sManQisda[] = "Qisda";
 static const char sManEgoman[] = "Egoman";
 static const char sManEmbest[] = "Embest";
+static const char sUnknown[] = "Unknown";
+
+static const char * sModelList[] = {
+  "Pi1 Model A",
+  "Pi1 Model B",
+  "Pi1 Model A+",
+  "Pi1 Model B+",
+  "Compute Module",
+  "Pi2 Model B",
+  "Pi Zero",
+  "Pi3 Model B",
+};
+
+static const char * sMcuList[] = {
+  "Bcm2708",
+  "Bcm2709",
+  "Bcm2710"
+};
 
 static const xRpi xRpiDb[] = {
   /*
@@ -23,8 +40,8 @@ static const xRpi xRpiDb[] = {
     | 0002     | Q1 2012      | B              | 1.0          | 256MB  |                           |
     | 0003     | Q3 2012      | B (ECN0001)    | 1.0          | 256MB  | Fuses mod and D14 removed |
   */
-  {.iRev = 0x00000002, .eModel = eRpiModelB, .iGpioRev = 1, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManUnknown},
-  {.iRev = 0x00000003, .eModel = eRpiModelB, .iGpioRev = 1, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManUnknown},
+  {.iRev = 0x00000002, .eModel = eRpiModelB, .iGpioRev = 1, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sUnknown},
+  {.iRev = 0x00000003, .eModel = eRpiModelB, .iGpioRev = 1, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sUnknown},
   /*
     | 0004     | Q3 2012      | B              | 2.0          | 256MB  | Mfg by Sony               |
     | 0005     | Q4 2012      | B              | 2.0          | 256MB  | Mfg by Qisda              |
@@ -59,7 +76,7 @@ static const xRpi xRpiDb[] = {
   {.iRev = 0x00000010, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
   {.iRev = 0x00000011, .eModel = eRpiModelComputeModule, .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
   {.iRev = 0x00000012, .eModel = eRpiModelAPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 256, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
-  {.iRev = 0x00000013, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManUnknown},
+  {.iRev = 0x00000013, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sUnknown},
   /*
     | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
     | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
@@ -71,8 +88,15 @@ static const xRpi xRpiDb[] = {
     | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
    */
   {.iRev = 0x00900092, .eModel = eRpiModelZero,          .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
+  /*
+    | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
+    | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
+  */
+  {.iRev = 0x00a02082, .eModel = eRpiModel3B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
+  {.iRev = 0x00a22082, .eModel = eRpiModel3B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sUnknown},
+
   /* Last element */
-  {.iRev = -1,         .eModel = eRpiModelUnknown,       .iGpioRev = -1, .eMcu = eRpiMcuUnknown, .iMemMB = -1, .iPcbMajor = -1, .iPcbMinor = -1, .sManufacturer = sManUnknown},
+  {.iRev = -1,         .eModel = eRpiModelUnknown,       .iGpioRev = -1, .eMcu = eRpiMcuUnknown, .iMemMB = -1, .iPcbMajor = -1, .iPcbMinor = -1, .sManufacturer = sUnknown},
 };
 
 /* private variables ======================================================== */
@@ -125,11 +149,14 @@ iRpiRev (void) {
         /* Locate Hardware for check if is it a Raspberry  */
         if (iStartWith (p, "Hardware") ) {
 
-          if (strstr (p, "BCM2709") ) {
+          if (strstr (p, "BCM2710") ) {
 
-            if (strstr (p, "BCM2708") ) {
+            if (strstr (p, "BCM2709") ) {
 
-              return 0;
+              if (strstr (p, "BCM2708") ) {
+
+                return 0;
+              }
             }
           }
           bisBcm = true;
@@ -170,12 +197,35 @@ pxRpiInfo (void) {
 
       // Recherche dans la base de données de la révision
       while ( (p->iRev != -1) && (p->iRev != r) ) {
+
         p++;
       }
       pxRpi = p;
     }
   }
   return pxRpi;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sRpiModelToStr (eRpiModel eModel) {
+
+  if ( (eModel >= eRpiModelA) && (eModel <= eRpiModel3B) ) {
+
+    return sModelList[eModel];
+  }
+  return sUnknown;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sRpiMcuToStr (eRpiMcu eMcu) {
+  
+  if ( (eMcu >= eRpiMcuBcm2708) && (eMcu <= eRpiMcuBcm2710) ) {
+
+    return sMcuList[eMcu];
+  }
+  return sUnknown;
 }
 
 /* ========================================================================== */

@@ -28,8 +28,7 @@
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
-      <Environment/>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -59,8 +58,7 @@
       <Project Name="sysio_doc" ConfigName="Debug"/>
       <Project Name="radio" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
-      <Environment/>
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>

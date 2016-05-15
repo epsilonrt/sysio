@@ -15,7 +15,7 @@
 #include <sysio/delay.h>
 
 /* constants ================================================================ */
-/* A+, B+, 2B, ZERO: 28 broches GPIO dispo */
+/* A+, B+, 2B, 3B, ZERO: 28 broches GPIO dispo */
 static const int iPhysListRev3[] = {
   7, 11, 12, 13, 15, 16, 18, 22, 24, 26, 29, 32, 33, 35, 37, 38, 40, -1
 };

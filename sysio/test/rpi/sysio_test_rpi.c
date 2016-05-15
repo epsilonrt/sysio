@@ -27,9 +27,9 @@ main (int argc, char **argv) {
   printf ("------------------------\n");
   if (r) {
     printf ("Revision    : 0x%x\n",r->iRev);
-    printf ("Model       : %d\n",r->eModel);
+    printf ("Model       : %s\n", sRpiModelToStr(r->eModel));
     printf ("GPIO Rev    : %d\n",r->iGpioRev);
-    printf ("Mcu         : %d\n",r->eMcu);
+    printf ("Mcu         : %s\n",sRpiMcuToStr(r->eMcu));
     printf ("Memory      : %dMB\n",r->iMemMB);
     printf ("PCB Rev     : %d.%d\n",r->iPcbMajor, r->iPcbMinor);
     printf ("Manufacturer: %s\n",r->sManufacturer);
