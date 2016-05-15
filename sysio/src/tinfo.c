@@ -563,7 +563,10 @@ prviSplitFrame (xTinfo * t) {
   // On passe la trame aux différents gestionnaires
   if (f.raw.frame == eTinfoFrameBlue) {
 
-    // Avertissement de Dépassement de Puissance Souscrite
+    // Si une trame a été traité par un gestionnaire d'exception, elle ne sera
+    // pas passée au gestionnaire de trame "normales"
+    
+    // Avertissement de Dépassement de Puissance Souscrite (Exception)
     if (f.blue.flag & eTinfoFlagAdps) {
 
       TINFO_DEBUG ("<< Avertissement de Dépassement de Puissance Souscrite >>");
@@ -574,7 +577,7 @@ prviSplitFrame (xTinfo * t) {
       }
     }
 
-    // Changement Période Tarifaire En Cours
+    // Changement Période Tarifaire En Cours (Exception)
     if (t->ptec != f.blue.ptec) {
 
       t->ptec = f.blue.ptec;
@@ -588,7 +591,7 @@ prviSplitFrame (xTinfo * t) {
       }
     }
 
-    // Changement de mot d'état
+    // Changement de mot d'état (Exception)
     if (t->motdetat != f.blue.motdetat) {
 
       t->motdetat = f.blue.motdetat;
@@ -601,6 +604,7 @@ prviSplitFrame (xTinfo * t) {
       }
     }
 
+    // Changement de couleur tempo du lendemain (Exception)
     if (f.blue.optarif == eTinfoOpTarifTempo) {
 
       if (t->demain != f.blue.tarif.tempo.demain) {
@@ -619,7 +623,8 @@ prviSplitFrame (xTinfo * t) {
   }
 
   if ( (bFrameHasBeenProcessed == false) && (t->cb[eTinfoCbFrame]) ) {
-
+    
+    // Trame normale
     ret = t->cb[eTinfoCbFrame] (t, &f);
   }
 
