@@ -29,6 +29,7 @@ static xXBee * xbee;
 static const char * cDev;
 static char cMyNi[21];
 volatile int frame_id = 0;
+static struct termios ts_save;
 
 /* private functions ======================================================== */
 int iDataCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
@@ -37,11 +38,12 @@ int iNodeIdCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
 int iLocalAtCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len);
 void vPrintAddr (uint8_t * pucAddr, int iSize);
 void vSigExitHandler (int sig);
-void vSigAlarmHandler (int sig);
+void vSendMsg (void);
 
 /* internal public functions ================================================ */
 int
 main (int argc, char **argv) {
+  struct termios ts;
   int ret;
   xSerialIos xIosSet = {
     .baud = DEFAULT_BAUDRATE, .dbits = SERIAL_DATABIT_8, .parity = SERIAL_PARITY_NONE,
@@ -69,7 +71,7 @@ main (int argc, char **argv) {
     perror ("xXBeeOpen failed !");
     exit (EXIT_FAILURE);
   }
-  
+
   printf ("*** SysIO XBee Coordinator Test ***\n");
 
   /*
@@ -83,16 +85,29 @@ main (int argc, char **argv) {
   ret = iXBeeSendAt (xbee, XBEE_CMD_NODE_ID, NULL, 0);
   assert (ret >= 0);
 
+  // non-blocking, noecho for stdin
+  tcgetattr (STDIN_FILENO, &ts);
+  ts_save = ts; // save to restore
+  ts.c_lflag &= ~ (ICANON | ECHO);
+  ts.c_cc[VMIN] = 0;
+  ts.c_cc[VTIME] = 0;
+  tcsetattr (STDIN_FILENO, TCSANOW, &ts);
+
   signal (SIGTERM, vSigExitHandler);
   signal (SIGINT,  vSigExitHandler);
-  signal (SIGALRM, vSigAlarmHandler);
-  alarm (1);
+
+  printf ("Press any key to send message, CTRL+C to exit,\n"
+          "Waiting for messages to be displayed...\n");
 
   for (;;) {
 
     // Scrute la réception des paquets
     ret = iXBeePoll (xbee, 10);
     assert (ret == 0);
+    if (getchar() > 0) {
+
+      vSendMsg();
+    }
   }
 
   return 0;
@@ -212,14 +227,17 @@ iNodeIdCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 void
 vSigExitHandler (int sig) {
 
+  // restore stdin settings
+  tcsetattr (STDIN_FILENO, TCSANOW, &ts_save);
   iXBeeClose (xbee);
+
   printf ("\n%s closed.\nHave a nice day !\n", cDev);
   exit (EXIT_SUCCESS);
 }
 
 // -----------------------------------------------------------------------------
 void
-vSigAlarmHandler (int sig) {
+vSendMsg (void) {
   char message[33];
   static int iCount = 1;
 
