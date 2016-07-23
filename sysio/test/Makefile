@@ -8,6 +8,8 @@ all: $(SUBDIRS)
 clean: $(SUBDIRS)
 distclean: $(SUBDIRS)
 rebuild: $(SUBDIRS)
+install: $(SUBDIRS)
+uninstall: $(SUBDIRS)
 
 elf: $(SUBDIRS)
 lss: $(SUBDIRS)
@@ -17,4 +19,3 @@ sym: $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) -w -C $@ $(MAKECMDGOALS)
-
