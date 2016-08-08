@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio-test" Database="">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
+  <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -27,8 +27,10 @@
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
+  <Project Name="sysio_test_blyss" Path="sysio/test/blyss/sysio_test_blyss.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -57,8 +59,10 @@
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_doc" ConfigName="Debug"/>
       <Project Name="radio" ConfigName="Debug"/>
+      <Project Name="sysio_test_blyss" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>
@@ -87,6 +91,7 @@
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_doc" ConfigName="Release"/>
       <Project Name="radio" ConfigName="Release"/>
+      <Project Name="sysio_test_blyss" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

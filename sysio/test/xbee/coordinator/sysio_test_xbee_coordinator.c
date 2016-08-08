@@ -227,12 +227,14 @@ iNodeIdCB (xXBee *xbee, xXBeePkt *pkt, uint8_t len) {
 void
 vSigExitHandler (int sig) {
 
-  // restore stdin settings
-  tcsetattr (STDIN_FILENO, TCSANOW, &ts_save);
-  iXBeeClose (xbee);
+  if ( (sig == SIGINT) || (sig == SIGTERM)) {
+    // restore stdin settings
+    tcsetattr (STDIN_FILENO, TCSANOW, &ts_save);
+    iXBeeClose (xbee);
 
-  printf ("\n%s closed.\nHave a nice day !\n", cDev);
-  exit (EXIT_SUCCESS);
+    printf ("\n%s closed.\nHave a nice day !\n", cDev);
+    exit (EXIT_SUCCESS);
+  }
 }
 
 // -----------------------------------------------------------------------------
