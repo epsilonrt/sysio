@@ -375,6 +375,7 @@ ifeq ($(SYS_HAS_GPIO),ON)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/doutput.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/gpio.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/pwm.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/blyss.h $(INSTALL_INCDIR)/$(TARGET)
 endif
 
 ifeq ($(SYS_HAS_I2C),ON)

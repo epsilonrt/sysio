@@ -2,7 +2,7 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = sping ssend
+SUBDIRS = sping ssend blyss
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
@@ -15,7 +15,7 @@ elf: $(SUBDIRS)
 lss: $(SUBDIRS)
 sym: $(SUBDIRS)
 
-.PHONY: all clean distclean rebuild elf lss sym $(SUBDIRS)
+.PHONY: all clean distclean rebuild install uninstall elf lss sym $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) -w -C $@ $(MAKECMDGOALS)
