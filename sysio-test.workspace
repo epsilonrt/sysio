@@ -28,6 +28,7 @@
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <Project Name="sysio_test_blyss" Path="sysio/test/blyss/sysio_test_blyss.project" Active="Yes"/>
+  <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -60,6 +61,7 @@
       <Project Name="sysio_doc" ConfigName="Debug"/>
       <Project Name="radio" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss" ConfigName="Debug"/>
+      <Project Name="util_bsend" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -92,6 +94,7 @@
       <Project Name="sysio_doc" ConfigName="Release"/>
       <Project Name="radio" ConfigName="Release"/>
       <Project Name="sysio_test_blyss" ConfigName="Release"/>
+      <Project Name="util_bsend" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

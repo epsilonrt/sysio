@@ -150,8 +150,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="sysio">
     <VirtualDirectory Name="test">
       <VirtualDirectory Name="xbee">
@@ -308,4 +306,6 @@
     <File Name="sysio/log.h"/>
     <File Name="sysio/blyss.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

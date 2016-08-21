@@ -23,6 +23,7 @@
   <Project Name="sysio_demo_hih6130" Path="demo/i2c/hih6130/sysio_demo_hih6130.project" Active="No"/>
   <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
   <Project Name="modbus_demo_rtu_master" Path="demo/modbus/rtu/modbus_demo_rtu_master.project" Active="No"/>
+  <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
