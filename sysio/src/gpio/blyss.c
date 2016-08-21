@@ -6,6 +6,7 @@
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdlib.h>
+#include <time.h>
 #include <sysio/blyss.h>
 #include <sysio/doutput.h>
 #include <sysio/dinput.h>
@@ -312,7 +313,8 @@ xBlyssNew (int iOutPin, int iInPin) {
     }
   }
 
-  b->last_token = 0x7D;
+  unsigned int seed = time(NULL);
+  b->last_token = rand_r(&seed);
 
   return b;
 
