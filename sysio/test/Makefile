@@ -2,7 +2,7 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = gpio pwm doutput dinput serial xbee rs485 dlist vector rpi
+SUBDIRS = blyss dinput dlist doutput gpio pwm rpi rs485 serial tinfo vector xbee
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
