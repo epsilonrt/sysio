@@ -67,7 +67,7 @@ main (int argc, char **argv) {
     vExitFailure();
   }
   
-  if (!bBlyssIsValidChannel (num)) {
+  if (!bBlyssChannelIsValid (num)) {
 
     printf ("Error: illegal channel !\n");
     vExitFailure();
