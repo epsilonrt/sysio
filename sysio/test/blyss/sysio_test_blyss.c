@@ -67,7 +67,7 @@ main (int argc, char **argv) {
     vExitFailure();
   }
   
-  if (!bBlyssIsValidChannel (num)) {
+  if (!bBlyssChannelIsValid (num)) {
 
     printf ("Error: illegal channel !\n");
     vExitFailure();
@@ -110,10 +110,10 @@ main (int argc, char **argv) {
   b = xBlyssNew (out_pin, -1);
   assert (b);
 
-  f = xBlyssNewFrame (my_id);
+  f = xBlyssFrameNew (my_id);
   assert (b);
 
-  vBlyssSetChannel (f, channel);
+  vBlyssFrameSetChannel (f, channel);
 
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);
@@ -122,7 +122,7 @@ main (int argc, char **argv) {
 
   do {
 
-    vBlyssSetState (f, state);
+    vBlyssFrameSetState (f, state);
 
     if (iBlyssSend (b, f, 4)) {
 
@@ -130,7 +130,7 @@ main (int argc, char **argv) {
     }
     else {
 
-      vBlyssPrintFrame (f);
+      vBlyssFramePrint (f);
     }
 
     if (loop) {

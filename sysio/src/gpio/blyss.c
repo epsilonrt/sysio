@@ -361,41 +361,41 @@ iBlyssSend (xBlyss * b, xBlyssFrame * f, uint8_t repeat) {
 
 // -----------------------------------------------------------------------------
 xBlyssFrame *
-xBlyssNewFrame (const uint8_t * id) {
+xBlyssFrameNew (const uint8_t * id) {
 
   xBlyssFrame * f = calloc (1, sizeof (xBlyssFrame));
   assert (f);
 
   vSetFlag (f);
-  vBlyssSetTxId (f, id);
+  vBlyssFrameSetTxId (f, id);
   return f;
 }
 
 // -----------------------------------------------------------------------------
 void
-vBlyssSetTxId (xBlyssFrame * f, const uint8_t * id) {
+vBlyssFrameSetTxId (xBlyssFrame * f, const uint8_t * id) {
 
-  vBlyssSetGlobalChannel (f, id[0]);
-  vBlyssSetAddress (f, (id[1] << 8) |  id[2]);
+  vBlyssFrameSetGlobalChannel (f, id[0]);
+  vBlyssFrameSetAddress (f, (id[1] << 8) |  id[2]);
 }
 
 // -----------------------------------------------------------------------------
 void
-vBlyssSetGlobalChannel (xBlyssFrame * f, uint8_t global_channel) {
+vBlyssFrameSetGlobalChannel (xBlyssFrame * f, uint8_t global_channel) {
 
   vSetBits (f, BLYSS_IDX_GCHAN, 4, global_channel);
 }
 
 // -----------------------------------------------------------------------------
 void
-vBlyssSetAddress (xBlyssFrame * f, uint16_t addr) {
+vBlyssFrameSetAddress (xBlyssFrame * f, uint16_t addr) {
 
   vSetBits (f, BLYSS_IDX_ADDR, 16, addr);
 }
 
 // -----------------------------------------------------------------------------
 void
-vBlyssSetChannel (xBlyssFrame * f, uint8_t channel) {
+vBlyssFrameSetChannel (xBlyssFrame * f, uint8_t channel) {
 
   if (channel < (sizeof (channels) - 1)) {
 
@@ -405,42 +405,42 @@ vBlyssSetChannel (xBlyssFrame * f, uint8_t channel) {
 
 // -----------------------------------------------------------------------------
 void
-vBlyssSetState (xBlyssFrame * f, bool state) {
+vBlyssFrameSetState (xBlyssFrame * f, bool state) {
 
   vSetBits (f, BLYSS_IDX_STATE, 4, ! state);
 }
 
 // -----------------------------------------------------------------------------
 uint8_t
-ucBlyssGlobalChannel (const xBlyssFrame * f) {
+ucBlyssFrameGlobalChannel (const xBlyssFrame * f) {
 
   return usGetBits (f, BLYSS_IDX_GCHAN, 4);
 }
 
 // -----------------------------------------------------------------------------
 uint8_t
-ucBlyssChannel (const xBlyssFrame * f) {
+ucBlyssFrameChannel (const xBlyssFrame * f) {
 
   return ucDecodeChannel (usGetBits (f, BLYSS_IDX_CHAN, 4));
 }
 
 // -----------------------------------------------------------------------------
 uint16_t
-usBlyssAddress (const xBlyssFrame * f) {
+usBlyssFrameAddress (const xBlyssFrame * f) {
 
   return usGetBits (f, BLYSS_IDX_ADDR, 16);
 }
 
 // -----------------------------------------------------------------------------
 bool
-bBlyssState (const xBlyssFrame * f) {
+bBlyssFrameState (const xBlyssFrame * f) {
 
   return ! usGetBits (f, BLYSS_IDX_STATE, 4);
 }
 
 // -----------------------------------------------------------------------------
 bool
-bBlyssIsValidFrame (const void * buffer) {
+bBlyssFrameIsValid (const void * buffer) {
   const xBlyssFrame * f = buffer;
 
   if (f->raw[0] == BLYSS_FLAG) {
@@ -451,34 +451,34 @@ bBlyssIsValidFrame (const void * buffer) {
 }
 
 // -----------------------------------------------------------------------------
-bool 
-bBlyssIsValidChannel (uint8_t channel) {
-  
-  return ucDecodeChannel (channel) != (uint8_t) -1;
+bool
+bBlyssChannelIsValid (uint8_t channel) {
+
+  return ucDecodeChannel (channel) != (uint8_t) - 1;
 }
 
 // -----------------------------------------------------------------------------
 void
-vBlyssPrintFrameToFile (const xBlyssFrame * f, FILE * out) {
+vBlyssFramePrintToFile (const xBlyssFrame * f, FILE * out) {
   uint16_t i;
 
-  printf ("RF frame          : ");
+  fprintf (out, "RF frame          : ");
   for (i = 0; i < BLYSS_NOF_BITS; i += 4) {
 
-    printf ("%X", usGetBits (f, i, 4));
+    fprintf (out, "%X", usGetBits (f, i, 4));
   }
 
   i = ucFlag (f);
-  printf ("\nRF footprint      : %02X - %s\n", i, i == BLYSS_FLAG ? ok : error);
-  printf ("RF global channel : %X\n", ucBlyssGlobalChannel (f));
-  printf ("RF adress         : %04X\n", usBlyssAddress (f));
+  fprintf (out, "\nRF footprint      : %02X - %s\n", i, i == BLYSS_FLAG ? ok : error);
+  fprintf (out, "RF global channel : %X\n", ucBlyssFrameGlobalChannel (f));
+  fprintf (out, "RF adress         : %04X\n", usBlyssFrameAddress (f));
 
-  printf ("RF channel        : %u\n", ucBlyssChannel (f));
-  printf ("Light status      : %s\n", bBlyssState (f) ? "On" : "Off");
+  fprintf (out, "RF channel        : %u\n", ucBlyssFrameChannel (f));
+  fprintf (out, "Light status      : %s\n", bBlyssFrameState (f) ? "On" : "Off");
 
   i = ucRollingCode (f);
-  printf ("Rolling code      : %02X - %s\n", i, bIsValidRollingCode (i) ? ok : error);
-  printf ("Token             : %02X\n", ucToken (f));
+  fprintf (out, "Rolling code      : %02X - %s\n", i, bIsValidRollingCode (i) ? ok : error);
+  fprintf (out, "Token             : %02X\n", ucToken (f));
 }
 
 /* ========================================================================== */

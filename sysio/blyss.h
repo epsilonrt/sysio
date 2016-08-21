@@ -30,7 +30,7 @@ __BEGIN_C_DECLS
  * 
  * @param f pointeur sur une trame de type \ref xBlyssFrame
  */
-#define vBlyssPrintFrame(f) vBlyssPrintFrameToFile (f, stdout)
+#define vBlyssFramePrint(f) vBlyssFramePrintToFile (f, stdout)
 
 /* constants ================================================================ */
 
@@ -113,7 +113,7 @@ int iBlyssSend (xBlyss * b, xBlyssFrame * frame, uint8_t repeat);
  * identifiant l'emetteur.
  * @return pointeur sur la trame initialisée, NULL si ereeur
  */
-xBlyssFrame * xBlyssNewFrame (const uint8_t * tx_id);
+xBlyssFrame * xBlyssFrameNew (const uint8_t * tx_id);
 
 /**
  * @brief Imprime le contenu d'une trame dans un fichier
@@ -132,7 +132,7 @@ xBlyssFrame * xBlyssNewFrame (const uint8_t * tx_id);
  * @param frame pointeur sur la trame
  * @param out pointeur sur le fichier ouvert en écriture
  */
-void vBlyssPrintFrameToFile (const xBlyssFrame * frame, FILE * out);
+void vBlyssFramePrintToFile (const xBlyssFrame * frame, FILE * out);
 
 /**
  * @brief Modification de l'identifiant de l'émetteur d'une trame
@@ -142,7 +142,7 @@ void vBlyssPrintFrameToFile (const xBlyssFrame * frame, FILE * out);
  * le canal global (4 bits de poids faible), le poids fort de l'adresse et 
  * le poids faible de l'adresse identifiant l'emetteur.
  */
-void vBlyssSetTxId (xBlyssFrame * frame, const uint8_t * tx_id);
+void vBlyssFrameSetTxId (xBlyssFrame * frame, const uint8_t * tx_id);
 
 /**
  * @brief Modification du canal destinataire d'une trame
@@ -152,7 +152,7 @@ void vBlyssSetTxId (xBlyssFrame * frame, const uint8_t * tx_id);
  * uniquement, valeur comprise entre 0 et 8, 0 correspondant à tous les canaux
  * (broadcast), 1 au canal 1, 2 au canal 2 ...
  */
-void vBlyssSetChannel (xBlyssFrame * frame, uint8_t channel);
+void vBlyssFrameSetChannel (xBlyssFrame * frame, uint8_t channel);
 
 /**
  * @brief Modification de l'état du destinataire
@@ -160,7 +160,7 @@ void vBlyssSetChannel (xBlyssFrame * frame, uint8_t channel);
  * @param frame pointeur sur la trame
  * @param state état du destinataire ON = true
  */
-void vBlyssSetState (xBlyssFrame * frame, bool state);
+void vBlyssFrameSetState (xBlyssFrame * frame, bool state);
 
 /**
  * @brief Canal destinataire de la trame
@@ -170,7 +170,7 @@ void vBlyssSetState (xBlyssFrame * frame, bool state);
  * uniquement, valeur comprise entre 0 et 8, 0 correspondant à tous les canaux
  * (broadcast), 1 au canal 1, 2 au canal 2 ...
  */
-uint8_t ucBlyssChannel (const xBlyssFrame * frame);
+uint8_t ucBlyssFrameChannel (const xBlyssFrame * frame);
 
 /**
  * @brief Etat du destinataire de la trame
@@ -178,7 +178,7 @@ uint8_t ucBlyssChannel (const xBlyssFrame * frame);
  * @param frame pointeur sur la trame
  * @return état du destinataire ON = true
  */
-bool bBlyssState (const xBlyssFrame * frame);
+bool bBlyssFrameState (const xBlyssFrame * frame);
 
 /**
  * @brief Modification du canal global d'une trame
@@ -186,7 +186,7 @@ bool bBlyssState (const xBlyssFrame * frame);
  * @param frame pointeur sur la trame
  * @param global_channel canal global (4 bits de poids faible)
  */
-void vBlyssSetGlobalChannel (xBlyssFrame * frame, uint8_t global_channel);
+void vBlyssFrameSetGlobalChannel (xBlyssFrame * frame, uint8_t global_channel);
 
 /**
  * @brief Modification de l'adresse source d'une trame
@@ -194,7 +194,7 @@ void vBlyssSetGlobalChannel (xBlyssFrame * frame, uint8_t global_channel);
  * @param frame pointeur sur la trame
  * @param address adresse de l'émetteur de la trame sur 16 bits
  */
-void vBlyssSetAddress (xBlyssFrame * frame, uint16_t address);
+void vBlyssFrameSetAddress (xBlyssFrame * frame, uint16_t address);
 
 /**
  * @brief Canal global d'une trame
@@ -202,7 +202,7 @@ void vBlyssSetAddress (xBlyssFrame * frame, uint16_t address);
  * @param frame pointeur sur la trame
  * @return canal global (4 bits de poids faible)
  */
-uint8_t ucBlyssGlobalChannel (const xBlyssFrame * frame);
+uint8_t ucBlyssFrameGlobalChannel (const xBlyssFrame * frame);
 
 /**
  * @brief Adresse source d'une trame
@@ -210,7 +210,7 @@ uint8_t ucBlyssGlobalChannel (const xBlyssFrame * frame);
  * @param frame pointeur sur la trame
  * @return adresse de l'émetteur de la trame sur 16 bits
  */
-uint16_t usBlyssAddress (const xBlyssFrame * frame);
+uint16_t usBlyssFrameAddress (const xBlyssFrame * frame);
 
 /**
  * @brief Test si un buffer contient une trame LiveEz valide
@@ -218,7 +218,7 @@ uint16_t usBlyssAddress (const xBlyssFrame * frame);
  * @param buffer pointeur sur une zone contenant les octets
  * @return true si valide
  */
-bool bBlyssIsValidFrame (const void * buffer);
+bool bBlyssFrameIsValid (const void * buffer);
 
 /**
  * @brief Test si un canal est valide
@@ -226,7 +226,7 @@ bool bBlyssIsValidFrame (const void * buffer);
  * @param channel canal à tester
  * @return true si valide
  */
-bool bBlyssIsValidChannel (uint8_t channel);
+bool bBlyssChannelIsValid (uint8_t channel);
 /* ========================================================================== */
 __END_C_DECLS
 #endif /*_SYSIO_BLYSS_H_ defined */
