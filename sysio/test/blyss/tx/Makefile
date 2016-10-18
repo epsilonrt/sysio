@@ -4,14 +4,14 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = sysio_test_tinfo
+TARGET = sysio_test_blyss_tx
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
-#ARCH = ARCH_ARM_RASPBERRYPI
-ARCH = ARCH_GENERIC_LINUX
+ARCH = ARCH_ARM_RASPBERRYPI
+#ARCH = ARCH_GENERIC_LINUX
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = OFF

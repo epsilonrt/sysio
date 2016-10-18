@@ -1,5 +1,5 @@
 /*
- * sysio_test_blyss.c
+ * sysio_test_blyss_tx.c
  * @brief Test module blyss en émission
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
