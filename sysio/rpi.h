@@ -154,9 +154,14 @@ int iRpiRev (void);
   | 0011     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Sony               |
   | 0012     | Q4 2014      | A+             | 1.0          | 256MB  | Mfg by Sony               |
   | 0013     | Q1 2015      | B+             | 1.2          | 512MB  | ?                         |
+* | 0014     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Embest, China      |
+* | 0015     | Q1 2015      | A+             | 1.1          | 512MB  | Mfg by Embest, China      |
+* | a01040   | Unknown      | 2 Model B      | 1.0          | 1GB    | Unknown                   |
   | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
   | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
+* | a22042   | Q3 2016      | 2 Model B      | 1.2          | 1GB    | Mfg by Embest, China      |
   | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
+* | 900093   | Q2 2016      | Zero           | 1.3          | 512MB  | Mfg by Sony               |
   | a02082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony               |
   | a22082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg ?                     |
  */
