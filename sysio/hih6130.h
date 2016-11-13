@@ -17,7 +17,10 @@ __BEGIN_C_DECLS
  *  @defgroup sysio_hih6130 Capteur I2C HIH6130
  *
  *  Ce module permet la commande d'un capteur d'humidité et de température
- *  I2C HIH6130 de Honeywell.
+ *  I2C HIH6130 de Honeywell. Ce module est compatible avec les circuits
+ *  suivants :
+ *  - ChipCap 2
+ *  .
  *  @{
  *  @example i2c/hih6130/sysio_demo_hih6130.c
  *  Affichage de la température et de l'humidité
@@ -31,6 +34,14 @@ __BEGIN_C_DECLS
  * exprimée en hexadécimal alignée à droite.
  */
 #define HIH6130_I2CADDR  0x27
+
+/**
+ * @brief Adresse I2c par défaut du circuit ChipCap 2
+ * 
+ * La valeur par défaut indiquée dans la documentation 0x28 est
+ * exprimée en hexadécimal alignée à droite.
+ */
+#define CHIPCAP2_I2CADDR  0x28
 
 /**
  * @brief Valeur indiquant que la mesure est en cours.

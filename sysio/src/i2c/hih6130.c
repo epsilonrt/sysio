@@ -159,14 +159,14 @@ iHih6130Read (xHih6130 * s, xHih6130Data * data) {
         s->status = DATA_AVAILABLE;
         
         // Calcul de l'humidité relative en dixième de %
-        lHum = ( ((int32_t)buf[0] & ~HIH6130_STATUS) << 8) + buf[1];
-        s->data.dHum = ((double)lHum * 100.0) / 16382.0;
+        lHum = ( ((int32_t)buf[0] & ~HIH6130_STATUS) * 256) + buf[1];
+        s->data.dHum = ((double)lHum * 100.0) / 16384.0;
 
         if (ret == 4) {
 
           // Calcul de la température en dixième de oC
-          lTemp = (((int32_t)buf[2] << 8) + (int32_t)buf[3]) >> 2;
-          s->data.dTemp = (((double)lTemp * 165.0) / 16382.0) - 40.0;
+          lTemp = (((int32_t)buf[2] * 64) + (((int32_t)buf[3]) / 4));
+          s->data.dTemp = (((double)lTemp * 165.0) / 16384.0) - 40.0;
         }
         else {
 

@@ -18,7 +18,9 @@
 #include <stdio.h>
 
 /* constants ================================================================ */
-#define DEFAULT_I2C_BUS       "/dev/i2c-1"
+#define DEFAULT_I2CBUS       "/dev/i2c-1"
+#define DEFAULT_I2CADDR      HIH6130_I2CADDR
+//#define DEFAULT_I2CADDR      CHIPCAP2_I2CADDR
 
 /* private variables ======================================================== */
 xHih6130 * sensor;
@@ -47,7 +49,8 @@ main (void) {
 
   printf ("\n# HIH6130 Demo\n");
 
-  sensor = xHih6130Open (DEFAULT_I2C_BUS, HIH6130_I2CADDR);
+  // sensor = xHih6130Open (DEFAULT_I2CBUS, HIH6130_I2CADDR);
+  sensor = xHih6130Open (DEFAULT_I2CBUS, CHIPCAP2_I2CADDR);
   assert (sensor);
 
   // vSigIntHandler() intercepte le CTRL+C
