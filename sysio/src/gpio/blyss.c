@@ -1,6 +1,6 @@
 /**
- * @file
- * @brief
+ * @file sysio/gpio/blyss.c
+ * @brief Modules Blyss™
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>

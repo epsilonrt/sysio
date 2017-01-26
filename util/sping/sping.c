@@ -25,7 +25,7 @@
 
 /* constants ================================================================ */
 #define AUTHORS "epsilonRT"
-#define WEBSITE "http://www.epsilonrt.com/sysio"
+#define WEBSITE "http://www.epsilonrt.fr/sysio"
 
 #define STX 2
 #define ETX 3

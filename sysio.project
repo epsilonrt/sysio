@@ -44,6 +44,8 @@
       <File Name="util/bin/rpi-rev"/>
       <File Name="util/bin/sysio-ver"/>
       <File Name="util/bin/sysio-prj"/>
+      <File Name="util/bin/sunxi-board"/>
+      <File Name="util/bin/hardware-cpu"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ssend">
       <File Name="util/ssend/version-git.h"/>
@@ -243,12 +245,17 @@
             <File Name="sysio/src/arch/arm/rpi/gpio.c"/>
             <File Name="sysio/src/arch/arm/rpi/pwm.c"/>
           </VirtualDirectory>
+          <VirtualDirectory Name="nanopineo">
+            <File Name="sysio/src/arch/arm/nanopineo/nanopineo.c"/>
+            <File Name="sysio/src/arch/arm/nanopineo/pwm.c"/>
+          </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="gpio">
         <File Name="sysio/src/gpio/doutput.c"/>
         <File Name="sysio/src/gpio/dinput.c"/>
         <File Name="sysio/src/gpio/blyss.c"/>
+        <File Name="sysio/src/gpio/gpio.c"/>
       </VirtualDirectory>
       <VirtualDirectory Name="win32">
         <File Name="sysio/src/win32/delay.c"/>
@@ -275,6 +282,7 @@
       <File Name="sysio/src/string.c"/>
       <File Name="sysio/src/serial-wrapper.cpp"/>
       <File Name="sysio/src/xbee_private.h"/>
+      <File Name="sysio/src/gpio_private.h"/>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -305,6 +313,7 @@
     <File Name="sysio/serial.h"/>
     <File Name="sysio/log.h"/>
     <File Name="sysio/blyss.h"/>
+    <File Name="sysio/npi.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

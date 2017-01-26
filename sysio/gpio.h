@@ -102,7 +102,7 @@ int iGpioClose (xGpio * gpio);
  * @param gpio le pointeur sur le GPIO
  * @return true si ouvert, false sinon
  */
-bool bGpioIsOpen (xGpio * gpio);
+bool bGpioIsOpen (const xGpio * gpio);
 
 /**
  * @brief Modifie le type de numérotation
@@ -118,7 +118,14 @@ int iGpioSetNumbering (eGpioNumbering eNum, xGpio * gpio);
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
-eGpioNumbering eGpioGetNumbering (xGpio * gpio);
+eGpioNumbering eGpioGetNumbering (const xGpio * gpio);
+
+/**
+ * @brief Chaîne de caractère correspondant à une numérotation
+ * @param eNum numérotation
+ * @return Chaîne de caractère correspondant à une numérotation
+ */
+const char * sGpioNumberingToStr (eGpioNumbering eNum);
 
 /**
  * @brief Modifie le type d'une broche
@@ -160,15 +167,57 @@ bool bGpioIsValid (int iPin, xGpio * gpio);
  * @param gpio pointeur sur le GPIO
  * @return nombre de broches, -1 si erreur
  */
-int iGpioGetSize (xGpio * gpio);
+int iGpioGetSize (const xGpio * gpio);
 
-bool bGpioHasNext(xGpio * gpio);
-bool bGpioHasPrevious(xGpio * gpio);
+/**
+ * @brief Teste si l'itérateur interne peut passer à une broche suivante
+ * @param gpio pointeur sur le GPIO
+ * @return true si possible
+ */
+bool bGpioHasNext(const xGpio * gpio);
+
+/**
+ * @brief Teste si l'itérateur interne peut passer à une broche précédente
+ * @param gpio pointeur sur le GPIO
+ * @return true si possible
+ */
+bool bGpioHasPrevious(const xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne sur la broche suivante
+ * @param gpio pointeur sur le GPIO
+ * @return le numéro de la broche suivante
+ */
 int iGpioNext(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne sur la broche précédente
+ * @param gpio pointeur sur le GPIO
+ * @return le numéro de la broche précédente
+ */
 int iGpioPrevious(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne après la dernière broche
+ * @param gpio pointeur sur le GPIO
+ * @return 0
+ */
 int iGpioToBack(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne avant la première broche
+ * @param gpio pointeur sur le GPIO
+ * @return 0
+ */
 int iGpioToFront(xGpio * gpio);
+
+/**
+ * @brief Chaîne de caractère correspondant à un mode
+ * @param eMode mode
+ * @return Chaîne de caractère correspondant à un mode
+ */
 const char * sGpioModeToStr (eGpioMode eMode);
+
 /**
  * @brief Active ou désactive la résistance d'une broche
  *
@@ -279,7 +328,7 @@ int iGpioSetReleaseOnClose (bool enable, xGpio * gpio);
  * @param gpio le pointeur sur le GPIO
  * @return true si validé, false sinon
  */
-bool bGpioGetReleaseOnClose (xGpio * gpio);
+bool bGpioGetReleaseOnClose (const xGpio * gpio);
 
 /**
  * @brief Libère une broche de son utilisation

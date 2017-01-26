@@ -20,7 +20,7 @@
 
 /* constants ================================================================ */
 #define AUTHORS "epsilonRT"
-#define WEBSITE "http://www.epsilonrt.com/sysio"
+#define WEBSITE "http://www.epsilonrt.fr/sysio"
 
 /* default values =========================================================== */
 #ifdef ARCH_ARM_RASPBERRYPI

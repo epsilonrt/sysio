@@ -5,7 +5,7 @@
 
 #-------------------------------------------------------------------------------
 VPATH+=:$(SYSIO_ROOT)
-EXTRA_INCDIRS += $(SYSIO_ROOT) $(SYSIO_ROOT)/3rdparty
+EXTRA_INCDIRS += $(SYSIO_ROOT) $(SYSIO_ROOT)/sysio/src $(SYSIO_ROOT)/3rdparty
 
 ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
 SYS  = SYS_LINUX
@@ -13,6 +13,15 @@ SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
 SYS_HAS_SERIAL = ON
 ARCH_DIR = sysio/src/arch/arm/rpi
+CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
+endif
+
+ifeq ($(ARCH),ARCH_ARM_NANOPINEO)
+SYS  = SYS_LINUX
+SYS_HAS_GPIO = ON
+SYS_HAS_I2C = ON
+SYS_HAS_SERIAL = ON
+ARCH_DIR = sysio/src/arch/arm/nanopi/neo
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
 endif
 

@@ -37,7 +37,7 @@ main (int argc, char **argv) {
 
   do {
     m = 0;
-    printf ("\nTest %d> ", ++t);
+    printf ("\nTest %d (%s)> ", ++t, sGpioNumberingToStr(eNum));
     i = iGpioSetNumbering (eNum, gpio);
     assert (i == 0);
     printf ("Success\n");

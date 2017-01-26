@@ -44,6 +44,8 @@ install_utils: uninstall_utils
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-cpu $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-rev $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-cpu $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sunxi-board $(INSTALL_BINDIR)
 	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 
 uninstall_utils:
@@ -53,6 +55,8 @@ uninstall_utils:
 	@-rm -fr $(INSTALL_BINDIR)/sysio-ver
 	@-rm -fr $(INSTALL_BINDIR)/rpi-cpu
 	@-rm -fr $(INSTALL_BINDIR)/rpi-rev
+	@-rm -fr $(INSTALL_BINDIR)/hardware-cpu
+	@-rm -fr $(INSTALL_BINDIR)/sunxi-board
 
 $(SUBDIRS):
 	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
