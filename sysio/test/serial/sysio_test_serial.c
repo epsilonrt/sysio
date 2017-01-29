@@ -36,7 +36,7 @@
 #define LED_YELLOW  1
 #define LED_GREEN   2
 
-#ifdef ARCH_ARM_RASPBERRYPI
+#ifdef BOARD_RASPBERRYPI
 /* ========================================================================== */
 #include <sysio/doutput.h>
 
@@ -78,7 +78,7 @@ static void
 vLedToggle (unsigned i) {
   (void) iDoutToggle (i, led);
 }
-#else /* ARCH_ARM_RASPBERRYPI not defined */
+#else /* BOARD_RASPBERRYPI not defined */
 /* ========================================================================== */
 
 /* constants ================================================================ */
@@ -120,7 +120,7 @@ vLedToggle (unsigned i) {
   }
 }
 /* ========================================================================== */
-#endif  /* ARCH_ARM_RASPBERRYPI not defined */
+#endif  /* BOARD_RASPBERRYPI not defined */
 
 /* private variables ======================================================== */
 static int fd;

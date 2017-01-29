@@ -10,8 +10,8 @@ TARGET = sysio_test_tinfo
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
-#ARCH = ARCH_ARM_RASPBERRYPI
-ARCH = ARCH_GENERIC_LINUX
+#BOARD = BOARD_RASPBERRYPI
+BOARD = BOARD_GENERIC_LINUX
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = OFF
@@ -151,18 +151,18 @@ RPI_REV=$(shell rpi-rev)
 #$(warning $(RPI_REV))
 
 ifneq ($(RPI_CPU),)
-override ARCH = ARCH_ARM_RASPBERRYPI
+override BOARD = BOARD_RASPBERRYPI
 CDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 CPPDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 else
-ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
-override ARCH = ARCH_GENERIC_LINUX
+ifeq ($(BOARD),BOARD_RASPBERRYPI)
+override BOARD = BOARD_GENERIC_LINUX
 $(warning this system is not a Raspberry Pi, I compile for linux standard system)
 endif
 endif
 
-CDEFS += -D_REENTRANT -D$(ARCH)
-CPPDEFS += -D_REENTRANT -D$(ARCH)
+CDEFS += -D_REENTRANT -D$(BOARD)
+CPPDEFS += -D_REENTRANT -D$(BOARD)
 
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread

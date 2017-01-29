@@ -118,12 +118,15 @@ static const xPinList pxMcuPins[] = {
 #define GPIO_MODE(g,gp)  (((*(pIo(gp->map, (g)/10))) >> (((g)%10)*3)) & 7)
 
 /* private variables ======================================================== */
+// Configuration actuelle des broches
 static int pinmode[GPIO_SIZE];
+// Sauvegarde de la configuration d'origine des broches
 static int pinmode_release[GPIO_SIZE];
+// Un seul gpio sur RPi !
 static xGpio gpio = { .numbering = -1,
                       .pinmode = pinmode,
                       .pinmode_release = pinmode_release
-                    }; // Un seul gpio sur RPi !
+                    };
 
 /* private functions ======================================================== */
 
@@ -162,99 +165,7 @@ bIsPwmPin (int g) {
   return false;
 }
 
-// -----------------------------------------------------------------------------
-// Retourne le numéro de la broche en numérotation BCM
-static int
-iMcuPin (int n, xGpio * gp) {
-
-  if (gp->list) {
-
-    if (gp->numbering == eNumberingPhysical) {
-
-      n--;
-    }
-
-    if ( (n >= gp->list->first) && (n <= gp->list->last)) {
-
-      return gp->list->pin[n];
-    }
-  }
-  return -1;
-}
-
 /* internal public functions ================================================ */
-
-// -----------------------------------------------------------------------------
-xGpio *
-xGpioOpen (UNUSED_VAR (void *, setup)) {
-  xGpio * gp = &gpio;
-
-  if (!bGpioIsOpen (gp)) {
-
-    if (!pxRpiInfo()) {
-
-      PERROR ("It seems that this system is not a raspberry pi !\n");
-      return 0;
-    }
-
-    (void) iGpioSetNumbering (eNumberingLogical, gp);
-
-    gp->map = xIoMapOpen (GPIO_BASE (ulRpiIoBase()), BCM270X_BLOCK_SIZE);
-    if (gp->map) {
-
-      // Lecture des modes actuels
-      for (int g = 0; g < GPIO_SIZE; g++) {
-
-        gp->pinmode_release[g] = -1;
-        gp->pinmode[g] = GPIO_MODE (g, gp);
-      }
-      gp->link = 1;
-      gp->roc = true;
-      return gp;
-    }
-
-    // Sortie sur erreur
-    return 0;
-  }
-  gp->link++; // Ajout d'un lien supplémentaire
-  return gp;
-}
-
-// -----------------------------------------------------------------------------
-int
-iGpioClose (xGpio * gp) {
-
-  if (bGpioIsOpen (gp)) {
-
-    gp->link--;
-
-    if (gp->link <= 0) {
-      int error = 0;
-
-      if (gp->roc) {
-        int p;
-
-        // Fermeture effective lorsque le nombre de liens est 0, si roc true
-        iGpioToFront (gp);
-        
-        while (bGpioHasNext (gp)) {
-
-          p = iGpioNext (gp);
-          (void) iGpioRelease (p, gp);
-        }
-      }
-      error = iIoMapClose (gp->map);
-      memset (gp, 0, sizeof (xGpio));
-      gp->numbering = -1;
-      gp->pinmode = pinmode;
-      gp->pinmode_release = pinmode_release;
-
-      return error;
-    }
-  }
-  return 0;
-}
-
 // -----------------------------------------------------------------------------
 int
 iGpioSetNumbering (eGpioNumbering eNum, xGpio * gp) {
@@ -281,69 +192,173 @@ iGpioSetNumbering (eGpioNumbering eNum, xGpio * gp) {
 }
 
 // -----------------------------------------------------------------------------
-bool
-bGpioIsValid (int p, xGpio * gp) {
+xGpio *
+xGpioOpen (UNUSED_VAR (void *, setup)) {
+  xGpio * gp = &gpio;
 
-  return iMcuPin (p, gp) >= 0;
+  if (!bGpioIsOpen (gp)) {
+
+    if (!pxRpiInfo()) {
+
+      PERROR ("It seems that this system is not a raspberry pi !\n");
+      return 0;
+    }
+
+    (void) iGpioSetNumbering (eNumberingLogical, gp);
+
+    gp->map = xIoMapOpen (GPIO_BASE (ulRpiIoBase()), BCM270X_BLOCK_SIZE);
+    if (gp->map) {
+
+      // Lecture des modes actuels
+      for (int g = 0; g < GPIO_SIZE; g++) {
+
+        gp->pinmode_release[g] = -1;
+        gp->pinmode[g] = eArchGpioGetMode (g, gp);
+      }
+      gp->link = 1;
+      gp->roc = true;
+      return gp;
+    }
+
+    // Sortie sur erreur
+    return 0;
+  }
+  gp->link++; // Ajout d'un lien supplémentaire
+  return gp;
 }
 
 // -----------------------------------------------------------------------------
 int
-iGpioSetMode (int p, eGpioMode eMode, xGpio * gp) {
-  int i = 0;
-  int g = iMcuPin (p, gp);
+iGpioClose (xGpio * gp) {
 
-  if (g < 0) {
+  if (bGpioIsOpen (gp)) {
 
-    return -1;
+    gp->link--;
+
+    if (gp->link <= 0) { // Fermeture effective lorsque le nombre de liens est 0
+      int error = 0;
+
+      if (gp->roc) {
+
+        // restauration config. si roc == true
+        for (int g = 0; g < GPIO_SIZE; g++) {
+
+          (void) iArchGpioRelease (g, gp);
+        }
+      }
+      error = iIoMapClose (gp->map);
+      memset (gp, 0, sizeof (xGpio));
+      gp->numbering = -1;
+      gp->pinmode = pinmode;
+      gp->pinmode_release = pinmode_release;
+
+      return error;
+    }
   }
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+const char *
+sGpioModeToStr (eGpioMode mode) {
+
+  switch (mode) {
+    case eModeInput:
+      return "INPUT";
+      break;
+    case eModeOutput:
+      return "OUTPUT";
+      break;
+    case eModeAlt0:
+      return "ALT0";
+      break;
+    case eModeAlt1:
+      return "ALT1";
+      break;
+    case eModeAlt2:
+      return "ALT2";
+      break;
+    case eModeAlt3:
+      return "ALT3";
+      break;
+    case eModeAlt4:
+      return "ALT4";
+      break;
+    case eModeAlt5:
+      return "ALT5";
+      break;
+    default:
+      break;
+  }
+  return "!UNK!";
+}
+
+/* internal private functions =============================================== */
+
+// -----------------------------------------------------------------------------
+eGpioMode
+eArchGpioGetMode (int g, xGpio * gp) {
+
+  return GPIO_MODE (g, gp);
+}
+
+// -----------------------------------------------------------------------------
+eGpioPull
+eArchGpioGetPull (int g, xGpio * gp) {
+  
+  PWARNING("Reading of pull resistors is not supported on raspberry.");
+  return 0;
+}
+
+// -----------------------------------------------------------------------------
+int
+iArchGpioSetMode (int g, eGpioMode eMode, xGpio * gp) {
+  int i = 0;
 
   switch (eMode) {
     case eModeInput:
       GPIO_INP (g, gp);
       break;
+
     case eModeOutput:
       GPIO_INP (g, gp);
       GPIO_OUT (g, gp);
       break;
+
     case eModeAlt0:
     case eModeAlt1:
     case eModeAlt2:
     case eModeAlt3:
     case eModeAlt4:
     case eModeAlt5:
-      vDumpSel();
       GPIO_INP (g, gp);
       vDumpSel();
       GPIO_ALT (g, eMode, gp);
       vDumpSel();
       break;
+
     case eModePwm:
       if (!bIsPwmPin (g)) {
 
         return -1;
       }
-      i = iGpioSetMode (p, eModeAlt5, gp);
+      i = iArchGpioSetMode (g, eModeAlt5, gp);
       break;
+
     default:
       return -1;
   }
-  gp->pinmode_release[g] = gp->pinmode[g];
+  if (gp->pinmode_release[g] == -1) { // backup mode initial
+
+    gp->pinmode_release[g] = gp->pinmode[g];
+  }
   gp->pinmode[g] = eMode;
   return i;
 }
 
-
 // -----------------------------------------------------------------------------
 int
-iGpioSetPull (int p, eGpioPull ePull, xGpio * gp) {
-  int g = iMcuPin (p, gp);
-
-  if (g < 0) {
-
-    return -1;
-  }
-
+iArchGpioSetPull (int g, eGpioPull ePull, xGpio * gp) {
   volatile unsigned int * puPudClk = pIo (gp->map, GPPUDCLK0);
   if (g > 31) {
 
@@ -360,16 +375,26 @@ iGpioSetPull (int p, eGpioPull ePull, xGpio * gp) {
   return 0;
 }
 
+// -----------------------------------------------------------------------------
+int
+iArchGpioRelease (int g, xGpio * gp) {
+  int i = 0;
+
+  if (gp->pinmode_release[g] != -1) {
+
+    i = iArchGpioSetMode (g, gp->pinmode_release[g], gp);
+    if ( (i == 0) && (gp->pinmode_release[g] == eModeInput)) {
+
+      i = iArchGpioSetPull (g, ePullDown, gp);
+      gp->pinmode_release[g] = -1;
+    }
+  }
+  return i;
+}
 
 // -----------------------------------------------------------------------------
 int
-iGpioWrite (int p, bool bValue, xGpio * gp) {
-  int g = iMcuPin (p, gp);
-
-  if (g < 0) {
-
-    return -1;
-  }
+iArchGpioWrite (int g, bool bValue, xGpio * gp) {
   volatile unsigned int * puReg = pIo (gp->map, 0);
 
   if (bValue) {
@@ -389,51 +414,10 @@ iGpioWrite (int p, bool bValue, xGpio * gp) {
   return 0;
 }
 
-// -----------------------------------------------------------------------------
-eGpioMode
-eGpioGetMode (int p, xGpio * gp) {
-  int g = iMcuPin (p, gp);
-
-  if (g < 0) {
-
-    return -1;
-  }
-
-  return GPIO_MODE (g, gp);
-}
 
 // -----------------------------------------------------------------------------
 int
-iGpioRelease (int p, xGpio * gp) {
-  int g = iMcuPin (p, gp);
-
-  if (g >= 0) {
-    int i = 0;
-
-    if (gp->pinmode_release[g] != -1) {
-
-      i = iGpioSetMode (p, gp->pinmode_release[g], gp);
-      if ( (i == 0) && (gp->pinmode_release[g] == eModeInput)) {
-
-        i = iGpioSetPull (p, ePullDown, gp);
-        gp->pinmode_release[g] = -1;
-      }
-    }
-    return i;
-  }
-  return -1;
-}
-
-// -----------------------------------------------------------------------------
-int
-iGpioRead (int p, xGpio * gp) {
-  int g = iMcuPin (p, gp);
-
-  if (g < 0) {
-
-    return -1;
-  }
-
+iArchGpioRead (int g, xGpio * gp) {
   volatile unsigned int * puReg = pIo (gp->map, GPLEV0);
   if (g > 31) {
 
@@ -447,8 +431,8 @@ iGpioRead (int p, xGpio * gp) {
 
 // -----------------------------------------------------------------------------
 int
-iGpioToggle (int p, xGpio * gp) {
-  int iValue = iGpioRead (p, gp);
+iArchGpioToggle (int g, xGpio * gp) {
+  int iValue = iArchGpioRead (g, gp);
 
   if (iValue < 0) {
 
@@ -457,9 +441,9 @@ iGpioToggle (int p, xGpio * gp) {
 
   if (iValue) {
 
-    return iGpioWrite (p, false, gp);
+    return iArchGpioWrite (g, false, gp);
   }
-  return iGpioWrite (p, true, gp);
+  return iArchGpioWrite (g, true, gp);
 }
 
 /* ========================================================================== */

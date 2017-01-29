@@ -36,11 +36,11 @@ __BEGIN_C_DECLS
   |     |       |    GND     | 25 - 26  | SPI_CE1_N  |  11   |  7  |
   |  0  |  30   | I2C_SDA0   | 27 - 28  | I2C_SCL0   |  31   |  1  |
   |  5  |  21   | GPIO_GEN11 | 29 - 30  |    GND     |       |     |
-  |  6  |  22   | LAN_RUN    | 31 - 32  | GPIO_GEN15 |       | 12  |
+  |  6  |  22   | LAN_RUN    | 31 - 32  | GPIO_GEN15 |  26   | 12  |
   | 13  |  23   | GPIO_GEN12 | 33 - 34  |    GND     |       |     |
-  | 19  |  24   | GPIO_GEN13 | 35 - 36  | STATUS_LED |       | 16  |
-  | 26  |  25   | GPIO_GEN14 | 37 - 38  | GPIO_GEN17 |       | 20  |
-  |     |       |    GND     | 39 - 40  | GPIO_GEN18 |       | 21  |
+  | 19  |  24   | GPIO_GEN13 | 35 - 36  | STATUS_LED |  27   | 16  |
+  | 26  |  25   | GPIO_GEN14 | 37 - 38  | GPIO_GEN17 |  28   | 20  |
+  |     |       |    GND     | 39 - 40  | GPIO_GEN18 |  29   | 21  |
   \n Connecteur P1 (Modèle A et B PCB V2.0) \n  <hr>
   | BCM | SysIo | Name       | Physical | Name       | SysIo | BCM |
   | :-: | :---: | :--------: | :------: | :--------: | :---: | :-: |

@@ -10,11 +10,15 @@
 #include <string.h>
 #include <assert.h>
 #include <signal.h>
-#include <sysio/rpi.h>
 #include <sysio/gpio.h>
 #include <sysio/delay.h>
 
 /* constants ================================================================ */
+#if defined(BOARD_RASPBERRYPI)
+#include <sysio/rpi.h>
+
+#define pxBoardInfo() pxRpiInfo()
+
 /* A+, B+, 2B, 3B, ZERO: 28 broches GPIO dispo */
 static const int iPhysListRev3[] = {
   7, 11, 12, 13, 15, 16, 18, 22, 24, 26, 29, 32, 33, 35, 37, 38, 40, -1
@@ -32,6 +36,25 @@ static const int iPhysListRev1[] = {
 
 static const int * iPhysList[] = { iPhysListRev1, iPhysListRev2, iPhysListRev3 };
 
+#elif defined(BOARD_NANOPI_NEO) || defined(BOARD_NANOPI_AIR) || defined(BOARD_NANOPI_M1)
+#include <sysio/nanopi.h>
+
+#define pxBoardInfo() pxNanoPiInfo()
+static const int iPhysListRev2[] = {
+  7, 8, 10, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24,
+  26, 27, 28, 29, 31, 32, 33, 35, 36, 37, 38, 39, 40, -1
+};
+
+static const int iPhysListRev1[] = {
+  7, 8, 10, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24, -1
+};
+
+static const int * iPhysList[] = { iPhysListRev1, iPhysListRev2 };
+
+#else
+#error Platform not supported
+#endif
+
 /* private variables ======================================================== */
 static xGpio * gpio;
 
@@ -45,7 +68,7 @@ main (int argc, char **argv) {
   int t = 1;
   const int * p;
 
-  p = iPhysList[pxRpiInfo()->iGpioRev - 1];
+  p = iPhysList[pxBoardInfo()->iGpioRev - 1];
 
   printf ("GPIO Write test\n\n");
   printf ("Test %d> ", t);
@@ -67,7 +90,7 @@ main (int argc, char **argv) {
           "confirmer le test [n/OUI] ? ");
 
   fgets (text, 4, stdin);
-  if (strcmp (text, "OUI") ) {
+  if (strcmp (text, "OUI")) {
     return 0;
   }
 
@@ -79,7 +102,7 @@ main (int argc, char **argv) {
 
   /* Tests write */
   m = 0;
-  p = iPhysList[pxRpiInfo()->iGpioRev - 1];
+  p = iPhysList[pxBoardInfo()->iGpioRev - 1];
   while (*p >= 0) {
     printf ("\nPin[%d]:\n", *p);
 

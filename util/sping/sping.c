@@ -35,7 +35,7 @@
 #define MAX_PACKET_SIZE 512
 
 /* default values =========================================================== */
-#ifdef ARCH_ARM_RASPBERRYPI
+#ifdef BOARD_RASPBERRYPI
 #define DEFAULT_DEVICE "/dev/ttyAMA0"
 #else
 #define DEFAULT_DEVICE "/dev/ttyUSB0"

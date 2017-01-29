@@ -34,28 +34,37 @@ __BEGIN_C_DECLS
 /**
  * @enum eGpioMode
  * @brief Type de broche
+ * Les modes spécifiques à une plateforme sont définis dans le fichier d'en-tête
+ * de la plateforme (rpi.h pour le Raspberry Pi, nanopi.h pour le NanoPi ...)
  */
 typedef enum  {
-  eModeInput  = 0,  /**< entrée */
-  eModeOutput = 1,  /**< sortie */
-  eModeAlt0   = 4,  /**< fonction auxiliaire n° 0 (dépend de l'architecture */
-  eModeAlt1   = 5,  /**< fonction auxiliaire n° 1 (dépend de l'architecture */
-  eModeAlt2   = 6,  /**< fonction auxiliaire n° 2 (dépend de l'architecture */
-  eModeAlt3   = 7,  /**< fonction auxiliaire n° 3 (dépend de l'architecture */
-  eModeAlt4   = 3,  /**< fonction auxiliaire n° 4 (dépend de l'architecture */
-  eModeAlt5   = 2,  /**< fonction auxiliaire n° 5 (dépend de l'architecture */
-  eModePwm    = 0x8002,  /**< sortie PWM */
-  eModeError  = -1
+  eModeInput    = 0,  /**< entrée */
+  eModeOutput   = 1,  /**< sortie */
+  eModeAlt0     = 4,  /**< fonction auxiliaire n° 0 (Raspberry Pi) */
+  eModeAlt1     = 5,  /**< fonction auxiliaire n° 1 (Raspberry Pi) */
+  eModeAlt2     = 6,  /**< fonction auxiliaire n° 2 (Raspberry Pi) */
+  eModeAlt3     = 7,  /**< fonction auxiliaire n° 3 (Raspberry Pi) */
+  eModeAlt4     = 3,  /**< fonction auxiliaire n° 4 (Raspberry Pi) */
+  eModeAlt5     = 2,  /**< fonction auxiliaire n° 5 (Raspberry Pi) */
+  eModeFunc2    = 2,  /**< fonction auxiliaire n° 2 (NanoPi) */
+  eModeFunc3    = 3,  /**< fonction auxiliaire n° 3 (NanoPi) */
+  eModeFunc4    = 4,  /**< fonction auxiliaire n° 4 (NanoPi) */
+  eModeFunc5    = 5,  /**< fonction auxiliaire n° 5 (NanoPi) */
+  eModeFunc6    = 6,  /**< fonction auxiliaire n° 6 (NanoPi) */
+  eModeDisabled = 7,  /**< Broche désactivée (NanoPi) */
+  eModePwm      = 0x8002,  /**< sortie PWM */
+  eModeError    = -1 /**< Erreur */
 } eGpioMode;
 
 /**
  * @enum eGpioPull
- * @brief Activation des résistances de tirage
+ * @brief Type de résistances de tirage
  */
 typedef enum  {
-  ePullOff  = 0,  /**< résistance désactivée */
-  ePullDown = 1,  /**< résistance de tirage à l'état bas */
-  ePullUp   = 2   /**< résistance de tirage à l'état haut */
+  ePullOff   = 0,  /**< résistance désactivée */
+  ePullDown  = 1,  /**< résistance de tirage à l'état bas */
+  ePullUp    = 2,  /**< résistance de tirage à l'état haut */
+  ePullError = -1  /**< Erreur */
 } eGpioPull;
 
 /**
@@ -153,6 +162,25 @@ int iGpioSetMode (int iPin, eGpioMode eMode, xGpio * gpio);
 eGpioMode eGpioGetMode (int iPin, xGpio * gpio);
 
 /**
+ * @brief Modification de la résistance de tirage d'une broche
+ *
+ * @param iPin le numéro de la broche
+ * @param ePull le type de la résistance (ePullOff pour désactiver)
+ * @param gpio pointeur sur le GPIO
+ * @return 0, -1 si erreur
+ */
+int iGpioSetPull (int iPin, eGpioPull ePull, xGpio * gpio);
+
+/**
+ * @brief Lecture du type du type résistance de tirage d'une broche
+ *
+ * @param iPin le numéro de la broche
+ * @param gpio pointeur sur le GPIO
+ * @return le type de la résistance, ePullError si erreur
+ */
+eGpioPull eGpioGetPull (int iPin, xGpio * gpio);
+
+/**
  * @brief Teste la validité d'un numéro de broche
  *
  * @param iPin le numéro de la broche (numérotation sélectionnée)
@@ -168,68 +196,6 @@ bool bGpioIsValid (int iPin, xGpio * gpio);
  * @return nombre de broches, -1 si erreur
  */
 int iGpioGetSize (const xGpio * gpio);
-
-/**
- * @brief Teste si l'itérateur interne peut passer à une broche suivante
- * @param gpio pointeur sur le GPIO
- * @return true si possible
- */
-bool bGpioHasNext(const xGpio * gpio);
-
-/**
- * @brief Teste si l'itérateur interne peut passer à une broche précédente
- * @param gpio pointeur sur le GPIO
- * @return true si possible
- */
-bool bGpioHasPrevious(const xGpio * gpio);
-
-/**
- * @brief Pointe l'itérateur interne sur la broche suivante
- * @param gpio pointeur sur le GPIO
- * @return le numéro de la broche suivante
- */
-int iGpioNext(xGpio * gpio);
-
-/**
- * @brief Pointe l'itérateur interne sur la broche précédente
- * @param gpio pointeur sur le GPIO
- * @return le numéro de la broche précédente
- */
-int iGpioPrevious(xGpio * gpio);
-
-/**
- * @brief Pointe l'itérateur interne après la dernière broche
- * @param gpio pointeur sur le GPIO
- * @return 0
- */
-int iGpioToBack(xGpio * gpio);
-
-/**
- * @brief Pointe l'itérateur interne avant la première broche
- * @param gpio pointeur sur le GPIO
- * @return 0
- */
-int iGpioToFront(xGpio * gpio);
-
-/**
- * @brief Chaîne de caractère correspondant à un mode
- * @param eMode mode
- * @return Chaîne de caractère correspondant à un mode
- */
-const char * sGpioModeToStr (eGpioMode eMode);
-
-/**
- * @brief Active ou désactive la résistance d'une broche
- *
- * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
- * dépend de l'architecture matérielle.
- *
- * @param iPin le numéro de la broche
- * @param ePull le type de la résistance
- * @param gpio pointeur sur le GPIO
- * @return 0, -1 si erreur
- */
-int iGpioSetPull (int iPin, eGpioPull ePull, xGpio * gpio);
 
 /**
  * @brief Modification de l'état binaire d'une sortie
@@ -287,7 +253,7 @@ int iGpioToggleAll (int64_t iMask, xGpio * gpio);
  *
  * @param iPin le numéro de la broche
  * @param gpio pointeur sur le GPIO
- * @return 0, -1 si erreur
+ * @return true à l'état haut, false à l'état bas, -1 si erreur
  */
 int iGpioRead (int iPin, xGpio * gpio);
 
@@ -343,6 +309,56 @@ bool bGpioGetReleaseOnClose (const xGpio * gpio);
  * @return 0, -1 si erreur
  */
 int iGpioRelease (int iPin, xGpio * gpio);
+
+
+/**
+ * @brief Teste si l'itérateur interne peut passer à une broche suivante
+ * @param gpio pointeur sur le GPIO
+ * @return true si possible
+ */
+bool bGpioHasNext(const xGpio * gpio);
+
+/**
+ * @brief Teste si l'itérateur interne peut passer à une broche précédente
+ * @param gpio pointeur sur le GPIO
+ * @return true si possible
+ */
+bool bGpioHasPrevious(const xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne sur la broche suivante
+ * @param gpio pointeur sur le GPIO
+ * @return le numéro de la broche suivante
+ */
+int iGpioNext(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne sur la broche précédente
+ * @param gpio pointeur sur le GPIO
+ * @return le numéro de la broche précédente
+ */
+int iGpioPrevious(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne après la dernière broche
+ * @param gpio pointeur sur le GPIO
+ * @return 0
+ */
+int iGpioToBack(xGpio * gpio);
+
+/**
+ * @brief Pointe l'itérateur interne avant la première broche
+ * @param gpio pointeur sur le GPIO
+ * @return 0
+ */
+int iGpioToFront(xGpio * gpio);
+
+/**
+ * @brief Chaîne de caractère correspondant à un mode
+ * @param eMode mode
+ * @return Chaîne de caractère correspondant à un mode
+ */
+const char * sGpioModeToStr (eGpioMode eMode);
 
 /**
  * @}

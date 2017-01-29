@@ -11,8 +11,6 @@
 #include <sysio/gpio.h>
 #include <sysio/delay.h>
 
-/* constants ================================================================ */
-
 /* private variables ======================================================== */
 static xGpio * gpio;
 

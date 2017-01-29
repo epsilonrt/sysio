@@ -32,6 +32,7 @@ Ce projet est en développement, pour l'instant, il fournit les modules:
 sur plateforme Linux/Unix. Il fournit en plus les modules:
 
 * Raspberry Pi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__rpi.html)
+* NanoPi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__nanopi.html)
 * GPIO [**gpio**](http://www.epsilonrt.fr/sysio/group__sysio__gpio.html)
 * Port d'entrée [**dinput**](http://www.epsilonrt.fr/sysio/group__sysio__dinput.html)
 * Port de sortie [**douput**](http://www.epsilonrt.fr/sysio/group__sysio__doutput.html)
@@ -40,7 +41,7 @@ sur plateforme Linux/Unix. Il fournit en plus les modules:
 * Capteur I2C IAQ [**iaq**](http://www.epsilonrt.fr/sysio/group__sysio__iaq.html)
 * Capteur I2C HIH6130 [**hih6130**](http://www.epsilonrt.fr/sysio/group__sysio__hih6130.html)
 
-sur plateforme Raspberry Pi (A/B/B+/Pi2/Pi3).
+sur plateformes Raspberry Pi (A/B/B+/Pi2/Pi3) et NanoPi (Neo/NeoAir/M1).
 
 Pour chaque module, un ou plusieurs [exemples](http://www.epsilonrt.fr/sysio/examples.html) sont fournis.
 

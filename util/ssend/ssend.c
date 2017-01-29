@@ -23,7 +23,7 @@
 #define WEBSITE "http://www.epsilonrt.fr/sysio"
 
 /* default values =========================================================== */
-#ifdef ARCH_ARM_RASPBERRYPI
+#ifdef BOARD_RASPBERRYPI
 #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
 #define DEFAULT_PORT "/dev/ttyUSB0"

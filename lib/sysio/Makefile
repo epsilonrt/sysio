@@ -7,7 +7,7 @@
 TARGET = sysio
 
 # Choix de l'architecture matérielle du système
-ARCH = ARCH_GENERIC_LINUX
+#BOARD = BOARD_GENERIC_LINUX
 
 #---------------- Install Options ----------------
 prefix=/usr/local
@@ -153,7 +153,7 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
-$(info Check the target platform, you can use ARCH to force the target...)
+$(info Check the target platform, you can use BOARD to force the target...)
 
 HARDWARE_CPU=$(shell hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
@@ -167,7 +167,7 @@ RPI_REV=$(shell rpi-rev)
 #$(warning $(RPI_REV))
 
 $(info Build for Raspberry Pi target !)
-override ARCH = ARCH_ARM_RASPBERRYPI
+override BOARD = BOARD_RASPBERRYPI
 CDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 CPPDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 
@@ -177,14 +177,29 @@ else
 ifneq ($(findstring sun8i,$(HARDWARE_CPU)),)
 # Allwinner sunxi  -------------------------------------------------------------
 
-SUNXI_BOARD=$(shell sunxi-board)
-#$(warning '$(SUNXI_BOARD)')
+ARMBIAN_BOARD=$(shell armbian-board)
+#$(warning '$(ARMBIAN_BOARD)')
 
-ifeq ($(SUNXI_BOARD),nanopineo)
+ifeq ($(ARMBIAN_BOARD),nanopineo)
 # NanoPi Neo  ------------------------------------------------------------------
 $(info Build for NanoPi Neo target !)
-override ARCH = ARCH_ARM_NANOPINEO
+override BOARD = BOARD_NANOPI_NEO
 # NanoPi Neo  ------------------------------------------------------------------
+else
+ifeq ($(ARMBIAN_BOARD),nanopiair)
+# NanoPi Neo  ------------------------------------------------------------------
+$(info Build for NanoPi Neo Air target !)
+override BOARD = BOARD_NANOPI_AIR
+# NanoPi Neo  ------------------------------------------------------------------
+else
+ifeq ($(ARMBIAN_BOARD),nanopim1)
+# NanoPi Neo  ------------------------------------------------------------------
+$(info Build for NanoPi M1 target !)
+override BOARD = BOARD_NANOPI_M1
+# NanoPi Neo  ------------------------------------------------------------------
+else
+endif
+endif
 endif
 
 # Allwinner sunxi  -------------------------------------------------------------
@@ -193,15 +208,15 @@ endif
 # Not Raspberry Pi  ------------------------------------------------------------
 endif
 
-ifeq ($(ARCH),)
-$(info ARCH not defined, Build for linux standard system...)
-override ARCH = ARCH_GENERIC_LINUX
+ifeq ($(BOARD),)
+$(info BOARD not defined, Build for linux standard system...)
+override BOARD = BOARD_GENERIC_LINUX
 endif
 
-#$(warning '$(ARCH)')
+#$(warning '$(BOARD)')
 
-CDEFS += -D_REENTRANT -D$(ARCH)
-CPPDEFS += -D_REENTRANT -D$(ARCH)
+CDEFS += -D_REENTRANT -D$(BOARD)
+CPPDEFS += -D_REENTRANT -D$(BOARD)
 
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
@@ -417,7 +432,7 @@ ifeq ($(SYS_HAS_I2C),ON)
 	@-install -m 0644 $(SYSIO_ROOT)/chipio/*.h $(INSTALL_INCDIR)/chipio
 endif
 
-ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
+ifeq ($(BOARD),BOARD_RASPBERRYPI)
 endif
 
 	@-ldconfig

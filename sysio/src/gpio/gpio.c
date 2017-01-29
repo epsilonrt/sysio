@@ -17,7 +17,141 @@ static const char * sGpioNumberingStr[] = {
   "Physical"
 };
 
+/* private functions ======================================================== */
+
+// -----------------------------------------------------------------------------
+// Retourne le numéro de la broche en numérotation MCU
+int
+iGpioMcuPin (int n, xGpio * gp) {
+
+  if (gp->list) {
+
+    if (gp->numbering == eNumberingPhysical) {
+
+      n--;
+    }
+
+    if ( (n >= gp->list->first) && (n <= gp->list->last)) {
+
+      return gp->list->pin[n];
+    }
+  }
+  return -1;
+}
+
 /* internal public functions ================================================ */
+
+// -----------------------------------------------------------------------------
+int
+iGpioRelease (int p, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioRelease (g, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+eGpioMode
+eGpioGetMode (int p, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return eArchGpioGetMode (g, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+eGpioPull
+eGpioGetPull (int p, xGpio * gp) {
+
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return eArchGpioGetPull (g, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioSetMode (int p, eGpioMode eMode, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioSetMode (g, eMode, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioSetPull (int p, eGpioPull ePull, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioSetPull (g, ePull, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioWrite (int p, bool bValue, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioWrite (g, bValue, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioRead (int p, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioRead (g, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+int
+iGpioToggle (int p, xGpio * gp) {
+  int g;
+
+  g = iGpioMcuPin (p, gp);
+  if (g >= 0) {
+
+    return iArchGpioToggle (g, gp);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+bool
+bGpioIsValid (int p, xGpio * gp) {
+
+  return iGpioMcuPin (p, gp) >= 0;
+}
 
 // -----------------------------------------------------------------------------
 eGpioNumbering
@@ -250,42 +384,6 @@ iGpioPrevious (xGpio * gp) {
     while (bGpioHasPrevious (gp));
   }
   return -1;
-}
-
-
-// -----------------------------------------------------------------------------
-const char *
-sGpioModeToStr (eGpioMode mode) {
-
-  switch (mode) {
-    case eModeInput:
-      return "INPUT";
-      break;
-    case eModeOutput:
-      return "OUTPUT";
-      break;
-    case eModeAlt0:
-      return "ALT0";
-      break;
-    case eModeAlt1:
-      return "ALT1";
-      break;
-    case eModeAlt2:
-      return "ALT2";
-      break;
-    case eModeAlt3:
-      return "ALT3";
-      break;
-    case eModeAlt4:
-      return "ALT4";
-      break;
-    case eModeAlt5:
-      return "ALT5";
-      break;
-    default:
-      break;
-  }
-  return "!UNK!";
 }
 
 // -----------------------------------------------------------------------------

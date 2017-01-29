@@ -4,7 +4,7 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = sysio_test_gpio_write
+TARGET = sysio_test_nanopi
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
@@ -35,7 +35,7 @@ DEBUG_OPT = 0
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
-#DEBUG = ON
+DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
 VIEW_GCC_LINE = OFF
@@ -153,8 +153,8 @@ HARDWARE_CPU=$(shell hardware-cpu)
 ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell rpi-cpu)
-RPI_REV=$(shell rpi-rev)
+RPI_CPU=$(shell nanopi-cpu)
+RPI_REV=$(shell nanopi-rev)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
@@ -374,7 +374,7 @@ distclean: distclean_list clean_list
 
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 TARGET $(INSTALL_BINDIR)
+	-install -m 0755 $(TARGET) $(INSTALL_BINDIR)
 
 uninstall:
 	@echo "$(MSG_UNINSTALL) $(TARGET)"

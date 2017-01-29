@@ -24,10 +24,11 @@
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
   <Project Name="sysio_test_tinfo" Path="sysio/test/tinfo/sysio_test_tinfo.project" Active="No"/>
   <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -56,11 +57,12 @@
       <Project Name="sysio_test_tinfo" ConfigName="Debug"/>
       <Project Name="ssend" ConfigName="Debug"/>
       <Project Name="util_ssend" ConfigName="Debug"/>
-      <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_doc" ConfigName="Debug"/>
       <Project Name="radio" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss" ConfigName="Debug"/>
       <Project Name="util_bsend" ConfigName="Debug"/>
+      <Project Name="sysio" ConfigName="Debug"/>
+      <Project Name="sysio_test_nanopi" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -89,11 +91,12 @@
       <Project Name="sysio_test_tinfo" ConfigName="Release"/>
       <Project Name="ssend" ConfigName="Release"/>
       <Project Name="util_ssend" ConfigName="Release"/>
-      <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_doc" ConfigName="Release"/>
       <Project Name="radio" ConfigName="Release"/>
       <Project Name="sysio_test_blyss" ConfigName="Release"/>
       <Project Name="util_bsend" ConfigName="Release"/>
+      <Project Name="sysio" ConfigName="Release"/>
+      <Project Name="sysio_test_nanopi" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

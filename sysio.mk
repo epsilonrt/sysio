@@ -7,7 +7,7 @@
 VPATH+=:$(SYSIO_ROOT)
 EXTRA_INCDIRS += $(SYSIO_ROOT) $(SYSIO_ROOT)/sysio/src $(SYSIO_ROOT)/3rdparty
 
-ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
+ifeq ($(BOARD),BOARD_RASPBERRYPI)
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
@@ -16,36 +16,36 @@ ARCH_DIR = sysio/src/arch/arm/rpi
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
 endif
 
-ifeq ($(ARCH),ARCH_ARM_NANOPINEO)
+ifneq (,$(filter $(BOARD),BOARD_NANOPI_NEO BOARD_NANOPI_AIR BOARD_NANOPI_M1))
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
 SYS_HAS_SERIAL = ON
-ARCH_DIR = sysio/src/arch/arm/nanopi/neo
+ARCH_DIR = sysio/src/arch/arm/nanopi
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
 endif
 
-ifeq ($(ARCH),ARCH_GENERIC_LINUX)
+ifeq ($(BOARD),BOARD_GENERIC_LINUX)
 SYS  = SYS_LINUX
 SYS_HAS_SERIAL = ON
 ARCH_DIR = sysio/src/arch/generic
-CDEFS += -DARCH_GENERIC_LINUX -DSYS_HAS_SERIAL
+CDEFS += -DARCH_LINUX -DSYS_HAS_SERIAL
 endif
 
-ifeq ($(ARCH),ARCH_WIN32)
+ifeq ($(BOARD),BOARD_GENERIC_WIN32)
 SYS  = SYS_WIN32
 ARCH_DIR = sysio/src/arch/x86
 CDEFS += -DARCH_X86
 endif
 
-ifeq ($(ARCH),ARCH_WIN64)
+ifeq ($(BOARD),ARCH_WIN64)
 SYS  = SYS_WIN32
 ARCH_DIR = sysio/src/arch/x86_64
 CDEFS += -DARCH_X86_64
 endif
 
 ifeq ($(SYS),)
-$(error ARCH is not set correctly)
+$(error BOARD is not set correctly)
 endif
 
 ifeq ($(SYS),SYS_LINUX)

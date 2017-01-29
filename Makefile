@@ -2,7 +2,6 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-
 SUBDIRS = lib
 CLEANER_SUBDIRS = demo doc util sysio/test
 
@@ -10,7 +9,7 @@ CLEANER_SUBDIRS = demo doc util sysio/test
 SYSIO_ROOT = .
 
 # Choix de l'architecture matérielle du système
-ARCH = ARCH_GENERIC_LINUX
+# BOARD = BOARD_GENERIC_LINUX
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
@@ -45,7 +44,7 @@ install_utils: uninstall_utils
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-cpu $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-rev $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-cpu $(INSTALL_BINDIR)
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sunxi-board $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/armbian-board $(INSTALL_BINDIR)
 	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 
 uninstall_utils:
@@ -56,12 +55,12 @@ uninstall_utils:
 	@-rm -fr $(INSTALL_BINDIR)/rpi-cpu
 	@-rm -fr $(INSTALL_BINDIR)/rpi-rev
 	@-rm -fr $(INSTALL_BINDIR)/hardware-cpu
-	@-rm -fr $(INSTALL_BINDIR)/sunxi-board
+	@-rm -fr $(INSTALL_BINDIR)/armbian-board
 
 $(SUBDIRS):
-	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
+	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) BOARD=$(BOARD) DEBUG=$(DEBUG)
 
 $(CLEANER_SUBDIRS):
-	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) ARCH=$(ARCH) DEBUG=$(DEBUG)
+	$(MAKE) -w -C $@ $(MAKECMDGOALS) prefix=$(prefix) BOARD=$(BOARD) DEBUG=$(DEBUG)
 
 .PHONY: all rebuild clean distclean install uninstall $(SUBDIRS) $(CLEANER_SUBDIRS)

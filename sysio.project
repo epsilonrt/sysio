@@ -44,8 +44,8 @@
       <File Name="util/bin/rpi-rev"/>
       <File Name="util/bin/sysio-ver"/>
       <File Name="util/bin/sysio-prj"/>
-      <File Name="util/bin/sunxi-board"/>
       <File Name="util/bin/hardware-cpu"/>
+      <File Name="util/bin/armbian-board"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ssend">
       <File Name="util/ssend/version-git.h"/>
@@ -236,6 +236,10 @@
         <File Name="sysio/test/rs485/Makefile"/>
       </VirtualDirectory>
       <File Name="sysio/test/Makefile"/>
+      <VirtualDirectory Name="nanopi">
+        <File Name="sysio/test/nanopi/sysio_test_nanopi.c"/>
+        <File Name="sysio/test/nanopi/Makefile"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="src">
       <VirtualDirectory Name="arch">
@@ -245,9 +249,9 @@
             <File Name="sysio/src/arch/arm/rpi/gpio.c"/>
             <File Name="sysio/src/arch/arm/rpi/pwm.c"/>
           </VirtualDirectory>
-          <VirtualDirectory Name="nanopineo">
-            <File Name="sysio/src/arch/arm/nanopineo/nanopineo.c"/>
-            <File Name="sysio/src/arch/arm/nanopineo/pwm.c"/>
+          <VirtualDirectory Name="nanopi">
+            <File Name="sysio/src/arch/arm/nanopi/nanopi.c"/>
+            <File Name="sysio/src/arch/arm/nanopi/gpio.c"/>
           </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
@@ -313,7 +317,7 @@
     <File Name="sysio/serial.h"/>
     <File Name="sysio/log.h"/>
     <File Name="sysio/blyss.h"/>
-    <File Name="sysio/npi.h"/>
+    <File Name="sysio/nanopi.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
