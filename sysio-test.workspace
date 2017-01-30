@@ -29,6 +29,7 @@
   <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
+  <Project Name="sysio_test_blyss_tx" Path="sysio/test/blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -63,6 +64,7 @@
       <Project Name="util_bsend" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_nanopi" ConfigName="Debug"/>
+      <Project Name="sysio_test_blyss_tx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -97,6 +99,7 @@
       <Project Name="util_bsend" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_nanopi" ConfigName="Release"/>
+      <Project Name="sysio_test_blyss_tx" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -403,6 +403,7 @@ endif
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/iomap.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/log.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/rpi.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/nanopi.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/serial.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/xbee.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/dlist.h $(INSTALL_INCDIR)/$(TARGET)

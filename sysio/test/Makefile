@@ -2,8 +2,8 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = blyss dinput dlist doutput gpio pwm rs485 serial tinfo vector xbee
-CLEANER_SUBDIRS = rpi nanopi
+SUBDIRS = blyss dinput dlist doutput gpio rs485 serial tinfo vector xbee
+CLEANER_SUBDIRS = rpi nanopi pwm
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS) $(CLEANER_SUBDIRS)
