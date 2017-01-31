@@ -374,7 +374,7 @@ distclean: distclean_list clean_list
 
 install: uninstall build
 	@echo "$(MSG_INSTALL) $(TARGET)"
-	-install -m 0755 TARGET $(INSTALL_BINDIR)
+	-install -m 0755 $(TARGET) $(INSTALL_BINDIR)
 
 uninstall:
 	@echo "$(MSG_UNINSTALL) $(TARGET)"

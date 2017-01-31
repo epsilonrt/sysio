@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio-test" Database="">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
   <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
@@ -9,7 +9,7 @@
   <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
   <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
   <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
-  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="Yes"/>
+  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
   <Project Name="sysio_test_dinput_callback" Path="sysio/test/dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
   <Project Name="sysio_test_dinput_poll" Path="sysio/test/dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
   <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
@@ -30,6 +30,7 @@
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
   <Project Name="sysio_test_blyss_tx" Path="sysio/test/blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
+  <Project Name="util_blink" Path="util/blink/util_blink.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -65,6 +66,7 @@
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_nanopi" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Debug"/>
+      <Project Name="util_blink" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -100,6 +102,7 @@
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_nanopi" ConfigName="Release"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Release"/>
+      <Project Name="util_blink" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
