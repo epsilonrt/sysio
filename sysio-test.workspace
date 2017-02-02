@@ -31,6 +31,7 @@
   <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
   <Project Name="sysio_test_blyss_tx" Path="sysio/test/blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
   <Project Name="util_blink" Path="util/blink/util_blink.project" Active="No"/>
+  <Project Name="util_tinfo" Path="util/tinfo/util_tinfo.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -67,6 +68,7 @@
       <Project Name="sysio_test_nanopi" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Debug"/>
       <Project Name="util_blink" ConfigName="Debug"/>
+      <Project Name="util_tinfo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -103,6 +105,7 @@
       <Project Name="sysio_test_nanopi" ConfigName="Release"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Release"/>
       <Project Name="util_blink" ConfigName="Release"/>
+      <Project Name="util_tinfo" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
