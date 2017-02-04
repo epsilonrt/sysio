@@ -27,11 +27,12 @@
   <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="radio" Path="radio/radio.project" Active="No"/>
   <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
   <Project Name="sysio_test_blyss_tx" Path="sysio/test/blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
   <Project Name="util_blink" Path="util/blink/util_blink.project" Active="No"/>
   <Project Name="util_tinfo" Path="util/tinfo/util_tinfo.project" Active="No"/>
+  <Project Name="sysio" Path="sysio.project" Active="No"/>
+  <Project Name="sysio_test_spi" Path="sysio/test/spi/sysio_test_spi.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -64,11 +65,12 @@
       <Project Name="radio" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss" ConfigName="Debug"/>
       <Project Name="util_bsend" ConfigName="Debug"/>
-      <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_nanopi" ConfigName="Debug"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Debug"/>
       <Project Name="util_blink" ConfigName="Debug"/>
       <Project Name="util_tinfo" ConfigName="Debug"/>
+      <Project Name="sysio" ConfigName="Debug"/>
+      <Project Name="sysio_test_spi" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -101,11 +103,12 @@
       <Project Name="radio" ConfigName="Release"/>
       <Project Name="sysio_test_blyss" ConfigName="Release"/>
       <Project Name="util_bsend" ConfigName="Release"/>
-      <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_nanopi" ConfigName="Release"/>
       <Project Name="sysio_test_blyss_tx" ConfigName="Release"/>
       <Project Name="util_blink" ConfigName="Release"/>
       <Project Name="util_tinfo" ConfigName="Release"/>
+      <Project Name="sysio" ConfigName="Release"/>
+      <Project Name="sysio_test_spi" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

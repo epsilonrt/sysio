@@ -11,6 +11,7 @@ ifeq ($(BOARD),BOARD_RASPBERRYPI)
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
+SYS_HAS_SPI = ON
 SYS_HAS_SERIAL = ON
 ARCH_DIR = sysio/src/arch/arm/rpi
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
@@ -20,6 +21,7 @@ ifneq (,$(filter $(BOARD),BOARD_NANOPI_NEO BOARD_NANOPI_AIR BOARD_NANOPI_M1))
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
 SYS_HAS_I2C = ON
+SYS_HAS_SPI = ON
 SYS_HAS_SERIAL = ON
 ARCH_DIR = sysio/src/arch/arm/nanopi
 CDEFS += -DARCH_ARM -DSYSIO_HAS_GPIO -DSYSIO_HAS_I2C -DSYS_HAS_SERIAL
@@ -71,6 +73,10 @@ endif
 ifeq ($(SYS_HAS_I2C),ON)
 SRC += $(addprefix sysio/src/i2c/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/i2c/*.c)))
 SRC += $(addprefix chipio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/chipio/src/*.c)))
+endif
+
+ifeq ($(SYS_HAS_SPI),ON)
+SRC += $(addprefix sysio/src/spi/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/spi/*.c)))
 endif
 
 ifeq ($(SYS_UNIX),ON)

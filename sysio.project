@@ -284,9 +284,12 @@
       <File Name="sysio/src/xbee2.c"/>
       <File Name="sysio/src/xbee1.c"/>
       <File Name="sysio/src/string.c"/>
-      <File Name="sysio/src/serial-wrapper.cpp"/>
       <File Name="sysio/src/xbee_private.h"/>
       <File Name="sysio/src/gpio_private.h"/>
+      <VirtualDirectory Name="spi">
+        <File Name="sysio/src/spi/spi.c"/>
+        <File Name="sysio/src/spi/module.h"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -318,6 +321,8 @@
     <File Name="sysio/log.h"/>
     <File Name="sysio/blyss.h"/>
     <File Name="sysio/nanopi.h"/>
+    <File Name="sysio/spi.h"/>
+    <File Name="sysio/src/serial-wrapper.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
