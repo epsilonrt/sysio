@@ -154,7 +154,7 @@ int iSpiXfer (int fd, uint8_t * tx_buffer, uint8_t tx_len, uint8_t *rx_buffer, u
  * Cette fonction réalise une transmission de l'adresse du registre à lire,
  * suivie d'une lecture d'un octet.\n
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du registre (ou octet de contrôle)
+ * @param reg adresse du registre
  * @return la valeur de l'octet comme un unsigned, -1 si erreur
  */
 int iSpiReadReg8 (int fd, uint8_t reg);
@@ -165,7 +165,7 @@ int iSpiReadReg8 (int fd, uint8_t reg);
  * Cette fonction réalise une transmission de l'adresse du registre à lire,
  * suivie d'une lecture de 2 octets
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du registre (ou octet de contrôle)
+ * @param reg adresse du registre
  * @return la valeur du mot comme un unsigned, -1 si erreur
  */
 int iSpiReadReg16 (int fd, uint8_t reg);
@@ -173,10 +173,8 @@ int iSpiReadReg16 (int fd, uint8_t reg);
 /**
  * @brief Lecture d'un bloc de registres
  *
- * @warning La transmission s'effectue par bloc qu'au maximum 32 octets.
- *
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du premier registre (ou octet de contrôle)
+ * @param reg adresse du premier registre
  * @param buffer pointeur vers la zone de stockage des octets, la taille doit
  *        être suffisante pour y stocker le nombre d'octets demandés.
  * @param len nombre de registres à lire
@@ -188,9 +186,9 @@ int iSpiReadRegBlock (int fd, uint8_t reg, uint8_t * buffer, uint8_t len);
  * @brief Ecriture d'un registre 8 bits
  *
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du registre (ou octet de contrôle)
+ * @param reg adresse du registre
  * @param data valeur de l'octet
- * @return 0, -1 si erreur
+ * @return nombre d'octets écrits, -1 si erreur
  */
 int iSpiWriteReg8 (int fd, uint8_t reg, uint8_t data);
 
@@ -198,22 +196,20 @@ int iSpiWriteReg8 (int fd, uint8_t reg, uint8_t data);
  * @brief Ecriture d'un registre 16 bits
  *
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du registre (ou octet de contrôle)
+ * @param reg adresse du registre
  * @param data valeur du mot
- * @return 0, -1 si erreur
+ * @return nombre d'octets écrits, -1 si erreur
  */
 int iSpiWriteReg16 (int fd, uint8_t reg, uint16_t data);
 
 /**
  * @brief Ecriture d'un bloc de registres
  *
- * @warning La transmission s'effectue par bloc qu'au maximum 32 octets.
- *
  * @param fd descripteur de fichier vers la connexion ouverte
- * @param reg adresse du premier registre (ou octet de contrôle)
+ * @param reg adresse du premier registre
  * @param buffer pointeur vers la zone de stockage des octets
  * @param len nombre d'octets à écrire
- * @return 0, -1 si erreur
+ * @return nombre d'octets écrits, -1 si erreur
  */
 int iSpiWriteRegBlock (int fd, uint8_t reg, const uint8_t * buffer, uint8_t len);
 
