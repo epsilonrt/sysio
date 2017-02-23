@@ -37,7 +37,7 @@ __BEGIN_C_DECLS
 /* structures =============================================================== */
 /**
  * @class xBlyssFrame
- * @brief Classe permattant de manipuler une liaison LiveEz
+ * @brief Classe permettant de manipuler une liaison LiveEz
  * Classe opaque pour l'utilisateur
  */
 struct xBlyss;

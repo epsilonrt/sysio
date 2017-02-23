@@ -1,7 +1,7 @@
-/*
- * sysio/posix/delay.c
+/**
+ * @file
  * @brief fonctions de temporisation
- * Copyright © 2014 epsilonRT, All rights reserved.
+ * Copyright © 2014-2017 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <time.h>

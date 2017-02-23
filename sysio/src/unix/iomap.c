@@ -1,6 +1,6 @@
-/*
- * iomap.c
- * @brief
+/**
+ * @file
+ * @brief Projection mémoire 
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>

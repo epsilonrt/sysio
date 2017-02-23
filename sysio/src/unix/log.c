@@ -1,5 +1,5 @@
-/*
- * sysio/src/log.c
+/**
+ * @file
  * @brief Gestion des logs
  * Copyright © 2014 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
