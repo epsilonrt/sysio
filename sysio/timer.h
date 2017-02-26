@@ -75,7 +75,7 @@ int iTimerStop (xTimer * tm);
 /**
  * @brief Modifie l'intervalle d'un timer
  * @param tm pointeur sur le timer
- * @param msec
+ * @param msec intervalle en ms
  */
 void vTimerSetInterval (xTimer * tm, long msec);
 

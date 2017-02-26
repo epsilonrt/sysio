@@ -14,6 +14,7 @@
 #include <sysio/timer.h>
 #include <sysio/dlist.h>
 
+/* constants ================================================================ */
 #define MAX_EVENTS 20
 
 /* structures =============================================================== */
@@ -34,10 +35,10 @@ struct xTimer {
 struct xTimerContext {
   int epfd;
   pthread_t thread;
-//  pthread_mutex_t read_mutex;
   bool run;
 };
 
+/* private variables ======================================================== */
 struct xTimerContext ctx;
 
 /* private functions ======================================================== */
@@ -123,7 +124,7 @@ iTimerSetCallback (xTimer * tm, iTimerCallback callback, void * udata) {
 // -----------------------------------------------------------------------------
 int
 iTimerUnsetCallback (xTimer * tm) {
-  int ret;
+  int ret = 0;
 
   if (ctx.epfd) {
     ret = epoll_ctl (ctx.epfd, EPOLL_CTL_DEL, tm->fd, NULL);
