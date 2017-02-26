@@ -405,11 +405,13 @@ endif
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/rpi.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/nanopi.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/serial.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/term.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/xbee.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/dlist.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/vector.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/string.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/tinfo.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/timer.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -d -m 0755 $(INSTALL_INCDIR)/radio
 	@-install -m 0644 $(SYSIO_ROOT)/radio/*.h $(INSTALL_INCDIR)/radio
 	@-install -d -m 0755 $(INSTALL_INCDIR)/ssdv
@@ -435,6 +437,7 @@ endif
 
 ifeq ($(SYS_HAS_SPI),ON)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/spi.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/rf69.h $(INSTALL_INCDIR)/$(TARGET)
 endif
 
 ifeq ($(BOARD),BOARD_RASPBERRYPI)

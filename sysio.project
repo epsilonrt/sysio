@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="sysio" InternalType="">
+<CodeLite_Project Name="sysio" InternalType="" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -275,6 +275,8 @@
         <File Name="sysio/src/unix/serial.c"/>
         <File Name="sysio/src/unix/delay.c"/>
         <File Name="sysio/src/unix/log.c"/>
+        <File Name="sysio/src/unix/timer.c"/>
+        <File Name="sysio/src/unix/term.c"/>
       </VirtualDirectory>
       <File Name="sysio/src/xbee.c"/>
       <File Name="sysio/src/serial.c"/>
@@ -288,7 +290,10 @@
       <File Name="sysio/src/gpio_private.h"/>
       <VirtualDirectory Name="spi">
         <File Name="sysio/src/spi/spi.c"/>
-        <File Name="sysio/src/spi/module.h"/>
+        <File Name="sysio/src/spi/rf69.c"/>
+        <File Name="sysio/src/spi/rf69_private.h"/>
+        <File Name="sysio/src/spi/rf69_sysio.c"/>
+        <File Name="sysio/src/spi/rf69_registers.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
@@ -323,6 +328,9 @@
     <File Name="sysio/nanopi.h"/>
     <File Name="sysio/spi.h"/>
     <File Name="sysio/src/serial-wrapper.cpp"/>
+    <File Name="sysio/rf69.h"/>
+    <File Name="sysio/timer.h"/>
+    <File Name="sysio/term.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

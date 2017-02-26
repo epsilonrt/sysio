@@ -1,6 +1,8 @@
-/*
- * template.c
- * @brief Description de votre programme
+/**
+ * @file
+ * @brief Test d'accès SPI à un module RFM69
+ * Effectue des lectures et écritures dans les registres du module RFM69 et
+ * affiche les résultats sur la liaison série.
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
@@ -13,15 +15,9 @@
 #include <sysio/spi.h>
 
 /* constants ================================================================ */
-#define TEST_SPEED  250000
-#define TEST_MODE
-#define TEST_LSB
-#define TEST_BITS
-/* macros =================================================================== */
-/* structures =============================================================== */
-/* types ==================================================================== */
-/* private variables ======================================================== */
+#define TEST_SPEED  4000000
 
+/* private variables ======================================================== */
 static const char *   regs[] = {
   "RegFifo", "RegOpMode", "RegDataModul", "RegBitrateMsb", "RegBitrateLsb",
   "RegFdevMsb", "RegFdevLsb", "RegFrfMsb", "RegFrfMid", "RegFrfLsb",
@@ -105,7 +101,7 @@ main (int argc, char **argv) {
   while (regs[addr] != NULL) {
 
     tx_buffer[0] = addr;
-    ret = iSpiXfer (fd, tx_buffer, sizeof (tx_buffer), rx_buffer, sizeof (rx_buffer));
+    ret = iSpiXfer (fd, tx_buffer, 2, rx_buffer, 2);
     assert (ret >= 0);
     printf ("0x%02X,%s,0x%02X\n", addr, regs[addr], rx_buffer[1]);
     addr++;

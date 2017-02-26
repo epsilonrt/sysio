@@ -227,6 +227,11 @@ bool bBlyssFrameIsValid (const void * buffer);
  * @return true si valide
  */
 bool bBlyssChannelIsValid (uint8_t channel);
+
+/**
+ * @}
+ */
+
 /* ========================================================================== */
 __END_C_DECLS
 #endif /*_SYSIO_BLYSS_H_ defined */

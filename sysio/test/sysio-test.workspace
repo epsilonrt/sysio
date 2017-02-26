@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="sysio-test" Database="">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
-  <Project Name="lib" Path="lib/lib.project" Active="No"/>
-  <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
-  <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
-  <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
-  <Project Name="sysio_test_serial" Path="sysio/test/serial/sysio_test_serial.project" Active="No"/>
-  <Project Name="sysio_test_pwm" Path="sysio/test/pwm/sysio_test_pwm.project" Active="No"/>
-  <Project Name="sysio_test_gpio_getmode" Path="sysio/test/gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
-  <Project Name="sysio_test_gpio_read" Path="sysio/test/gpio/read/sysio_test_gpio_read.project" Active="No"/>
-  <Project Name="sysio_test_gpio_write" Path="sysio/test/gpio/write/sysio_test_gpio_write.project" Active="No"/>
-  <Project Name="sysio_test_dinput_callback" Path="sysio/test/dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
-  <Project Name="sysio_test_dinput_poll" Path="sysio/test/dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
-  <Project Name="sysio_test_dinput_group" Path="sysio/test/dinput/group/sysio_test_dinput_group.project" Active="No"/>
-  <Project Name="sysio_test_doutput" Path="sysio/test/doutput/sysio_test_doutput.project" Active="No"/>
-  <Project Name="sysio_test" Path="sysio/test/sysio_test.project" Active="No"/>
-  <Project Name="sysio_test_xbee_node" Path="sysio/test/xbee/node/sysio_test_xbee_node.project" Active="No"/>
-  <Project Name="sysio_test_xbee_coordinator" Path="sysio/test/xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
-  <Project Name="sysio_test_dlist" Path="sysio/test/dlist/sysio_test_dlist.project" Active="No"/>
-  <Project Name="sysio_test_vector" Path="sysio/test/vector/sysio_test_vector.project" Active="No"/>
-  <Project Name="sysio_test_rs485" Path="sysio/test/rs485/sysio_test_rs485.project" Active="No"/>
-  <Project Name="sysio_test_rpi" Path="sysio/test/rpi/sysio_test_rpi.project" Active="No"/>
-  <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
-  <Project Name="sysio_test_tinfo" Path="sysio/test/tinfo/sysio_test_tinfo.project" Active="No"/>
-  <Project Name="util_ssend" Path="util/ssend/util_ssend.project" Active="No"/>
-  <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
-  <Project Name="radio" Path="radio/radio.project" Active="No"/>
-  <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
-  <Project Name="sysio_test_nanopi" Path="sysio/test/nanopi/sysio_test_nanopi.project" Active="No"/>
-  <Project Name="sysio_test_blyss_tx" Path="sysio/test/blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
-  <Project Name="util_blink" Path="util/blink/util_blink.project" Active="No"/>
-  <Project Name="util_tinfo" Path="util/tinfo/util_tinfo.project" Active="No"/>
-  <Project Name="sysio" Path="sysio.project" Active="No"/>
-  <Project Name="sysio_test_spi" Path="sysio/test/spi/sysio_test_spi.project" Active="No"/>
+<CodeLite_Workspace Name="sysio-test" Database="" Version="10.0.0">
+  <Project Name="sysio" Path="../../sysio.project" Active="No"/>
+  <Project Name="libsysio" Path="../../lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="lib" Path="../../lib/lib.project" Active="No"/>
+  <Project Name="libpython" Path="../../lib/python/libpython.project" Active="No"/>
+  <Project Name="libsysio++" Path="../../lib/sysio++/libsysio++.project" Active="No"/>
+  <Project Name="libmodbus" Path="../../3rdparty/modbus/libmodbus.project" Active="No"/>
+  <Project Name="util_sping" Path="../../util/sping/util_sping.project" Active="No"/>
+  <Project Name="util_ssend" Path="../../util/ssend/util_ssend.project" Active="No"/>
+  <Project Name="util_bsend" Path="../../util/blyss/bsend/util_bsend.project" Active="No"/>
+  <Project Name="util_blink" Path="../../util/blink/util_blink.project" Active="No"/>
+  <Project Name="util_tinfo" Path="../../util/tinfo/util_tinfo.project" Active="No"/>
+  <Project Name="radio" Path="../../radio/radio.project" Active="No"/>
+  <Project Name="sysio_test_serial" Path="serial/sysio_test_serial.project" Active="No"/>
+  <Project Name="sysio_test_pwm" Path="pwm/sysio_test_pwm.project" Active="No"/>
+  <Project Name="sysio_test_gpio_getmode" Path="gpio/getmode/sysio_test_gpio_getmode.project" Active="No"/>
+  <Project Name="sysio_test_gpio_read" Path="gpio/read/sysio_test_gpio_read.project" Active="No"/>
+  <Project Name="sysio_test_gpio_write" Path="gpio/write/sysio_test_gpio_write.project" Active="No"/>
+  <Project Name="sysio_test_dinput_callback" Path="dinput/callback/sysio_test_dinput_callback.project" Active="No"/>
+  <Project Name="sysio_test_dinput_poll" Path="dinput/poll/sysio_test_dinput_poll.project" Active="No"/>
+  <Project Name="sysio_test_dinput_group" Path="dinput/group/sysio_test_dinput_group.project" Active="No"/>
+  <Project Name="sysio_test_doutput" Path="doutput/sysio_test_doutput.project" Active="No"/>
+  <Project Name="sysio_test" Path="sysio_test.project" Active="No"/>
+  <Project Name="sysio_test_xbee_node" Path="xbee/node/sysio_test_xbee_node.project" Active="No"/>
+  <Project Name="sysio_test_xbee_coordinator" Path="xbee/coordinator/sysio_test_xbee_coordinator.project" Active="No"/>
+  <Project Name="sysio_test_dlist" Path="dlist/sysio_test_dlist.project" Active="No"/>
+  <Project Name="sysio_test_vector" Path="vector/sysio_test_vector.project" Active="No"/>
+  <Project Name="sysio_test_rs485" Path="rs485/sysio_test_rs485.project" Active="No"/>
+  <Project Name="sysio_test_rpi" Path="rpi/sysio_test_rpi.project" Active="No"/>
+  <Project Name="sysio_test_tinfo" Path="tinfo/sysio_test_tinfo.project" Active="No"/>
+  <Project Name="sysio_doc" Path="../../doc/sysio_doc.project" Active="No"/>
+  <Project Name="sysio_test_nanopi" Path="nanopi/sysio_test_nanopi.project" Active="No"/>
+  <Project Name="sysio_test_blyss_tx" Path="blyss/tx/sysio_test_blyss_tx.project" Active="No"/>
+  <Project Name="sysio_test_spi" Path="spi/sysio_test_spi.project" Active="No"/>
+  <Project Name="sysio_test_timer" Path="timer/sysio_test_timer.project" Active="No"/>
+  <Project Name="sysio_test_rf69_common" Path="rf69/common/sysio_test_rf69_common.project" Active="No"/>
+  <Project Name="sysio_test_rf69_spi" Path="rf69/spi/sysio_test_rf69_spi.project" Active="No"/>
+  <Project Name="sysio_test_rf69_ping" Path="rf69/ping/sysio_test_rf69_ping.project" Active="No"/>
+  <Project Name="sysio_test_rf69_gateway" Path="rf69/gateway/sysio_test_rf69_gateway.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Environment/>
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -71,9 +75,14 @@
       <Project Name="util_tinfo" ConfigName="Debug"/>
       <Project Name="sysio" ConfigName="Debug"/>
       <Project Name="sysio_test_spi" ConfigName="Debug"/>
+      <Project Name="sysio_test_rf69_ping" ConfigName="Debug"/>
+      <Project Name="sysio_test_timer" ConfigName="Debug"/>
+      <Project Name="sysio_test_rf69_common" ConfigName="Debug"/>
+      <Project Name="sysio_test_rf69_spi" ConfigName="Debug"/>
+      <Project Name="sysio_test_rf69_ping" ConfigName="Debug"/>
+      <Project Name="sysio_test_rf69_gateway" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
-      <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="lib" ConfigName="Release"/>
       <Project Name="libpython" ConfigName="Release"/>
@@ -109,6 +118,12 @@
       <Project Name="util_tinfo" ConfigName="Release"/>
       <Project Name="sysio" ConfigName="Release"/>
       <Project Name="sysio_test_spi" ConfigName="Release"/>
+      <Project Name="sysio_test_rf69_ping" ConfigName="Release"/>
+      <Project Name="sysio_test_timer" ConfigName="Release"/>
+      <Project Name="sysio_test_rf69_common" ConfigName="Release"/>
+      <Project Name="sysio_test_rf69_spi" ConfigName="Release"/>
+      <Project Name="sysio_test_rf69_ping" ConfigName="Release"/>
+      <Project Name="sysio_test_rf69_gateway" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
