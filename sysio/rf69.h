@@ -19,9 +19,9 @@ __BEGIN_C_DECLS
  * @defgroup sysio_rfm69 Module UHF RFM69
  * Ce module permet de gérer la transmission avec des modules sans fil
  * RFM69 de HopeRF (http://www.hoperf.com/rf_transceiver/modules/RFM69W.html). \n
- * La plateforme doit disposer d'un GPIO. \n
+ * La plateforme doit disposer d'un bus SPI et de la gestion des interruptions. \n
  * @{
- * @example net/rf69/ping/demo_rf69_ping.c
+ * @example rf69/ping/demo_rf69_ping.c
  * Demo émission-réception RFM69 (module rf69)
  * Ce programme : \n
  * - Transmet des messages 'Hello' à un noeud du réseau (gateway) et attend 
@@ -53,7 +53,7 @@ __BEGIN_C_DECLS
 
     T[1]>[255] 'Hello 16' >
  * @endcode
- * @example net/rf69/gateway/demo_rf69_gateway.c
+ * @example rf69/gateway/demo_rf69_gateway.c
  * Demo réception RFM69 (module rf69)
  * Ce programme attend la réception de messages, les affichent sur la liaison
  * série et retourne un accusé réception si demandé. \n
@@ -181,14 +181,14 @@ int iRf69SendAck (xRf69 * rf, const void * tx_buffer, uint8_t tx_len);
  * @param rf pointeur sur l'objet xRf69
  * @return  Adresse de l'émetteur comme un unsigned int, -1 si erreur
  */
-int iRf69SenderId(xRf69 * rf);
+int iRf69SenderId(const xRf69 * rf);
 
 /**
  * @brief Adresse du destinataire du dernier message reçu
  * @param rf pointeur sur l'objet xRf69
  * @return  Adresse du destinataire comme un unsigned int, -1 si erreur
  */
-int iRf69TargetId(xRf69 * rf);
+int iRf69TargetId(const xRf69 * rf);
 
 /**
  * @brief Nombre d'octets du dernier message reçu
@@ -297,7 +297,7 @@ int iRf69SetNodeId (xRf69 * rf, uint8_t ucNodeId);
  * @param rf pointeur sur l'objet xRf69
  * @return identifiant, valeur négative si erreur
  */
-int iRf69NodeId (const xRf69 * rf);
+int iRf69NodeId (xRf69 * rf);
 
 /**
  * @brief Modification de notre réseau
@@ -306,14 +306,14 @@ int iRf69NodeId (const xRf69 * rf);
  * @param ucNetId identifiant du nouveau réseau
  * @return 0, valeur négative si erreur
  */
-int iRf69SetNetworkId (const xRf69 * rf, uint8_t ucNetId);
+int iRf69SetNetworkId (xRf69 * rf, uint8_t ucNetId);
 
 /**
  * @brief Lecture de notre réseau
  * @param rf pointeur sur l'objet xRf69
  * @return identifiant de notre réseau, valeur négative si erreur
  */
-int iRf69NetworkId (const xRf69 * rf);
+int iRf69NetworkId (xRf69 * rf);
 
 /**
  * @brief Lecture de la fréquence d'émission/réception
@@ -321,7 +321,7 @@ int iRf69NetworkId (const xRf69 * rf);
  * @param rf pointeur sur l'objet xRf69
  * @return La fréquence en Hz, valeur négative si erreur
  */
-long lRf69Frequency (const xRf69 * rf);
+long lRf69Frequency (xRf69 * rf);
 
 /**
  * @brief Modification de la fréquence d'émission/réception
@@ -375,7 +375,7 @@ int iRf69SetPowerLevel (xRf69 * rf, int level);
  * @param rf pointeur sur l'objet xRf69
  * @return puissance relative (0 à 31 dBm)
  */
-int iRf69PowerLevel (const xRf69 * rf);
+int iRf69PowerLevel (xRf69 * rf);
 
 /**
  * @brief Lecture de la température du capteur 8 bits embarqué
@@ -396,7 +396,7 @@ int iRf69Temperature (xRf69 * rf, int iCalFactor);
  * le niveau de réception correspondant à la dernière réception qui est lu.
  * @return Le niveau de réception en dBm, INT_MAX si erreur
  */
-int iRf69Rssi (const xRf69 * rf, bool bForceTrigger);
+int iRf69Rssi (xRf69 * rf, bool bForceTrigger);
 
 /**
  * @brief Modification de la clé d'encryptage
@@ -416,7 +416,7 @@ int iRf69SetEncryptKey (xRf69 * rf, const char * sKey);
  * @param rf pointeur sur l'objet xRf69
  * @return true, false, valeur négative si erreur
  */
-int iRf69isEncrypted (const xRf69 * rf);
+int iRf69isEncrypted (xRf69 * rf);
 
 /**
  * @brief Modification du mode promiscuité
@@ -458,7 +458,7 @@ int iRf69Sleep (xRf69 * rf);
  * @param rf pointeur sur l'objet xRf69
  * @return 0, valeur négative si erreur
  */
-int iRf69RcCalibration (const xRf69 * rf);
+int iRf69RcCalibration (xRf69 * rf);
 
 /**
  * @}

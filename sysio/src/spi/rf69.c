@@ -445,7 +445,7 @@ sRf69Data (const xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69isEncrypted (const xRf69 * rf) {
+iRf69isEncrypted (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -488,7 +488,7 @@ iRf69SetNodeId (xRf69 * rf, uint8_t ucNodeId) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69NodeId (const xRf69 * rf) {
+iRf69NodeId (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -498,7 +498,7 @@ iRf69NodeId (const xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69SetNetworkId (const xRf69 * rf, uint8_t ucNetId) {
+iRf69SetNetworkId (xRf69 * rf, uint8_t ucNetId) {
   TRY_INT_INIT();
 
   TRY_INT (iRf69WriteReg (rf, REG_SYNCVALUE2, ucNetId));
@@ -507,7 +507,7 @@ iRf69SetNetworkId (const xRf69 * rf, uint8_t ucNetId) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69NetworkId (const xRf69 * rf) {
+iRf69NetworkId (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -517,7 +517,7 @@ iRf69NetworkId (const xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 long
-lRf69Frequency (const xRf69 * rf) {
+lRf69Frequency (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
   long f = 0;
@@ -597,7 +597,7 @@ iRf69SetPowerLevel (xRf69 * rf, int level) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69PowerLevel (const xRf69 * rf) {
+iRf69PowerLevel (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -632,7 +632,7 @@ iRf69Temperature (xRf69 * rf, int iCalFactor) {
 // -----------------------------------------------------------------------------
 // Utilisé sous interruption
 int
-iRf69Rssi (const xRf69 * rf, bool bForceTrigger) {
+iRf69Rssi (xRf69 * rf, bool bForceTrigger) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -682,14 +682,14 @@ bRf69isHighPower (const xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 int 
-iRf69SenderId(xRf69 * rf) {
+iRf69SenderId(const xRf69 * rf) {
   
   return rf->hdr.sender;
 }
 
 // -----------------------------------------------------------------------------
 int 
-iRf69TargetId(xRf69 * rf) {
+iRf69TargetId(const xRf69 * rf) {
   
   return rf->hdr.dest;
 }
@@ -703,7 +703,7 @@ iRf69Sleep (xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69RcCalibration (const xRf69 * rf) {
+iRf69RcCalibration (xRf69 * rf) {
   TRY_INT_INIT();
   uint8_t b;
 
@@ -751,7 +751,7 @@ iRf69StartReceiving (xRf69 * rf) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69WaitIrq (const xRf69 * rf, int timeout) {
+iRf69WaitIrq (xRf69 * rf, int timeout) {
   TRY_INT_INIT();
   bool bIrqHigh;
   xRf69Timer t;
@@ -771,7 +771,7 @@ iRf69WaitIrq (const xRf69 * rf, int timeout) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69WaitForReady (const xRf69 * rf, int timeout) {
+iRf69WaitForReady (xRf69 * rf, int timeout) {
   TRY_INT_INIT();
   uint8_t b;
   xRf69Timer t;
@@ -791,7 +791,7 @@ iRf69WaitForReady (const xRf69 * rf, int timeout) {
 
 // -----------------------------------------------------------------------------
 int
-iRf69WriteRegWithCheck (const xRf69 * rf, uint8_t reg, uint8_t data, int timeout) {
+iRf69WriteRegWithCheck (xRf69 * rf, uint8_t reg, uint8_t data, int timeout) {
   TRY_INT_INIT();
   uint8_t b;
   xRf69Timer t;
@@ -812,7 +812,7 @@ iRf69WriteRegWithCheck (const xRf69 * rf, uint8_t reg, uint8_t data, int timeout
 // -----------------------------------------------------------------------------
 // Utilisé sous interruption
 int
-iRf69SetHighPowerRegs (const xRf69 * rf, bool bOn) {
+iRf69SetHighPowerRegs (xRf69 * rf, bool bOn) {
   TRY_INT_INIT();
 
   TRY_INT (iRf69WriteReg (rf, REG_TESTPA1, bOn ? 0x5D : 0x55));

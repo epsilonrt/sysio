@@ -121,7 +121,7 @@ int iSpiGetConfig (int fd, xSpiIos * config);
  * @param buffer pointeur vers la zone de stockage des octets, la taille doit
  *        être suffisante pour y stocker le nombre d'octets demandés.
  * @param len nombre d'octets à lire
- * @return le nombre d'octets lus, -1 si erreur
+ * @return la valeur de l'octet comme un unsigned int, -1 si erreur
  */
 int iSpiRead (int fd, uint8_t * buffer, uint8_t len);
 
@@ -141,10 +141,10 @@ int iSpiWrite (int fd, uint8_t * buffer, uint8_t len);
  * @param fd descripteur de fichier vers la connexion ouverte
  * @param tx_buffer pointeur vers la zone de stockage des octets
  * @param tx_len nombre d'octets à écrire
- * @param buffer pointeur vers la zone de stockage des octets, la taille doit
+ * @param rx_buffer pointeur vers la zone de stockage des octets, la taille doit
  *        être suffisante pour y stocker le nombre d'octets demandés.
- * @param len nombre d'octets à lire
- * @return
+ * @param rx_len nombre d'octets à lire
+ * @return le nombre d'octets transférés, -1 si erreur
  */
 int iSpiXfer (int fd, uint8_t * tx_buffer, uint8_t tx_len, uint8_t *rx_buffer, uint8_t rx_len);
 
@@ -155,7 +155,7 @@ int iSpiXfer (int fd, uint8_t * tx_buffer, uint8_t tx_len, uint8_t *rx_buffer, u
  * suivie d'une lecture d'un octet.\n
  * @param fd descripteur de fichier vers la connexion ouverte
  * @param reg adresse du registre
- * @return la valeur de l'octet comme un unsigned, -1 si erreur
+ * @return la valeur de l'octet comme un unsigned int, -1 si erreur
  */
 int iSpiReadReg8 (int fd, uint8_t reg);
 
@@ -166,9 +166,9 @@ int iSpiReadReg8 (int fd, uint8_t reg);
  * suivie d'une lecture de 2 octets
  * @param fd descripteur de fichier vers la connexion ouverte
  * @param reg adresse du registre
- * @return la valeur du mot comme un unsigned, -1 si erreur
+ * @return la valeur du mot comme un unsigned long, -1 si erreur
  */
-int iSpiReadReg16 (int fd, uint8_t reg);
+long lSpiReadReg16 (int fd, uint8_t reg);
 
 /**
  * @brief Lecture d'un bloc de registres

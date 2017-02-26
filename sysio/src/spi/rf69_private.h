@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief Module de transmission UHF RFM69 (Déclarations privées)
- * 
+ *
  * http://www.hoperf.com/rf_transceiver/modules/RFM69W.html
  *
  * Copyright © 2017 epsilonRT, All rights reserved.
@@ -10,7 +10,7 @@
 #ifndef _RF69_PRIVATE_H_
 #define _RF69_PRIVATE_H_
 
-#include <avrio/defs.h>
+#include <sysio/defs.h>
 __BEGIN_C_DECLS
 /* ========================================================================== */
 #include "rf69_registers.h"
@@ -36,7 +36,7 @@ struct xRf69Header {
   uint8_t ctl;
 #define RF69_ACK      0x80
 #define RF69_ACKREQ  0x40
-} __attribute__ ( (__packed__) );
+} __attribute__ ( (__packed__));
 
 /* settings ================================================================= */
 /* Bande 315MHz - 290 à 340 MHz pour le RFM69
@@ -48,9 +48,9 @@ struct xRf69Header {
 #define RF69_FRF_315_STP 25E3
 
 /* Bande 433MHz - 424 à 510 MHz pour le RFM69
- * 69 canaux 25kHz de 433,075 MHz à 434,775 MHz 
+ * 69 canaux 25kHz de 433,075 MHz à 434,775 MHz
  * Réglementation européenne ISM
- * http://www.erodocdb.dk/docs/doc98/official/pdf/ERCRep025.pdf 
+ * http://www.erodocdb.dk/docs/doc98/official/pdf/ERCRep025.pdf
  * Puissance max. 10mW
  */
 #define RF69_FRF_433_MIN 433075E3
@@ -60,8 +60,8 @@ struct xRf69Header {
 
 /* Bande 868MHz - 862 à 890 MHz pour le RFM69
  * Réglementation européenne ISM
- * 81 canaux 25kHz de 868 MHz à 870 MHz 
- * http://www.erodocdb.dk/docs/doc98/official/pdf/ERCRep025.pdf 
+ * 81 canaux 25kHz de 868 MHz à 870 MHz
+ * http://www.erodocdb.dk/docs/doc98/official/pdf/ERCRep025.pdf
  * Puissance max. dépendant de la fréquence voir :
  * http://docplayer.fr/docs-images/40/386919/images/6-0.png
  */
@@ -111,6 +111,7 @@ struct xRf69Header {
 #include <sysio/rf69.h>
 #include <sysio/timer.h>
 #include <sysio/dinput.h>
+#include <pthread.h>
 
 /* macros =================================================================== */
 /**
@@ -169,7 +170,7 @@ typedef xTimer * xRf69Timer;
 struct xRf69 {
   uint8_t data[RF_FIFO_SIZE];
   uint8_t data_len;
-  struct xRf69Header hdr; 
+  struct xRf69Header hdr;
   int rssi;
   uint8_t mode;
   union {
@@ -183,6 +184,8 @@ struct xRf69 {
   uint8_t node_id;
   uint8_t power_level;
   int fd; // descripteur de fichier vers spidev
+  pthread_mutex_t spi_mutex;
+  pthread_mutex_t rcv_mutex;
   xDinPort * port;
 };
 
@@ -301,7 +304,7 @@ int iRf69SetMode (xRf69 * rf, eRf69Mode eNewMode);
  * @param timeout en ms
  * @return true DIO0 à l'état haut, false si timeout, -1 si erreur
  */
-int iRf69WaitIrq (const xRf69 * rf, int timeout);
+int iRf69WaitIrq (xRf69 * rf, int timeout);
 
 /**
  * @brief Attente module prêt
@@ -309,7 +312,7 @@ int iRf69WaitIrq (const xRf69 * rf, int timeout);
  * @param timeout en ms
  * @return true module prêt, false si timeout, -1 si erreur
  */
-int iRf69WaitForReady (const xRf69 * rf, int timeout);
+int iRf69WaitForReady (xRf69 * rf, int timeout);
 
 /**
  * @brief wait to send
@@ -325,7 +328,7 @@ int iRf69WaitToSend (xRf69 * rf, int timeout);
  * @param timeout
  * @return 0 succès, -1 timeout
  */
-int iRf69WriteRegWithCheck (const xRf69 * rf, uint8_t reg, uint8_t data, int timeout);
+int iRf69WriteRegWithCheck (xRf69 * rf, uint8_t reg, uint8_t data, int timeout);
 
 /**
  * @brief
@@ -359,7 +362,7 @@ int iRf69StartReceiving (xRf69 * rf);
  * @param bOn
  * @return
  */
-int iRf69SetHighPowerRegs (const xRf69 * rf, bool bOn);
+int iRf69SetHighPowerRegs (xRf69 * rf, bool bOn);
 
 /* protected functions ====================================================== */
 // -----------------------------------------------------------------------------
@@ -374,20 +377,20 @@ int iRf69SetHighPowerRegs (const xRf69 * rf, bool bOn);
  * @param data valeur de l'octet
  * @return nombre d'octets écrits, -1 si erreur
  */
-int iRf69WriteReg (const xRf69 * rf, uint8_t reg, uint8_t data);
+int iRf69WriteReg (xRf69 * rf, uint8_t reg, uint8_t data);
 
 /**
  * @brief Ecriture d'un registre 8 bits sous forme de stucture constante
- * 
+ *
  * Sur AVR par exemple, la configuration initiale est stockée en FLASH ce qui
  * nécessite un traitement particulier.
- * 
+ *
  * @param rf pointeur sur l'objet xRf69
  * @param elmt adresse et valeur du registre sous forme de stucture constante
  * @return 1 si le registre a été écrit, 0 si elmt pointe sur le registre 255
  * (fin de configuration)
  */
-int iRf69WriteConstElmt (const xRf69 * rf, const struct xRf69Config * elmt);
+int iRf69WriteConstElmt (xRf69 * rf, const struct xRf69Config * elmt);
 
 /**
  * @brief Ecriture d'un bloc de registres
@@ -398,7 +401,7 @@ int iRf69WriteConstElmt (const xRf69 * rf, const struct xRf69Config * elmt);
  * @param len nombre d'octets à écrire
  * @return nombre d'octets écrits, -1 si erreur
  */
-int iRf69WriteBlock (const xRf69 * rf, uint8_t reg, const uint8_t * buffer, uint8_t len);
+int iRf69WriteBlock (xRf69 * rf, uint8_t reg, const uint8_t * buffer, uint8_t len);
 
 /**
  * @brief Lecture d'un registre 8 bits
@@ -409,7 +412,7 @@ int iRf69WriteBlock (const xRf69 * rf, uint8_t reg, const uint8_t * buffer, uint
  * @param reg adresse du registre
  * @return la valeur de l'octet comme un unsigned int, -1 si erreur
  */
-int iRf69ReadReg (const xRf69 * rf, uint8_t reg);
+int iRf69ReadReg (xRf69 * rf, uint8_t reg);
 
 /**
  * @brief Lecture d'un bloc de registres
@@ -421,7 +424,7 @@ int iRf69ReadReg (const xRf69 * rf, uint8_t reg);
  * @param len nombre de registres à lire
  * @return le nombre d'octets lus, -1 si erreur
  */
-int iRf69ReadBlock (const xRf69 * rf, uint8_t reg, uint8_t * buf, uint8_t len);
+int iRf69ReadBlock (xRf69 * rf, uint8_t reg, uint8_t * buf, uint8_t len);
 
 // ------------------------- Broche d'interruption -----------------------------
 /**
@@ -430,7 +433,7 @@ int iRf69ReadBlock (const xRf69 * rf, uint8_t reg, uint8_t * buf, uint8_t len);
  * @param rf pointeur sur l'objet xRf69
  * @return true si active, false si inactive, -1 si erreur
  */
-int iRf69ReadIrqPin (const xRf69 * rf);
+int iRf69ReadIrqPin (xRf69 * rf);
 
 // ---------------------------------- Timers -----------------------------------
 /**
