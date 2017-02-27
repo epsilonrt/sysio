@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="sysio" Database="">
+<CodeLite_Workspace Name="sysio" Database="" Version="10.0.0">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
   <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
@@ -24,6 +24,9 @@
   <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
   <Project Name="modbus_demo_rtu_master" Path="demo/modbus/rtu/modbus_demo_rtu_master.project" Active="No"/>
   <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
+  <Project Name="sysio_demo_blyss_tx" Path="demo/blyss/tx/sysio_demo_blyss_tx.project" Active="No"/>
+  <Project Name="sysio_demo_rf69_ping" Path="demo/rf69/ping/sysio_demo_rf69_ping.project" Active="No"/>
+  <Project Name="sysio_demo_rf69_gateway" Path="demo/rf69/gateway/sysio_demo_rf69_gateway.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -60,6 +63,9 @@
       <Project Name="sysio_demo_hih6130" ConfigName="Debug"/>
       <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
       <Project Name="modbus_demo_rtu_master" ConfigName="Debug"/>
+      <Project Name="sysio_demo_blyss_tx" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rf69_ping" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rf69_gateway" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -96,6 +102,9 @@
       <Project Name="sysio_demo_hih6130" ConfigName="Release"/>
       <Project Name="sysio_demo_i2c" ConfigName="Release"/>
       <Project Name="modbus_demo_rtu_master" ConfigName="Release"/>
+      <Project Name="sysio_demo_blyss_tx" ConfigName="Release"/>
+      <Project Name="sysio_demo_rf69_ping" ConfigName="Release"/>
+      <Project Name="sysio_demo_rf69_gateway" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
