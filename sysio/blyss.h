@@ -23,6 +23,49 @@ __BEGIN_C_DECLS
  * Bidle (https://skyduino.wordpress.com/2012/07/19/hack-partie-2-reverse-engineering-des-interrupteurs-domotique-blyss) \n
  * @todo Seule la partie emission est implémentée pour l'instant.
  * @{
+ * @example blyss/tx/sysio_demo_blyss_tx.c
+ * Demo émission Modules Blyss™
+ * 
+ * Ce programme permet d'envoyer des commandes sur une liaison LiveEz™ 433.92 MHz
+ * à l'aide d'un module d'émission connecté à une broche de GPIO. Par exemple,
+ * on pourra utiliser le module SeeedStudio du kit :
+ * https://www.seeedstudio.com/433Mhz-RF-link-kit-p-127.html#
+ * Le module émetteur est alimenté entre GND et +5V, l'entrée DATA sera reliée
+ * à une broche de GPIO (3.3 ou 5V). \n
+ * Le programme émule par défaut une télécommande 8 canaux Ref. 582883
+ * Le synopsis est le suivant :
+ * 
+ * @code
+ * sysio_demo_blyss_tx channel {on,off,loop} [pin]
+ * @endcode
+ *
+ * - `channel` numéro du canal à commander entre 1 et 8, 0 pour tous les canaux
+ * - `{on,off,loop}` commande à effectuer : `on` pour marche, `off` pour arrêt et
+ * `loop` pour entrer dans une boucle qui bascule l'état du canal toutes les 5
+ * secondes (CTRL+C por arrêter)
+ * - `[pin]` numéro de la broche à utiliser, optionnel, par défaut le programme
+ * utilise la broche 0 (numérotation logique qui dépend de la carte utilisé, voir
+ * les modules Raspberry Pi ou NanoPi pour la numérotation.
+ * .
+ * Voilà ce que ça donne : \n
+ * @code
+    sysio_demo_blyss_tx 4 on
+    Press Ctrl+C to abort ...
+    RF frame          : FE508241098E9
+    RF footprint      : FE - Ok
+    RF global channel : 5
+    RF adress         : 0824
+    RF channel        : 4
+    Light status      : On
+    Rolling code      : 98 - Ok
+    Token             : E9
+
+    everything was closed.
+    Have a nice day !
+ * @endcode
+ * Si le programme n'est pas installé à l'aide d'un `sudo make install`, la
+ * commande est `sudo ./sysio_demo_blyss_tx 4 on`, en effet l'accès au GPIO
+ * est réservé à root.
  */
 /* macros =================================================================== */
 /**
