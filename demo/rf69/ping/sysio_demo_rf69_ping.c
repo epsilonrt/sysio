@@ -17,10 +17,10 @@
 #include <signal.h>
 
 /* constants ================================================================ */
-#define DIO0_IRQ  6 // BCM25 on Raspberry Pi
-#define MYNODE_ID 1
-#define TARGET_ID 10
-#define NET_ID    1
+#define DIO0_IRQ  6     // BCM25 on Raspberry Pi
+#define MYNODE_ID 1     // Adresse de notre module
+#define TARGET_ID 10    // Adresse du module destinataire de nos messages
+#define NET_ID    1     // Numéro de notre réseau
 
 /* private variables ======================================================== */
 static xRf69 * rf;
@@ -45,31 +45,36 @@ main (void) {
   bool bTxOn = true;
   bool bPromiscuous = true;
 
+
   // Affiche le menu
-  printf ("\n\n** RFM69 Ping Test **\n"
-          "----------- Menu -----------\n"
-          "[space]: start/stop Tx\n"
-          "      p: toggle promiscous\n"
-          "      t: change target node\n"
-          "      w: change power level\n");
+  printf ("\n\n** RFM69 Ping Demo **\n"
+                  "----------- Menu -----------\n"
+                  "[space]: start/stop Tx\n"
+                  "      p: toggle promiscous\n"
+                  "      t: change target node\n"
+                  "      w: change power level\n");
 
-  rf = xRf69New (0, 0, DIO0_IRQ);
-  assert (rf);
+  // Création de l'objet xRf69
+  // Les 2 premiers paramètres ne sont pas utilisés sur AVR
+  xRf69 * rf = xRf69New (0, 0, DIO0_IRQ);
+  assert (rf); // vérifie que le pointeur n'est pas nul
 
+  // Ouverture de la connexion vers le module RFM69
   ret = iRf69Open (rf, eRf69Band868Mhz, MYNODE_ID, NET_ID);
   assert (ret == 0);
 
+  // Lecture de notre identifiant (pour vérification et affichage)
   src = iRf69NodeId (rf);
-  assert (src >= 0);
+  assert (src == MYNODE_ID);
 
+  // Lecture de notre  réseau (pour vérification et affichage)
   net = iRf69NetworkId (rf);
-  assert (net >= 0);
+  assert (net == NET_ID);
 
-  target = TARGET_ID;
+  target = TARGET_ID; // L'adresse de la cible est stockée et pourra être modifiée
 
   // vSigIntHandler() intercepte le CTRL+C
   signal (SIGINT, vSigIntHandler);
-
   printf ("Press Ctrl+C to abort ...\n");
 
   for (;;) {
@@ -77,45 +82,45 @@ main (void) {
     raw (true); // désactive l'echo et l'attente du ENTER
     if (kbhit() ) { // Touche clavier appuyée ?
 
-      c = getchar(); // lecture touche
-
+      c = getchar();
       // Commandes utilisateur
       switch (c) {
-        case ' ':
+        case ' ': // Arrêt / Marche transmission
           bTxOn = ! bTxOn;
-          printf ("Tx %s\n", bTxOn ? "On" : "Off");
+          printf ("\nTx %s\n", bTxOn ? "On" : "Off");
           break;
 
-        case 'p':
+        case 'p': // Basculement mode promiscuité
           bPromiscuous = ! bPromiscuous;
           ret = iRf69SetPromiscuous (rf, bPromiscuous);
-          printf ("Promiscuous %s\n", bPromiscuous ? "On" : "Off");
+          printf ("\nPromiscuous %s\n", bPromiscuous ? "On" : "Off");
           break;
 
-        case 't':
+        case 't': // Modification de l'adresse de la cible
           raw (false); // réactive l'echo et l'attente ENTER pour scanf
-          do {
+          do { // demande de saisie
             printf ("\nTarget ID (%d for broadcast)? ", RF69_BROADCAST_ADDR);
             scanf ("%d", &ret);
           }
-          while ( (ret < 1) || (ret > 255) );
-          target = ret;
-          bPrintStat = true;
+          while ( (ret < 1) || (ret > 255)); // tant que l'adresse n'est pas correcte
+          target = ret; // mémorisation adresse cible
+          bPrintStat = true; // demande affichage des caractèristiques de la liaison
           break;
 
-        case 'w':
+        case 'w': // Modification de la puissance d'émission
           raw (false); // réactive l'echo et l'attente ENTER pour scanf
-          do {
+          do { // demande de saisie
             printf ("\nPower level [-18,13]? ");
             scanf ("%d", &ret);
           }
-          while ( (ret < -18) || (ret > 13) );
-          level = ret + 18;
-          ret = iRf69SetPowerLevel (rf, level);
-          assert (ret == 0);
-          bPrintStat = true;
+          while ( (ret < -18) || (ret > 13));// tant que la puissance n'est pas correcte
+          level = ret + 18; // puissance relative 0 à 31
+          ret = iRf69SetPowerLevel (rf, level); // modification puissance
+          assert (ret == 0); // vérification absence d'erreur
+          bPrintStat = true; // demande affichage des caractèristiques de la liaison
           break;
-        default:
+        
+        default: // tous les autres caractères sont ignorés
           break;
       }
     }
@@ -136,35 +141,44 @@ main (void) {
       else {
         level -= 18;
       }
-
       bPromiscuous = bRf69isPromiscuous (rf);
-
-      printf ("Frf: %lu kHz - Power Level: %d dBm - Promiscuous: %d\n"
-              "Own address: [%d]\n"
-              "Transmitting data on network %d to node [%d]...\n",
-              frf / 1000, level, src, bPromiscuous, net, target);
-      bPrintStat = false;
+      printf ("\nFrf: %lu kHz - Power Level: %d dBm - Promiscuous: %d\n"
+                      "Own address: [%d]\n"
+                      "Transmitting data on network %d to node [%d]...\n",
+                frf / 1000, level, bPromiscuous, src, net, target);
+      bPrintStat = false; // on désactive l'affichage
     }
 
     if (bTxOn) {
-      // Transmission activée, on envoit...
+      // Transmission activée, on envoie...
+
+      // Peut-on émettre ?
       ret = iRf69CanSend (rf);
       assert (ret >= 0);
-      if (ret) {
-        static int count;
-        char msg[20];
+
+      if (ret == true) { // oui
+        static int count; // compteur de message
+        char msg[20]; // buffer de caractères pour cpnstruire le message
+
+        // Construction du message 'Hello XXX' avec XXX = count
         snprintf (msg, sizeof (msg), "Hello %d", count++);
-        printf ("T[%d]>[%d] '%s' > ", src, target, msg);
+        printf ("\nT[%d]>[%d] '%s' > ", src, target, msg);
 
+        // Envoi du message, on demande un Ack uniquement si la cible n'est pas le broadcast
         ret = iRf69Send (rf, target, msg, strlen (msg), target != RF69_BROADCAST_ADDR);
-        assert (ret == true);
+        assert (ret == true); // vérification trame envoyée
 
-        if (target != RF69_BROADCAST_ADDR) {
-          int rssi;
+        if (target != RF69_BROADCAST_ADDR) { // si pas broadcast
+          int rssi = 0;
 
+          // On attend l'ack de la cible
           ret = iRf69WaitAckReceived (rf, target, 1000);
-          rssi = iRf69Rssi (rf, false);
+          if (ret == true) {
+            // on récupère le niveau de réception
+            rssi = iRf69Rssi (rf, false);
+          }
           assert (rssi != INT_MAX);
+          // On affiche le résultat
           switch (ret) {
             case false:
               printf ("Timeout");
@@ -176,36 +190,45 @@ main (void) {
               printf ("Error %d", ret);
               break;
           }
-          printf (" [RSSI = %d]\n", rssi);
+          printf (" [RSSI = %d]", rssi);
         }
-        else {
-          
-          putchar('\n');
-        }
-        delay_ms (1000);
+        delay_ms (1000); // attente nécessaire pour éviter un débordement réseau
       }
     }
 
     // Réception des paquets hors ACK
-    ret = iRf69ReceiveDone (rf);
+
+    ret = iRf69ReceiveDone (rf); // a-t-on reçu ?
     assert (ret >= 0);
-    if (ret) {
+    
+    if (ret == true) { // Oui
 
-      if (iRf69DataLength (rf) ) {
+      // Lecture niveau de réception
+      int rssi = iRf69Rssi (rf, false);
+      assert (rssi != INT_MAX);
 
-        printf ("R>%s\n", sRf69Data (rf) );
+      // Affichage message
+      printf ("R[%d]<[%d] ", iRf69TargetId (rf), iRf69SenderId (rf));
+      if (iRf69DataLength (rf)) {
+
+        printf ("'%s'", sRf69Data (rf));
       }
 
-      ret = iRf69AckRequested (rf);
+      ret = iRf69AckRequested (rf); // Ack demandé ?
       assert (ret >= 0);
-      if (ret) {
 
+      if (ret == true) { // Oui
+
+        // Envoi Ack (message vide, uniquement Ack)
         ret = iRf69SendAck (rf, 0, 0);
         assert (ret == true);
+        printf (" > Ack"); //  > Ack [RSSI = -28]
       }
+      printf (" [RSSI = %d]\n", rssi);
     }
   }
   return 0;
 }
+
 
 /* ========================================================================== */

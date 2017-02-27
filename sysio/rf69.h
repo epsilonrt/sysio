@@ -21,7 +21,7 @@ __BEGIN_C_DECLS
  * RFM69 de HopeRF (http://www.hoperf.com/rf_transceiver/modules/RFM69W.html). \n
  * La plateforme doit disposer d'un bus SPI et de la gestion des interruptions. \n
  * @{
- * @example rf69/ping/demo_rf69_ping.c
+ * @example rf69/ping/sysio_demo_rf69_ping.c
  * Demo émission-réception RFM69 (module rf69)
  * Ce programme : \n
  * - Transmet des messages 'Hello' à un noeud du réseau (gateway) et attend 
@@ -53,7 +53,7 @@ __BEGIN_C_DECLS
 
     T[1]>[255] 'Hello 16' >
  * @endcode
- * @example rf69/gateway/demo_rf69_gateway.c
+ * @example rf69/gateway/sysio_demo_rf69_gateway.c
  * Demo réception RFM69 (module rf69)
  * Ce programme attend la réception de messages, les affichent sur la liaison
  * série et retourne un accusé réception si demandé. \n

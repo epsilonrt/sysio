@@ -120,22 +120,6 @@ main (int argc, char **argv) {
   }
   printf ("Success\n\n");
 
-  printf ("Test %d>\n", t++);
-  addr = 0;
-  while ( (strcmp (regs[addr], "RegBitrateMsb") != 0) && regs[addr] != NULL) {
-
-    addr++;
-  }
-  if (regs[addr]) {
-
-    ret = iSpiReadReg16 (fd, addr);
-    assert (ret >= 0);
-    printf ("0x%02X,%s,0x%04X\n", addr, regs[addr], ret);
-    assert (ret == 0x1A0B);
-  }
-  printf ("Success\n\n");
-
-
   addr = 0;
   while ( (strcmp (regs[addr], "RegSyncConfig") != 0) && regs[addr] != NULL) {
 
@@ -176,18 +160,6 @@ main (int argc, char **argv) {
     assert (ret >= 0);
     printf ("0x%02X,%s,0x%02X\n", addr, regs[addr], ret);
     assert (ret == 0x5A);
-  }
-  printf ("Success\n\n");
-
-  printf ("Test %d>\n", t++);
-  if (regs[addr]) {
-
-    ret = iSpiWriteReg16 (fd, addr, 0x5AA5);
-    assert (ret == 2);
-    ret = iSpiReadReg16 (fd, addr);
-    assert (ret >= 0);
-    printf ("0x%02X,%s,0x%04X\n", addr, regs[addr], ret);
-    assert (ret == 0x5AA5);
   }
   printf ("Success\n\n");
 
