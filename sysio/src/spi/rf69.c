@@ -424,21 +424,21 @@ int iRf69AckReceived (xRf69 * rf, uint8_t fromNodeId) {
 }
 
 // -----------------------------------------------------------------------------
-int iRf69AckRequested (const xRf69 * rf) {
+int iRf69AckRequested (xRf69 * rf) {
 
   return (rf->hdr.ctl & RF69_ACKREQ) && (rf->hdr.dest != RF69_BROADCAST_ADDR);
 }
 
 // -----------------------------------------------------------------------------
 int
-iRf69DataLength (const xRf69 * rf) {
+iRf69DataLength (xRf69 * rf) {
 
   return rf->data_len;
 }
 
 // -----------------------------------------------------------------------------
 const char *
-sRf69Data (const xRf69 * rf) {
+sRf69Data (xRf69 * rf) {
 
   return (const char *) rf->data;
 }
@@ -668,28 +668,28 @@ int iRf69SetPromiscuous (xRf69 * rf, bool bOn) {
 
 // -----------------------------------------------------------------------------
 bool
-bRf69isPromiscuous (const xRf69 * rf) {
+bRf69isPromiscuous (xRf69 * rf) {
 
   return rf->promiscuous;
 }
 
 // -----------------------------------------------------------------------------
 bool
-bRf69isHighPower (const xRf69 * rf) {
+bRf69isHighPower (xRf69 * rf) {
 
   return rf->is_rfm69hw;
 }
 
 // -----------------------------------------------------------------------------
 int 
-iRf69SenderId(const xRf69 * rf) {
+iRf69SenderId(xRf69 * rf) {
   
   return rf->hdr.sender;
 }
 
 // -----------------------------------------------------------------------------
 int 
-iRf69TargetId(const xRf69 * rf) {
+iRf69TargetId(xRf69 * rf) {
   
   return rf->hdr.dest;
 }

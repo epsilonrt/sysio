@@ -162,7 +162,7 @@ int iRf69ReceiveDone (xRf69 * rf);
  * @param rf pointeur sur l'objet xRf69
  * @return true, false, valeur négative si erreur
  */
-int iRf69AckRequested (const xRf69 * rf);
+int iRf69AckRequested (xRf69 * rf);
 
 /**
  * @brief Envoi d'un paquet ACK suite à demande AckRequested
@@ -181,14 +181,14 @@ int iRf69SendAck (xRf69 * rf, const void * tx_buffer, uint8_t tx_len);
  * @param rf pointeur sur l'objet xRf69
  * @return  Adresse de l'émetteur comme un unsigned int, -1 si erreur
  */
-int iRf69SenderId(const xRf69 * rf);
+int iRf69SenderId(xRf69 * rf);
 
 /**
  * @brief Adresse du destinataire du dernier message reçu
  * @param rf pointeur sur l'objet xRf69
  * @return  Adresse du destinataire comme un unsigned int, -1 si erreur
  */
-int iRf69TargetId(const xRf69 * rf);
+int iRf69TargetId(xRf69 * rf);
 
 /**
  * @brief Nombre d'octets du dernier message reçu
@@ -199,7 +199,7 @@ int iRf69TargetId(const xRf69 * rf);
  * @param rf pointeur sur l'objet xRf69
  * @return Nombre d'octets de données utiles (sans en-tête), -1 si erreur
  */
-int iRf69DataLength (const xRf69 * rf);
+int iRf69DataLength (xRf69 * rf);
 
 /**
  * @brief Données utiles (sans en-tête) du dernier message reçu
@@ -209,7 +209,7 @@ int iRf69DataLength (const xRf69 * rf);
  * @param rf pointeur sur l'objet xRf69
  * @return pointeur sur les données
  */
-const char * sRf69Data (const xRf69 * rf);
+const char * sRf69Data (xRf69 * rf);
 
 /**
  * @brief Vérifie si on peut émettre
@@ -350,7 +350,7 @@ int iRf69SetHighPower (xRf69 * rf, bool bOn);
  * @param rf pointeur sur l'objet xRf69
  * @return true, false, valeur négative si erreur
  */
-bool bRf69isHighPower (const xRf69 * rf);
+bool bRf69isHighPower (xRf69 * rf);
 
 /**
  * @brief Modification de la puissance d'émission
@@ -434,7 +434,7 @@ int iRf69SetPromiscuous (xRf69 * rf, bool bOn);
  * @param rf pointeur sur l'objet xRf69
  * @return true, false, valeur négative si erreur
  */
-bool bRf69isPromiscuous (const xRf69 * rf);
+bool bRf69isPromiscuous (xRf69 * rf);
 
 /**
  * @brief Passage en mode sommeil
