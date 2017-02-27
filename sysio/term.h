@@ -14,7 +14,7 @@ __BEGIN_C_DECLS
 #include <stdio.h>
 
 /**
- *  @defgroup sysio_term Fichiers
+ *  @defgroup sysio_term Terminaux
  *
  *  Ce module fournit des fonctions pour les terminaux.
  *  @{
