@@ -16,7 +16,7 @@ __BEGIN_C_DECLS
 #include <limits.h>
 
 /**
- * @defgroup sysio_rfm69 Module UHF RFM69
+ * @defgroup sysio_rf69 Module UHF RFM69
  * Ce module permet de gérer la transmission avec des modules sans fil
  * RFM69 de HopeRF (http://www.hoperf.com/rf_transceiver/modules/RFM69W.html). \n
  * La plateforme doit disposer d'un bus SPI et de la gestion des interruptions. \n
