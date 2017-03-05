@@ -21,12 +21,13 @@
   <Project Name="sysio_demo_iaq" Path="demo/i2c/iaq/sysio_demo_iaq.project" Active="No"/>
   <Project Name="sysio_demo_rtc" Path="demo/i2c/rtc/sysio_demo_rtc.project" Active="No"/>
   <Project Name="sysio_demo_hih6130" Path="demo/i2c/hih6130/sysio_demo_hih6130.project" Active="No"/>
-  <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
   <Project Name="modbus_demo_rtu_master" Path="demo/modbus/rtu/modbus_demo_rtu_master.project" Active="No"/>
   <Project Name="util_bsend" Path="util/blyss/bsend/util_bsend.project" Active="No"/>
   <Project Name="sysio_demo_blyss_tx" Path="demo/blyss/tx/sysio_demo_blyss_tx.project" Active="No"/>
   <Project Name="sysio_demo_rf69_ping" Path="demo/rf69/ping/sysio_demo_rf69_ping.project" Active="No"/>
   <Project Name="sysio_demo_rf69_gateway" Path="demo/rf69/gateway/sysio_demo_rf69_gateway.project" Active="No"/>
+  <Project Name="sysio_demo_i2c" Path="demo/i2c/i2c/sysio_demo_i2c.project" Active="No"/>
+  <Project Name="sysio_demo_mcp3426" Path="demo/i2c/mcp3426/sysio_demo_mcp3426.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -44,7 +45,6 @@
       <Project Name="sysio_demo_rs485" ConfigName="Debug"/>
       <Project Name="sysio_demo_xbee_coordinator" ConfigName="Debug"/>
       <Project Name="sysio_demo_xbee_node" ConfigName="Debug"/>
-      <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
       <Project Name="sysio_demo_button" ConfigName="Debug"/>
       <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
       <Project Name="sysio_demo_led" ConfigName="Debug"/>
@@ -66,6 +66,8 @@
       <Project Name="sysio_demo_blyss_tx" ConfigName="Debug"/>
       <Project Name="sysio_demo_rf69_ping" ConfigName="Debug"/>
       <Project Name="sysio_demo_rf69_gateway" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
+      <Project Name="sysio_demo_mcp3426" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -83,7 +85,6 @@
       <Project Name="sysio_demo_rs485" ConfigName="Release"/>
       <Project Name="sysio_demo_xbee_coordinator" ConfigName="Release"/>
       <Project Name="sysio_demo_xbee_node" ConfigName="Release"/>
-      <Project Name="sysio_demo_i2c" ConfigName="Release"/>
       <Project Name="sysio_demo_button" ConfigName="Release"/>
       <Project Name="sysio_demo_i2c" ConfigName="Release"/>
       <Project Name="sysio_demo_led" ConfigName="Release"/>
@@ -105,6 +106,8 @@
       <Project Name="sysio_demo_blyss_tx" ConfigName="Release"/>
       <Project Name="sysio_demo_rf69_ping" ConfigName="Release"/>
       <Project Name="sysio_demo_rf69_gateway" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Release"/>
+      <Project Name="sysio_demo_mcp3426" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
