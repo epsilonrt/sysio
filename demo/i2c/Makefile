@@ -2,7 +2,7 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = i2c rtc eeprom hih6130 iaq
+SUBDIRS = i2c rtc eeprom hih6130 iaq mcp3426
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
