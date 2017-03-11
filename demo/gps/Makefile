@@ -2,7 +2,7 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = pipe ptty libgps
+SUBDIRS = poll callback
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
@@ -19,4 +19,3 @@ sym: $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) -w -C $@ $(MAKECMDGOALS)
-

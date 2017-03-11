@@ -1,0 +1,392 @@
+Content-type: text/html
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of 3</TITLE>
+</HEAD><BODY>
+<H1>3</H1>
+Section: GPSD Documentation (3)<BR>Updated: 14 Aug 2004<BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+libgps - C service library for communicating with the GPS daemon
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<P>
+<B>
+</B><PRE>
+
+C:
+
+#include &lt;<A HREF="file:///usr/include/gps.h">gps.h</A>&gt;
+
+</PRE>
+
+
+<DL COMPACT>
+<DT>
+<B>int gps_open(char&nbsp;*</B><I>server</I><B>, char&nbsp;*&nbsp;</B><I>port</I><B>, struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>);</B>
+
+<DT>
+<B>int gps_send(struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>, char&nbsp;*</B><I>fmt</I><B>...);</B>
+
+<DT>
+<B>int gps_read(struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>);</B>
+
+<DT>
+<B>bool gps_waiting(const&nbsp;struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>, int&nbsp;</B><I>timeout</I><B>);</B>
+
+<DT>
+<B>char *gps_data(const&nbsp;struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>);</B>
+
+<DT>
+<B>int gps_unpack(char&nbsp;*</B><I>buf</I><B>, struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>);</B>
+
+<DT>
+<B>void gps_close(struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>);</B>
+
+<DT>
+<B>int gps_stream(struct&nbsp;gps_data_t&nbsp;*</B><I>gpsdata</I><B>, unsigned&nbsp;int</B><I>flags</I><B>, void&nbsp;*</B><I>data</I><B>);</B>
+
+<DT>
+<B>const char *gps_errstr(int&nbsp;</B><I>err</I><B>);</B>
+
+<P>
+<B>
+</B><PRE>
+
+<DD>Python:
+
+import gps
+
+session = gps.gps(host=&quot;localhost&quot;, port=&quot;2947&quot;)
+
+session.stream(flags=gps.WATCH_JSON)
+
+for report in session:
+    process(report)
+
+del session
+
+</PRE>
+
+
+</DL>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<P>
+
+<B>libgps</B>
+is a service library which supports communicating with an instance of the
+<B><A HREF="/cgi-bin/man/man2html?8+gpsd">gpsd</A></B>(8); link it with the linker option -lgps.
+<P>
+
+
+
+<DL COMPACT><DT><DD>
+
+
+
+<BR>
+
+<FONT SIZE="+1">
+<B>Warning</B>
+</FONT>
+<BR>
+
+<P>
+
+Take care to conditionalize your code on the major and minor API version symbols in
+gps.h; ideally, force a compilation failure if GPSD_API_MAJOR_VERSION is not a version you recognize. See the GPSD project website for more information on the protocol and API changes.
+<P>
+</DL>
+
+<P>
+
+Calling
+<B>gps_open()</B>
+initializes a GPS-data structure to hold the data collected by the GPS, and sets up access to
+<B><A HREF="/cgi-bin/man/man2html?1+gpsd">gpsd</A></B>(1)
+via either the socket or shared-memory export. The shared-memory export is faster, but does not carry information about device activation and deactivation events and will not allow you to monitor device packet traffic.
+<P>
+
+<B>gps_open()</B>
+returns 0 on success, -1 on errors and is re-entrant. errno is set depending on the error returned from the socket or shared-memory interface; see
+gps.h
+for values and explanations; also see
+<B>gps_errstr()</B>. The host address may be a DNS name, an IPv4 dotted quad, an IPV6 address, or the special value
+<B>GPSD_SHARED_MEMORY</B>
+referring to the shared-memory export; the library will do the right thing for any of these.
+<P>
+
+<B>gps_close()</B>
+ends the session.
+<P>
+
+<B>gps_send()</B>
+writes a command to the daemon. It does nothing when using the shared-memory export. The second argument must be a format string containing elements from the command set documented at
+<B><A HREF="/cgi-bin/man/man2html?1+gpsd">gpsd</A></B>(1). It may have % elements as for
+<B><A HREF="/cgi-bin/man/man2html?3+sprintf">sprintf</A></B>(3), which will be filled in from any following arguments. This function returns a -1 if there was a Unix-level write error, otherwise 0. Please read the LIMITATIONS section for additional information and cautions. See
+<B>gps_stream()</B>
+as a possible alternative.
+<P>
+
+<B>gps_read()</B>
+accepts a response, or sequence of responses, from the daemon and interprets. This function does either a nonblocking read for data from the daemon or a fetch from shared memory; it returns a count of bytes read for success, -1 with errno set on a Unix-level read error, -1 with errno not set if the socket to the daemon has closed or if the shared-memory segment was unavailable, and 0 if no data is available.
+<P>
+
+<B>gps_waiting()</B>
+can be used to check whether there is new data from the daemon. The second argument is the maximum amount of time to wait (in microseconds) on input before returning. It returns true if there is input waiting, false on timeout (no data waiting) or error condition. This function is a convenience wrapper around a
+<B><A HREF="/cgi-bin/man/man2html?2+select">select</A></B>(2)
+call, and zeros
+<I>errno</I>
+on entry; you can test
+<I>errno</I>
+after exit to get more information about error conditions.
+<P>
+
+<B>gps_unpack()</B>
+parses JSON from the argument buffer into the target of the session structure pointer argument. Included in case your application wishes to manage socket I/O itself.
+<P>
+
+<B>gps_data()</B>
+returns the contents of the client data buffer (it returns NULL when using the shared-memory export). Use with care; this may fail to be a NUL-terminated string if WATCH_RAW is enabled.
+<P>
+
+<B>gps_stream()</B>
+asks
+gpsd
+to stream the reports it has at you, to be made available when you poll (not available when using the shared-memory export). The second argument is a flag mask that sets various policy bits; see the list below. Calling
+<B>gps_stream()</B>
+more than once with different flag masks is allowed.
+<P>
+
+WATCH_DISABLE
+<DL COMPACT><DT><DD>
+Disable the reporting modes specified by the other WATCH_ flags.
+</DL>
+
+<P>
+
+WATCH_ENABLE
+<DL COMPACT><DT><DD>
+Disable the reporting modes specified by the other WATCH_ flags. This is the default.
+</DL>
+
+<P>
+
+WATCH_JSON
+<DL COMPACT><DT><DD>
+Enable JSON reporting of data. If WATCH_ENABLE is set, and no other WATCH flags are set, this is the default.
+</DL>
+
+<P>
+
+WATCH_NMEA
+<DL COMPACT><DT><DD>
+Enable generated pseudo-NMEA reporting on binary devices.
+</DL>
+
+<P>
+
+WATCH_RARE
+<DL COMPACT><DT><DD>
+Enable reporting of binary packets in encoded hex.
+</DL>
+
+<P>
+
+WATCH_RAW
+<DL COMPACT><DT><DD>
+Enable literal passthrough of binary packets.
+</DL>
+
+<P>
+
+WATCH_SCALED
+<DL COMPACT><DT><DD>
+When reporting AIS or Subframe data, scale integer quantities to floats if they have a divisor or rendering formula associated with them.
+</DL>
+
+<P>
+
+WATCH_NEWSTYLE
+<DL COMPACT><DT><DD>
+Force issuing a JSON initialization and getting new-style responses. This is the default.
+</DL>
+
+<P>
+
+WATCH_OLDSTYLE
+<DL COMPACT><DT><DD>
+Force issuing a W or R command and getting old-style responses. Warning: this flag (and the capability) will be removed in a future release.
+</DL>
+
+<P>
+
+WATCH_DEVICE
+<DL COMPACT><DT><DD>
+Restrict watching to a specified device, patch given as second argument.
+</DL>
+
+<P>
+
+<B>gps_errstr()</B>
+returns an ASCII string (in English) describing the error indicated by a nonzero return value from
+<B>gps_open()</B>.
+<P>
+
+Consult
+gps.h
+to learn more about the data members and associated timestamps. Note that information will accumulate in the session structure over time, and the 'valid' field is not automatically zeroed by each
+<B>gps_read()</B>. It is up to the client to zero that field when appropriate and to keep an eye on the fix and sentence timestamps.
+<P>
+
+The Python implementation supports the same facilities as the socket-export calls in the C library; there is no shared-memory interface.
+<B>gps_open()</B>
+is replaced by the initialization of a gps session object; the other calls are methods of that object, and have the same names as the corresponding C functions. However, it is simpler just to use the session object as an iterator, as in the example given below. Resources within the session object will be properly released when it is garbage-collected.
+<A NAME="lbAE">&nbsp;</A>
+<H2>CODE EXAMPLE</H2>
+
+<P>
+
+The following is an excerpted and simplified version of the libgps interface code from
+<B><A HREF="/cgi-bin/man/man2html?1+cgps">cgps</A></B>(1).
+<P>
+<DL COMPACT><DT><DD>
+
+
+
+<PRE>
+    struct gps_data_t gps_data;
+
+    ret = gps_open(hostName, hostPort, &amp;gps_data);
+
+    (void) gps_stream(&amp;gps_data, WATCH_ENABLE | WATCH_JSON, NULL);
+
+    /* Put this in a loop with a call to a high resolution sleep () in it. */
+    if (gps_waiting (&amp;gps_data, 500)) {
+        errno = 0;
+        if (gps_read (&amp;gps_data) == -1) {
+            ...
+        } else {
+            /* Display data from the GPS receiver. */
+            if (gps_data.set &amp; ...
+        }
+    }
+
+    /* When you are done... */
+    (void) gps_stream(&amp;gps_data, WATCH_DISABLE, NULL);
+    (void) gps_close (&amp;gps_data);
+</PRE>
+
+</DL>
+
+
+
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>LIMITATIONS</H2>
+
+<P>
+
+On some systems (those which do not support implicit linking in libraries) you may need to add -lm to your link line when you link libgps. It is always safe to do this.
+<P>
+
+In the C API, incautious use of
+<B>gps_send()</B>
+may lead to subtle bugs. In order to not bloat
+struct gps_data_t
+with space used by responses that are not expected to be shipped in close sequence with each other, the storage for fields associated with certain responses are combined in a union.
+<P>
+
+The risky set of responses includes VERSION, DEVICELIST, RTCM2, RTCM3, SUBFRAME, AIS, GST, and ERROR; it may not be limited to that set. The logic of the daemon's watcher mode is careful to avoid dangerous sequences, but you should read and understand the layout of
+struct gps_data_t
+before using
+<B>gps_send()</B>
+to request any of these responses.
+<A NAME="lbAG">&nbsp;</A>
+<H2>COMPATIBILITY</H2>
+
+<P>
+
+The
+<B>gps_query()</B>
+supported in major versions 1 and 2 of this library has been removed. With the new streaming-oriented wire protocol behind this library, it is extremely unwise to assume that the first transmission from the daemon after a command is shipped to it will be the response to command.
+<P>
+
+If you must send commands to the daemon explicitly, use
+<B>gps_send()</B>
+but beware that this ties your code to the GPSD wire protocol. It is not recommended.
+<P>
+
+In earlier versions of the API
+<B>gps_read()</B>
+was a blocking call and there was a POLL_NONBLOCK option to make it nonblocking.
+<B>gps_waiting()</B>
+was added to reduce the number of wrong ways to code a polling loop.
+<P>
+
+See the comment above the symbol GPSD_API_MAJOR_VERSION in
+gps.h
+for recent changes.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<P>
+
+<P>
+<B><A HREF="/cgi-bin/man/man2html?8+gpsd">gpsd</A></B>(8),
+<B><A HREF="/cgi-bin/man/man2html?1+gps">gps</A></B>(1),
+<B><A HREF="/cgi-bin/man/man2html?3+libgpsd">libgpsd</A></B>(3).
+<B><A HREF="/cgi-bin/man/man2html?3+libgpsmm">libgpsmm</A></B>(3).
+<A NAME="lbAI">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+<P>
+
+Eric S. Raymond &lt;<A HREF="mailto:esr@thyrsus.com">esr@thyrsus.com</A>&gt;, C sample code Charles Curley &lt;<A HREF="mailto:charlescurley@charlescurley.com">charlescurley@charlescurley.com</A>&gt;
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">CODE EXAMPLE</A><DD>
+<DT><A HREF="#lbAF">LIMITATIONS</A><DD>
+<DT><A HREF="#lbAG">COMPATIBILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+<DT><A HREF="#lbAI">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 21:50:51 GMT, March 25, 2014
+</BODY>
+</HTML>

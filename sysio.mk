@@ -7,6 +7,13 @@
 VPATH+=:$(SYSIO_ROOT)
 EXTRA_INCDIRS += $(SYSIO_ROOT) $(SYSIO_ROOT)/sysio/src $(SYSIO_ROOT)/3rdparty
 
+SYS_HAS_GPS_H=$(shell $(SYSIO_ROOT)/util/bin/test-header gps.h)
+
+ifeq ($(SYS_HAS_GPS_H),ON)
+CDEFS += -DHAVE_GPS_H
+$(info Build with libgps support, HAVE_GPS_H defined)
+endif
+
 ifeq ($(BOARD),BOARD_RASPBERRYPI)
 SYS  = SYS_LINUX
 SYS_HAS_GPIO = ON
@@ -82,6 +89,10 @@ endif
 ifeq ($(SYS_UNIX),ON)
 SRC += $(addprefix sysio/src/unix/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/unix/*.c)))
 SRC += $(addprefix radio/src/, $(notdir $(wildcard $(SYSIO_ROOT)/radio/src/*.c)))
+endif
+
+ifeq ($(SYS_HAS_GPS_H),ON)
+SRC += $(addprefix sysio/src/libgps/, $(notdir $(wildcard $(SYSIO_ROOT)/sysio/src/libgps/*.c)))
 endif
 
 SRC += $(addprefix $(ARCH_DIR)/, $(notdir $(wildcard $(SYSIO_ROOT)/$(ARCH_DIR)/*.c)))
