@@ -31,6 +31,7 @@ il fournit les modules:
 * Vecteur [**vector**](http://www.epsilonrt.fr/sysio/group__sysio__vector.html)
 * String [**string**](http://www.epsilonrt.fr/sysio/group__sysio__string.html)
 * Terminaux [**term**](http://www.epsilonrt.fr/sysio/group__sysio__term.html)
+* Gps avec gpsd [**gps**](http://www.epsilonrt.fr/sysio/group__sysio__gps.html)
 
 sur plateformes Raspberry Pi (A/B/B+/Pi2/Pi3) et NanoPi (Neo/NeoAir/M1), il 
 fournit en plus les modules:

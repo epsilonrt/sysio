@@ -295,6 +295,10 @@
         <File Name="sysio/src/spi/rf69_sysio.c"/>
         <File Name="sysio/src/spi/rf69_registers.h"/>
       </VirtualDirectory>
+      <File Name="sysio/src/xgps.c"/>
+      <VirtualDirectory Name="libgps">
+        <File Name="sysio/src/libgps/gps.c"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <File Name="sysio.mk"/>
     <File Name="INSTALL"/>
@@ -331,6 +335,7 @@
     <File Name="sysio/rf69.h"/>
     <File Name="sysio/timer.h"/>
     <File Name="sysio/term.h"/>
+    <File Name="sysio/gps.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
