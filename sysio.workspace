@@ -30,6 +30,7 @@
   <Project Name="sysio_demo_mcp3426" Path="demo/i2c/mcp3426/sysio_demo_mcp3426.project" Active="No"/>
   <Project Name="sysio_demo_gps_poll" Path="demo/gps/poll/sysio_demo_gps_poll.project" Active="No"/>
   <Project Name="sysio_demo_gps_callback" Path="demo/gps/callback/sysio_demo_gps_callback.project" Active="No"/>
+  <Project Name="sysio_demo_gps_monitor" Path="demo/gps/monitor/sysio_demo_gps_monitor.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -72,6 +73,7 @@
       <Project Name="sysio_demo_mcp3426" ConfigName="Debug"/>
       <Project Name="sysio_demo_gps_poll" ConfigName="Debug"/>
       <Project Name="sysio_demo_gps_callback" ConfigName="Debug"/>
+      <Project Name="sysio_demo_gps_monitor" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -114,6 +116,7 @@
       <Project Name="sysio_demo_mcp3426" ConfigName="Release"/>
       <Project Name="sysio_demo_gps_poll" ConfigName="Release"/>
       <Project Name="sysio_demo_gps_callback" ConfigName="Release"/>
+      <Project Name="sysio_demo_gps_monitor" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

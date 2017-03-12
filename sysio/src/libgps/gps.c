@@ -59,7 +59,7 @@ pvFixLoop (void * p_data) {
 
   if (!p_data) {
 
-    vLog (LOG_CRIT, "pvFixLoop: p_data is nul");
+    vLog (LOG_CRIT, "p_data is null !");
   }
   else {
     struct xGps * gps = (struct xGps *) p_data;
@@ -73,30 +73,22 @@ pvFixLoop (void * p_data) {
         if (gps_read (gps->xData) == -1) {
 
           // Erreur de lecture !
-          vLog (LOG_ERR, "pvFixLoop: gps_read(%s)", strerror (errno));
+          vLog (LOG_ERR, "gps_read(%s)", strerror (errno));
           vRaiseError (gps, eGpsReadError);
-          break;
         }
         else {
 
           // Lecture correcte
-          if (gps->xData->status > 0) {
+          if (gps->xData->status > STATUS_NO_FIX) {
 
-            // Test si la position renvoyée est différente de NaN (Not A Number)
-            if (GPS_ISNAN (gps->xData->fix.longitude) ||
-                GPS_ISNAN (gps->xData->fix.altitude)) {
-
-              vLog (LOG_ERR, "pvFixLoop: Unable to get a fix");
-              vRaiseError (gps, eGpsFixError);
-              break;
-            }
-            else {
+            if ( (gps->xData->fix.mode == MODE_2D) ||
+                 (gps->xData->fix.mode == MODE_3D)) {
 
               // Nous avons un fix !
               gps->ulFixCount++;
               pthread_mutex_unlock (&gps->xFixMutex);
               if (gps->vFixCallback) {
-                
+
                 gps->vFixCallback (gps);
               }
             }
@@ -182,7 +174,7 @@ int
 iGpsRead (struct xGps * gps, struct gps_data_t * data) {
 
   if (!gps) {
-    
+
     return eGpsArgumentError;
   }
   memcpy (data, gps->xData, sizeof (struct gps_data_t));
@@ -194,9 +186,9 @@ bool
 bGpsDataAvailable (struct xGps * gps) {
 
   if (gps) {
-    
+
     if (pthread_mutex_trylock (&gps->xFixMutex) == 0) {
-      
+
       return true;
     }
   }
@@ -284,9 +276,18 @@ eGpsFixStatus (struct xGps * gps) {
 }
 
 // -----------------------------------------------------------------------------
-bool bGpsIsFix (struct xGps * gps) {
+bool
+bGpsIsFix (struct xGps * gps) {
 
-  return eGpsFixStatus (gps) != eStatusNoFix;
+  if (eGpsFixStatus (gps) != eStatusNoFix) {
+    eGpsMode mode = eGpsFixMode (gps);
+
+    if ( (mode == eMode2d) || (mode == eMode3d)) {
+
+      return true;
+    }
+  }
+  return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -311,7 +312,7 @@ tGpsTime (struct xGps * gps) {
       return gps->xData->fix.time;
     }
   }
-  return NAN;
+  return -1llu;
 }
 
 // -----------------------------------------------------------------------------
