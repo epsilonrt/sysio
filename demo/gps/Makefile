@@ -2,7 +2,7 @@
 # Copyright © 2015 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-SUBDIRS = poll callback
+SUBDIRS = poll callback monitor
 
 all: $(SUBDIRS)
 clean: $(SUBDIRS)
