@@ -102,7 +102,6 @@ void
 vErrorCallback (int iError) {
 
   fprintf (stderr, "Gps Error: %d\n", iError);
-  vSigIntHandler (SIGQUIT);
 }
 
 // -----------------------------------------------------------------------------

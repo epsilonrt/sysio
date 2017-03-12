@@ -260,10 +260,10 @@ eGpsStatus eGpsFixStatus (struct xGps * gps);
 eGpsMode eGpsFixMode (struct xGps * gps);
 
 /**
- * @brief Heure de la position
+ * @brief Heure de la position (fix time)
  * 
  * @param gps pointeur sur objet GPS
- * @return la valeur demandée, NaN si pas disponible
+ * @return la valeur demandée, -1 si pas disponible
  */
 timestamp_t tGpsTime (struct xGps * gps);
 
