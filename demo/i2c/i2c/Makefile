@@ -164,6 +164,11 @@ endif
 CDEFS += -D_REENTRANT -D$(ARCH)
 CPPDEFS += -D_REENTRANT -D$(ARCH)
 
+SYS_HAS_GPS_H=$(shell test-header gps.h)
+ifeq ($(SYS_HAS_GPS_H),ON)
+EXTRA_LIBS += gps
+endif
+
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
 

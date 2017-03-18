@@ -209,6 +209,11 @@ endif
 
 CDEFS += -D_REENTRANT -D$(BOARD)
 CPPDEFS += -D_REENTRANT -D$(BOARD)
+SYS_HAS_GPS_H=$(shell test-header gps.h)
+ifeq ($(SYS_HAS_GPS_H),ON)
+EXTRA_LIBS += gps
+endif
+
 EXTRA_LIBS += pthread rt
 LDFLAGS += -pthread
 
