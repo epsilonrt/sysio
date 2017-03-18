@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief Module de transmission UHF RFM69 (Implémentation générique)
- * 
+ *
  * http://www.hoperf.com/rf_transceiver/modules/RFM69W.html
  *
  * Copyright © 2017 epsilonRT, All rights reserved.
@@ -667,6 +667,44 @@ int iRf69SetPromiscuous (xRf69 * rf, bool bOn) {
 }
 
 // -----------------------------------------------------------------------------
+int
+iRf69SetDioMapping (xRf69 * rf, uint8_t dio, uint8_t map) {
+
+  if ( (rf->is_open) && (dio >= 1) && (dio <= 5) && (dio != 4) &&
+       (map >= 0) && (map <= 3)) {
+    TRY_INT_INIT();
+    uint8_t b;
+
+    if (dio < 5) {
+      /*
+       * DIO1 5-4
+       * DIO2 3-2
+       * DIO3 1-0
+       */
+      uint8_t i = (3 - dio) * 2;
+
+      TRY_INT (b = iRf69ReadReg (rf, REG_DIOMAPPING1));
+      b &= ~ (3 << i);
+      b |= map << i;
+      TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING1, b));
+    }
+    else {
+      /*
+       * DIO5 5-4
+       */
+
+      TRY_INT (b = iRf69ReadReg (rf, REG_DIOMAPPING2));
+      b &= ~ (3 << 4);
+      b |= map << 4;
+      TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING2, b));
+    }
+    return 0;
+  }
+  return -1;
+}
+
+
+// -----------------------------------------------------------------------------
 bool
 bRf69isPromiscuous (xRf69 * rf) {
 
@@ -681,16 +719,16 @@ bRf69isHighPower (xRf69 * rf) {
 }
 
 // -----------------------------------------------------------------------------
-int 
-iRf69SenderId(xRf69 * rf) {
-  
+int
+iRf69SenderId (xRf69 * rf) {
+
   return rf->hdr.sender;
 }
 
 // -----------------------------------------------------------------------------
-int 
-iRf69TargetId(xRf69 * rf) {
-  
+int
+iRf69TargetId (xRf69 * rf) {
+
   return rf->hdr.dest;
 }
 
@@ -735,6 +773,7 @@ iRf69AvoidRxDeadLocks (xRf69 * rf) {
 int
 iRf69StartReceiving (xRf69 * rf) {
   TRY_INT_INIT();
+  uint8_t b;
 
   rf->data_len = 0;
   rf->hdr.sender = 0;
@@ -745,7 +784,9 @@ iRf69StartReceiving (xRf69 * rf) {
 
   TRY_INT (iRf69AvoidRxDeadLocks (rf)); /*Ok*/
 
-  TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01));
+  TRY_INT (b = iRf69ReadReg (rf, REG_DIOMAPPING1));
+  b |= RF_DIOMAPPING1_DIO0_01;
+  TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING1, b));
   return iRf69SetMode (rf, eRf69ModeRx);
 }
 
@@ -889,8 +930,11 @@ iRf69SendFrame (xRf69 * rf, uint8_t toAddress,
   TRY_INT (bIsOk = iRf69WaitForReady (rf, 50)); /*Ok*/
 
   if (bIsOk) {
+    uint8_t b;
 
-    TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00));
+    TRY_INT (b = iRf69ReadReg (rf, REG_DIOMAPPING1));
+    b &= ~RF_DIOMAPPING1_DIO0_01; // RF_DIOMAPPING1_DIO0_00
+    TRY_INT (iRf69WriteReg (rf, REG_DIOMAPPING1, b));
 
     tx_len = MIN (tx_len, RF69_MAX_DATA_LEN);
     rf->data[0] = tx_len + RF69_HEADER_SIZE - 1;

@@ -59,6 +59,14 @@ main (void) {
   // Ouverture de la connexion vers le module RFM69
   ret = iRf69Open (rf, eRf69Band868Mhz, MYNODE_ID, NET_ID);
   assert (ret == 0);
+  
+  // La broche DIO2 est configurée pour visualiser les données
+  ret = iRf69SetDioMapping(rf, 2, 1);
+  assert (ret == 0);
+  
+  // La broche DIO3 est configurée pour visualiser le RSSI en réception
+  ret = iRf69SetDioMapping(rf, 3, 1);
+  assert (ret == 0);
 
   // Lecture de notre identifiant (pour vérification et affichage)
   src = iRf69NodeId (rf);

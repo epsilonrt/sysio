@@ -429,6 +429,18 @@ int iRf69isEncrypted (xRf69 * rf);
 int iRf69SetPromiscuous (xRf69 * rf, bool bOn);
 
 /**
+ * @brief Modification du mapping d'une broche DIO
+ *
+ * @param rf pointeur sur l'objet xRf69
+ * @param dio numéro de broche à modifier (1,2,3,5). Le mapping de la broche DIO0
+ * ne peut pas être modifié.
+ * @param map configuration de mapping choisie conformémement au tableau 22, 
+ * page 48 du datasheet.
+ * @return 0, valeur négative si erreur
+ */
+int iRf69SetDioMapping (xRf69 * rf, uint8_t dio, uint8_t map);
+
+/**
  * @brief Lecture du mode promiscuité
  *
  * @param rf pointeur sur l'objet xRf69
