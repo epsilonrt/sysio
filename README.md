@@ -62,5 +62,6 @@ Sa documentation complète est consultable sur le site :
 
     git clone http://github.com/epsilonrt/sysio.git
     cd sysio
+    sudo make install_utils
     make
     sudo make install
