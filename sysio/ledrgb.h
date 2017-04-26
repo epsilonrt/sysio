@@ -9,11 +9,11 @@
 #define _SYSIO_LEDRGB_H_
 
 #include <sysio/defs.h>
+#include <sysio/rgb.h>
+#include <sysio/tlc59116.h>
 
 __BEGIN_C_DECLS
 /* ========================================================================== */
-#include <sysio/rgb.h>
-
 
 /**
  *  @defgroup ledrgb_module Leds RGB
@@ -47,14 +47,19 @@ __BEGIN_C_DECLS
  * Mode d'allumage d'une LED RGB
  */
 typedef enum {
-  MODE_OFF = 0,     ///< Led éteinte
-  MODE_ON = 1,      ///< Led allumée sans variation d'intensité
-  MODE_BRIGHT = 2,  ///< Led avec variation d'intensité
-  MODE_BLINK = 3    ///< Led avec variation d'intensité et clignotement
+  eLedRgbModeOff = 0,     ///< Led éteinte
+  eLedRgbModeOn = 1,      ///< Led allumée sans variation d'intensité
+  eLedRgbModeDimmer = 2,  ///< Led avec variation d'intensité
+  eLedRgbModeBlinker = 3    ///< Led avec variation d'intensité et clignotement
   } eLedRgbMode;
 
+/**
+ * @enum eLedRgbDeviceModel
+ * @brief Modèle de contrôleur de leds RGB
+ */
 typedef enum {
-  DEVICE_TLC59116 = 0
+  eLedRgbDeviceNone = 0,      ///< Pas de contrôleur
+  eLedRgbDeviceTlc59116 = 1,  ///< Contrôleur TI I²C TLC59116
 } eLedRgbDeviceModel;
 
 struct xLedRgbDevice;
@@ -63,20 +68,11 @@ typedef struct xLedRgbDevice xLedRgbDevice;
 
 /* internal public functions ================================================ */
 
-xLedRgbDevice * xLedRgbNewDevice (eLedRgbDeviceModel model);
+xLedRgbDevice * xLedRgbNewDevice (eLedRgbDeviceModel model, void * dev_setup);
 int iLedRgbDeleteDevice (xLedRgbDevice * d);
 
-int iLedRgbAddLed ()
-
-/**
- * @brief Initialise le module
- *
- * Après un initialisation du contrôleur, un test de présence est réalisé avant
- * avant de configurer toutes les leds en mode variation d'intensité et
- * clignotement (MODE_BLINK)
- * @return 0 en cas de succès. Une valeur négative en cas d'erreur.
- */
-int8_t iLedRgbInit (void);
+int iLedRgbSize (const xLedRgbDevice * d);
+int iLedRgbAddLed (xLedRgbDevice * d, void * setup);
 
 /**
  * @brief Modifie la couleur d'une ou plusieurs leds
@@ -86,8 +82,7 @@ int8_t iLedRgbInit (void);
  * restera inchangée.
  * @param ulColor Nouvelle couleur
  */
-void vLedRgbSetColor (uint64_t xLed, uint32_t ulColor);
-
+int iLedRgbSetColor (xLedRgbDevice * d, uint64_t leds, uint32_t color);
 /**
  * @brief Modifie le mode d'allumage d'une ou plusieurs leds
  *
@@ -96,27 +91,25 @@ void vLedRgbSetColor (uint64_t xLed, uint32_t ulColor);
  * restera inchangée.
  * @param eMode Nouveau mode
  */
-void vLedRgbSetMode  (uint64_t xLed, eLedRgbMode eMode);
-
+int iLedRgbSetMode  (xLedRgbDevice * d, uint64_t leds, eLedRgbMode mode);
 /**
  * @brief Modifie la luminosité globale de toutes les leds configurées en mode MODE_BLINK
  *
- * Seules les LEDS en mode MODE_BLINK sont affectées.
+ * Seules les LEDS en mode eLedRgbModeBlinker sont affectées.
  * A l'initialisation la luminosité globale est à sa valeur maximale (255).
  * @param ucDimming Nouvelle luminosité entre 0 et 255
  */
-void vLedRgbSetGlobalDimming  (uint8_t ucDimming);
-
+int iLedRgbSetDimmer  (xLedRgbDevice * d, uint16_t dimming);
 /**
  * @brief Fait clignoter toutes les leds configurées en mode MODE_BLINK
  *
- * Seules les LEDS en mode MODE_BLINK sont affectées. Pour mettre fin au
+ * Seules les LEDS en mode eLedRgbModeBlinker sont affectées. Pour mettre fin au
  * clignotement, il faut faire un appel à vLedRgbSetGlobalDimming()
  * @param usPeriod Période en millisecondes. La valeur minimale et maximale
  * dépend du contrôleur utilisé.
  * @param ucDutyCycle Rapport cyclique entre 0 et 255
  */
-void vLedRgbSetGlobalBlinking (uint16_t usPeriod, uint8_t ucDutyCycle);
+int iLedRgbSetBlinker  (xLedRgbDevice * d, uint16_t blinking);
 
 /**
  * @brief Renvoie les erreurs des leds
@@ -126,9 +119,9 @@ void vLedRgbSetGlobalBlinking (uint16_t usPeriod, uint8_t ucDutyCycle);
  * @return les bits d'erreurs pour chaque led multicolore. 1 indique une erreur.
  * Si non implémenté par le contrôleur renvoie toujours 0.
  */
-uint64_t xLedRgbError (void);
+uint64_t xLedRgbError (xLedRgbDevice * d);
 
-void vLedRgbClearError (void);
+void vLedRgbClearError (xLedRgbDevice * d);
 
 /**
  * @}

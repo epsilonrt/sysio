@@ -50,7 +50,7 @@ DISABLE_DELETE_UNUSED_SECTIONS = OFF
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
 # recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
 # d'accès complet du fichier mais seulement le nom du projet
-SRC  = $(TARGET).c
+SRC  = $(TARGET).c 
 
 # Liste des fichiers source C++ (Les dépendances sont automatiquement générées.)
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
@@ -117,10 +117,10 @@ VERSION=1.0.0
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
 # de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
-#SYSIO_DEBUG_TEST = ON
+SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)
-SYSIO_ROOT = $(PROJECT_TOPDIR)/../sysio
+SYSIO_ROOT = $(PROJECT_TOPDIR)/../../../../sysio
 endif
 #-----------------------------------------------
 

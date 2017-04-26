@@ -412,6 +412,7 @@ endif
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/string.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/tinfo.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/timer.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/ledrgb.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -d -m 0755 $(INSTALL_INCDIR)/radio
 	@-install -m 0644 $(SYSIO_ROOT)/radio/*.h $(INSTALL_INCDIR)/radio
 	@-install -d -m 0755 $(INSTALL_INCDIR)/ssdv
@@ -431,6 +432,7 @@ ifeq ($(SYS_HAS_I2C),ON)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/i2c.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/hih6130.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/iaq.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/tlc59116.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -d -m 0755 $(INSTALL_INCDIR)/chipio
 	@-install -m 0644 $(SYSIO_ROOT)/chipio/*.h $(INSTALL_INCDIR)/chipio
 endif
