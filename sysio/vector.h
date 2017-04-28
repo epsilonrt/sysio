@@ -49,7 +49,7 @@ typedef const void * (*pvVectorElmtKey) (const void * element);
  * @class vVector
  * @brief Vecteur dynamique
  */
-typedef struct vVector {
+typedef struct xVector {
   void** data; /**< pointeur sur le tableau d'éléments */
   int size; /**< Taille en nombre d'éléments */
   int alloc; /**< nombre d'éléments alloués */

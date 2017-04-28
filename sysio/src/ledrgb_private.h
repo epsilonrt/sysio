@@ -15,6 +15,7 @@ __BEGIN_C_DECLS
 /* ========================================================================== */
 
 /* constants ================================================================ */
+
 /* structures =============================================================== */
 typedef struct xLedRgbDcb xLedRgbDcb; // déclaration préalable...
 
@@ -27,12 +28,9 @@ typedef struct xLedRgbOps {
   /*
    * @return numéro led >= 0, négatif si erreur
    */
-  int (*addled) (xLedRgbDcb * dcb, void * led);
-  int (*setcolor) (xLedRgbDcb * dcb,int led, uint32_t color);
-  int (*setmode) (xLedRgbDcb * dcb,int led, eLedRgbMode mode);
-  int (*setdimmer) (xLedRgbDcb * dcb,uint16_t dimming);
-  int (*setblinker) (xLedRgbDcb * dcb, uint16_t blinking);
-  int (*error) (xLedRgbDcb * dcb, int * code);
+  int (*addled) (xLedRgbDcb * dcb, eLedRgbMode mode, void * led);
+  int (*setcolor) (xLedRgbDcb * dcb, int led, xRgbColor * pxColor);
+  int (*ctl) (xLedRgbDcb * dcb, int c, ...);
 } xLedRgbOps;
 
 /*

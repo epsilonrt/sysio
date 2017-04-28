@@ -9,65 +9,18 @@
 #include <string.h>
 #include <sysio/delay.h>
 #include <sysio/i2c.h>
+#include <sysio/vector.h>
 #include "../ledrgb_private.h"
 
-#if 0
-/**
- * @file avrio-board-ledrgb.h
- * @brief Configuration module LED RGB
- * @author Copyright © 2012-2013 epsilonRT. All rights reserved.
- * @copyright GNU Lesser General Public License version 3
- *            <http://www.gnu.org/licenses/lgpl.html>
- * @version $Id: avrio-board-ledrgb.h 29 2013-02-17 22:19:35Z pjean $
- * Revision History ---
- *    20130129 - Initial version by epsilonRT
- */
-#include <avrio/ledrgb_defs.h>
-
 /* constants ================================================================ */
-#define LEDRGB_LED_QUANTITY   16 ///< Nombre de LED RGB
-#define LEDRGB_ALL_LEDS       0xFFFF
-#define LEDRGB_NO_LED         0
-#define LEDRGB_DEFAULT_MODE   MODE_BLINK
-#define LEDRGB_CTRL           LEDRGB_CTRL_TLC59116 ///< Type de contrôleur
+#define TLC59116_ADDR_ALL    0x68
+#define TLC59116_ADDR_SUB1   0x69
+#define TLC59116_ADDR_SUB2   0x6A
+#define TLC59116_ADDR_SWRST  0x6B
+#define TLC59116_ADDR_SUB3   0x6C
 
-/* types ==================================================================== */
-/*
- * Type utilisé pour les masques de LED RGB. 
- * Le nombre de bits doit être supérieur ou égal à LEDRGB_LED_QUANTITY
- */
-typedef uint16_t xLedRgbMask;
-
-/* Contrôleur TLC59116 (I²C) =============== */
-/** Réglage du gain en courant à l'init. (c.f. p. 19 du datasheet) */
-#define TLC59116_DEFAULT_IREF TLC59116_IREF(1,1,63) // CM=1, HC=1, D=63 
-
-/** 
- * Listes d'adresse I²C des contrôleurs (1 liste par couleur)
- * Il doit y avoir un contrôleur TLC59116 de chaque couleur par paquet
- * de 16 leds.
- *                             TLC59116_ADDR(A3,A2,A1,A0) */
-#define TLC59116_RED_LIST    { TLC59116_ADDR(0,0,0,0) }
-#define TLC59116_GREEN_LIST  { TLC59116_ADDR(0,0,0,1) }
-#define TLC59116_BLUE_LIST   { TLC59116_ADDR(0,0,1,0) }
-
-/** Broche de RESET des contrôleurs, si non défini, un RESET SOFT est effectué */
-#define TLC59116_RESET 5
-#define TLC59116_RESET_PORT PORTD
-#define TLC59116_RESET_DDR  DDRD
-
-/* ========================================================================== */
-/* _AVRIO_BOARD_LEDRGB_H_ not defined */
-
-#endif
-/* constants ================================================================ */
-#define TLC59116_CM      7
-#define TLC59116_HC      6
-#define TLC59116_CC      0x3F
-#define TLC59116_IREF(_cm,_hc,_cc) (((_cm)<<TLC59116_CM)+((_hc)<<TLC59116_HC)+((_cc)&TLC59116_CC))
-
-#define TLC59116_SWRST_BYTE1  0xA5
-#define TLC59116_SWRST_BYTE2  0x5A
+#define TLC59116_SWRST_BYTE1 0xA5
+#define TLC59116_SWRST_BYTE2 0x5A
 
 /* Registres du TCL59116 */
 #define MODE1       0x00
@@ -179,57 +132,64 @@ typedef struct xTlc59116Ctrl {
 typedef struct xTlc59116Data {
   xTlc59116Ctrl * ctrl;
   int nof_ctrl;
+  xVector leds;
 } xTlc59116Data;
 
 /* private functions ======================================================== */
 // -----------------------------------------------------------------------------
+static void
+vLedDestroy (void *led) {
+  free (led);
+}
+
+// -----------------------------------------------------------------------------
 // Ecrit un bloc de registre d'un contrôleur
 static int
 iWriteRegBlock (const xTlc59116Ctrl * ctrl, uint8_t first_reg, uint8_t last_reg) {
-  int fd, ret = -1;
+  int fd;
 
   fd = iI2cOpen (ctrl->config.i2c_bus, ctrl->config.i2c_addr);
 
   if (fd >= 0) {
     uint8_t len;
     uint8_t reg;
-    int error;
+    int error, ret;
 
     len = last_reg - first_reg + 1;
     reg = first_reg | (last_reg > first_reg ? AI_ALL : 0);
 
     ret = iI2cWriteRegBlock (fd, reg, &ctrl->regs[first_reg], len);
     error = iI2cClose (fd);
-    if (error != 0) {
-      ret = error;
+    if ( (error == 0) && (ret == len)) {
+      return 0;
     }
   }
-  return ret;
+  return -1;
 }
 
 // -----------------------------------------------------------------------------
 // Lit un bloc de registre d'un contrôleur
 static int
 iReadRegBlock (xTlc59116Ctrl * ctrl, uint8_t first_reg, uint8_t last_reg) {
-  int fd, ret = -1;
+  int fd;
 
   fd = iI2cOpen (ctrl->config.i2c_bus, ctrl->config.i2c_addr);
 
   if (fd >= 0) {
     uint8_t len;
     uint8_t reg;
-    int error;
+    int error, ret;
 
     len = last_reg - first_reg + 1;
     reg = first_reg | (last_reg > first_reg ? AI_ALL : 0);
 
     ret = iI2cReadRegBlock (fd, reg, &ctrl->regs[first_reg], len);
     error = iI2cClose (fd);
-    if (error != 0) {
-      ret = error;
+    if ( (error == 0) && (ret == len)) {
+      return 0;
     }
   }
-  return ret;
+  return -1;
 }
 
 // -----------------------------------------------------------------------------
@@ -272,16 +232,61 @@ iSwReset (const char * i2c_bus) {
 
 // -----------------------------------------------------------------------------
 static int
+iSetPinMode (xTlc59116Ctrl * ctrl, int out, eLedRgbMode mode) {
+  uint8_t reg, ls;
+
+  reg = LEDOUT0 + out / 4; // registre LEDOUT correspondant
+  ls = (out % 4) * 2; // décalage à gauche
+  ctrl->regs[reg] &= ~ (3 << ls); // clear
+  ctrl->regs[reg] |= (mode << ls); // set
+  return iWriteRegBlock (ctrl, reg, reg);
+}
+
+// -----------------------------------------------------------------------------
+static int
+iSetPinPwm (xTlc59116Ctrl * ctrl, int out, uint8_t dcycle) {
+  uint8_t reg;
+
+  reg = PWM0 + out; // registre PWM correspondant
+  ctrl->regs[reg] = dcycle; // set
+  return iWriteRegBlock (ctrl, reg, reg);
+}
+
+/* internal public functions ================================================ */
+
+// -----------------------------------------------------------------------------
+static int
 iClose (xLedRgbDcb * dcb) {
   xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
   xTlc59116Ctrl * ctrl = d->ctrl;
 
+  vVectorDestroy (d->leds);
   for (int i = 0; i < d->nof_ctrl; i++) {
-    free (ctrl->config.i2c_bus);
+    free (ctrl[i]->config.i2c_bus);
   }
   free (ctrl);
   free (d);
   return 0;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iClrError (xLedRgbDcb * dcb) {
+  int ret = -1;
+  xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
+  xTlc59116Ctrl * ctrl = d->ctrl;
+
+  for (int i = 0; i < d->nof_ctrl; i++) {
+
+    ctrl[i]->regs[MODE2] |= _BV (EFCLR);
+    ret = iWriteRegBlock (&ctrl[i], MODE2, MODE2);
+    if (ret != 0) {
+      break;
+    }
+    ctrl[i]->regs[MODE2] &= ~_BV (EFCLR);
+    ret = iWriteRegBlock (&ctrl[i], MODE2, MODE2);
+  }
+  return ret;
 }
 
 // -----------------------------------------------------------------------------
@@ -340,29 +345,12 @@ iOpen (xLedRgbDcb * dcb, void * setup) {
 
       ctrl->config.i2c_addr = config->i2c_addr;
       d->nof_ctrl++;
-#if 0
-      // Régle le courant max dans les leds
-      ucRegs[IREF] = TLC59116_DEFAULT_IREF;
-      iWriteRegBlock (TLC59116_ADDR_ALL, IREF, IREF);
-      DEBUG_READ_CTRL();
-
-      // Configure les leds en mode brightness
-      memset (&ucRegs[LEDOUT0], (LEDRGB_DEFAULT_MODE << LDR3_0) + (LEDRGB_DEFAULT_MODE << LDR2_0) +
-              (LEDRGB_DEFAULT_MODE << LDR1_0) + (LEDRGB_DEFAULT_MODE << LDR0_0), 4);
-      iWriteRegBlock (TLC59116_ADDR_ALL, LEDOUT0, LEDOUT3);
-      DEBUG_READ_CTRL();
-
-      // Démarrage des oscillateurs
-      ucRegs[MODE1] = _BV (ALLCALL);
-      iWriteRegBlock (TLC59116_ADDR_ALL, MODE1, MODE1);
-      delay_ms (1); // Délai de démarrage 500 ṁs
-      DEBUG_READ_CTRL();
-#endif
 
       config++;
     }
+    delay_ms (1); // Délai de démarrage 500 ms
 
-    return 0;
+    return iClrError (dcb);
   }
 
   return -1;
@@ -370,38 +358,266 @@ iOpen (xLedRgbDcb * dcb, void * setup) {
 
 // -----------------------------------------------------------------------------
 static int
-iAddLed (xLedRgbDcb * dcb, void * led) {
-  return 0;
+iSetMode (xLedRgbDcb * dcb, int index, eLedRgbMode mode) {
+  int ret;
+  xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
+  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  assert (led);
+
+  ret = iSetPinMode (ctrl[led->red.ctrl], led->red.out, mode);
+  if (ret == 0) {
+    ret = iSetPinMode (ctrl[led->green.ctrl], led->green.out, mode);
+    if (ret == 0) {
+      return iSetPinMode (ctrl[led->blue.ctrl], led->blue.out, mode);
+    }
+  }
+  return ret;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iSetColor (xLedRgbDcb * dcb, int led, uint32_t color) {
-  return 0;
+iAddLed (xLedRgbDcb * dcb, eLedRgbMode mode, void * setup) {
+  xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
+  xTlc59116Led * s = (xTlc59116Led *) setup;
+
+  if ( (s->red.ctrl < d->nof_ctrl) && (s->green.ctrl < d->nof_ctrl) &&
+       (s->blue.ctrl < d->nof_ctrl) &&
+       (s->red.out < 16) && (s->green.out < 16) && (s->blue.out < 16)) {
+    xTlc59116Led * led;
+
+    led = malloc (sizeof (xTlc59116Led));
+    assert (led);
+    memcpy (led, s, sizeof (xTlc59116Led));
+
+    if (iVectorAppend (&d->leds, led) == 0) {
+      int index = iVectorSize (&d->leds) - 1;
+
+      if (iSetMode (dcb, index, mode) == 0) {
+        return index;
+      }
+      iVectorRemove (&d->leds, index);
+    }
+  }
+  return -1;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iSetMode (xLedRgbDcb * dcb, int led, eLedRgbMode mode) {
-  return 0;
+iSetColor (xLedRgbDcb * dcb, int index, xRgbColor * color) {
+  int ret;
+  xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
+  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  assert (led);
+
+  ret = iSetPinPwm (d->ctrl[led->red.ctrl], led->red.out, color->ucRed);
+  if (ret == 0) {
+    ret = iSetPinPwm (d->ctrl[led->green.ctrl], led->green.out, color->ucGreen);
+    if (ret == 0) {
+      return iSetPinPwm (d->ctrl[led->blue.ctrl], led->blue.out, color->ucBlue);
+    }
+  }
+  return ret;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iSetDimmer (xLedRgbDcb * dcb, uint16_t dimming) {
-  return 0;
+iSetDimmer (xLedRgbDcb * dcb, int index, int dimming) {
+  int ret = -1;
+
+  if (dimming >= 0) {
+    int c[3] = { -1, -1, -1};
+    xTlc59116Data * d;
+    xTlc59116Led * led;
+    xTlc59116Pin * pin;
+
+    d = (xTlc59116Data *) dcb->dptr;
+    led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+    assert (led);
+    pin = &led->red;
+
+    while (dimming > 255) {
+      dimming >>= 1;
+    }
+
+    for (int i = 0; i < 3; i++) {
+
+      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1])) {
+        xTlc59116Ctrl * ctrl = d->ctrl[pin->ctrl];
+
+        ctrl->regs[GRPPWM] = dimming;
+        ret = iWriteRegBlock (ctrl, GRPPWM, GRPPWM);
+        if (ret != 0) {
+          break;
+        }
+
+        ctrl->regs[MODE2] &= ~_BV (DMBLNK);
+        ret = iWriteRegBlock (ctrl, MODE2, MODE2);
+        if (ret != 0) {
+          break;
+        }
+        c[i] = pin->ctrl;
+      }
+      pin++;
+    }
+  }
+
+  return ret;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iSetBlinker (xLedRgbDcb * dcb, uint16_t blinking) {
-  return 0;
+iSetBlinker (xLedRgbDcb * dcb, int index, int period, int dcycle) {
+  int ret = -1;
+
+  if ( (period >= 0) && (dcycle >= 0)) {
+    int c[3] = { -1, -1, -1};
+    xTlc59116Data * d;
+    xTlc59116Led * led;
+    xTlc59116Pin * pin;
+
+    d = (xTlc59116Data *) dcb->dptr;
+    led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+    assert (led);
+    pin = &led->red;
+
+    while (dcycle > 255) {
+      dcycle >>= 1;
+    }
+
+    for (int i = 0; i < 3; i++) {
+
+      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1])) {
+        xTlc59116Ctrl * ctrl = d->ctrl[pin->ctrl];
+
+        if (period < 42) {
+          period = 42;
+        }
+        ctrl->regs[GRPPWM] = dcycle;
+        ctrl->regs[GRPFREQ] = (uint8_t) MIN ( (period * 3) / 125 - 1, 255);
+        ret = iWriteRegBlock (ctrl, GRPPWM, GRPFREQ);
+        if (ret != 0) {
+          break;
+        }
+
+        ctrl->regs[MODE2] |= _BV (DMBLNK);
+        ret = iWriteRegBlock (ctrl, MODE2, MODE2);
+        if (ret != 0) {
+          break;
+        }
+        c[i] = pin->ctrl;
+      }
+      pin++;
+    }
+  }
+
+  return ret;
 }
 
 // -----------------------------------------------------------------------------
 static int
-iError (xLedRgbDcb * dcb, int * code) {
-  return 0;
+iGetError (xLedRgbDcb * dcb, int index) {
+  int ret = false;
+  xTlc59116Data * d;
+  xTlc59116Led * led;
+  xTlc59116Pin * pin;
+
+  d = (xTlc59116Data *) dcb->dptr;
+  led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  assert (led);
+  pin = &led->red;
+
+  for (int i = 0; i < 3; i++) {
+    xTlc59116Ctrl * ctrl; 
+    uint8_t reg, bit;
+    int error;
+    
+    ctrl = d->ctrl[pin->ctrl];
+    reg = EFLAG1 + pin->out / 8;
+    bit = pin->out % 8;
+
+    error = iReadRegBlock (ctrl, reg, reg);
+    if (error != 0) {
+      return error;
+    }
+    
+    if (ctrl->regs[reg] & _BV(bit)) {
+      ret = true;
+    }
+    pin++;
+  }
+  return ret;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iSetGain (xLedRgbDcb * dcb, int ctl, int gain) {
+  xTlc59116Data * d;
+
+  d = (xTlc59116Data *) dcb->dptr;
+  if ((ctl >= 0) && (ctl < d->nof_ctrl)) {
+    xTlc59116Ctrl * ctrl; 
+    
+    ctrl = d->ctrl[ctl];
+    ctrl->regs [IREF] = (uint8_t) gain;
+    return iWriteRegBlock(ctrl, IREF, IREF);
+  }
+  return -1;
+}
+
+// -----------------------------------------------------------------------------
+static int
+iCtl (xLedRgbDcb * dcb, int c, va_list ap) {
+  it ret = 0;
+
+  switch (c) {
+
+    /* int setmode (xLedRgbDcb * dcb, int led, eLedRgbMode mode) */
+    case LEDRGB_IOC_SETMODE: {
+      int led = va_arg (ap, int);
+      eLedRgbMode mode = va_arg (ap, eLedRgbMode);
+      ret = iSetMode (dcb, led, mode);
+    }
+    break;
+    /* int setdimmer (xLedRgbDcb * dcb, int led, int dimming) */
+    case LEDRGB_IOC_SETDIMMER: {
+      int led = va_arg (ap, int);
+      int dimming = va_arg (ap, int);
+      ret = iSetDimmer (dcb, led, dimming);
+    }
+    break;
+    /* int setblinker (xLedRgbDcb * dcb, int led, int period, int dcycle) */
+    case LEDRGB_IOC_SETBLINKER: {
+      int led = va_arg (ap, int);
+      int period = va_arg (ap, int);
+      int dcycle = va_arg (ap, int);
+      ret = iSetBlinker (dcb, led, period, dcycle);
+    }
+    break;
+    /* int error (xLedRgbDcb * dcb, int led) */
+    case LEDRGB_IOC_GETERROR: {
+      int led = va_arg (ap, int);
+      ret = iGetError (dcb, led);
+    }
+    break;
+    /* int clrerror (xLedRgbDcb * dcb); */
+    case LEDRGB_IOC_CLRERROR: {
+      ret = iClrError (dcb);
+    }
+    break;
+    /* int setgain (xLedRgbDcb * dcb, int ctl, int gain); */
+    case LEDRGB_IOC_SETGAIN: {
+      int ctl = va_arg (ap, int);
+      int gain = va_arg (ap, int);
+      ret = iSetGain (dcb, ctl, gain);
+    }
+    break;
+    default:
+      errno = EINVAL;
+      ret = -1;
+      break;
+  }
+
+  return ret;
 }
 
 /* public variables ========================================================= */
@@ -410,271 +626,6 @@ xLedRgbOps xTlc59116Ops = {
   .close = iClose,
   .addled = iAddLed,
   .setcolor = iSetColor,
-  .setmode = iSetMode,
-  .setdimmer = iSetDimmer,
-  .setblinker = iSetBlinker,
-  .error = iError
+  .ctl = iCtl
 };
-
-#if 0
-
-/* private variables ======================================================== */
-static xTwiFrame xFrame;
-static uint8_t ucRegs[REG_BLOCK_SIZE];
-static xTwiDeviceAddr xRedCtrl[NUMBER_OF_CTRL]   = TLC59116_RED_LIST;
-static xTwiDeviceAddr xGreenCtrl[NUMBER_OF_CTRL] = TLC59116_GREEN_LIST;
-static xTwiDeviceAddr xBlueCtrl[NUMBER_OF_CTRL]  = TLC59116_BLUE_LIST;
-static int8_t iGlobalError;
-
-/* private functions ======================================================== */
-
-// -----------------------------------------------------------------------------
-// Modifie la couleur d'un bloc de leds
-static void
-vSetColorBlock (uint8_t ucCtrlIndex,
-                uint8_t ucFirst, uint8_t ucSize, xRgbColor * pxColor) {
-  uint8_t ucLast = ucFirst + ucSize - 1;
-
-  memset (&ucRegs[ucFirst], pxColor->ucRed, ucSize);
-  iWriteRegBlock (xRedCtrl[ucCtrlIndex], ucFirst, ucLast);
-  DEBUG_READ_CTRL();
-  memset (&ucRegs[ucFirst], pxColor->ucGreen, ucSize);
-  iWriteRegBlock (xGreenCtrl[ucCtrlIndex], ucFirst, ucLast);
-  DEBUG_READ_CTRL();
-  memset (&ucRegs[ucFirst], pxColor->ucBlue, ucSize);
-  iWriteRegBlock (xBlueCtrl[ucCtrlIndex], ucFirst, ucLast);
-  DEBUG_READ_CTRL();
-}
-
-// -----------------------------------------------------------------------------
-// Modifie la couleur d'un bloc de 16 leds
-static void
-vSetColorCtrl (uint8_t ucCtrlIndex, uint16_t usLed, xRgbColor * pxColor) {
-  uint8_t ucReg = PWM0;
-  uint8_t ucBlockSize = 0;
-  uint16_t usMask = 1;
-
-  while (usMask) {
-
-    if (usLed & usMask) {
-
-      // Bit à 1
-      ucBlockSize++;
-
-    }
-    else {
-
-      // Bit à 0
-      if (ucBlockSize) {
-        // Un bloc de 1 précède le 0, il faut envoyé la commande aux leds
-
-        vSetColorBlock (ucCtrlIndex, ucReg, ucBlockSize, pxColor);
-        ucReg += ucBlockSize + 1;
-        ucBlockSize = 0;
-      }
-      else {
-
-        ucReg++;
-      }
-    }
-    usMask <<= 1;
-  }
-  if (ucBlockSize) {
-    // Un bloc de 1 termine le mot, il faut envoyé la commande aux leds
-
-    vSetColorBlock (ucCtrlIndex, ucReg, ucBlockSize, pxColor);
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Modifie le mode d'un bloc de 16 leds
-static void
-vSetModeCtrl (uint8_t ucCtrlIndex, uint16_t usLed, eLedRgbMode eMode) {
-  uint8_t ucReg = LEDOUT0;
-  uint8_t ucRegMask = _BV (LDR0_1) | _BV (LDR0_0);
-  uint8_t ucMode = eMode;
-  uint16_t usMask = 1;
-
-  iReadRegBlock (xRedCtrl[ucCtrlIndex], LEDOUT0, LEDOUT3);
-
-  while (usMask) {
-
-    if (ucRegMask == 0) {
-
-      ucRegMask = _BV (LDR0_1) | _BV (LDR0_0);
-      ucMode = eMode;
-      ucReg++;
-    }
-
-    if (usLed & usMask) {
-
-      // Bit à 1
-      ucRegs[ucReg] &= ~ucRegMask;
-      ucRegs[ucReg] |=  ucMode;
-    }
-    usMask <<= 1;
-    ucRegMask <<= 2;
-    ucMode <<= 2;
-  }
-  iWriteRegBlock (xRedCtrl[ucCtrlIndex],   LEDOUT0, LEDOUT3);
-  iWriteRegBlock (xGreenCtrl[ucCtrlIndex], LEDOUT0, LEDOUT3);
-  iWriteRegBlock (xBlueCtrl[ucCtrlIndex],  LEDOUT0, LEDOUT3);
-}
-
-// -----------------------------------------------------------------------------
-static void
-vClearErrorCtrl (xTwiDeviceAddr xCtrl) {
-
-  iReadRegBlock (xCtrl, MODE2, MODE2);
-  ucRegs[MODE2] |= _BV (EFCLR);
-  iWriteRegBlock (xCtrl, MODE2, MODE2);
-  ucRegs[MODE2] &= ~_BV (EFCLR);
-  iWriteRegBlock (xCtrl, MODE2, MODE2);
-}
-
-/* internal public functions ================================================ */
-
-// -----------------------------------------------------------------------------
-int8_t
-iLedRgbInit (void) {
-  int8_t iError;
-
-#ifdef TLC59116_RESET
-  // Hardware RESET
-  TLC59116_RESET_DDR  |=  _BV (TLC59116_RESET);
-  TLC59116_RESET_PORT &= ~_BV (TLC59116_RESET);
-  delay_ms (1);
-  TLC59116_RESET_PORT |= _BV (TLC59116_RESET);
-  delay_ms (1);
-#else
-  // Software RESET
-  xFrame.xAddr = TLC59116_ADDR_SWRST;
-  xFrame.xLen = 2;
-  ucRegs[0] = TLC59116_SWRST_BYTE1;
-  ucRegs[1] = TLC59116_SWRST_BYTE2;
-  xFrame.pxData = &ucRegs[0];
-  iGlobalError = eTwiSend (&xFrame);
-  if (iGlobalError) {
-    return iGlobalError;
-  }
-#endif
-
-  // Vérifie la présence sur le bus iĠc de tous les contrôleurs
-  iError = iCheckAllCtrl();
-  if (iError) {
-    return iError;
-  }
-
-  // Régle le courant max dans les leds
-  ucRegs[IREF] = TLC59116_DEFAULT_IREF;
-  iWriteRegBlock (TLC59116_ADDR_ALL, IREF, IREF);
-  DEBUG_READ_CTRL();
-
-  // Configure les leds en mode brightness
-  memset (&ucRegs[LEDOUT0], (LEDRGB_DEFAULT_MODE << LDR3_0) + (LEDRGB_DEFAULT_MODE << LDR2_0) +
-          (LEDRGB_DEFAULT_MODE << LDR1_0) + (LEDRGB_DEFAULT_MODE << LDR0_0), 4);
-  iWriteRegBlock (TLC59116_ADDR_ALL, LEDOUT0, LEDOUT3);
-  DEBUG_READ_CTRL();
-
-  // Démarrage des oscillateurs
-  ucRegs[MODE1] = _BV (ALLCALL);
-  iWriteRegBlock (TLC59116_ADDR_ALL, MODE1, MODE1);
-  delay_ms (1); // Délai de démarrage 500 ṁs
-  DEBUG_READ_CTRL();
-
-  return iError;
-}
-
-
-// -----------------------------------------------------------------------------
-void
-vLedRgbSetColor (uint64_t xLed, uint32_t ulColor) {
-  uint8_t ucCtrlIndex;
-  uint16_t usLed;
-  xRgbColor * pxColor = (xRgbColor *) &ulColor;
-
-  for (ucCtrlIndex = 0; ucCtrlIndex < NUMBER_OF_CTRL; ucCtrlIndex++) {
-
-    usLed = (uint16_t) (xLed >> (16 * ucCtrlIndex));
-    vSetColorCtrl (ucCtrlIndex, usLed, pxColor);
-  }
-}
-
-// -----------------------------------------------------------------------------
-void
-vLedRgbSetMode (uint64_t xLed, eLedRgbMode eMode) {
-  uint8_t ucCtrlIndex;
-  uint16_t usLed;
-
-  for (ucCtrlIndex = 0; ucCtrlIndex < NUMBER_OF_CTRL; ucCtrlIndex++) {
-
-    usLed = (uint16_t) (xLed >> (16 * ucCtrlIndex));
-    vSetModeCtrl (ucCtrlIndex, usLed, eMode);
-  }
-}
-
-// -----------------------------------------------------------------------------
-void
-vLedRgbSetGlobalDimming (uint8_t ucDimming) {
-
-  ucRegs[GRPPWM] = ucDimming;
-  iWriteRegBlock (TLC59116_ADDR_ALL, GRPPWM, GRPPWM);
-
-  iReadRegBlock (xRedCtrl[0], MODE2, MODE2);
-  ucRegs[MODE2] &= ~_BV (DMBLNK);
-  iWriteRegBlock (TLC59116_ADDR_ALL, MODE2, MODE2);
-}
-
-// -----------------------------------------------------------------------------
-void
-vLedRgbSetGlobalBlinking (uint16_t usPeriod, uint8_t ucDutyCycle) {
-
-  if (usPeriod < 42) {
-    usPeriod = 42;
-  }
-
-  ucRegs[GRPPWM]  = ucDutyCycle;
-  ucRegs[GRPFREQ] = (uint8_t) MIN ( (usPeriod * 3) / 125 - 1, 255);
-  iWriteRegBlock (TLC59116_ADDR_ALL, GRPPWM, GRPFREQ);
-
-  iReadRegBlock (xRedCtrl[0], MODE2, MODE2);
-  ucRegs[MODE2] |= _BV (DMBLNK);
-  iWriteRegBlock (TLC59116_ADDR_ALL, MODE2, MODE2);
-}
-
-// -----------------------------------------------------------------------------
-uint64_t
-xLedRgbError (void) {
-  uint64_t xError = 0, xCtrlError;
-  uint8_t ucCtrlIndex;
-
-  for (ucCtrlIndex = 0; ucCtrlIndex < NUMBER_OF_CTRL; ucCtrlIndex++) {
-
-    xCtrlError = 0;
-    iReadRegBlock (xRedCtrl[ucCtrlIndex], EFLAG1, EFLAG2);
-    xCtrlError |= ~ (ucRegs[EFLAG2] << 8 | ucRegs[EFLAG1]);
-    iReadRegBlock (xGreenCtrl[ucCtrlIndex], EFLAG1, EFLAG2);
-    xCtrlError |= ~ (ucRegs[EFLAG2] << 8 | ucRegs[EFLAG1]);
-    iReadRegBlock (xBlueCtrl[ucCtrlIndex], EFLAG1, EFLAG2);
-    xCtrlError |= ~ (ucRegs[EFLAG2] << 8 | ucRegs[EFLAG1]);
-
-    xError |= (xCtrlError << (16 * ucCtrlIndex));
-  }
-
-  return xError;
-}
-
-// -----------------------------------------------------------------------------
-void
-vLedRgbClearError (void) {
-  uint8_t ucCtrlIndex;
-
-  for (ucCtrlIndex = 0; ucCtrlIndex < NUMBER_OF_CTRL; ucCtrlIndex++) {
-
-    vClearErrorCtrl (xRedCtrl[ucCtrlIndex]);
-    vClearErrorCtrl (xGreenCtrl[ucCtrlIndex]);
-    vClearErrorCtrl (xBlueCtrl[ucCtrlIndex]);
-  }
-}
-#endif
 /* ========================================================================== */

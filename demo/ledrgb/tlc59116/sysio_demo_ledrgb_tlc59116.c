@@ -42,7 +42,7 @@ int
 main (int argc, char **argv) {
   int ret;
   uint64_t leds = 0;
-  xTlc59116Config ctrl_list[] = {{.i2c_bus = "/dev/i2c-1", .i2c_addr = TLC59116_ADDR_BASE }, {.i2c_bus = NULL, 0}};
+  xTlc59116Config ctrl_list[] = {{.i2c_bus = "/dev/i2c-1", .i2c_addr = TLC59116_ADDR(0,0,0,0) }, /* Fin de la liste */ {.i2c_bus = NULL, 0}};
   int led[NOF_LEDS];
   xTlc59116Led setup[NOF_LEDS] = {
     { .red = { .num = 0, .ctrl = 0 }, .green = { .num =  1, .ctrl = 0 }, .blue = { .num =  2, .ctrl = 0 }},
@@ -60,7 +60,8 @@ main (int argc, char **argv) {
     leds |= 1ULL << i;
   }
 
-  ret = iLedRgbSetMode (dev, leds, eLedRgbModeDimmer);
+  ret = iLedRgbSetMode (dev, leds, eLedRgbModePwm);
+  ret _ iLedRgbSetColor(dev, leds, RGB_DEEPPINK);
 
 
   // vSigIntHandler() intercepte le CTRL+C
