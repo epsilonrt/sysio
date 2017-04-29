@@ -14,9 +14,9 @@ __BEGIN_C_DECLS
 /* ========================================================================== */
 
 /**
- *  @addtogroup ledrgb_module
+ *  @addtogroup sysio_ledrgb
  *  @{
- *  @defgroup tlc59116_module Contrôleur TLC59116
+ *  @defgroup sysio_tlc59116 Contrôleur TLC59116
 
  *  Partie spécifique aux contrôleurs TLC59116. \n
  *  Les TLC59116 supportent :

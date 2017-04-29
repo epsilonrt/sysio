@@ -48,6 +48,7 @@ fournit en plus les modules:
 * Capteur I2C HIH6130 [**hih6130**](http://www.epsilonrt.fr/sysio/group__sysio__hih6130.html)
 * Modules Blyss™ [**blyss**](http://www.epsilonrt.fr/sysio/group__sysio__blyss.html)
 * Module UHF RFM69 [**rf69**](http://www.epsilonrt.fr/sysio/group__sysio__rf69.html)
+* Leds RGB [**ledrgb**](http://www.epsilonrt.fr/sysio/group__sysio__ledrgb.html)
 
 Pour chaque module, un ou plusieurs [exemples](http://www.epsilonrt.fr/sysio/examples.html) sont fournis.
 

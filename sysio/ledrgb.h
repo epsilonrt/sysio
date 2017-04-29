@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Leds RGB (Contrôleur TI TLC59116)
+ * @brief Leds RGB 
  *
  * Copyright © 2017 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -16,7 +16,7 @@ __BEGIN_C_DECLS
 /* ========================================================================== */
 
 /**
- * @defgroup ledrgb_module Leds RGB
+ * @defgroup sysio_ledrgb Leds RGB
 
  * Ce module permet de gérer les leds multicolores (Rouge, Verte, Bleue) de
  * façons indépendantes de la plate-forme matérielle et du contrôleur. \n

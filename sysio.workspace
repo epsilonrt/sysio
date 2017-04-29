@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" Version="10.0.0">
-  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="Yes"/>
-  <Project Name="lib" Path="lib/lib.project" Active="No"/>
+  <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
