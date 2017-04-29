@@ -8,19 +8,12 @@
 #include <stdlib.h>
 #include "ledrgb_private.h"
 
-/* macros =================================================================== */
-/* constants ================================================================ */
 /* structures =============================================================== */
 struct xLedRgbDevice {
   xLedRgbDcb * dcb;
   eLedRgbDeviceModel model;
   int size;
 };
-
-/* types ==================================================================== */
-/* private variables ======================================================== */
-/* private functions ======================================================== */
-/* public variables ========================================================= */
 
 /* internal public functions ================================================ */
 
@@ -172,6 +165,13 @@ int
 iLedRgbSetBlinker (xLedRgbDevice * d, int item, int period, int dcycle) {
 
   return iLedRgbCtl (d, LEDRGB_IOC_SETBLINKER, item, period, dcycle);
+}
+
+// -----------------------------------------------------------------------------
+int
+iLedRgbSetGain (xLedRgbDevice * d, int item, int gain) {
+
+  return iLedRgbCtl (d, LEDRGB_IOC_SETGAIN, item, gain);
 }
 
 // -----------------------------------------------------------------------------

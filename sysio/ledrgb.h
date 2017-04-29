@@ -188,6 +188,19 @@ int iLedRgbSetDimmer (xLedRgbDevice * d, int item, int dimming);
 int iLedRgbSetBlinker (xLedRgbDevice * d, int item, int period, int dcycle);
 
 /**
+ * @brief Modifie le gain en courant
+ *
+ * Cette fonction est disponible que sur certains contrôleur (comme le TLC59116).
+ * 
+ * @param d pointeur sur l'objet
+ * @param item index de l'item à modifier, en fonction du modèle de contrôleur
+ * l'item peut être un contrôleur ou une led.
+ * @param gain nouveau gain (plage acceptée dépendant du modèle de contrôleur)
+ * @return 0, -1 si erreur ou non disponible (dans ce dernier cas errno vaut EINVAL)
+ */
+int iLedRgbSetGain (xLedRgbDevice * d, int item, int gain);
+
+/**
  * @brief Teste si une led est en défaut
  *
  * En fonction du contrôleur utilisé, celui-ci peut effectuer une surveillance
