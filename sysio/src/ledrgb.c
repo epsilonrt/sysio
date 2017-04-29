@@ -6,8 +6,6 @@
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
 #include "ledrgb_private.h"
 
 /* macros =================================================================== */
@@ -31,9 +29,9 @@ xLedRgbDevice *
 xLedRgbNewDevice (eLedRgbDeviceModel model, void * dev_setup) {
   xLedRgbDevice * d;
 
-  d = calloc (1, sizeof (xLedRgbDevice));
+  d = calloc (1, sizeof (xLedRgbDevice) );
   assert (d);
-  d->dcb = calloc (1, sizeof (xLedRgbDcb));
+  d->dcb = calloc (1, sizeof (xLedRgbDcb) );
   assert (d->dcb);
 
   d->model = eLedRgbDeviceNone;
@@ -92,16 +90,23 @@ iLedRgbAddLed (xLedRgbDevice * d, eLedRgbMode mode, void * led_setup) {
 
 // -----------------------------------------------------------------------------
 int
-iLedRgbSetColor (xLedRgbDevice * d, uint64_t leds, uint32_t color) {
-  int ret = 0, led = 0;
+iLedRgbSetColor (xLedRgbDevice * d, int led, uint32_t color) {
   xRgbColor * pxColor = (xRgbColor *) &color;
 
-  while ( (leds) && (ret == 0)) {
+  return d->dcb->ops->setcolor (d->dcb, led, pxColor);
+}
+
+// -----------------------------------------------------------------------------
+int
+iLedRgbSetGrpColor (xLedRgbDevice * d, uint64_t leds, uint32_t color) {
+  int ret = 0, led = 0;
+
+  while ( (leds) && (ret == 0) && (led < d->size) ) {
     uint64_t mask = 1ULL << led;
 
     if (leds & mask) {
       leds &= ~mask;
-      ret = d->dcb->ops->setcolor (d->dcb, led, pxColor);
+      ret = iLedRgbSetColor (d, led, color);
     }
     led++;
   }
@@ -122,7 +127,7 @@ iLedRgbCtl (xLedRgbDevice * d, int c, ...) {
 
     default:
       ret = d->dcb->ops->ctl (d->dcb, c, ap);
-      if ( (ret == -1) && (errno == EINVAL)) {
+      if ( (ret == -1) && (errno == EINVAL) ) {
         PERROR ("iLedRgbCtl function not supported: %d", c);
       }
       break;
@@ -133,10 +138,17 @@ iLedRgbCtl (xLedRgbDevice * d, int c, ...) {
 
 // -----------------------------------------------------------------------------
 int
-iLedRgbSetMode (xLedRgbDevice * d, uint64_t leds, eLedRgbMode mode) {
+iLedRgbSetMode (xLedRgbDevice * d, int led, eLedRgbMode mode) {
+
+  return iLedRgbCtl (d, LEDRGB_IOC_SETMODE, led, mode);
+}
+
+// -----------------------------------------------------------------------------
+int
+iLedRgbSetGrpMode (xLedRgbDevice * d, uint64_t leds, eLedRgbMode mode) {
   int ret = 0, led = 0;
 
-  while ( (leds) && (ret == 0)) {
+  while ( (leds) && (ret == 0) && (led < d->size) ) {
     uint64_t mask = 1ULL << led;
 
     if (leds & mask) {
@@ -150,16 +162,16 @@ iLedRgbSetMode (xLedRgbDevice * d, uint64_t leds, eLedRgbMode mode) {
 
 // -----------------------------------------------------------------------------
 int
-iLedRgbSetDimmer (xLedRgbDevice * d, int dimming) {
+iLedRgbSetDimmer (xLedRgbDevice * d, int item, int dimming) {
 
-  return iLedRgbCtl (d, LEDRGB_IOC_SETDIMMER, dimming);
+  return iLedRgbCtl (d, LEDRGB_IOC_SETDIMMER, item, dimming);
 }
 
 // -----------------------------------------------------------------------------
 int
-iLedRgbSetBlinker (xLedRgbDevice * d, int period, int dcycle) {
+iLedRgbSetBlinker (xLedRgbDevice * d, int item, int period, int dcycle) {
 
-  return iLedRgbCtl (d, LEDRGB_IOC_SETBLINKER, period, dcycle);
+  return iLedRgbCtl (d, LEDRGB_IOC_SETBLINKER, item, period, dcycle);
 }
 
 // -----------------------------------------------------------------------------
@@ -168,8 +180,8 @@ iLedRgbGetError (xLedRgbDevice * d, int led) {
   int ret;
 
   ret = iLedRgbCtl (d, LEDRGB_IOC_GETERROR, led);
-  if ( (ret == -1) && (errno == EINVAL)) {
-    ret = 0;
+  if ( (ret == -1) && (errno == EINVAL) ) {
+    ret = false;
   }
   return ret;
 }
@@ -180,7 +192,7 @@ iLedRgbClearError (xLedRgbDevice * d) {
   int ret;
 
   ret = iLedRgbCtl (d, LEDRGB_IOC_CLRERROR);
-  if ( (ret == -1) && (errno == EINVAL)) {
+  if ( (ret == -1) && (errno == EINVAL) ) {
     ret = 0;
   }
   return ret;

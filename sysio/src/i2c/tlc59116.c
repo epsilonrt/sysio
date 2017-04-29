@@ -160,7 +160,7 @@ iWriteRegBlock (const xTlc59116Ctrl * ctrl, uint8_t first_reg, uint8_t last_reg)
 
     ret = iI2cWriteRegBlock (fd, reg, &ctrl->regs[first_reg], len);
     error = iI2cClose (fd);
-    if ( (error == 0) && (ret == len)) {
+    if ( (error == 0) && (ret == 0) ) {
       return 0;
     }
   }
@@ -185,7 +185,7 @@ iReadRegBlock (xTlc59116Ctrl * ctrl, uint8_t first_reg, uint8_t last_reg) {
 
     ret = iI2cReadRegBlock (fd, reg, &ctrl->regs[first_reg], len);
     error = iI2cClose (fd);
-    if ( (error == 0) && (ret == len)) {
+    if ( (error == 0) && (ret == len) ) {
       return 0;
     }
   }
@@ -203,7 +203,7 @@ iCheckCtrlPresence (const xTlc59116Config * config) {
 
     subadr1 = iI2cReadReg8 (fd, SUBADR1);
     iI2cClose (fd);
-    if (subadr1 == (TLC59116_ADDR_SUB1 << 1)) {
+    if (subadr1 == (TLC59116_ADDR_SUB1 << 1) ) {
       return 0;
     }
   }
@@ -221,9 +221,9 @@ iSwReset (const char * i2c_bus) {
     int ret;
     uint8_t buffer[] = {TLC59116_SWRST_BYTE1, TLC59116_SWRST_BYTE2};
 
-    ret = iI2cWriteBlock (fd, buffer, sizeof (buffer));
+    ret = iI2cWriteBlock (fd, buffer, sizeof (buffer) );
     iI2cClose (fd);
-    if (ret == sizeof (buffer)) {
+    if (ret == sizeof (buffer) ) {
       return 0;
     }
   }
@@ -258,13 +258,23 @@ iSetPinPwm (xTlc59116Ctrl * ctrl, int out, uint8_t dcycle) {
 static int
 iClose (xLedRgbDcb * dcb) {
   xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
-  xTlc59116Ctrl * ctrl = d->ctrl;
+  xTlc59116Ctrl * ctrl;
 
-  vVectorDestroy (d->leds);
   for (int i = 0; i < d->nof_ctrl; i++) {
-    free (ctrl[i]->config.i2c_bus);
+
+    ctrl = &d->ctrl[i];
+    // Arrêt oscillateur
+    ctrl->regs[MODE1] = _BV (OSC);
+    iWriteRegBlock (ctrl, MODE1, MODE1);
   }
-  free (ctrl);
+
+  // Destruction des éléments alloués sur le tas
+  vVectorDestroy (&d->leds);
+  for (int i = 0; i < d->nof_ctrl; i++) {
+    ctrl = &d->ctrl[i];
+    free (ctrl->config.i2c_bus);
+  }
+  free (d->ctrl);
   free (d);
   return 0;
 }
@@ -278,12 +288,12 @@ iClrError (xLedRgbDcb * dcb) {
 
   for (int i = 0; i < d->nof_ctrl; i++) {
 
-    ctrl[i]->regs[MODE2] |= _BV (EFCLR);
+    ctrl[i].regs[MODE2] |= _BV (EFCLR);
     ret = iWriteRegBlock (&ctrl[i], MODE2, MODE2);
     if (ret != 0) {
       break;
     }
-    ctrl[i]->regs[MODE2] &= ~_BV (EFCLR);
+    ctrl[i].regs[MODE2] &= ~_BV (EFCLR);
     ret = iWriteRegBlock (&ctrl[i], MODE2, MODE2);
   }
   return ret;
@@ -304,17 +314,21 @@ iOpen (xLedRgbDcb * dcb, void * setup) {
   }
 
   if (nof_ctrl > 0) {
+    int ret;
     const char * str = "";
 
     // Allocation de la structure de stockage des données privées et mise à zéro
     xTlc59116Data * d;
-    d = calloc (1, sizeof (xTlc59116Data));
+    d = calloc (1, sizeof (xTlc59116Data) );
     assert (d);
 
     // Allocation du bloc des contrôleurs et mise à zéro
-    d->ctrl = calloc (nof_ctrl, sizeof (xTlc59116Ctrl));
+    d->ctrl = calloc (nof_ctrl, sizeof (xTlc59116Ctrl) );
     assert (d->ctrl);
     dcb->dptr = d;
+
+    ret = iVectorInit (&d->leds, 16, NULL, vLedDestroy);
+    assert (ret == 0);
 
     // Copie des configurations et reset contrôleurs
     config = (xTlc59116Config *) setup;
@@ -344,13 +358,26 @@ iOpen (xLedRgbDcb * dcb, void * setup) {
       strcpy (ctrl->config.i2c_bus, config->i2c_bus);
 
       ctrl->config.i2c_addr = config->i2c_addr;
-      d->nof_ctrl++;
 
+      // Copie du bloc de registres complet
+      ret = iReadRegBlock (ctrl, MODE1, EFLAG2);
+      if (ret != 0) {
+        iClose (dcb);
+        return -1;
+      }
+      // Démarrage oscillateur
+      ctrl->regs[MODE1] &= ~_BV (OSC);
+      ret = iWriteRegBlock (ctrl, MODE1, MODE1);
+      if (ret != 0) {
+        iClose (dcb);
+        return -1;
+      }
+
+      d->nof_ctrl++;
       config++;
     }
-    delay_ms (1); // Délai de démarrage 500 ms
-
-    return iClrError (dcb);
+    delay_ms (1); // Délai de démarrage oscillateurs 500 µs
+    return  0;
   }
 
   return -1;
@@ -361,14 +388,14 @@ static int
 iSetMode (xLedRgbDcb * dcb, int index, eLedRgbMode mode) {
   int ret;
   xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
-  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (&d->leds, index);
   assert (led);
 
-  ret = iSetPinMode (ctrl[led->red.ctrl], led->red.out, mode);
+  ret = iSetPinMode (&d->ctrl[led->red.ctrl], led->red.out, mode);
   if (ret == 0) {
-    ret = iSetPinMode (ctrl[led->green.ctrl], led->green.out, mode);
+    ret = iSetPinMode (&d->ctrl[led->green.ctrl], led->green.out, mode);
     if (ret == 0) {
-      return iSetPinMode (ctrl[led->blue.ctrl], led->blue.out, mode);
+      return iSetPinMode (&d->ctrl[led->blue.ctrl], led->blue.out, mode);
     }
   }
   return ret;
@@ -382,12 +409,12 @@ iAddLed (xLedRgbDcb * dcb, eLedRgbMode mode, void * setup) {
 
   if ( (s->red.ctrl < d->nof_ctrl) && (s->green.ctrl < d->nof_ctrl) &&
        (s->blue.ctrl < d->nof_ctrl) &&
-       (s->red.out < 16) && (s->green.out < 16) && (s->blue.out < 16)) {
+       (s->red.out < 16) && (s->green.out < 16) && (s->blue.out < 16) ) {
     xTlc59116Led * led;
 
-    led = malloc (sizeof (xTlc59116Led));
+    led = malloc (sizeof (xTlc59116Led) );
     assert (led);
-    memcpy (led, s, sizeof (xTlc59116Led));
+    memcpy (led, s, sizeof (xTlc59116Led) );
 
     if (iVectorAppend (&d->leds, led) == 0) {
       int index = iVectorSize (&d->leds) - 1;
@@ -406,14 +433,14 @@ static int
 iSetColor (xLedRgbDcb * dcb, int index, xRgbColor * color) {
   int ret;
   xTlc59116Data * d = (xTlc59116Data *) dcb->dptr;
-  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  xTlc59116Led * led = (xTlc59116Led *) pvVectorGet (&d->leds, index);
   assert (led);
 
-  ret = iSetPinPwm (d->ctrl[led->red.ctrl], led->red.out, color->ucRed);
+  ret = iSetPinPwm (&d->ctrl[led->red.ctrl], led->red.out, color->ucRed);
   if (ret == 0) {
-    ret = iSetPinPwm (d->ctrl[led->green.ctrl], led->green.out, color->ucGreen);
+    ret = iSetPinPwm (&d->ctrl[led->green.ctrl], led->green.out, color->ucGreen);
     if (ret == 0) {
-      return iSetPinPwm (d->ctrl[led->blue.ctrl], led->blue.out, color->ucBlue);
+      return iSetPinPwm (&d->ctrl[led->blue.ctrl], led->blue.out, color->ucBlue);
     }
   }
   return ret;
@@ -431,7 +458,7 @@ iSetDimmer (xLedRgbDcb * dcb, int index, int dimming) {
     xTlc59116Pin * pin;
 
     d = (xTlc59116Data *) dcb->dptr;
-    led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+    led = (xTlc59116Led *) pvVectorGet (&d->leds, index);
     assert (led);
     pin = &led->red;
 
@@ -441,8 +468,8 @@ iSetDimmer (xLedRgbDcb * dcb, int index, int dimming) {
 
     for (int i = 0; i < 3; i++) {
 
-      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1])) {
-        xTlc59116Ctrl * ctrl = d->ctrl[pin->ctrl];
+      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1]) ) {
+        xTlc59116Ctrl * ctrl = &d->ctrl[pin->ctrl];
 
         ctrl->regs[GRPPWM] = dimming;
         ret = iWriteRegBlock (ctrl, GRPPWM, GRPPWM);
@@ -469,14 +496,14 @@ static int
 iSetBlinker (xLedRgbDcb * dcb, int index, int period, int dcycle) {
   int ret = -1;
 
-  if ( (period >= 0) && (dcycle >= 0)) {
+  if ( (period >= 0) && (dcycle >= 0) ) {
     int c[3] = { -1, -1, -1};
     xTlc59116Data * d;
     xTlc59116Led * led;
     xTlc59116Pin * pin;
 
     d = (xTlc59116Data *) dcb->dptr;
-    led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+    led = (xTlc59116Led *) pvVectorGet (&d->leds, index);
     assert (led);
     pin = &led->red;
 
@@ -486,8 +513,8 @@ iSetBlinker (xLedRgbDcb * dcb, int index, int period, int dcycle) {
 
     for (int i = 0; i < 3; i++) {
 
-      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1])) {
-        xTlc59116Ctrl * ctrl = d->ctrl[pin->ctrl];
+      if ( (pin->ctrl != c[0]) && (pin->ctrl != c[1]) ) {
+        xTlc59116Ctrl * ctrl = &d->ctrl[pin->ctrl];
 
         if (period < 42) {
           period = 42;
@@ -522,16 +549,16 @@ iGetError (xLedRgbDcb * dcb, int index) {
   xTlc59116Pin * pin;
 
   d = (xTlc59116Data *) dcb->dptr;
-  led = (xTlc59116Led *) pvVectorGet (d->leds, index);
+  led = (xTlc59116Led *) pvVectorGet (&d->leds, index);
   assert (led);
   pin = &led->red;
 
   for (int i = 0; i < 3; i++) {
-    xTlc59116Ctrl * ctrl; 
+    xTlc59116Ctrl * ctrl;
     uint8_t reg, bit;
     int error;
-    
-    ctrl = d->ctrl[pin->ctrl];
+
+    ctrl = &d->ctrl[pin->ctrl];
     reg = EFLAG1 + pin->out / 8;
     bit = pin->out % 8;
 
@@ -539,8 +566,8 @@ iGetError (xLedRgbDcb * dcb, int index) {
     if (error != 0) {
       return error;
     }
-    
-    if (ctrl->regs[reg] & _BV(bit)) {
+
+    if ((ctrl->regs[reg] & _BV (bit) ) == 0) {
       ret = true;
     }
     pin++;
@@ -554,12 +581,12 @@ iSetGain (xLedRgbDcb * dcb, int ctl, int gain) {
   xTlc59116Data * d;
 
   d = (xTlc59116Data *) dcb->dptr;
-  if ((ctl >= 0) && (ctl < d->nof_ctrl)) {
-    xTlc59116Ctrl * ctrl; 
-    
-    ctrl = d->ctrl[ctl];
+  if ( (ctl >= 0) && (ctl < d->nof_ctrl) ) {
+    xTlc59116Ctrl * ctrl;
+
+    ctrl = &d->ctrl[ctl];
     ctrl->regs [IREF] = (uint8_t) gain;
-    return iWriteRegBlock(ctrl, IREF, IREF);
+    return iWriteRegBlock (ctrl, IREF, IREF);
   }
   return -1;
 }
@@ -567,11 +594,11 @@ iSetGain (xLedRgbDcb * dcb, int ctl, int gain) {
 // -----------------------------------------------------------------------------
 static int
 iCtl (xLedRgbDcb * dcb, int c, va_list ap) {
-  it ret = 0;
+  int ret = 0;
 
   switch (c) {
 
-    /* int setmode (xLedRgbDcb * dcb, int led, eLedRgbMode mode) */
+      /* int setmode (xLedRgbDcb * dcb, int led, eLedRgbMode mode) */
     case LEDRGB_IOC_SETMODE: {
       int led = va_arg (ap, int);
       eLedRgbMode mode = va_arg (ap, eLedRgbMode);

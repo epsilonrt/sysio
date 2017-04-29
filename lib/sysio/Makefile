@@ -413,6 +413,7 @@ endif
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/tinfo.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/timer.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/ledrgb.h $(INSTALL_INCDIR)/$(TARGET)
+	@-install -m 0644 $(SYSIO_ROOT)/$(TARGET)/rgb.h $(INSTALL_INCDIR)/$(TARGET)
 	@-install -d -m 0755 $(INSTALL_INCDIR)/radio
 	@-install -m 0644 $(SYSIO_ROOT)/radio/*.h $(INSTALL_INCDIR)/radio
 	@-install -d -m 0755 $(INSTALL_INCDIR)/ssdv

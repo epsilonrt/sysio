@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Leds RGB (Contrôleur TI TLC59116)
+ * @brief Défintion pour les drivers de leds RGB 
  *
  * Copyright © 2017 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -8,13 +8,13 @@
 #ifndef _SYSIO_LEDRGB_PRIVATE_H_
 #define _SYSIO_LEDRGB_PRIVATE_H_
 
+#include <stdarg.h>
+#include <errno.h>
 #include <sysio/defs.h>
 #include <sysio/ledrgb.h>
 
 __BEGIN_C_DECLS
 /* ========================================================================== */
-
-/* constants ================================================================ */
 
 /* structures =============================================================== */
 typedef struct xLedRgbDcb xLedRgbDcb; // déclaration préalable...
@@ -30,7 +30,7 @@ typedef struct xLedRgbOps {
    */
   int (*addled) (xLedRgbDcb * dcb, eLedRgbMode mode, void * led);
   int (*setcolor) (xLedRgbDcb * dcb, int led, xRgbColor * pxColor);
-  int (*ctl) (xLedRgbDcb * dcb, int c, ...);
+  int (*ctl) (xLedRgbDcb * dcb, int c, va_list ap);
 } xLedRgbOps;
 
 /*
@@ -38,10 +38,11 @@ typedef struct xLedRgbOps {
  */
 typedef struct xLedRgbDcb {
   xLedRgbOps * ops; // opérations du driver
-  void * dptr;  // données du driver
+  void * dptr;  // données privées du driver
 } xLedRgbDcb;
 
 /* public variables ========================================================= */
+// Opérations du contrôleur TLC59116
 extern xLedRgbOps xTlc59116Ops;
 
 __END_C_DECLS
