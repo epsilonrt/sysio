@@ -10,8 +10,8 @@ TARGET = sysio_demo_xbee_node
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
-#ARCH = ARCH_ARM_RASPBERRYPI
-#ARCH = ARCH_ARM_NANOPI
+#BOARD = BOARD_RASPBERRYPI
+#BOARD = BOARD_NANOPI
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = OFF
@@ -145,24 +145,70 @@ COPY = cp
 #-------------------------------------------------------------------------------
 # !!!!!!!!!!!!!!!!!         DO NOT EDIT BELOW THIS LINE        !!!!!!!!!!!!!!!!!
 #-------------------------------------------------------------------------------
+$(info Check the target platform, you can use BOARD to force the target...)
+
+HARDWARE_CPU=$(shell hardware-cpu)
+#$(warning '$(HARDWARE_CPU)')
+
+ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
+# Raspberry Pi -----------------------------------------------------------------
+
 RPI_CPU=$(shell rpi-cpu)
 RPI_REV=$(shell rpi-rev)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
-ifneq ($(RPI_CPU),)
-override ARCH = ARCH_ARM_RASPBERRYPI
+$(info Build for Raspberry Pi target !)
+override BOARD = BOARD_RASPBERRYPI
 CDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 CPPDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
+
 else
-ifeq ($(ARCH),ARCH_ARM_RASPBERRYPI)
-override ARCH = ARCH_GENERIC_LINUX
-$(warning this system is not a Raspberry Pi, I compile for linux standard system)
+# Not Raspberry Pi  ------------------------------------------------------------
+
+ifneq ($(findstring sun8i,$(HARDWARE_CPU)),)
+# Allwinner sunxi  -------------------------------------------------------------
+
+ARMBIAN_BOARD=$(shell armbian-board)
+#$(warning '$(ARMBIAN_BOARD)')
+
+ifeq ($(ARMBIAN_BOARD),nanopineo)
+# NanoPi Neo  ------------------------------------------------------------------
+$(info Build for NanoPi Neo target !)
+override BOARD = BOARD_NANOPI_NEO
+# NanoPi Neo  ------------------------------------------------------------------
+else
+ifeq ($(ARMBIAN_BOARD),nanopiair)
+# NanoPi Neo  ------------------------------------------------------------------
+$(info Build for NanoPi Neo Air target !)
+override BOARD = BOARD_NANOPI_AIR
+# NanoPi Neo  ------------------------------------------------------------------
+else
+ifeq ($(ARMBIAN_BOARD),nanopim1)
+# NanoPi Neo  ------------------------------------------------------------------
+$(info Build for NanoPi M1 target !)
+override BOARD = BOARD_NANOPI_M1
+# NanoPi Neo  ------------------------------------------------------------------
+else
+endif
 endif
 endif
 
-CDEFS += -D_REENTRANT -D$(ARCH)
-CPPDEFS += -D_REENTRANT -D$(ARCH)
+# Allwinner sunxi  -------------------------------------------------------------
+endif
+
+# Not Raspberry Pi  ------------------------------------------------------------
+endif
+
+ifeq ($(BOARD),)
+$(info BOARD not defined, Build for linux standard system...)
+override BOARD = BOARD_GENERIC_LINUX
+endif
+
+#$(warning '$(BOARD)')
+
+CDEFS += -D_REENTRANT -D$(BOARD)
+CPPDEFS += -D_REENTRANT -D$(BOARD)
 
 SYS_HAS_GPS_H=$(shell test-header gps.h)
 ifeq ($(SYS_HAS_GPS_H),ON)
@@ -209,7 +255,7 @@ TARGET_LIB_PATH = $(DESTDIR)/lib$(TARGET)
 ifeq ($(DEBUG),ON)
 CFLAGS += -g$(DEBUG_FORMAT) -O$(DEBUG_OPT) -DDEBUG
 else
-CFLAGS += -O$(OPT) -DNDEBUG
+CFLAGS += -O$(OPT)
 endif
 
 CFLAGS += $(CDEFS)
@@ -288,14 +334,14 @@ endif
 
 # Define Messages
 # English
-MSG_COMPILING = [CC]\t\t
-MSG_COMPILING_CPP = [CPP]\t\t
-MSG_ASSEMBLING = [ASM]\t\t
-MSG_LINKING = [LINK]\t\t
-MSG_CREATING_LIBRARY = [LIB]\t\t
-MSG_CLEANING = [CLEAN]\t\t
-MSG_EXTENDED_LISTING = [LISTING]\t
-MSG_SYMBOL_TABLE = [SYMBOL]\t
+MSG_COMPILING = [CC]tt
+MSG_COMPILING_CPP = [CPP]tt
+MSG_ASSEMBLING = [ASM]tt
+MSG_LINKING = [LINK]tt
+MSG_CREATING_LIBRARY = [LIB]tt
+MSG_CLEANING = [CLEAN]tt
+MSG_EXTENDED_LISTING = [LISTING]t
+MSG_SYMBOL_TABLE = [SYMBOL]t
 MSG_SIZE = [SIZE]
 MSG_INSTALL = [INSTALL]
 MSG_UNINSTALL = [UNINSTALL]
@@ -463,7 +509,7 @@ ifeq ($(GIT_VERSION),ON)
 endif
 
 # Listing of phony targets.
-.PHONY : all size sizebefore sizeafter build rebuild lib elf \
+.PHONY : all size sizebefore sizeafter build rebuild lib elf
 lss sym clean distclean cleanlib clean_list clean_list_lib
 
 # Make docs pictures
