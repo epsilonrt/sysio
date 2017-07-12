@@ -509,8 +509,7 @@ ifeq ($(GIT_VERSION),ON)
 endif
 
 # Listing of phony targets.
-.PHONY : all size sizebefore sizeafter build rebuild lib elf
-lss sym clean distclean cleanlib clean_list clean_list_lib
+.PHONY : all size sizebefore sizeafter build rebuild lib elf lss sym clean distclean cleanlib clean_list clean_list_lib
 
 # Make docs pictures
 FIG2DEV                 = fig2dev
