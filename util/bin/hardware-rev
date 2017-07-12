@@ -1,0 +1,2 @@
+#!/bin/sh
+cat /proc/cpuinfo | awk '/Revision/ { printf "0x%s\n", $3 }' | tr '[:upper:]' '[:lower:]'

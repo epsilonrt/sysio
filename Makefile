@@ -44,6 +44,7 @@ install_utils: uninstall_utils
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-cpu $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-rev $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-cpu $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-rev $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/armbian-board $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/test-header $(INSTALL_BINDIR)
 	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
@@ -56,6 +57,7 @@ uninstall_utils:
 	@-rm -fr $(INSTALL_BINDIR)/rpi-cpu
 	@-rm -fr $(INSTALL_BINDIR)/rpi-rev
 	@-rm -fr $(INSTALL_BINDIR)/hardware-cpu
+	@-rm -fr $(INSTALL_BINDIR)/hardware-rev
 	@-rm -fr $(INSTALL_BINDIR)/armbian-board
 	@-rm -fr $(INSTALL_BINDIR)/test-header
 
