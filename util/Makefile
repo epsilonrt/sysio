@@ -3,7 +3,7 @@
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
 SUBDIRS = sping ssend 
-CLEANER_SUBDIRS = blink blyss tinfo
+CLEANER_SUBDIRS = blink blyss tinfo i2cping
 
 
 all: $(SUBDIRS)
