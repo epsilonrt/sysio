@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" Version="10.0.0">
   <Project Name="libsysio" Path="lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="lib/lib.project" Active="Yes"/>
+  <Project Name="lib" Path="lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -33,6 +33,7 @@
   <Project Name="sysio_demo_gps_monitor" Path="demo/gps/monitor/sysio_demo_gps_monitor.project" Active="No"/>
   <Project Name="sysio_demo_ledrgb_tlc59116" Path="demo/ledrgb/tlc59116/sysio_demo_ledrgb_tlc59116.project" Active="No"/>
   <Project Name="util_i2cping" Path="util/i2cping/util_i2cping.project" Active="No"/>
+  <Project Name="sysio_demo_gp2" Path="demo/i2c/gp2/sysio_demo_gp2.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="libpython" ConfigName="Debug"/>
@@ -77,6 +78,7 @@
       <Project Name="sysio_demo_gps_monitor" ConfigName="Debug"/>
       <Project Name="sysio_demo_ledrgb_tlc59116" ConfigName="Debug"/>
       <Project Name="util_i2cping" ConfigName="Debug"/>
+      <Project Name="sysio_demo_gp2" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="libsysio" ConfigName="Release"/>
@@ -121,6 +123,7 @@
       <Project Name="sysio_demo_gps_monitor" ConfigName="Release"/>
       <Project Name="sysio_demo_ledrgb_tlc59116" ConfigName="Release"/>
       <Project Name="util_i2cping" ConfigName="Release"/>
+      <Project Name="sysio_demo_gp2" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

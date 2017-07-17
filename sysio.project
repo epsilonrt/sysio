@@ -270,6 +270,7 @@
         <File Name="sysio/src/i2c/i2c-dev.h"/>
         <File Name="sysio/src/i2c/hih6130.c"/>
         <File Name="sysio/src/i2c/tlc59116.c"/>
+        <File Name="sysio/src/i2c/gp2.c"/>
       </VirtualDirectory>
       <VirtualDirectory Name="unix">
         <File Name="sysio/src/unix/iomap.c"/>
@@ -342,6 +343,7 @@
     <File Name="sysio/ledrgb.h"/>
     <File Name="sysio/rgb.h"/>
     <File Name="sysio/tlc59116.h"/>
+    <File Name="sysio/gp2.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
