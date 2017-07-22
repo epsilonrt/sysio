@@ -48,7 +48,7 @@ struct xHih6130 {
 
 /* internal public functions ================================================ */
 // -----------------------------------------------------------------------------
-xHih6130 * 
+xHih6130 *
 xHih6130Open (const char * device, int i2caddr) {
   xHih6130 * s;
   unsigned long i2cfuncs;
@@ -68,7 +68,7 @@ xHih6130Open (const char * device, int i2caddr) {
     goto hih6130OC;
   }
 
-  if (! (i2cfuncs & I2C_FUNC_I2C)) {
+  if (! (i2cfuncs & I2C_FUNC_I2C) ) {
 
     errno = EIO;
     PERROR ("Plain i2c-level commands unsupported");
@@ -77,6 +77,7 @@ xHih6130Open (const char * device, int i2caddr) {
 
   delay_ms (100); // Startup-time 60 ms max.
 
+#if 0
   // Démarrage d'une mesure pour vérification de présence du capteur
   if (iHih6130Start (s) != 0) {
 
@@ -86,19 +87,23 @@ xHih6130Open (const char * device, int i2caddr) {
   }
   else {
     int ret;
+    int timeout = 10; // Response-time 45 ms max.
     xHih6130Data dummy;
 
     // Lecture du résultat de la mesure pour vérification
     do {
+
+      delay_ms (10); 
+      timeout--;
       ret = iHih6130Read (s, &dummy);
-      if (ret < 0) {
+      if ( (ret < 0) || (timeout == 0) ) {
 
         goto hih6130OC;
       }
-      delay_ms (10);
     }
     while (ret == HIH6130_BUSY);
   }
+#endif
 
   return s;
 
@@ -144,7 +149,7 @@ iHih6130Read (xHih6130 * s, xHih6130Data * data) {
     int ret;
 
     /* Mesure en cours */
-    ret = iI2cReadBlock (s->fd, buf, sizeof (buf));
+    ret = iI2cReadBlock (s->fd, buf, sizeof (buf) );
     if (ret < 2) {
 
       return -1;
@@ -157,16 +162,16 @@ iHih6130Read (xHih6130 * s, xHih6130Data * data) {
 
         /* Nouvelles données disponibles */
         s->status = DATA_AVAILABLE;
-        
+
         // Calcul de l'humidité relative en dixième de %
-        lHum = ( ((int32_t)buf[0] & ~HIH6130_STATUS) * 256) + buf[1];
-        s->data.dHum = ((double)lHum * 100.0) / 16384.0;
+        lHum = ( ( (int32_t) buf[0] & ~HIH6130_STATUS) * 256) + buf[1];
+        s->data.dHum = ( (double) lHum * 100.0) / 16384.0;
 
         if (ret == 4) {
 
           // Calcul de la température en dixième de oC
-          lTemp = (((int32_t)buf[2] * 64) + (((int32_t)buf[3]) / 4));
-          s->data.dTemp = (((double)lTemp * 165.0) / 16384.0) - 40.0;
+          lTemp = ( ( (int32_t) buf[2] * 64) + ( ( (int32_t) buf[3]) / 4) );
+          s->data.dTemp = ( ( (double) lTemp * 165.0) / 16384.0) - 40.0;
         }
         else {
 
