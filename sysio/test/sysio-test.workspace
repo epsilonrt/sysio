@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio-test" Database="" Version="10.0.0">
   <Project Name="sysio" Path="../../sysio.project" Active="No"/>
-  <Project Name="libsysio" Path="../../lib/sysio/libsysio.project" Active="No"/>
+  <Project Name="libsysio" Path="../../lib/sysio/libsysio.project" Active="Yes"/>
   <Project Name="lib" Path="../../lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="../../lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="../../lib/sysio++/libsysio++.project" Active="No"/>
@@ -37,7 +37,7 @@
   <Project Name="sysio_test_rf69_common" Path="rf69/common/sysio_test_rf69_common.project" Active="No"/>
   <Project Name="sysio_test_rf69_spi" Path="rf69/spi/sysio_test_rf69_spi.project" Active="No"/>
   <Project Name="sysio_test_rf69_ping" Path="rf69/ping/sysio_test_rf69_ping.project" Active="No"/>
-  <Project Name="sysio_test_rf69_gateway" Path="rf69/gateway/sysio_test_rf69_gateway.project" Active="Yes"/>
+  <Project Name="sysio_test_rf69_gateway" Path="rf69/gateway/sysio_test_rf69_gateway.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="libpython" ConfigName="Debug"/>

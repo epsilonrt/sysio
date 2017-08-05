@@ -116,7 +116,7 @@ VERSION=1.0.0
 #---------------- SysIO Options ----------------
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
+# de SysIO sont recompilées. SYSIO_ROOT doit être défini 
 #SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)

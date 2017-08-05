@@ -158,7 +158,7 @@ $(info Check the target platform, you can use BOARD to force the target...)
 HARDWARE_CPU=$(shell ../../util/bin/hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
 
-ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
+ifeq ($(HARDWARE_CPU),$(filter $(HARDWARE_CPU),bcm2708 bcm2835 bcm2709 bcm2836 bcm2710 bcm2837))
 # Raspberry Pi -----------------------------------------------------------------
 
 RPI_CPU=$(shell ../../util/bin/rpi-cpu)

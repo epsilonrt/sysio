@@ -158,15 +158,11 @@ iRpiRev (void) {
         /* Locate Hardware for check if is it a Raspberry  */
         if (iStartWith (p, "Hardware") ) {
 
-          if (strstr (p, "BCM2710") ) {
+          if (strstr (p, "BCM2710") && strstr (p, "BCM2709") &&
+              strstr (p, "BCM2708") && strstr (p, "BCM2837") &&
+              strstr (p, "BCM2836") && strstr (p, "BCM2837") ) {
 
-            if (strstr (p, "BCM2709") ) {
-
-              if (strstr (p, "BCM2708") ) {
-
-                return 0;
-              }
-            }
+            return 0;
           }
           bisBcm = true;
         }
@@ -229,7 +225,7 @@ sRpiModelToStr (eRpiModel eModel) {
 // -----------------------------------------------------------------------------
 const char *
 sRpiMcuToStr (eRpiMcu eMcu) {
-  
+
   if ( (eMcu >= eRpiMcuBcm2708) && (eMcu <= eRpiMcuBcm2710) ) {
 
     return sMcuList[eMcu];
