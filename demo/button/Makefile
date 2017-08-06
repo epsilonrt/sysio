@@ -9,9 +9,8 @@ TARGET = sysio_demo_button
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
 
-# Architecture du système cible
-#BOARD = BOARD_RASPBERRYPI
-#BOARD = BOARD_NANOPI
+# Choix de l'architecture matérielle du système
+#BOARD = BOARD_GENERIC_LINUX
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
 GIT_VERSION = OFF
@@ -116,7 +115,7 @@ VERSION=1.0.0
 #---------------- SysIO Options ----------------
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis 
+# de SysIO sont recompilées. SYSIO_ROOT doit être défini 
 #SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)
@@ -150,11 +149,11 @@ $(info Check the target platform, you can use BOARD to force the target...)
 HARDWARE_CPU=$(shell hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
 
-ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
+ifeq ($(HARDWARE_CPU),$(filter $(HARDWARE_CPU),bcm2708 bcm2835 bcm2709 bcm2836 bcm2710 bcm2837))
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell rpi-cpu)
-RPI_REV=$(shell rpi-rev)
+RPI_CPU=$(shell rpi-info -c)
+RPI_REV=$(shell rpi-info -r)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
@@ -255,7 +254,7 @@ TARGET_LIB_PATH = $(DESTDIR)/lib$(TARGET)
 ifeq ($(DEBUG),ON)
 CFLAGS += -g$(DEBUG_FORMAT) -O$(DEBUG_OPT) -DDEBUG
 else
-CFLAGS += -O$(OPT)
+CFLAGS += -O$(OPT) -DNDEBUG
 endif
 
 CFLAGS += $(CDEFS)
@@ -334,14 +333,14 @@ endif
 
 # Define Messages
 # English
-MSG_COMPILING = [CC]tt
-MSG_COMPILING_CPP = [CPP]tt
-MSG_ASSEMBLING = [ASM]tt
-MSG_LINKING = [LINK]tt
-MSG_CREATING_LIBRARY = [LIB]tt
-MSG_CLEANING = [CLEAN]tt
-MSG_EXTENDED_LISTING = [LISTING]t
-MSG_SYMBOL_TABLE = [SYMBOL]t
+MSG_COMPILING = [CC]\t\t
+MSG_COMPILING_CPP = [CPP]\t\t
+MSG_ASSEMBLING = [ASM]\t\t
+MSG_LINKING = [LINK]\t\t
+MSG_CREATING_LIBRARY = [LIB]\t\t
+MSG_CLEANING = [CLEAN]\t\t
+MSG_EXTENDED_LISTING = [LISTING]\t
+MSG_SYMBOL_TABLE = [SYMBOL]\t
 MSG_SIZE = [SIZE]
 MSG_INSTALL = [INSTALL]
 MSG_UNINSTALL = [UNINSTALL]
@@ -509,7 +508,8 @@ ifeq ($(GIT_VERSION),ON)
 endif
 
 # Listing of phony targets.
-.PHONY : all size sizebefore sizeafter build rebuild lib elf lss sym clean distclean cleanlib clean_list clean_list_lib
+.PHONY : all size sizebefore sizeafter build rebuild lib elf \
+lss sym clean distclean cleanlib clean_list clean_list_lib
 
 # Make docs pictures
 FIG2DEV                 = fig2dev

@@ -8,7 +8,7 @@
   <Project Name="util_sping" Path="util/sping/util_sping.project" Active="No"/>
   <Project Name="sysio" Path="sysio.project" Active="No"/>
   <Project Name="sysio_demo_button" Path="demo/button/sysio_demo_button.project" Active="No"/>
-  <Project Name="sysio_demo_led" Path="demo/led/sysio_demo_led.project" Active="No"/>
+  <Project Name="sysio_demo_led" Path="demo/led/sysio_demo_led.project" Active="Yes"/>
   <Project Name="sysio_demo_rs485" Path="demo/rs485/sysio_demo_rs485.project" Active="No"/>
   <Project Name="sysio_demo_switch" Path="demo/switch/sysio_demo_switch.project" Active="No"/>
   <Project Name="sysio_demo_xbee_coordinator" Path="demo/xbee/coordinator/sysio_demo_xbee_coordinator.project" Active="No"/>

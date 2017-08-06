@@ -116,7 +116,7 @@ VERSION=1.0.0
 #---------------- SysIO Options ----------------
 # Active le debug d'un test SysIO (ON/OFF)
 # Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT et ARCH doivent être définis
+# de SysIO sont recompilées. SYSIO_ROOT doit être défini
 #SYSIO_DEBUG_TEST = ON
 
 ifeq ($(SYSIO_ROOT),)
@@ -150,11 +150,11 @@ $(info Check the target platform, you can use BOARD to force the target...)
 HARDWARE_CPU=$(shell hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
 
-ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
+ifeq ($(HARDWARE_CPU),$(filter $(HARDWARE_CPU),bcm2708 bcm2835 bcm2709 bcm2836 bcm2710 bcm2837))
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell rpi-cpu)
-RPI_REV=$(shell rpi-rev)
+RPI_CPU=$(shell rpi-info -c)
+RPI_REV=$(shell rpi-info -r)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 

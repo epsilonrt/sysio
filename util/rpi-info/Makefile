@@ -4,17 +4,16 @@
 ###############################################################################
 
 # Nom du fichier cible (sans extension).
-TARGET = sysio_demo_ledrgb_tlc59116
+TARGET = rpi-info
 
 # Chemin relatif du répertoire racine du projet de l'utilisateur
 PROJECT_TOPDIR = .
 
 # Architecture du système cible
 #BOARD = BOARD_RASPBERRYPI
-#BOARD = BOARD_NANOPI
 
 # Permet de générer un fichier version-git.h permettant de récupérer les informations sur la version
-GIT_VERSION = OFF
+GIT_VERSION = ON
 
 # Niveau d'optimisation de GCC =  [0, 1, 2, 3, s].
 #     0 = pas d'optimisation (pour debug).
@@ -35,10 +34,10 @@ DEBUG_OPT = 0
 
 # Activation des informations Debug (ON/OFF)
 # Si défini sur ON, aucune information de debug ne sera générée
-#DEBUG = ON
+DEBUG = ON
 
 # Affiche la ligne de compilation GCC ou non (ON/OFF)
-VIEW_GCC_LINE = OFF
+#VIEW_GCC_LINE = ON
 
 # Désactive la suppression des variables et fonctions "inutiles"
 # Le linker vérifie d'une fonction ou une variable est appellée, si ce n'est pas
@@ -50,7 +49,7 @@ DISABLE_DELETE_UNUSED_SECTIONS = OFF
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
 # recherche du compilateur, il n'est donc pas nécessaire de préciser le chemin
 # d'accès complet du fichier mais seulement le nom du projet
-SRC  = $(TARGET).c 
+SRC  = $(TARGET).c rpi/rpi.c
 
 # Liste des fichiers source C++ (Les dépendances sont automatiquement générées.)
 # Le chemin d'accès des fichiers sources systèmes a été ajouté au chemin de
@@ -87,7 +86,7 @@ EXTRA_INCDIRS =
 #---------------- Library Options ----------------
 
 # Enable static link
-STATIC_LINKER = OFF
+#STATIC_LINKER = ON
 
 # List any extra directories to look for libraries here.
 #     Each directory must be seperated by a space.
@@ -100,7 +99,7 @@ EXTRA_LIBDIRS =
 EXTRA_LIBS = 
 
 # Enable link with  mathematics library (ON/OFF)
-MATH_LIB_ENABLE = ON
+MATH_LIB_ENABLE = OFF
 
 # Compiler flag to set the C Standard level.
 #     c89   = "ANSI" C
@@ -114,13 +113,8 @@ INSTALL_BINDIR=$(prefix)/bin
 VERSION=1.0.0
 
 #---------------- SysIO Options ----------------
-# Active le debug d'un test SysIO (ON/OFF)
-# Si défini sur ON, la cible n'est pas liée à la lib sysio et les sources
-# de SysIO sont recompilées. SYSIO_ROOT doit être défini 
-#SYSIO_DEBUG_TEST = ON
-
 ifeq ($(SYSIO_ROOT),)
-SYSIO_ROOT = $(PROJECT_TOPDIR)/../../../../sysio
+SYSIO_ROOT = $(PROJECT_TOPDIR)/../sysio
 endif
 #-----------------------------------------------
 
@@ -147,6 +141,8 @@ COPY = cp
 #-------------------------------------------------------------------------------
 $(info Check the target platform, you can use BOARD to force the target...)
 
+EXTRA_INCDIRS += $(SYSIO_ROOT)
+
 HARDWARE_CPU=$(shell hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
 
@@ -162,6 +158,7 @@ $(info Build for Raspberry Pi target !)
 override BOARD = BOARD_RASPBERRYPI
 CDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
 CPPDEFS += -DRPI_CPU=$(RPI_CPU) -DRPI_REV=$(RPI_REV)
+ARCH_DIR = $(SYSIO_ROOT)/sysio/src/arch/arm
 
 else
 # Not Raspberry Pi  ------------------------------------------------------------
@@ -176,18 +173,24 @@ ifeq ($(ARMBIAN_BOARD),nanopineo)
 # NanoPi Neo  ------------------------------------------------------------------
 $(info Build for NanoPi Neo target !)
 override BOARD = BOARD_NANOPI_NEO
+ARCH_DIR = $(SYSIO_ROOT)/sysio/src/arch/arm
+
 # NanoPi Neo  ------------------------------------------------------------------
 else
 ifeq ($(ARMBIAN_BOARD),nanopiair)
 # NanoPi Neo  ------------------------------------------------------------------
 $(info Build for NanoPi Neo Air target !)
 override BOARD = BOARD_NANOPI_AIR
+ARCH_DIR = $(SYSIO_ROOT)/sysio/src/arch/arm
+
 # NanoPi Neo  ------------------------------------------------------------------
 else
 ifeq ($(ARMBIAN_BOARD),nanopim1)
 # NanoPi Neo  ------------------------------------------------------------------
 $(info Build for NanoPi M1 target !)
 override BOARD = BOARD_NANOPI_M1
+ARCH_DIR = $(SYSIO_ROOT)/sysio/src/arch/arm
+
 # NanoPi Neo  ------------------------------------------------------------------
 else
 endif
@@ -203,30 +206,15 @@ endif
 ifeq ($(BOARD),)
 $(info BOARD not defined, Build for linux standard system...)
 override BOARD = BOARD_GENERIC_LINUX
+ARCH_DIR = sysio/src/arch/generic
 endif
 
 #$(warning '$(BOARD)')
 
-CDEFS += -D_REENTRANT -D$(BOARD)
-CPPDEFS += -D_REENTRANT -D$(BOARD)
+VPATH+=:$(ARCH_DIR)
 
-SYS_HAS_GPS_H=$(shell test-header gps.h)
-ifeq ($(SYS_HAS_GPS_H),ON)
-EXTRA_LIBS += gps
-endif
-
-EXTRA_LIBS += pthread rt
-LDFLAGS += -pthread
-
-ifeq ($(SYSIO_DEBUG_TEST),ON)
-ifeq ($(SYSIO_ROOT),)
-$(error SYSIO_DEBUG_TEST On and SYSIO_ROOT not defined, double-check that !)
-else
-include $(SYSIO_ROOT)/sysio.mk
-endif
-else
-EXTRA_LIBS += sysio
-endif
+CDEFS += -D$(BOARD)
+CPPDEFS += -D$(BOARD)
 
 ifeq ($(PROJECT_TOPDIR),)
 else
@@ -317,6 +305,11 @@ endif
 #    --cref:    add cross reference to  map file
 ifeq ($(STATIC_LINKER),ON)
 LDFLAGS += -static
+else
+EXTRA_LIBS += sysio pthread rt
+LDFLAGS += -pthread
+CDEFS += -D_REENTRANT
+CPPDEFS += -D_REENTRANT
 endif
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
@@ -372,7 +365,7 @@ endif
 
 # Default target.
 all: build sizeafter cleanver
-build: elf lss sym
+build: elf
 rebuild: sizebefore clean_list build sizeafter
 clean: clean_list
 distclean: distclean_list clean_list

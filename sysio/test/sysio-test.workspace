@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio-test" Database="" Version="10.0.0">
   <Project Name="sysio" Path="../../sysio.project" Active="No"/>
-  <Project Name="libsysio" Path="../../lib/sysio/libsysio.project" Active="No"/>
-  <Project Name="lib" Path="../../lib/lib.project" Active="Yes"/>
+  <Project Name="libsysio" Path="../../lib/sysio/libsysio.project" Active="Yes"/>
+  <Project Name="lib" Path="../../lib/lib.project" Active="No"/>
   <Project Name="libpython" Path="../../lib/python/libpython.project" Active="No"/>
   <Project Name="libsysio++" Path="../../lib/sysio++/libsysio++.project" Active="No"/>
   <Project Name="libmodbus" Path="../../3rdparty/modbus/libmodbus.project" Active="No"/>
@@ -38,8 +38,9 @@
   <Project Name="sysio_test_rf69_spi" Path="rf69/spi/sysio_test_rf69_spi.project" Active="No"/>
   <Project Name="sysio_test_rf69_ping" Path="rf69/ping/sysio_test_rf69_ping.project" Active="No"/>
   <Project Name="sysio_test_rf69_gateway" Path="rf69/gateway/sysio_test_rf69_gateway.project" Active="No"/>
+  <Project Name="util_rpi_info" Path="../../util/rpi-info/util_rpi_info.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="libpython" ConfigName="Debug"/>
       <Project Name="libsysio++" ConfigName="Debug"/>
       <Project Name="lib" ConfigName="Debug"/>
@@ -81,6 +82,7 @@
       <Project Name="sysio_test_rf69_spi" ConfigName="Debug"/>
       <Project Name="sysio_test_rf69_ping" ConfigName="Debug"/>
       <Project Name="sysio_test_rf69_gateway" ConfigName="Debug"/>
+      <Project Name="util_rpi_info" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="libsysio" ConfigName="Release"/>
@@ -124,6 +126,7 @@
       <Project Name="sysio_test_rf69_spi" ConfigName="Release"/>
       <Project Name="sysio_test_rf69_ping" ConfigName="Release"/>
       <Project Name="sysio_test_rf69_gateway" ConfigName="Release"/>
+      <Project Name="util_rpi_info" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
