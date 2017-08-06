@@ -308,11 +308,6 @@ endif
 #    --cref:    add cross reference to  map file
 ifeq ($(STATIC_LINKER),ON)
 LDFLAGS += -static
-else
-EXTRA_LIBS += sysio pthread rt
-LDFLAGS += -pthread
-CDEFS += -D_REENTRANT
-CPPDEFS += -D_REENTRANT
 endif
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
