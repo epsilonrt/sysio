@@ -46,6 +46,7 @@
       <File Name="util/bin/sysio-prj"/>
       <File Name="util/bin/hardware-cpu"/>
       <File Name="util/bin/armbian-board"/>
+      <File Name="util/bin/hardware-rev"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ssend">
       <File Name="util/ssend/version-git.h"/>
