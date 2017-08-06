@@ -161,8 +161,8 @@ HARDWARE_CPU=$(shell ../../util/bin/hardware-cpu)
 ifeq ($(HARDWARE_CPU),$(filter $(HARDWARE_CPU),bcm2708 bcm2835 bcm2709 bcm2836 bcm2710 bcm2837))
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell ../../util/bin/rpi-cpu)
-RPI_REV=$(shell ../../util/bin/rpi-rev)
+RPI_CPU=$(shell ../../util/bin/rpi-info -c)
+RPI_REV=$(shell ../../util/bin/rpi-info -r)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 

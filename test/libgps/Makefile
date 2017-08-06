@@ -153,8 +153,8 @@ HARDWARE_CPU=$(shell hardware-cpu)
 ifneq ($(findstring bcm27,$(HARDWARE_CPU)),)
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell rpi-cpu)
-RPI_REV=$(shell rpi-rev)
+RPI_CPU=$(shell rpi-info -c)
+RPI_REV=$(shell rpi-info -r)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
