@@ -95,6 +95,8 @@ typedef enum  {
   eRpiModel2B,
   eRpiModelZero,
   eRpiModel3B,
+  eRpiModelZeroW,
+  eRpiModelComputeModule3,
   eRpiModelUnknown = -1
 } eRpiModel;
 
@@ -133,6 +135,9 @@ int iRpiRev (void);
 
 /**
  * @brief Lecture des informations sur le Raspberry Pi
+ * 
+ * Dernière mise à jour du tableau au 06/08/2017.
+ * 
  * @return Pointeur sur les informations, NULL si erreur
   Board Revision History (from <A HREF="http://elinux.org/RPi_HardwareHistory">elinux.org</A>) : \n
   <hr>
@@ -154,19 +159,26 @@ int iRpiRev (void);
   | 0011     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Sony               |
   | 0012     | Q4 2014      | A+             | 1.0          | 256MB  | Mfg by Sony               |
   | 0013     | Q1 2015      | B+             | 1.2          | 512MB  | ?                         |
-* | 0014     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Embest, China      |
-* | 0015     | Q1 2015      | A+             | 1.1          | 512MB  | Mfg by Embest, China      |
-* | a01040   | Unknown      | 2 Model B      | 1.0          | 1GB    | Unknown                   |
+  | 0014     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Embest, China      |
+  | 0015     | Q1 2015      | A+             | 1.1          | 512MB  | Mfg by Embest, China      |
+* | 900021   | Q3 2016      | A+             | 1.1          | 512MB  | Mfg by Sony               |
+* | 900032   | Q2 2016?     | B+             | 1.2          | 512MB  | Mfg by Sony               |
+  | a01040   | Unknown      | 2 Model B      | 1.0          | 1GB    | Unknown                   |
   | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
   | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
-* | a22042   | Q3 2016      | 2 Model B      | 1.2          | 1GB    | Mfg by Embest, China      |
+  | a22042   | Q3 2016      | 2 Model B      | 1.2          | 1GB    | Mfg by Embest, China      |
   | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
-* | 900093   | Q2 2016      | Zero           | 1.3          | 512MB  | Mfg by Sony               |
+  | 900093   | Q2 2016      | Zero           | 1.3          | 512MB  | Mfg by Sony               |
+* | 920093   | Q4 2016?     | Zero           | 1.3          | 512MB  | Mfg by Embest             |
+* | 9000c1   | Q1 2017      | Zero W         | 1.1          | 512MB  | Mfg by Sony               |
   | a02082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony               |
+* | a020a0   | Q1 2017      | CM3 / CM3 Lite | 1.0          | 1GB    | Mfg by Sony               |
   | a22082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg ?                     |
+* | a32082   | Q4 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony Japan         |
  */
 const xRpi * pxRpiInfo (void);
-
+/*
+ */
 /**
  * @brief Chaîne de caractères correspondant à un modèle
  * 

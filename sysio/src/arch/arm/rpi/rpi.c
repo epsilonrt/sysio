@@ -25,16 +25,19 @@ static const char * sModelList[] = {
   "Pi2 Model B",
   "Pi Zero",
   "Pi3 Model B",
+  "Pi ZeroW",
+  "Compute Module 3",
 };
 
 static const char * sMcuList[] = {
-  "Bcm2708",
-  "Bcm2709",
-  "Bcm2710"
+  "bcm2708",
+  "bcm2709",
+  "bcm2710"
 };
 
 static const xRpi xRpiDb[] = {
   /*
+   * Last update: 2017/08/06
     | Revision | Release Date | Model          | PCB Revision | Memory | Notes                     |
     | :------- | :----------- | :------------- | :----------- | :----- | :------------------------ |
     | 0002     | Q1 2012      | B              | 1.0          | 256MB  |                           |
@@ -74,6 +77,8 @@ static const xRpi xRpiDb[] = {
     | 0013     | Q1 2015      | B+             | 1.2          | 512MB  | ?                         |
     | 0014     | Q2 2014      | Compute Module | 1.0          | 512MB  | Mfg by Embest, China      |
     | 0015     | Q1 2015      | A+             | 1.1          | 512MB  | Mfg by Embest, China      |
+  * | 900021   | Q3 2016      | A+             | 1.1          | 512MB  | Mfg by Sony               |
+  * | 900032   | Q2 2016?     | B+             | 1.2          | 512MB  | Mfg by Sony               |
   */
   {.iRev = 0x00000010, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
   {.iRev = 0x00000011, .eModel = eRpiModelComputeModule, .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
@@ -81,6 +86,8 @@ static const xRpi xRpiDb[] = {
   {.iRev = 0x00000013, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sUnknown},
   {.iRev = 0x00000014, .eModel = eRpiModelComputeModule, .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManEmbest},
   {.iRev = 0x00000015, .eModel = eRpiModelAPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManEmbest},
+  {.iRev = 0x00900021, .eModel = eRpiModelAPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManSony},
+  {.iRev = 0x00900032, .eModel = eRpiModelBPlus,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
   /*
     | a01040   | Unknown      | 2 Model B      | 1.0          | 1GB    | Unknown                   |
     | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
@@ -94,15 +101,23 @@ static const xRpi xRpiDb[] = {
   /*
     | 900092   | Q4 2015      | Zero           | 1.2          | 512MB  | Mfg by Sony               |
     | 900093   | Q2 2016      | Zero           | 1.3          | 512MB  | Mfg by Sony               |
+  * | 920093   | Q4 2016?     | Zero           | 1.3          | 512MB  | Mfg by Embest             |
+  * | 9000c1   | Q1 2017      | Zero W         | 1.1          | 512MB  | Mfg by Sony               |
    */
   {.iRev = 0x00900092, .eModel = eRpiModelZero,          .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
   {.iRev = 0x00900093, .eModel = eRpiModelZero,          .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 3, .sManufacturer = sManSony},
+  {.iRev = 0x00920093, .eModel = eRpiModelZero,          .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 3, .sManufacturer = sManEmbest},
+  {.iRev = 0x009000c1, .eModel = eRpiModelZeroW,         .iGpioRev = 3, .eMcu = eRpiMcuBcm2708, .iMemMB = 512, .iPcbMajor = 1, .iPcbMinor = 1, .sManufacturer = sManSony},
   /*
-    | a01041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Sony               |
-    | a21041   | Q1 2015      | 2 Model B      | 1.1          | 1GB    | Mfg by Embest, China      |
+    | a02082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony               |
+  * | a020a0   | Q1 2017      | CM3 / CM3 Lite | 1.0          | 1GB    | Mfg by Sony               |
+    | a22082   | Q1 2016      | 3 Model B      | 1.2          | 1GB    | Mfg ?                     |
+  * | a32082   | Q4 2016      | 3 Model B      | 1.2          | 1GB    | Mfg by Sony Japan         |
   */
   {.iRev = 0x00a02082, .eModel = eRpiModel3B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
+  {.iRev = 0x00a020a0, .eModel = eRpiModelComputeModule3,.iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 0, .sManufacturer = sManSony},
   {.iRev = 0x00a22082, .eModel = eRpiModel3B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sUnknown},
+  {.iRev = 0x00a32082, .eModel = eRpiModel3B,            .iGpioRev = 3, .eMcu = eRpiMcuBcm2710, .iMemMB = 1024, .iPcbMajor = 1, .iPcbMinor = 2, .sManufacturer = sManSony},
 
   /* Last element */
   {.iRev = -1,         .eModel = eRpiModelUnknown,       .iGpioRev = -1, .eMcu = eRpiMcuUnknown, .iMemMB = -1, .iPcbMajor = -1, .iPcbMinor = -1, .sManufacturer = sUnknown},
