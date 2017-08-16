@@ -1,0 +1,15 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+bindir=${exec_prefix}/bin
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+ldflags_other=@SYSIO_LDFLAGS_OTHER@
+cflags_other=@SYSIO_CFLAGS_OTHER@
+
+Name: @PROJECT_NAME@
+Description: @PROJECT_DESCRIPTION@
+Version: @VERSION_SHORT@
+Requires: 
+Libs: -L${libdir} -lsysio ${ldflags_other}
+Cflags: -I${includedir} ${cflags_other}
+

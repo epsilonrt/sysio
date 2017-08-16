@@ -31,7 +31,7 @@ xLedRgbNewDevice (eLedRgbDeviceModel model, void * dev_setup) {
 
   switch (model) {
 
-#ifdef SYSIO_HAS_I2C
+#if SYSIO_WITH_I2C
     case eLedRgbDeviceTlc59116:
       d->dcb->ops = &xTlc59116Ops;
       d->model = eLedRgbDeviceTlc59116;

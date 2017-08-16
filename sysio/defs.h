@@ -30,6 +30,14 @@
 // -----------------------------------------------------------------------------
 #endif /* !defined(__DOXYGEN__) */
 
+#define BOARD_GENERIC_LINUX 0
+#define BOARD_RASPBERRYPI   1
+#define BOARD_NANOPI_NEO    2
+#define BOARD_NANOPI_AIR    3
+#define BOARD_NANOPI_M1     4
+
+#include "config.h"
+
 #ifndef __ASSEMBLER__
 __BEGIN_C_DECLS
 /* ==========================Partie Langage C============================== */
@@ -76,6 +84,7 @@ __BEGIN_C_DECLS
 #else
 # error Unable to detect operating system !
 #endif
+
 
 // ntohs, htons, ntohl, htonl, ntohll, htonll 
 #include <arpa/inet.h>

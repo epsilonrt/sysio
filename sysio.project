@@ -26,6 +26,12 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="cmake">
+    <VirtualDirectory Name="modules">
+      <File Name="cmake/modules/GetPiBoardInfo.cmake"/>
+      <File Name="cmake/modules/GetGitVersion.cmake"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <VirtualDirectory Name="util">
     <VirtualDirectory Name="template">
       <VirtualDirectory Name="cpp">
@@ -47,6 +53,7 @@
       <File Name="util/bin/hardware-cpu"/>
       <File Name="util/bin/armbian-board"/>
       <File Name="util/bin/hardware-rev"/>
+      <File Name="util/bin/git-version"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ssend">
       <File Name="util/ssend/version-git.h"/>
@@ -345,6 +352,9 @@
     <File Name="sysio/rgb.h"/>
     <File Name="sysio/tlc59116.h"/>
     <File Name="sysio/gp2.h"/>
+    <File Name="CMakeLists.txt"/>
+    <File Name="sysio.cmake"/>
+    <File Name="cmake_uninstall.cmake.in"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

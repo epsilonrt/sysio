@@ -1,0 +1,165 @@
+#!/bin/bash
+# git-version 
+# Build a file containing version information from GIT
+# (c) Copyright 2015-2017 epsilonRT
+# All rights reserved.
+# This software is governed by the CeCILL license <http://www.cecill.info>
+
+usage()
+{
+cat << EOF
+usage: $(basename $0) [options] [filename.ext]
+
+Ce script permet d'extraire les informations de version issues du tag lu à
+l'aide de 'git describe'. Le tag doit être de la forme v[M].[m]-[p]-g[c] avec :
+- [M] Numéro majeur
+- [m] Numéro mineur
+- [p] Numéro patch (optionnel)
+- [c] Numéro de signature SHA1 (optionnel)
+
+Si aucun tag n'est trouvé par git, v1.0-0 est utilisé.
+
+  [filename.ext] nom d'un fichier à générer (optionnel). 
+  Si l'extension est .h, un fichier d'entête C contenant les #define correspondant
+  à toutes les options est généré (VERSION, VERSION_MAJOR, VERSION_MINOR ...).
+  Si l'extension est .mk, un fichier makefile est créé avec une variable 
+  VERSION qui vaut [M].[m].[p]
+  
+OPTIONS:
+  -h    Affiche ce message
+  -f    Affiche le numéro complet sous la forme [M].[m]-[p]-g[c] et sort.
+  -s    Affiche le numéro court sous la forme  [M].[m]-[p] et sort.
+  -t    Affiche le numéro très court sous la forme  [M].[m] et sort.
+  -M    Affiche le numéro majeur sous la forme [M] et sort.
+  -m    Affiche le numéro mineur sous la forme  [m] et sort.
+  -p    Affiche le numéro de patch sous la forme [p] et sort.
+  -c    Affiche le numéro de signature sous la forme  0x[c] et sort.
+EOF
+}
+
+STAMP=.version
+HASGIT=0
+
+if [ -x "$(command -v git 2> /dev/null)" ]; then
+  VERSION="$(git describe 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+    HASGIT=1
+    VERSION=${VERSION#v}
+    VERSION=${VERSION#V}
+  else
+    echo "$(basename $0) error: git failed to find the project version !"
+    usage
+    exit 1
+  fi
+fi
+
+if [ $HASGIT -eq 0 ]; then
+  VERSION="1.0-0"
+fi
+
+if [ $HASGIT -eq 1 ]; then
+  #echo "the project git version is $VERSION"
+  echo "$VERSION" > ${STAMP}
+else
+  #echo "a default project version number will used ($VERSION)"
+  # Version par défaut, le fichier .version est vide
+  echo -n > ${STAMP}
+fi
+
+VERSION_SHORT=${VERSION%%-g*}
+VERSION_SHORT_DOT=${VERSION_SHORT//-/.}
+VERSION_TINY=${VERSION%%-*}
+
+VERSION_CORE=${VERSION_SHORT%%-*}
+VERSION_MAJOR=${VERSION_SHORT%%.*}
+VERSION_MAJOR=${VERSION_MAJOR%%[A-Za-z]*}
+VERSION_MINOR=${VERSION_CORE##*.}
+VERSION_MINOR=${VERSION_MINOR%%[A-Za-z]*}
+
+if [[ $VERSION == *-* ]]; then
+  VERSION_PATCH=${VERSION_SHORT##*-}
+  VERSION_PATCH=${VERSION_PATCH%%[A-Za-z]*}
+else
+  VERSION_PATCH="0"
+fi
+
+if [[ $VERSION == *-g* ]]; then
+  VERSION_SHA1="0x${VERSION##*-g}"
+else
+  VERSION_SHA1="0x0"
+fi
+
+while getopts ":Mmptsfch" opt; do
+  case $opt in
+    M)
+      echo $VERSION_MAJOR
+      exit 0
+      ;;
+    m)
+      echo $VERSION_MINOR
+      exit 0
+      ;;
+    p)
+      echo $VERSION_PATCH
+      exit 0
+      ;;
+    t)
+      echo $VERSION_TINY
+      exit 0
+      ;;
+    s)
+      echo $VERSION_SHORT
+      exit 0
+      ;;
+    c)
+      echo $VERSION_SHA1
+      exit 0
+      ;;
+    f)
+      echo $VERSION
+      exit 0
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+if [ $# -lt 1 ]; then
+  echo "$(basename $(basename $0)) error: you must provide the name of the file to be created"
+  usage
+  exit -1
+fi
+
+OUTPUT=${1}
+EXT=${OUTPUT##*.}
+case "$EXT" in
+
+  h)  echo "#define VERSION \"$VERSION\"" > ${OUTPUT}
+      echo "#define VERSION_SHORT \"$VERSION_SHORT_DOT\"" >> ${OUTPUT}
+      echo "#define VERSION_TINY \"$VERSION_TINY\"" >> ${OUTPUT}
+      echo "#define VERSION_MAJOR $VERSION_MAJOR" >> ${OUTPUT}
+      echo "#define VERSION_MINOR $VERSION_MINOR" >> ${OUTPUT}
+      echo "#define VERSION_PATCH $VERSION_PATCH" >> ${OUTPUT}
+      echo "#define VERSION_SHA1 $VERSION_SHA1" >> ${OUTPUT}
+      ;;
+  mk) VERSION=${VERSION%%-*}
+      echo "$VERSION_SHORT_DOT" > ${OUTPUT}
+      ;;
+  *)  echo "$(basename $0) error: unknown file extension !"
+      usage
+      exit 1
+      ;;
+esac
+
+#echo "$OUTPUT generate for $VERSION version"
+#cat ${OUTPUT}
+exit 0

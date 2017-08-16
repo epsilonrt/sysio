@@ -30,6 +30,9 @@
   <Dependencies/>
   <VirtualDirectory Name="libsysio">
     <File Name="Makefile"/>
+    <File Name="CMakeLists.txt"/>
+    <File Name="sysio.pc.in"/>
+    <File Name="config.h.in"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
