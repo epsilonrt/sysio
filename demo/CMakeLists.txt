@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.5)
+
+project (sysio_demo)
+
+find_package(sysio REQUIRED)
+link_directories(${SYSIO_LIBRARY_DIRS})
+
+include (PiBoardInfo)
+if (NOT PIBOARD_ID)
+  message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
+  GetPiBoardInfo()
+endif (NOT PIBOARD_ID)
+
+file(GLOB_RECURSE demo_list *.c)
+#message("demos=${demo_list}")
+
+foreach(f ${demo_list})
+  get_filename_component(demo_name ${f} NAME_WE)
+  get_filename_component(demo_dir ${f} DIRECTORY)
+  if ("${demo_name}" MATCHES "sysio_demo_*")
+  
+    message (STATUS "Add ${demo_name} executable...")
+    add_executable (${demo_name} ${f}) 
+    
+    target_link_libraries(${demo_name} ${SYSIO_LIBRARIES})
+    target_include_directories(${demo_name} PUBLIC ${demo_dir} ${SYSIO_INCLUDE_DIRS})
+    target_compile_options(${demo_name} PUBLIC ${SYSIO_CFLAGS})
+    
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${demo_name}
+      DESTINATION bin)
+  endif()
+endforeach(f)

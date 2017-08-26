@@ -39,12 +39,12 @@ install_utils: uninstall_utils
 	@-install -m 0644 $(SYSIO_ROOT)/util/template/template.c $(INSTALL_DATDIR)/sysio/template
 	@-install -m 0644 $(SYSIO_ROOT)/util/template/template.project $(INSTALL_DATDIR)/sysio/template
 	@-install -m 0644 $(SYSIO_ROOT)/util/template/cpp/* $(INSTALL_DATDIR)/sysio/template/cpp
+	@-install -m 0755 $(SYSIO_ROOT)/util/dev/bin/hardware-cpu $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/dev/rpi/rpi-info $(INSTALL_BINDIR)
+	@-install -m 0755 $(SYSIO_ROOT)/util/dev/bin/armbian-board $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-prj $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/sysio-ver $(INSTALL_BINDIR)
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-cpu $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/hardware-rev $(INSTALL_BINDIR)
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/rpi-info $(INSTALL_BINDIR)
-	@-install -m 0755 $(SYSIO_ROOT)/util/bin/armbian-board $(INSTALL_BINDIR)
 	@-install -m 0755 $(SYSIO_ROOT)/util/bin/test-header $(INSTALL_BINDIR)
 	@sed -i -e "s#INSTALLED_TEMPLATE_DIR#$(INSTALL_DATDIR)/sysio/template#g" $(INSTALL_BINDIR)/sysio-prj
 

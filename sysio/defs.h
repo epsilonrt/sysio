@@ -36,7 +36,9 @@
 #define BOARD_NANOPI_AIR    3
 #define BOARD_NANOPI_M1     4
 
+#ifdef SYSIO_WITH_CONFIG_H
 #include "config.h"
+#endif
 
 #ifndef __ASSEMBLER__
 __BEGIN_C_DECLS

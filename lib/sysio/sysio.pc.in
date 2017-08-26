@@ -1,14 +1,15 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-bindir=${exec_prefix}/bin
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+bindir=@INSTALL_BIN_DIR@
+libdir=@INSTALL_LIB_DIR@
+includedir=@INSTALL_INCLUDE_DIR@
 ldflags_other=@SYSIO_LDFLAGS_OTHER@
 cflags_other=@SYSIO_CFLAGS_OTHER@
 
 Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
-Version: @VERSION_SHORT@
+URL: http://www.epsilonrt.fr/sysio
+Version: @SYSIO_VERSION@
 Requires: 
 Libs: -L${libdir} -lsysio ${ldflags_other}
 Cflags: -I${includedir} ${cflags_other}

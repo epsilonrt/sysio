@@ -31,6 +31,7 @@
   <VirtualDirectory Name="sysio_demo_led">
     <File Name="Makefile"/>
     <File Name="sysio_demo_led.c"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

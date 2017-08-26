@@ -155,7 +155,7 @@ COPY = cp
 #-------------------------------------------------------------------------------
 $(info Check the target platform, you can use BOARD to force the target...)
 
-HARDWARE_CPU=$(shell ../../util/bin/hardware-cpu)
+HARDWARE_CPU=$(shell ../../util/dev/bin/hardware-cpu)
 #$(warning '$(HARDWARE_CPU)')
 
 ifneq ($(HARDWARE_CPU),)
@@ -164,8 +164,8 @@ ifneq ($(HARDWARE_CPU),)
 ifeq ($(HARDWARE_CPU),$(filter $(HARDWARE_CPU),bcm2708 bcm2835 bcm2709 bcm2836 bcm2710 bcm2837))
 # Raspberry Pi -----------------------------------------------------------------
 
-RPI_CPU=$(shell ../../util/bin/rpi-info -c)
-RPI_REV=$(shell ../../util/bin/rpi-info -r)
+RPI_CPU=$(shell ../../util/dev/rpi/rpi-info -c)
+RPI_REV=$(shell ../../util/dev/rpi/rpi-info -r)
 #$(warning $(RPI_CPU))
 #$(warning $(RPI_REV))
 
@@ -180,7 +180,7 @@ else
 ifneq ($(findstring sun8i,$(HARDWARE_CPU)),)
 # Allwinner sunxi  -------------------------------------------------------------
 
-ARMBIAN_BOARD=$(shell ../../util/bin/armbian-board)
+ARMBIAN_BOARD=$(shell ../../util/dev/bin/armbian-board)
 #$(warning '$(ARMBIAN_BOARD)')
 
 ifeq ($(ARMBIAN_BOARD),nanopineo)

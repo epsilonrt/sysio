@@ -33,6 +33,8 @@
     <File Name="CMakeLists.txt"/>
     <File Name="sysio.pc.in"/>
     <File Name="config.h.in"/>
+    <File Name="sysio-config.cmake.in"/>
+    <File Name="sysio-config-version.cmake.in"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
