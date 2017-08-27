@@ -124,6 +124,7 @@ add_custom_target(uninstall
 add_subdirectory (lib)
 add_subdirectory (util)
 add_subdirectory (sysiopp)
+add_subdirectory (chipio)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")

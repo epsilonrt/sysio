@@ -1,12 +1,12 @@
 /**
- * @file sysio/chipio/serial.h
+ * @file 
  * @brief Liaison série ChipIo
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#ifndef _SYSIO_CHIPIO_SERIAL_H_
-#define _SYSIO_CHIPIO_SERIAL_H_
+#ifndef _CHIPIO_SERIAL_H_
+#define _CHIPIO_SERIAL_H_
 
 #include <stdio.h>
 #include <sysio/serial.h>
@@ -98,4 +98,4 @@ int iChipIoSerialFlush (xChipIoSerial * port);
 
 /* ========================================================================== */
 __END_C_DECLS
-#endif /* _SYSIO_CHIPIO_SERIAL_H_ */
+#endif /* _CHIPIO_SERIAL_H_ */

@@ -1,0 +1,27 @@
+###############################################################################
+# Copyright © 2017 epsilonRT, All rights reserved.                            #
+# This software is governed by the CeCILL license <http://www.cecill.info>    #
+###############################################################################
+# - Config file for the chipio package
+# It defines the following variables
+#  CHIPIO_INCLUDE_DIRS - include directories for chipio
+#  CHIPIO_LIBRARY_DIRS - where to find libraries
+#  CHIPIO_LIBRARIES    - libraries to link against
+#  CHIPIO_CPPFLAGS_OTHER       - all required cppflags
+
+find_package(sysio REQUIRED)
+
+# Compute paths
+get_filename_component(CHIPIO_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(CHIPIO_INCLUDE_DIRS "${SYSIO_INCLUDE_DIRS}")
+set(CHIPIO_LIBRARY_DIRS "${SYSIO_LIBRARY_DIRS}")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${CHIPIO_CMAKE_DIR}/chipio.cmake")
+
+# These are IMPORTED targets created by sysio.cmake
+set(CHIPIO_LIBRARIES chipio ${SYSIO_LIBRARIES})
+
+set(CHIPIO_CPPFLAGS_OTHER "${SYSIO_CFLAGS_OTHER}")
+set(CMAKE_MODULE_PATH "${CHIPIO_CMAKE_DIR}" "${SYSIO_CMAKE_DIR}")

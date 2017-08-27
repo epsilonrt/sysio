@@ -1,12 +1,12 @@
 /**
- * @file sysio/chipio/chipio.h
+ * @file 
  * @brief Circuit d'entrées-sorties universel
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#ifndef _SYSIO_CHIPIO_H_
-#define _SYSIO_CHIPIO_H_
+#ifndef _CHIPIO_H_
+#define _CHIPIO_H_
 
 #include <sysio/defs.h>
 __BEGIN_C_DECLS
@@ -174,4 +174,4 @@ int iChipIoWriteRegBlock (xChipIo * chip, uint8_t reg, const uint8_t * buffer, u
 
 /* ========================================================================== */
 __END_C_DECLS
-#endif /* _SYSIO_CHIPIO_H_ */
+#endif /* _CHIPIO_H_ */

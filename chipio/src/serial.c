@@ -1,5 +1,5 @@
 /**
- * @file chipio/serial.c
+ * @file
  * @brief Liaison série ChipIo
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

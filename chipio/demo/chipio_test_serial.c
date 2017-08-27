@@ -1,5 +1,5 @@
-/*
- * chipio_test_serial.c
+/**
+ * @file
  * @brief Description de votre programme
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -15,7 +15,7 @@
 #include <chipio/serial.h>
 #include <sysio/log.h>
 #include <sysio/rpi.h>
-#error "TODO: Ce test n'est plus fonctionnel suite à modification de chipio/serial.c pour modbus"
+#warning "TODO: Ce test n'est plus fonctionnel suite à modification de chipio/serial.c pour modbus"
 /* constants ================================================================ */
 #define I2C_DEVICE      "/dev/i2c-1"
 #define I2C_SLAVE       0x46

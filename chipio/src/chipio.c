@@ -1,5 +1,5 @@
 /**
- * @file chipio/chipio.c
+ * @file 
  * @brief Circuit d'entrées-sorties universel
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

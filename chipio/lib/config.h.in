@@ -1,0 +1,20 @@
+/**
+ * @file
+ * @brief Configuration SysIo++
+ *
+ * Copyright © 2017 epsilonRT, All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
+ */
+#ifndef _CHIPIO_CONFIG_H_
+#define _CHIPIO_CONFIG_H_
+/* ========================================================================== */
+#define CHIPIO_VERSION       "@SYSIO_VERSION_STRING@"
+#define CHIPIO_VERSION_SHORT "@SYSIO_VERSION_SHORT@"
+#define CHIPIO_VERSION_TINY  "@SYSIO_VERSION_TINY@"
+#define CHIPIO_VERSION_MAJOR @SYSIO_VERSION_MAJOR@
+#define CHIPIO_VERSION_MINOR @SYSIO_VERSION_MINOR@
+#define CHIPIO_VERSION_PATCH @SYSIO_VERSION_PATCH@
+#define CHIPIO_VERSION_SHA1  @SYSIO_VERSION_SHA1@
+
+/* ========================================================================== */
+#endif /*_CHIPIO_CONFIG_H_ defined */

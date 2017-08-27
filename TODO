@@ -5,7 +5,6 @@ Prioritaire:
 ------------
 1- Passage à CMake:
   - radio
-  - chipio
   - doc
   - 3rdparty/ssdv
   - 3rdparty/modbus

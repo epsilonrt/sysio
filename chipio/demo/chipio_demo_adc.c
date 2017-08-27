@@ -1,5 +1,5 @@
-/*
- * chipio_test_adc.c
+/**
+ * @file
  * @brief Description de votre programme
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -43,7 +43,7 @@ int
 main (int argc, char **argv) {
   int i;
 
-  printf ("ChipIo ADC Test\n");
+  printf ("ChipIo ADC Demo\n");
   xChip = xChipIoOpen (I2C_DEVICE, I2C_SLAVE);
   assert (xChip);
   printf ("ChipIo found on %s at 0x%02X\n", I2C_DEVICE, I2C_SLAVE);

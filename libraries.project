@@ -251,8 +251,6 @@
       <File Name="sysiopp/src/serial-wrapper.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="util">
     <File Name="util/CMakeLists.txt"/>
     <File Name="util/Makefile"/>
@@ -271,4 +269,29 @@
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VirtualDirectory Name="chipio">
+    <VirtualDirectory Name="include">
+      <VirtualDirectory Name="chipio">
+        <File Name="chipio/include/chipio/chipio.h"/>
+        <File Name="chipio/include/chipio/serial.h"/>
+        <File Name="chipio/include/chipio/adc.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="chipio/CMakeLists.txt"/>
+    <VirtualDirectory Name="lib">
+      <File Name="chipio/lib/chipio-config-version.cmake.in"/>
+      <File Name="chipio/lib/CMakeLists.txt"/>
+      <File Name="chipio/lib/chipio.pc.in"/>
+      <File Name="chipio/lib/config.h.in"/>
+      <File Name="chipio/lib/chipio-config.cmake.in"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="src">
+      <File Name="chipio/src/serial.c"/>
+      <File Name="chipio/src/adc.c"/>
+      <File Name="chipio/src/interface.h"/>
+      <File Name="chipio/src/chipio.c"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
