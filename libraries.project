@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="libraries" InternalType="">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="arm">
+        <VirtualDirectory Name="rpi">
+          <File Name="src/arch/arm/rpi/rpi.c"/>
+          <File Name="src/arch/arm/rpi/gpio.c"/>
+          <File Name="src/arch/arm/rpi/pwm.c"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="nanopi">
+          <File Name="src/arch/arm/nanopi/gpio.c"/>
+          <File Name="src/arch/arm/nanopi/nanopi.c"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="spi">
+      <File Name="src/spi/rf69_private.h"/>
+      <File Name="src/spi/rf69_registers.h"/>
+      <File Name="src/spi/spi.c"/>
+      <File Name="src/spi/rf69_sysio.c"/>
+      <File Name="src/spi/rf69.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="win32">
+      <File Name="src/win32/delay.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="unix">
+      <File Name="src/unix/serial.c"/>
+      <File Name="src/unix/timer.c"/>
+      <File Name="src/unix/term.c"/>
+      <File Name="src/unix/delay.c"/>
+      <File Name="src/unix/iomap.c"/>
+      <File Name="src/unix/log.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="i2c">
+      <File Name="src/i2c/hih6130.c"/>
+      <File Name="src/i2c/iaq.c"/>
+      <File Name="src/i2c/i2c-dev.h"/>
+      <File Name="src/i2c/gp2.c"/>
+      <File Name="src/i2c/tlc59116.c"/>
+      <File Name="src/i2c/i2c.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gpio">
+      <File Name="src/gpio/dinput.c"/>
+      <File Name="src/gpio/gpio.c"/>
+      <File Name="src/gpio/doutput.c"/>
+      <File Name="src/gpio/blyss.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="libgps">
+      <File Name="src/libgps/gps.c"/>
+    </VirtualDirectory>
+    <File Name="src/vector.c"/>
+    <File Name="src/serial.c"/>
+    <File Name="src/dlist.c"/>
+    <File Name="src/xbee.c"/>
+    <File Name="src/version.c"/>
+    <File Name="src/ledrgb.c"/>
+    <File Name="src/xbee_private.h"/>
+    <File Name="src/string.c"/>
+    <File Name="src/xbee2.c"/>
+    <File Name="src/gpio_private.h"/>
+    <File Name="src/ledrgb_private.h"/>
+    <File Name="src/xbee1.c"/>
+    <File Name="src/tinfo.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="sysio">
+      <File Name="include/sysio/dlist.h"/>
+      <File Name="include/sysio/gpio.h"/>
+      <File Name="include/sysio/vector.h"/>
+      <File Name="include/sysio/nanopi.h"/>
+      <File Name="include/sysio/spi.h"/>
+      <File Name="include/sysio/i2c.h"/>
+      <File Name="include/sysio/hih6130.h"/>
+      <File Name="include/sysio/ledrgb.h"/>
+      <File Name="include/sysio/defs.h"/>
+      <File Name="include/sysio/tinfo.h"/>
+      <File Name="include/sysio/rpi.h"/>
+      <File Name="include/sysio/gp2.h"/>
+      <File Name="include/sysio/gps.h"/>
+      <File Name="include/sysio/tlc59116.h"/>
+      <File Name="include/sysio/compat.h"/>
+      <File Name="include/sysio/iaq.h"/>
+      <File Name="include/sysio/blyss.h"/>
+      <File Name="include/sysio/pwm.h"/>
+      <File Name="include/sysio/dinput.h"/>
+      <File Name="include/sysio/xbee.h"/>
+      <File Name="include/sysio/rf69.h"/>
+      <File Name="include/sysio/rgb.h"/>
+      <File Name="include/sysio/serial.h"/>
+      <File Name="include/sysio/term.h"/>
+      <File Name="include/sysio/delay.h"/>
+      <File Name="include/sysio/iomap.h"/>
+      <File Name="include/sysio/doutput.h"/>
+      <File Name="include/sysio/string.h"/>
+      <File Name="include/sysio/timer.h"/>
+      <File Name="include/sysio/log.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="lib">
+    <File Name="lib/CMakeLists.txt"/>
+    <File Name="lib/sysio-config-version.cmake.in"/>
+    <File Name="lib/sysio.pc.in"/>
+    <File Name="lib/config.h.in"/>
+    <File Name="lib/sysio-config.cmake.in"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="sysio">
+    <File Name="TODO"/>
+    <File Name="CMakeLists.txt"/>
+    <File Name="cmake_uninstall.cmake.in"/>
+    <File Name="AUTHORS"/>
+    <File Name="LICENSE"/>
+    <File Name="LICENCE"/>
+    <File Name="INSTALL"/>
+  </VirtualDirectory>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="Distclean">rm -fr build-debug</Target>
+        <Target Name="CMake">mkdir -p build-debug &amp;&amp; cd build-debug &amp;&amp; cmake -G "Unix Makefiles" .. -DCMAKE_BUILD_TYPE=Debug</Target>
+        <RebuildCommand>make -C build-debug clean &amp;&amp; make -j4 -C build-debug</RebuildCommand>
+        <CleanCommand>make -C build-debug clean</CleanCommand>
+        <BuildCommand> make -j4 -C build-debug</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand>make -j4 -C build-debug $(CurrentFileName).o</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="Distclean">rm -fr build-release</Target>
+        <Target Name="Debian Packages">make -j4  -C build-release package</Target>
+        <Target Name="CMake">mkdir -p build-release &amp;&amp; cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr .. -DCMAKE_BUILD_TYPE=Release</Target>
+        <RebuildCommand>make -C build-release clean &amp;&amp; make -j4 -C build-release</RebuildCommand>
+        <CleanCommand>make -C build-release clean</CleanCommand>
+        <BuildCommand>make -j4 -C build-release</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand>make -j4 -C build-release $(CurrentFileName).o</SingleFileCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="sysiopp">
+    <VirtualDirectory Name="include">
+      <VirtualDirectory Name="sysiopp">
+        <File Name="sysiopp/include/sysiopp/serial.hpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="sysiopp/CMakeLists.txt"/>
+    <VirtualDirectory Name="lib">
+      <File Name="sysiopp/lib/CMakeLists.txt"/>
+      <File Name="sysiopp/lib/sysiopp-config-version.cmake.in"/>
+      <File Name="sysiopp/lib/sysiopp-config.cmake.in"/>
+      <File Name="sysiopp/lib/config.h.in"/>
+      <File Name="sysiopp/lib/sysiopp.pc.in"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="src">
+      <File Name="sysiopp/src/serial-wrapper.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <VirtualDirectory Name="util">
+    <File Name="util/CMakeLists.txt"/>
+    <File Name="util/Makefile"/>
+    <VirtualDirectory Name="dev">
+      <File Name="util/dev/CMakeLists.txt"/>
+      <VirtualDirectory Name="bin">
+        <File Name="util/dev/bin/armbian-board"/>
+        <File Name="util/dev/bin/hardware-cpu"/>
+        <File Name="util/dev/bin/git-version"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="cmake">
+        <File Name="util/dev/cmake/Findrt.cmake"/>
+        <File Name="util/dev/cmake/GitVersion.cmake"/>
+        <File Name="util/dev/cmake/PiBoardInfo.cmake"/>
+        <File Name="util/dev/cmake/Findmath.cmake"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
+</CodeLite_Project>

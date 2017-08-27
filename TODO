@@ -3,10 +3,18 @@ Bugg:
 
 Prioritaire:
 ------------
+1- Passage à CMake:
+  - radio
+  - chipio
+  - doc
+  - 3rdparty/ssdv
+  - 3rdparty/modbus
+  - tests
+  - sysiopy
 
+2- Création des templates intégrés à Codelite
 
 A planifier:
 ------------
-- Développement de la deuxième voie dans le module rpi/pwm pour les B+,2B...
 
 --------------------------------------------------------------------------------

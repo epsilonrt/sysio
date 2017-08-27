@@ -1,0 +1,27 @@
+/**
+ * @file
+ * @brief Configuration SysIo++
+ *
+ * Copyright © 2017 epsilonRT, All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
+ */
+#ifndef _SYSIOPP_CONFIG_H_
+#define _SYSIOPP_CONFIG_H_
+/* ========================================================================== */
+#define SYSIO_WITH_GPIO   @SYSIO_WITH_GPIO@
+#define SYSIO_WITH_I2C    @SYSIO_WITH_I2C@
+#define SYSIO_WITH_SPI    @SYSIO_WITH_SPI@
+#define SYSIO_WITH_SERIAL @SYSIO_WITH_SERIAL@
+
+#define SYSIO_WITH_STATIC @SYSIO_WITH_STATIC@
+
+#define SYSIO_VERSION       "@SYSIO_VERSION_STRING@"
+#define SYSIO_VERSION_SHORT "@SYSIO_VERSION_SHORT@"
+#define SYSIO_VERSION_TINY  "@SYSIO_VERSION_TINY@"
+#define SYSIO_VERSION_MAJOR @SYSIO_VERSION_MAJOR@
+#define SYSIO_VERSION_MINOR @SYSIO_VERSION_MINOR@
+#define SYSIO_VERSION_PATCH @SYSIO_VERSION_PATCH@
+#define SYSIO_VERSION_SHA1  @SYSIO_VERSION_SHA1@
+
+/* ========================================================================== */
+#endif /*_SYSIOPP_CONFIG_H_ defined */

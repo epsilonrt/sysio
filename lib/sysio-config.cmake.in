@@ -1,0 +1,34 @@
+###############################################################################
+# Copyright © 2017 epsilonRT, All rights reserved.                            #
+# This software is governed by the CeCILL license <http://www.cecill.info>    #
+###############################################################################
+# - Config file for the sysio package
+# It defines the following variables
+#  SYSIO_INCLUDE_DIRS - include directories for sysio
+#  SYSIO_LIBRARY_DIRS - where to find libraries
+#  SYSIO_LIBRARIES    - libraries to link against
+#  SYSIO_CFLAGS       - all required cflags
+
+# Compute paths
+get_filename_component(SYSIO_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+unset(SYSIO_INCLUDE_DIRS)
+foreach(RELATIVE_PATH "@CONF_INCLUDE_DIRS@")
+  get_filename_component(ABSOLUTE_PATH ${RELATIVE_PATH} ABSOLUTE)
+  list(APPEND SYSIO_INCLUDE_DIRS "${ABSOLUTE_PATH}")
+endforeach()
+
+unset(SYSIO_LIBRARY_DIRS)
+foreach(RELATIVE_PATH "@CONF_LIB_DIRS@")
+  get_filename_component(ABSOLUTE_PATH ${RELATIVE_PATH} ABSOLUTE)
+  list(APPEND SYSIO_LIBRARY_DIRS "${ABSOLUTE_PATH}")
+endforeach()
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${SYSIO_CMAKE_DIR}/sysio.cmake")
+
+# These are IMPORTED targets created by sysio.cmake
+set(SYSIO_LIBRARIES sysio @LIBGPS_LIBRARIES@)
+
+set(SYSIO_CFLAGS @LIBGPS_CFLAGS@ @CMAKE_THREAD_LIBS_INIT@)
+set(CMAKE_MODULE_PATH "${SYSIO_CMAKE_DIR}")

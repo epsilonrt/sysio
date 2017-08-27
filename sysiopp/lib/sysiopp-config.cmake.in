@@ -1,0 +1,27 @@
+###############################################################################
+# Copyright © 2017 epsilonRT, All rights reserved.                            #
+# This software is governed by the CeCILL license <http://www.cecill.info>    #
+###############################################################################
+# - Config file for the sysio package
+# It defines the following variables
+#  SYSIOPP_INCLUDE_DIRS - include directories for sysiopp
+#  SYSIOPP_LIBRARY_DIRS - where to find libraries
+#  SYSIOPP_LIBRARIES    - libraries to link against
+#  SYSIOPP_CPPFLAGS_OTHER       - all required cppflags
+
+find_package(sysio REQUIRED)
+
+# Compute paths
+get_filename_component(SYSIOPP_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(SYSIOPP_INCLUDE_DIRS "${SYSIO_INCLUDE_DIRS}")
+set(SYSIOPP_LIBRARY_DIRS "${SYSIO_LIBRARY_DIRS}")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${SYSIOPP_CMAKE_DIR}/sysiopp.cmake")
+
+# These are IMPORTED targets created by sysio.cmake
+set(SYSIOPP_LIBRARIES sysiopp ${SYSIO_LIBRARIES})
+
+set(SYSIOPP_CPPFLAGS_OTHER "${SYSIO_CFLAGS_OTHER}")
+set(CMAKE_MODULE_PATH "${SYSIOPP_CMAKE_DIR}" "${SYSIO_CMAKE_DIR}")

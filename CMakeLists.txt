@@ -13,16 +13,13 @@ set (PROJECT_TOOLS_PATHS ${PROJECT_SOURCE_DIR}/util/dev/bin ${PROJECT_SOURCE_DIR
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
 
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/util/dev/cmake ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/util/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
 
 set (SYSIO_WITH_STATIC 0 CACHE BOOL "Enable building static libraries.")
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
-
-#find_package(rt)
-#find_package(math)
 
 find_package(PkgConfig)
 pkg_check_modules (LIBGPS libgps)
@@ -39,14 +36,18 @@ set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
+
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INSTALL_CMAKE_DIR CMake)
+  set(DEF_INSTALL_DOC_DIR Doc)
 else()
-  set(DEF_INSTALL_CMAKE_DIR lib/sysio/cmake)
+  set(DEF_INSTALL_CMAKE_DIR lib)
+  set(DEF_INSTALL_DOC_DIR share/doc)
 endif()
-
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
   "Installation directory for CMake files")
+set(INSTALL_DOC_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
+  "Installation directory for documentation")
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)
@@ -55,6 +56,11 @@ foreach(p LIB BIN INCLUDE CMAKE)
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
   endif()
 endforeach()
+
+set (SYSIO_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set (SYSIO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
+set (SYSIO_INSTALL_CMAKE_DIR "${INSTALL_CMAKE_DIR}/sysio/cmake")
+set (SYSIO_INSTALL_DOC_DIR "${INSTALL_DOC_DIR}/sysio")
 
 if (NOT PIBOARD_ID)
   message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
@@ -75,13 +81,14 @@ endif (NOT PIBOARD_FOUND)
 
 add_definitions (-D${PIBOARD_ID})
 
+
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   # Raspberry Pi ---------------------------------------------------------------
   set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
   set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
   set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
   set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (SYSIO_ARCH_DIR sysio/src/arch/arm/rpi)
+  set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/rpi)
 
 elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_AIR") OR 
@@ -91,16 +98,16 @@ elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR
   set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
   set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
   set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (SYSIO_ARCH_DIR sysio/src/arch/arm/nanopi)
+  set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/nanopi)
 
 elseif ("${PIBOARD_ID}" STREQUAL "BOARD_GENERIC_LINUX")
   # Linux Generic  -------------------------------------------------------------
   set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (SYSIO_ARCH_DIR sysio/src/arch/generic)
+  set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/generic)
 endif ()
 
 if (CMAKE_HOST_UNIX)
-  set (SYSIO_SYS_DIR sysio/src/unix)
+  set (SYSIO_SRC_SYS_DIR ${SYSIO_SRC_DIR}/unix)
   message (STATUS "Build on Unix host")
 endif (CMAKE_HOST_UNIX)
 
@@ -116,6 +123,7 @@ add_custom_target(uninstall
 
 add_subdirectory (lib)
 add_subdirectory (util)
+add_subdirectory (sysiopp)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")
@@ -123,7 +131,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${SYSIO_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${SYSIO_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${SYSIO_VERSION_PATCH}")
 set(CPACK_PACKAGE_CONTACT "Pascal JEAN <epsilonrt@gmail.com>")
-set(CPACK_RESOURCE_FILE_LICENSE "${SYSIO_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
 set(CPACK_GENERATOR "DEB")
 
@@ -181,7 +189,13 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_DEV_FILE_NAME "lib${PROJECT_NAME}-dev_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
   set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}), cmake, bash, git-core, pkg-config${libgps_dev_depends}")
   set(CPACK_DEBIAN_DEV_PACKAGE_SECTION "libdevel")
-  #set(CPACK_PACKAGE_DESCRIPTION_FILE "${SYSIO_SOURCE_DIR}/doc/README-deb.md")
+  #set(CPACK_PACKAGE_DESCRIPTION_FILE "${SYSIO_SRC_DIR}/doc/README-deb.md")
+
+  set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
+  set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
+  set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
+  set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
+  set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
 
 endif (CPACK_GENERATOR STREQUAL "DEB")
 

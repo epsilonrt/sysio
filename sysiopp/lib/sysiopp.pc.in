@@ -1,0 +1,16 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+bindir=@INSTALL_BIN_DIR@
+libdir=@INSTALL_LIB_DIR@
+includedir=@INSTALL_INCLUDE_DIR@
+ldflags_other=@SYSIOPP_LDFLAGS_OTHER@
+cflags_other=@SYSIOPP_CPPFLAGS_OTHER@
+
+Name: @PROJECT_NAME@pp
+Description: @PROJECT_DESCRIPTION@
+URL: http://www.epsilonrt.fr/sysio
+Version: @SYSIO_VERSION@
+Requires: sysio
+Libs: -L${libdir} -lsysiopp ${ldflags_other}
+Cflags: -I${includedir} ${cflags_other}
+
