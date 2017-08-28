@@ -4,6 +4,8 @@
   <Project Name="chipio_demo" Path="chipio/demo/chipio_demo.project" Active="No"/>
   <Project Name="radio_demo" Path="radio/demo/radio_demo.project" Active="No"/>
   <Project Name="ssdv_demo" Path="3rdparty/ssdv/demo/ssdv_demo.project" Active="No"/>
+  <Project Name="modbus_demo" Path="3rdparty/modbus/demo/modbus_demo.project" Active="No"/>
+  <Project Name="sysio_doc" Path="doc/sysio_doc.project" Active="No"/>
   <Project Name="libraries" Path="libraries.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
@@ -11,6 +13,8 @@
       <Project Name="chipio_demo" ConfigName="Debug"/>
       <Project Name="radio_demo" ConfigName="Debug"/>
       <Project Name="ssdv_demo" ConfigName="Debug"/>
+      <Project Name="modbus_demo" ConfigName="Debug"/>
+      <Project Name="sysio_doc" ConfigName="Debug"/>
       <Project Name="libraries" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
@@ -18,6 +22,8 @@
       <Project Name="chipio_demo" ConfigName="Release"/>
       <Project Name="radio_demo" ConfigName="Release"/>
       <Project Name="ssdv_demo" ConfigName="Release"/>
+      <Project Name="modbus_demo" ConfigName="Release"/>
+      <Project Name="sysio_doc" ConfigName="Release"/>
       <Project Name="libraries" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

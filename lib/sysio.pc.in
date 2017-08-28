@@ -3,8 +3,8 @@ exec_prefix=${prefix}
 bindir=@INSTALL_BIN_DIR@
 libdir=@INSTALL_LIB_DIR@
 includedir=@INSTALL_INCLUDE_DIR@
-ldflags_other=@SYSIO_LDFLAGS_OTHER@
-cflags_other=@SYSIO_CFLAGS_OTHER@
+ldflags_other=@SYSIO_LDFLAGS_PKGCONFIG@
+cflags_other=@SYSIO_CFLAGS_PKGCONFIG@
 
 Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@

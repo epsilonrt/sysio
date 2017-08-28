@@ -48,7 +48,7 @@
 
 #include "modbus-private.h"
 
-#include "../modbus-tcp.h"
+#include <modbus/modbus-tcp.h>
 #include "modbus-tcp-private.h"
 
 #ifdef OS_WIN32

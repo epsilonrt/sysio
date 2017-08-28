@@ -3,8 +3,8 @@ exec_prefix=${prefix}
 bindir=@INSTALL_BIN_DIR@
 libdir=@INSTALL_LIB_DIR@
 includedir=@INSTALL_INCLUDE_DIR@
-ldflags_other=@CHIPIO_LDFLAGS_OTHER@
-cflags_other=@CHIPIO_CPPFLAGS_OTHER@
+ldflags_other=@SSDV_LDFLAGS_PKGCONFIG@
+cflags_other=@SSDV_CFLAGS_PKGCONFIG@
 
 Name: ssdv
 Description: Slow Scan Digital Video library

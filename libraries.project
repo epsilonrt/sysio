@@ -26,6 +26,41 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="utils">
+    <VirtualDirectory Name="rpi">
+      <File Name="utils/rpi/rpi-info.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="i2c">
+      <File Name="utils/i2c/i2cping.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gpio">
+      <File Name="utils/gpio/bsend.c"/>
+      <File Name="utils/gpio/blink.c"/>
+    </VirtualDirectory>
+    <File Name="utils/CMakeLists.txt"/>
+    <File Name="utils/sping.c"/>
+    <File Name="utils/ssend.c"/>
+    <File Name="utils/tinfo.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="dev">
+    <VirtualDirectory Name="bin">
+      <File Name="dev/bin/armbian-board"/>
+      <File Name="dev/bin/hardware-cpu"/>
+      <File Name="dev/bin/git-version"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="cmake">
+      <File Name="dev/cmake/FindSDL2.cmake"/>
+      <File Name="dev/cmake/FindSDL2_image.cmake"/>
+      <File Name="dev/cmake/Findrt.cmake"/>
+      <File Name="dev/cmake/GitVersion.cmake"/>
+      <File Name="dev/cmake/PiBoardInfo.cmake"/>
+      <File Name="dev/cmake/Findmath.cmake"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="rpi">
+      <File Name="dev/rpi/rpi-info"/>
+    </VirtualDirectory>
+    <File Name="dev/CMakeLists.txt"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="3rdparty">
     <VirtualDirectory Name="ssdv">
       <VirtualDirectory Name="include">
@@ -53,6 +88,35 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <File Name="3rdparty/CMakeLists.txt"/>
+    <VirtualDirectory Name="modbus">
+      <VirtualDirectory Name="include">
+        <VirtualDirectory Name="modbus">
+          <File Name="3rdparty/modbus/include/modbus/modbus-tcp.h"/>
+          <File Name="3rdparty/modbus/include/modbus/modbus-rtu.h"/>
+          <File Name="3rdparty/modbus/include/modbus/modbus.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <File Name="3rdparty/modbus/CMakeLists.txt"/>
+      <File Name="3rdparty/modbus/AUTHORS"/>
+      <File Name="3rdparty/modbus/COPYING"/>
+      <VirtualDirectory Name="lib">
+        <File Name="3rdparty/modbus/lib/CMakeLists.txt"/>
+        <File Name="3rdparty/modbus/lib/modbus.pc.in"/>
+        <File Name="3rdparty/modbus/lib/modbus-config.cmake.in"/>
+        <File Name="3rdparty/modbus/lib/modbus-config-version.cmake.in"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="src">
+        <File Name="3rdparty/modbus/src/modbus-rtu-private.h"/>
+        <File Name="3rdparty/modbus/src/modbus-data.c"/>
+        <File Name="3rdparty/modbus/src/modbus-version.h"/>
+        <File Name="3rdparty/modbus/src/modbus-tcp.c"/>
+        <File Name="3rdparty/modbus/src/modbus-private.h"/>
+        <File Name="3rdparty/modbus/src/modbus-rtu.c"/>
+        <File Name="3rdparty/modbus/src/modbus-tcp-private.h"/>
+        <File Name="3rdparty/modbus/src/modbus.c"/>
+        <File Name="3rdparty/modbus/src/config.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="arch">
@@ -164,12 +228,12 @@
   </VirtualDirectory>
   <VirtualDirectory Name="sysio">
     <File Name="TODO"/>
-    <File Name="CMakeLists.txt"/>
     <File Name="cmake_uninstall.cmake.in"/>
     <File Name="AUTHORS"/>
     <File Name="LICENSE"/>
     <File Name="LICENCE"/>
     <File Name="INSTALL"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -263,24 +327,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="util">
-    <File Name="util/CMakeLists.txt"/>
-    <File Name="util/Makefile"/>
-    <VirtualDirectory Name="dev">
-      <File Name="util/dev/CMakeLists.txt"/>
-      <VirtualDirectory Name="bin">
-        <File Name="util/dev/bin/armbian-board"/>
-        <File Name="util/dev/bin/hardware-cpu"/>
-        <File Name="util/dev/bin/git-version"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="cmake">
-        <File Name="util/dev/cmake/Findrt.cmake"/>
-        <File Name="util/dev/cmake/GitVersion.cmake"/>
-        <File Name="util/dev/cmake/PiBoardInfo.cmake"/>
-        <File Name="util/dev/cmake/Findmath.cmake"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-  </VirtualDirectory>
   <VirtualDirectory Name="chipio">
     <VirtualDirectory Name="include">
       <VirtualDirectory Name="chipio">
@@ -323,11 +369,11 @@
       <File Name="radio/src/tnc.c"/>
     </VirtualDirectory>
     <VirtualDirectory Name="lib">
-      <File Name="radio/lib/CMakeLists.txt"/>
       <File Name="radio/lib/radio-config.cmake.in"/>
       <File Name="radio/lib/radio.pc.in"/>
       <File Name="radio/lib/config.h.in"/>
       <File Name="radio/lib/radio-config-version.cmake.in"/>
+      <File Name="radio/lib/CMakeLists.txt"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>

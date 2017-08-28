@@ -18,7 +18,7 @@
 #endif
 
 #include "config.h"
-#include "../modbus.h"
+#include <modbus/modbus.h>
 #include "modbus-private.h"
 
 /* Internal use */

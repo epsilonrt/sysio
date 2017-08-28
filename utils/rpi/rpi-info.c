@@ -10,7 +10,7 @@
 #include <getopt.h>
 #include <sysio/rpi.h>
 #include <sysio/log.h>
-#include "version-git.h"
+#include "version.h"
 
 /* constants ================================================================ */
 #define AUTHORS "epsilonRT"

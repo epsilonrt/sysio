@@ -1,0 +1,16 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+bindir=@INSTALL_BIN_DIR@
+libdir=@INSTALL_LIB_DIR@
+includedir=@INSTALL_INCLUDE_DIR@
+ldflags_other=@MODBUS_LDFLAGS_PKGCONFIG@
+cflags_other=@MODBUS_CFLAGS_PKGCONFIG@
+
+Name: modbus
+Description: Modbus libray (epsilonrt mod)
+URL: http://libmodbus.org
+Version: @MODBUS_VERSION@
+Requires: 
+Libs: -L${libdir} -lmodbus ${ldflags_other}
+Cflags: -I${includedir} ${cflags_other}
+

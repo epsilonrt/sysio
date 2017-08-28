@@ -15,4 +15,4 @@ target_link_libraries(ssdv-codec ssdv)
 target_include_directories(ssdv-codec PUBLIC ${SSDV_INC_DIR})
 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/ssdv-codec
-  DESTINATION bin  COMPONENT utils)
+  DESTINATION "${INSTALL_BIN_DIR}" COMPONENT utils)

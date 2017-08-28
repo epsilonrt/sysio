@@ -196,9 +196,13 @@ endif(SYSIO_WITH_STATIC)
 
 
 ## pkg-config ------------------------------------------------------------------
+foreach(item ${SYSIO_CFLAGS_OTHER})
+  string(APPEND SYSIO_CFLAGS_PKGCONFIG "${item} ")
+endforeach(item SYSIO_CFLAGS_OTHER)
 
-set (SYSIO_LDFLAGS_OTHER "${LIBGPS_LDFLAGS}")
-set (SYSIO_CFLAGS_OTHER "${LIBGPS_CFLAGS} ${CMAKE_THREAD_LIBS_INIT}")
+foreach(item ${SYSIO_LDFLAGS_OTHER})
+  string(APPEND SYSIO_LDFLAGS_PKGCONFIG "${item} ")
+endforeach(item SYSIO_LDFLAGS_OTHER)
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/sysio.pc.in
   ${CMAKE_CURRENT_BINARY_DIR}/sysio.pc @ONLY)

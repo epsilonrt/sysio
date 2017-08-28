@@ -16,7 +16,7 @@
 
 #include "modbus-private.h"
 
-#include "../modbus-rtu.h"
+#include <modbus/modbus-rtu.h>
 #include "modbus-rtu-private.h"
 
 #if HAVE_DECL_TIOCSRS485 || HAVE_DECL_TIOCM_RTS

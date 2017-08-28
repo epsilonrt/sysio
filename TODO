@@ -4,8 +4,6 @@ Bugg:
 Prioritaire:
 ------------
 1- Passage à CMake:
-  - 3rdparty/modbus
-  - sysio/util/*
   - doc
   - sysio/test
   - radio/test

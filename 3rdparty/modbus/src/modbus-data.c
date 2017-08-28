@@ -13,7 +13,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../modbus.h"
+#include <modbus/modbus.h>
 
 #if defined(HAVE_BYTESWAP_H)
 #  include <byteswap.h>

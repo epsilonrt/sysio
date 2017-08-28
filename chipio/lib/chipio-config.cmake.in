@@ -7,7 +7,7 @@
 #  CHIPIO_INCLUDE_DIRS - include directories for chipio
 #  CHIPIO_LIBRARY_DIRS - where to find libraries
 #  CHIPIO_LIBRARIES    - libraries to link against
-#  CHIPIO_CPPFLAGS_OTHER       - all required cppflags
+#  CHIPIO_CFLAGS_OTHER       - all required cppflags
 
 find_package(sysio REQUIRED)
 
@@ -23,5 +23,5 @@ include("${CHIPIO_CMAKE_DIR}/chipio.cmake")
 # These are IMPORTED targets created by sysio.cmake
 set(CHIPIO_LIBRARIES chipio ${SYSIO_LIBRARIES})
 
-set(CHIPIO_CPPFLAGS_OTHER "${SYSIO_CFLAGS_OTHER}")
+set(CHIPIO_CFLAGS_OTHER "${SYSIO_CFLAGS_OTHER}")
 set(CMAKE_MODULE_PATH "${CHIPIO_CMAKE_DIR}" "${SYSIO_CMAKE_DIR}")

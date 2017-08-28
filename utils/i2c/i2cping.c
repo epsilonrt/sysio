@@ -14,7 +14,7 @@
 #include <sysio/i2c.h>
 #include <sysio/log.h>
 #include <sysio/string.h>
-#include "version-git.h"
+#include "version.h"
 
 /* constants ================================================================ */
 #define AUTHORS "epsilonRT"

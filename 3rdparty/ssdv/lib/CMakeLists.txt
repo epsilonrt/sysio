@@ -113,9 +113,6 @@ endif(SYSIO_WITH_STATIC)
 
 ## pkg-config ------------------------------------------------------------------
 
-#set (SSDV_LDFLAGS_OTHER "")
-#set (SSDV_CPPFLAGS_OTHER "")
-
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/ssdv.pc.in
   ${CMAKE_CURRENT_BINARY_DIR}/ssdv.pc @ONLY)
 

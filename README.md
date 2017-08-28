@@ -59,10 +59,15 @@ Vous pouvez récupérer la toute dernière version de développement grâce à g
 Sa documentation complète est consultable sur le site : 
 [http://www.epsilonrt.fr/sysio](http://www.epsilonrt.fr/sysio)
 
+## Pré-requis
+
+Pour compiler, il est nécessaire d'installer gcc, g++, cmake, pkg-config.
+
 ##Installation rapide
 
     git clone http://github.com/epsilonrt/sysio.git
     cd sysio
-    sudo make install_utils
+    mkdir build-release && cd build-release
+    cmake ..
     make
     sudo make install

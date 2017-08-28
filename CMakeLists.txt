@@ -8,12 +8,12 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
 project (SYSIO)
 set (PROJECT_DESCRIPTION "Library and tools for embedded development")
-set (PROJECT_TOOLS_PATHS ${PROJECT_SOURCE_DIR}/util/dev/bin ${PROJECT_SOURCE_DIR}/util/dev/rpi)
+set (PROJECT_TOOLS_PATHS ${PROJECT_SOURCE_DIR}/dev/bin ${PROJECT_SOURCE_DIR}/dev/rpi)
 
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
 
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/util/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
 
 set (SYSIO_WITH_STATIC 0 CACHE BOOL "Enable building static libraries.")
 
@@ -21,8 +21,14 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
+set (SYSIO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT})
+
 find_package(PkgConfig)
 pkg_check_modules (LIBGPS libgps)
+if (LIBGPS_FOUND)
+  set (SYSIO_LDFLAGS_OTHER  ${LIBGPS_LDFLAGS})
+  list(APPEND SYSIO_CFLAGS_OTHER ${LIBGPS_CFLAGS})
+endif (LIBGPS_FOUND)
 
 include (GitVersion)
 include (PiBoardInfo)
@@ -59,6 +65,7 @@ endforeach()
 
 set (SYSIO_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set (SYSIO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
+set (SYSIO_LIB_DIR ${PROJECT_BINARY_DIR}/lib)
 set (SYSIO_INSTALL_CMAKE_DIR "${INSTALL_CMAKE_DIR}/sysio/cmake")
 set (SYSIO_INSTALL_DOC_DIR "${INSTALL_DOC_DIR}/sysio")
 
@@ -121,11 +128,13 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
+add_subdirectory (dev)
 add_subdirectory (lib)
-add_subdirectory (util)
-add_subdirectory (chipio)
 add_subdirectory (3rdparty)
 add_subdirectory (radio)
+add_subdirectory (chipio)
+add_subdirectory (utils)
+#add_subdirectory (doc)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")

@@ -115,9 +115,6 @@ endif(SYSIO_WITH_STATIC)
 
 ## pkg-config ------------------------------------------------------------------
 
-set (CHIPIO_LDFLAGS_OTHER "")
-set (CHIPIO_CPPFLAGS_OTHER "")
-
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/chipio.pc.in
   ${CMAKE_CURRENT_BINARY_DIR}/chipio.pc @ONLY)
 
