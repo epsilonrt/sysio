@@ -2,20 +2,17 @@
 # Copyright © 2017 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# chipio demo CMakeLists.txt
+# ssdv demo CMakeLists.txt
 
 cmake_minimum_required(VERSION 3.5)
 
-project (chipio_demo)
+project (ssdv_demo)
 
-find_package(chipio REQUIRED)
-link_directories(${CHIPIO_LIBRARY_DIRS})
+find_package(ssdv REQUIRED)
+find_package(SDL REQUIRED)
+find_package(SDL_image REQUIRED)
 
-include (PiBoardInfo)
-if (NOT PIBOARD_ID)
-  message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-  GetPiBoardInfo()
-endif (NOT PIBOARD_ID)
+link_directories(${SSDV_LIBRARY_DIRS})
 
 file(GLOB_RECURSE demo_list *.c)
 #message("demos=${demo_list}")
@@ -28,10 +25,10 @@ foreach(f ${demo_list})
     message (STATUS "Add ${demo_name} executable...")
     add_executable (${demo_name} ${f}) 
     
-    set_property(TARGET ${demo_name} PROPERTY C_STANDARD 99)
-    target_link_libraries(${demo_name} ${CHIPIO_LIBRARIES})
-    target_include_directories(${demo_name} PUBLIC ${demo_dir} ${CHIPIO_INCLUDE_DIRS})
-    target_compile_options(${demo_name} PUBLIC ${CHIPIO_CFLAGS})
+#    set_property(TARGET ${demo_name} PROPERTY C_STANDARD 99)
+    target_link_libraries(${demo_name} ${SSDV_LIBRARIES} ${SDL_LIBRARY} ${SDL_IMAGE_LIBRARIES})
+    target_include_directories(${demo_name} PUBLIC ${demo_dir} ${SSDV_INCLUDE_DIRS} ${SDL_INCLUDE_DIR} ${SDL_IMAGE_INCLUDE_DIRS})
+    target_compile_options(${demo_name} PUBLIC ${SSDV_CFLAGS})
     
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${demo_name}
       DESTINATION bin)

@@ -123,8 +123,9 @@ add_custom_target(uninstall
 
 add_subdirectory (lib)
 add_subdirectory (util)
-add_subdirectory (sysiopp)
 add_subdirectory (chipio)
+add_subdirectory (3rdparty)
+add_subdirectory (radio)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")
@@ -184,6 +185,7 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_LIB_FILE_NAME "lib${PROJECT_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
   set(CPACK_DEBIAN_LIB_PACKAGE_DEPENDS "libc6 (>= ${libc6_ver}), libgcc1 (>= ${libgcc1_ver})${libgps_depends}")
   set(CPACK_DEBIAN_LIB_PACKAGE_SECTION "libs")
+  set(CPACK_DEBIAN_LIB_PACKAGE_CONFLICTS "libmodbus5")
 
   set(CPACK_DEBIAN_DEV_PACKAGE_NAME "libsysio-dev")
   set(CPACK_COMPONENT_DEV_DESCRIPTION "${PROJECT_DESCRIPTION} (development files)")
@@ -191,13 +193,19 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_DEV_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION}), cmake, bash, git-core, pkg-config${libgps_dev_depends}")
   set(CPACK_DEBIAN_DEV_PACKAGE_SECTION "libdevel")
   #set(CPACK_PACKAGE_DESCRIPTION_FILE "${SYSIO_SRC_DIR}/doc/README-deb.md")
+  
+  set(CPACK_DEBIAN_UTILS_PACKAGE_NAME "libsysio-utils")
+  set(CPACK_COMPONENT_UTILS_DESCRIPTION "${PROJECT_DESCRIPTION} (utilities)")
+  set(CPACK_DEBIAN_UTILS_FILE_NAME "lib${PROJECT_NAME}-utils_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
+  set(CPACK_DEBIAN_UTILS_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
+  set(CPACK_DEBIAN_UTILS_PACKAGE_SECTION "utils")
 
   set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
   set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
   set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
   set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
   set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
-
+  
 endif (CPACK_GENERATOR STREQUAL "DEB")
 
 include(CPack)

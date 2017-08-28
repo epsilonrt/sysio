@@ -3,14 +3,14 @@ exec_prefix=${prefix}
 bindir=@INSTALL_BIN_DIR@
 libdir=@INSTALL_LIB_DIR@
 includedir=@INSTALL_INCLUDE_DIR@
-ldflags_other=@CHIPIO_LDFLAGS_OTHER@
-cflags_other=@CHIPIO_CPPFLAGS_OTHER@
+ldflags_other=@RADIO_LDFLAGS_OTHER@
+cflags_other=@RADIO_CPPFLAGS_OTHER@
 
-Name: chipio
-Description: Universal Input/Output Circuit library
+Name: radio
+Description: Radio ham library
 URL: http://www.epsilonrt.fr/sysio
 Version: @SYSIO_VERSION@
-Requires: sysio
-Libs: -L${libdir} -lchipio ${ldflags_other}
+Requires: sysio ssdv
+Libs: -L${libdir} -lradio ${ldflags_other}
 Cflags: -I${includedir} ${cflags_other}
 

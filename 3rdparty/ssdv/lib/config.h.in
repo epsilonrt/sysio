@@ -1,0 +1,20 @@
+/**
+ * @file
+ * @brief Configuration SysIo++
+ *
+ * Copyright © 2017 epsilonRT, All rights reserved.
+ * This software is governed by the CeCILL license <http://www.cecill.info>
+ */
+#ifndef _SSDV_CONFIG_H_
+#define _SSDV_CONFIG_H_
+/* ========================================================================== */
+#define SSDV_VERSION       "@SYSIO_VERSION_STRING@"
+#define SSDV_VERSION_SHORT "@SYSIO_VERSION_SHORT@"
+#define SSDV_VERSION_TINY  "@SYSIO_VERSION_TINY@"
+#define SSDV_VERSION_MAJOR @SYSIO_VERSION_MAJOR@
+#define SSDV_VERSION_MINOR @SYSIO_VERSION_MINOR@
+#define SSDV_VERSION_PATCH @SYSIO_VERSION_PATCH@
+#define SSDV_VERSION_SHA1  @SYSIO_VERSION_SHA1@
+
+/* ========================================================================== */
+#endif /*_SSDV_CONFIG_H_ defined */

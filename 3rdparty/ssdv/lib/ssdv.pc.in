@@ -6,11 +6,11 @@ includedir=@INSTALL_INCLUDE_DIR@
 ldflags_other=@CHIPIO_LDFLAGS_OTHER@
 cflags_other=@CHIPIO_CPPFLAGS_OTHER@
 
-Name: chipio
-Description: Universal Input/Output Circuit library
+Name: ssdv
+Description: Slow Scan Digital Video library
 URL: http://www.epsilonrt.fr/sysio
 Version: @SYSIO_VERSION@
-Requires: sysio
-Libs: -L${libdir} -lchipio ${ldflags_other}
+Requires: 
+Libs: -L${libdir} -lssdv ${ldflags_other}
 Cflags: -I${includedir} ${cflags_other}
 

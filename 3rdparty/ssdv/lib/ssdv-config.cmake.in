@@ -1,0 +1,25 @@
+###############################################################################
+# Copyright © 2017 epsilonRT, All rights reserved.                            #
+# This software is governed by the CeCILL license <http://www.cecill.info>    #
+###############################################################################
+# - Config file for the ssdv package
+# It defines the following variables
+#  SSDV_INCLUDE_DIRS - include directories for ssdv
+#  SSDV_LIBRARY_DIRS - where to find libraries
+#  SSDV_LIBRARIES    - libraries to link against
+#  SSDV_CPPFLAGS_OTHER       - all required cppflags
+
+# Compute paths
+get_filename_component(SSDV_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(SSDV_INCLUDE_DIRS "${SYSIO_INCLUDE_DIRS}")
+set(SSDV_LIBRARY_DIRS "${SYSIO_LIBRARY_DIRS}")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${SSDV_CMAKE_DIR}/ssdv.cmake")
+
+# These are IMPORTED targets created by sysio.cmake
+set(SSDV_LIBRARIES ssdv)
+
+set(SSDV_CPPFLAGS_OTHER "${SYSIO_CFLAGS_OTHER}")
+set(CMAKE_MODULE_PATH "${SSDV_CMAKE_DIR}" "${SYSIO_CMAKE_DIR}")

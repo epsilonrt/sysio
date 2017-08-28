@@ -4,12 +4,12 @@ Bugg:
 Prioritaire:
 ------------
 1- Passage à CMake:
-  - radio
-  - doc
-  - 3rdparty/ssdv
   - 3rdparty/modbus
-  - tests
-  - sysiopy
+  - sysio/util/*
+  - doc
+  - sysio/test
+  - radio/test
+  - sysio/python
 
 2- Création des templates intégrés à Codelite
 

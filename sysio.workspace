@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="">
   <Project Name="sysio_demo" Path="demo/sysio_demo.project" Active="No"/>
-  <Project Name="sysiopp_demo" Path="sysiopp/demo/sysiopp_demo.project" Active="No"/>
-  <Project Name="libraries" Path="libraries.project" Active="Yes"/>
   <Project Name="chipio_demo" Path="chipio/demo/chipio_demo.project" Active="No"/>
+  <Project Name="radio_demo" Path="radio/demo/radio_demo.project" Active="No"/>
+  <Project Name="ssdv_demo" Path="3rdparty/ssdv/demo/ssdv_demo.project" Active="No"/>
+  <Project Name="libraries" Path="libraries.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="sysio_demo" ConfigName="Debug"/>
-      <Project Name="sysiopp_demo" ConfigName="Debug"/>
-      <Project Name="libraries" ConfigName="Debug"/>
       <Project Name="chipio_demo" ConfigName="Debug"/>
+      <Project Name="radio_demo" ConfigName="Debug"/>
+      <Project Name="ssdv_demo" ConfigName="Debug"/>
+      <Project Name="libraries" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="sysio_demo" ConfigName="Release"/>
-      <Project Name="sysiopp_demo" ConfigName="Release"/>
-      <Project Name="libraries" ConfigName="Release"/>
       <Project Name="chipio_demo" ConfigName="Release"/>
+      <Project Name="radio_demo" ConfigName="Release"/>
+      <Project Name="ssdv_demo" ConfigName="Release"/>
+      <Project Name="libraries" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -52,6 +52,7 @@
     <File Name="sysio_demo_gps_monitor.c"/>
     <File Name="sysio_demo_gps_poll.c"/>
     <File Name="sysio_demo_i2c.c"/>
+    <File Name="sysio_cpp_demo_serial.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

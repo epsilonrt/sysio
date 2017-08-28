@@ -26,6 +26,34 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="3rdparty">
+    <VirtualDirectory Name="ssdv">
+      <VirtualDirectory Name="include">
+        <VirtualDirectory Name="ssdv">
+          <File Name="3rdparty/ssdv/include/ssdv/rs8.h"/>
+          <File Name="3rdparty/ssdv/include/ssdv/ssdv.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="src">
+        <File Name="3rdparty/ssdv/src/rs8.c"/>
+        <File Name="3rdparty/ssdv/src/ssdv.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="lib">
+        <File Name="3rdparty/ssdv/lib/ssdv-config.cmake.in"/>
+        <File Name="3rdparty/ssdv/lib/CMakeLists.txt"/>
+        <File Name="3rdparty/ssdv/lib/ssdv.pc.in"/>
+        <File Name="3rdparty/ssdv/lib/config.h.in"/>
+        <File Name="3rdparty/ssdv/lib/ssdv-config-version.cmake.in"/>
+      </VirtualDirectory>
+      <File Name="3rdparty/ssdv/CMakeLists.txt"/>
+      <File Name="3rdparty/ssdv/COPYING"/>
+      <VirtualDirectory Name="bin">
+        <File Name="3rdparty/ssdv/bin/CMakeLists.txt"/>
+        <File Name="3rdparty/ssdv/bin/main.c"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="3rdparty/CMakeLists.txt"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
@@ -88,6 +116,7 @@
     <File Name="src/ledrgb_private.h"/>
     <File Name="src/xbee1.c"/>
     <File Name="src/tinfo.c"/>
+    <File Name="src/serial-wrapper.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="sysio">
@@ -121,6 +150,7 @@
       <File Name="include/sysio/string.h"/>
       <File Name="include/sysio/timer.h"/>
       <File Name="include/sysio/log.h"/>
+      <File Name="include/sysio/serial.hpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
@@ -233,24 +263,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="sysiopp">
-    <VirtualDirectory Name="include">
-      <VirtualDirectory Name="sysiopp">
-        <File Name="sysiopp/include/sysiopp/serial.hpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <File Name="sysiopp/CMakeLists.txt"/>
-    <VirtualDirectory Name="lib">
-      <File Name="sysiopp/lib/CMakeLists.txt"/>
-      <File Name="sysiopp/lib/sysiopp-config-version.cmake.in"/>
-      <File Name="sysiopp/lib/sysiopp-config.cmake.in"/>
-      <File Name="sysiopp/lib/config.h.in"/>
-      <File Name="sysiopp/lib/sysiopp.pc.in"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="src">
-      <File Name="sysiopp/src/serial-wrapper.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
   <VirtualDirectory Name="util">
     <File Name="util/CMakeLists.txt"/>
     <File Name="util/Makefile"/>
@@ -290,6 +302,32 @@
       <File Name="chipio/src/adc.c"/>
       <File Name="chipio/src/interface.h"/>
       <File Name="chipio/src/chipio.c"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="radio">
+    <VirtualDirectory Name="include">
+      <VirtualDirectory Name="radio">
+        <File Name="radio/include/radio/ax25.h"/>
+        <File Name="radio/include/radio/ax25.hpp"/>
+        <File Name="radio/include/radio/tnc.h"/>
+        <File Name="radio/include/radio/crc.h"/>
+        <File Name="radio/include/radio/tnc.hpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="radio/CMakeLists.txt"/>
+    <VirtualDirectory Name="src">
+      <File Name="radio/src/ax25-wrapper.cpp"/>
+      <File Name="radio/src/crc.c"/>
+      <File Name="radio/src/tnc-wrapper.cpp"/>
+      <File Name="radio/src/ax25.c"/>
+      <File Name="radio/src/tnc.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="lib">
+      <File Name="radio/lib/CMakeLists.txt"/>
+      <File Name="radio/lib/radio-config.cmake.in"/>
+      <File Name="radio/lib/radio.pc.in"/>
+      <File Name="radio/lib/config.h.in"/>
+      <File Name="radio/lib/radio-config-version.cmake.in"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>

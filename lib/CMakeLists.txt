@@ -12,6 +12,7 @@ endif()
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
 file(GLOB src_sysio ${SYSIO_SRC_DIR}/*.c)
+file(GLOB src_sysio_cpp ${SYSIO_SRC_DIR}/*.cpp)
 file(GLOB src_sys   ${SYSIO_SRC_SYS_DIR}/*.c)
 file(GLOB src_arch  ${SYSIO_SRC_ARCH_DIR}/*.c)
 
@@ -32,6 +33,10 @@ set (hdr_sysio
   ${SYSIO_INC_DIR}/sysio/timer.h
   ${SYSIO_INC_DIR}/sysio/ledrgb.h
   ${SYSIO_INC_DIR}/sysio/rgb.h
+)
+
+set (hdr_sysio_cpp 
+  ${SYSIO_INC_DIR}/sysio/serial.hpp
 )
 
 set (hdr_gpio 
@@ -62,7 +67,7 @@ set (hdr_gps
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
-set(hdr_public ${hdr_sysio} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+set(hdr_public ${hdr_sysio} ${hdr_sysio_cpp} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if (SYSIO_WITH_GPIO)
   file(GLOB src_gpio ${SYSIO_SRC_DIR}/gpio/*.c)
@@ -88,6 +93,7 @@ endif (LIBGPS_FOUND)
 
 set (libsrc ${src_sysio} ${src_sys} ${src_arch} 
   ${src_gpio} ${src_i2c} ${src_spi} ${src_gps} 
+  ${src_sysio_cpp}
   )
 
 include_directories(
