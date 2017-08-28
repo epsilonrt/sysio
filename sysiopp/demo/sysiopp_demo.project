@@ -121,7 +121,7 @@
   </Settings>
   <VirtualDirectory Name="demo">
     <File Name="CMakeLists.txt"/>
-    <File Name="sysiopp_demo_led.cpp"/>
+    <File Name="sysiopp_demo_serial.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

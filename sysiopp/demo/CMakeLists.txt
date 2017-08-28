@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project (sysiopp_demo)
 
-find_package(sysiopp REQUIRED)
-link_directories(${SYSIOPP_LIBRARY_DIRS})
+find_package(sysio REQUIRED)
+link_directories(${SYSIO_LIBRARY_DIRS})
 
 include (PiBoardInfo)
 if (NOT PIBOARD_ID)
@@ -22,9 +22,9 @@ foreach(f ${demo_list})
     message (STATUS "Add ${demo_name} executable...")
     add_executable (${demo_name} ${f}) 
     
-    target_link_libraries(${demo_name} ${SYSIOPP_LIBRARIES})
-    target_include_directories(${demo_name} PUBLIC ${demo_dir} ${SYSIOPP_INCLUDE_DIRS})
-    target_compile_options(${demo_name} PUBLIC ${SYSIOPP_CFLAGS})
+    target_link_libraries(${demo_name} ${SYSIO_LIBRARIES})
+    target_include_directories(${demo_name} PUBLIC ${demo_dir} ${SYSIO_INCLUDE_DIRS})
+    target_compile_options(${demo_name} PUBLIC ${SYSIO_CFLAGS})
     
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${demo_name}
       DESTINATION bin)
