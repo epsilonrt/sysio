@@ -1,5 +1,5 @@
 /**
- * @file sysio/delay.h
+ * @file delay.h
  * @brief Temporisation
  *
  * Copyright © 2014 epsilonRT, All rights reserved.

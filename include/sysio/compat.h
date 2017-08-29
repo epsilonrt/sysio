@@ -1,5 +1,5 @@
 /**
- * @file sysio/compat.h
+ * @file
  * @brief Fonctions de portabilité POSIX, GNU, Microsoft
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

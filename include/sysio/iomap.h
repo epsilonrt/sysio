@@ -1,5 +1,5 @@
 /**
- * @file sysio/iomap.h
+ * @file iomap.h
  * @brief Projection mémoire
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

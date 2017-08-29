@@ -1,5 +1,5 @@
 /**
- * @file sysio/douput.h
+ * @file
  * @brief Sorties binaires
  * 
  * Copyright © 2015 epsilonRT, All rights reserved.
@@ -22,7 +22,7 @@ __BEGIN_C_DECLS
  * Le nombre maximal de broches d'un port logique est de 31 sur une plateforme
  * 32 bits (63 pour 64 bits ...)
  * @{
- *  @example led/sysio_demo_led.c
+ *  @example gpio/sysio_demo_led.c
  *  Utilisation pour gérer des leds
  */
 

@@ -1,5 +1,5 @@
 /**
- * @file sysio/nanopi.h
+ * @file nanopi.h
  * @brief NanoPi
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

@@ -1,5 +1,5 @@
 /**
- * @file sysio/gpio_private.h
+ * @file gpio_private.h
  * @brief GPIO Private
  *
  * Copyright © 2017 epsilonRT, All rights reserved.

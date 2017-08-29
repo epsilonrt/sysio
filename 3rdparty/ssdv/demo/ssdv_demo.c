@@ -1,5 +1,5 @@
 /**
- * @file demo_ssdv.c
+ * @file
  * @brief SSDV radio demo.
  * 
  * Nécessite SDL 1.2 et SDL_image:

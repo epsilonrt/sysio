@@ -1,5 +1,5 @@
 /*
- * @file sysio/string.c
+ * @file string.c
  * @brief Chaîne de caractères
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

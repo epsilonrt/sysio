@@ -22,10 +22,10 @@ __BEGIN_C_DECLS
  *
  *  Copyright © 2006-2008 Tymm Twillman <tymm@booyaka.com>
  *  @{
- *  @example xbee/node/sysio_demo_xbee_node.c
+ *  @example serial/sysio_demo_xbee_node.c
  *  Affiche le contenu des paquets de données reçus du coordinateur, transmet 
  *  périodiquement un paquet de données de test.
- *  @example xbee/coordinator/sysio_demo_xbee_coordinator.c
+ *  @example serial/sysio_demo_xbee_coordinator.c
  *  Affiche l'identification des nouveaux noeuds, affiche le contenu des paquets 
  *  de données reçus et transmet périodiquement un paquet de test en broadcast.
  */

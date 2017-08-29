@@ -1,5 +1,5 @@
 /**
- * @file sysio/gpio/gpio.c
+ * @file gpio/gpio.c
  * @brief GPIO
  *
  * Copyright © 2017 epsilonRT, All rights reserved.

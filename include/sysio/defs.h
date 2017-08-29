@@ -1,5 +1,5 @@
 /**
- * @file sysio/defs.h
+ * @file
  * @brief Défintions pour l'interface système
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

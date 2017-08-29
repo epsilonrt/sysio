@@ -1,5 +1,5 @@
 /**
- * @file sysio/iaq.h
+ * @file
  * @brief Capteur I2c IAQ de amS
  *
  * Copyright © 2016 epsilonRT, All rights reserved.
@@ -20,7 +20,7 @@ __BEGIN_C_DECLS
  *  la mesure de qualité de l'air (CO2 et composés volatiles)
  *  .
  *  @{
- *  @example i2c/iaq/sysio_demo_iaq.c
+ *  @example i2c/sysio_demo_i2c_iaq.c
  *  Affichage du taux de CO2 en ppm (partie par million) et du taux de
  *  composés volatiles en ppb (partie par milliard).
  */

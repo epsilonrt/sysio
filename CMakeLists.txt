@@ -149,7 +149,7 @@ if(SYSIO_WITH_I2C)
   add_subdirectory (chipio)
 endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
-#add_subdirectory (doc)
+add_subdirectory (doc)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")

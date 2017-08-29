@@ -119,8 +119,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="demo">
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
@@ -157,4 +155,6 @@
     <File Name="spi/sysio_demo_rf69_gateway.c"/>
     <File Name="spi/sysio_demo_rf69_ping.c"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

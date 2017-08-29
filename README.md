@@ -59,15 +59,31 @@ Vous pouvez récupérer la toute dernière version de développement grâce à g
 Sa documentation complète est consultable sur le site : 
 [http://www.epsilonrt.fr/sysio](http://www.epsilonrt.fr/sysio)
 
-## Pré-requis
-
-Pour compiler, il est nécessaire d'installer gcc, g++, cmake, pkg-config.
-
 ##Installation rapide
 
-    git clone http://github.com/epsilonrt/sysio.git
-    cd sysio
-    mkdir build-release && cd build-release
-    cmake ..
-    make
-    sudo make install
+Pour compiler, il est nécessaire d'installer gcc, g++, cmake, pkg-config et
+de façon optionnelle libgps
+
+* Installer les dépendances:
+
+        sudo apt-get install build-essential cmake libgps-dev
+
+* Générer le Makefile avec cmake:
+
+        cd sysio
+        mkdir build-release && cd build-release
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .. 
+
+* Compiler et installer sysio :
+
+        make
+        sudo make install
+
+On pourra désinstaller avec un `sudo make uninstall` dans le même répertoire.
+
+Si on le préfère, on peut à la place de la compilation directe créer un package 
+et l'installer:
+
+        cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+        make package
+        sudo dpkg -i *.deb

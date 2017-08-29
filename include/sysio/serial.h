@@ -1,5 +1,5 @@
 /**
- * @file sysio/serial.h
+ * @file 
  * @brief Liaison série
  *
  * Copyright © 2014 epsilonRT, All rights reserved.
@@ -22,7 +22,7 @@ __BEGIN_C_DECLS
  *  @example serial/sysio_demo_serial.c
  *  Transmet tous les caractères tapés sur la liaison série et affiche les
  *  caractères reçus.
- *  @example rs485/sysio_demo_rs485.c
+ *  @example serial/sysio_demo_rs485.c
  *  Transmet l'alphabet sur la liaison RS485 toutes les secondes
  */
 

@@ -1,5 +1,5 @@
 /**
- * @file sysio/iaq.h
+ * @file iaq.h
  * @brief Capteur I2c IAQ de amS (Implémentation)
  *
  * Copyright © 2016 epsilonRT, All rights reserved.

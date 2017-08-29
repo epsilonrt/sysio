@@ -1,5 +1,5 @@
 /**
- * @file sysio/serial.hpp
+ * @file 
  * @brief Liaison série C++
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

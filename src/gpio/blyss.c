@@ -1,5 +1,5 @@
 /**
- * @file sysio/gpio/blyss.c
+ * @file gpio/blyss.c
  * @brief Modules Blyss™
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

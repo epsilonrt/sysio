@@ -1,5 +1,5 @@
 /**
- * @file sysio/gpio.h
+ * @file
  * @brief GPIO
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
@@ -17,6 +17,9 @@ __BEGIN_C_DECLS
  *  Ce module fournit les fonctions permettant de contrôler les broches
  *  d'entrées-sorties à usage général.
  *  @{
+ */
+
+/*
  *  @example gpio/write/sysio_test_gpio_write.c
  *  Allumage de leds
  *  @example gpio/read/sysio_test_gpio_read.c
@@ -24,7 +27,6 @@ __BEGIN_C_DECLS
  *  @example gpio/getmode/sysio_test_gpio_getmode.c
  *  Lecture du mode de toutes les broches du GPIO
  */
-
 /* constants ================================================================ */
 /**
  * Permet d'indiquer qu'une broche est inutilisée

@@ -1,5 +1,5 @@
 /**
- * @file sysio/pwm.h
+ * @file pwm.h
  * @brief PWM
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
@@ -20,6 +20,9 @@ __BEGIN_C_DECLS
  *  correspond au nombre de cycles d'horloge à l'état haut alors que "range"
  *  correspond à la période du signal généré en nombre de cycles d'horloge.
  *  @{
+ */
+
+/*
  *  @example pwm/sysio_test_pwm.c
  *  Test sortie PWM
  */

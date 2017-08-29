@@ -1,5 +1,5 @@
 /**
- * @file sysio/log.h
+ * @file log.h
  * @brief Gestion des logs
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

@@ -143,7 +143,7 @@ export(TARGETS ${exported_targets}
 export(PACKAGE Sysio)
 
 # Create the sysio-config.cmake and sysio-config-version files
-file(RELATIVE_PATH REL_LIB_DIR "${SYSIO_INSTALL_CMAKE_DIR}e" 
+file(RELATIVE_PATH REL_LIB_DIR "${SYSIO_INSTALL_CMAKE_DIR}" 
   "${INSTALL_LIB_DIR}")
 file(RELATIVE_PATH REL_INCLUDE_DIR "${SYSIO_INSTALL_CMAKE_DIR}"
   "${INSTALL_INCLUDE_DIR}")

@@ -41,7 +41,7 @@ __BEGIN_C_DECLS
  * On peut aussi afficher les informations reçues sous forme plus exploitables
  * avec `cgps` ou `xgps`. 
  * @{
- * @example gps/poll/sysio_demo_gps_poll.c
+ * @example gps/sysio_demo_gps_poll.c
  *  Demo module gps par scrutation
  * 
  * Ce programme permet d'afficher les données GPS reçues par gpsd. \n
@@ -68,7 +68,7 @@ __BEGIN_C_DECLS
     Have a nice day !
  * @endcode
  *
- * @example gps/callback/sysio_demo_gps_callback.c
+ * @example gps/sysio_demo_gps_callback.c
  *  Demo module gps par interruption
  * 
  * Ce programme permet d'afficher les données GPS reçues par gpsd. \n

@@ -1,5 +1,5 @@
 /**
- * @file sysio/spi.h
+ * @file spi.h
  * @brief Bus SPI
  *
  * Copyright © 2017 epsilonRT, All rights reserved.
@@ -16,7 +16,7 @@ __BEGIN_C_DECLS
  *
  *  Ce module fournit les fonctions permettant d'accéder au bus SPI.
  *  @{
- *  @example spi/rfm69/sysio_demo_rfm69.c
+ *  @example spi/sysio_demo_rf69_ping.c
  *  Accès aux registres d'un module de transmission
  */
 

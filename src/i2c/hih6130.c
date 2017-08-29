@@ -1,5 +1,5 @@
 /**
- * @file sysio/hih6130.h
+ * @file hih6130.h
  * @brief Capteur I2c HIH6130 de Honeywell (Implémentation)
  *
  * Copyright © 2016 epsilonRT, All rights reserved.

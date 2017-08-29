@@ -1,5 +1,5 @@
 /**
- * @file sysio/dinput.h
+ * @file
  * @brief Entrées binaires
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
@@ -29,10 +29,13 @@ __BEGIN_C_DECLS
  * Le nombre maximal de broches d'un port logique est de 31 sur une plateforme
  * 32 bits (63 pour 64 bits ...)
  * @{
- *  @example button/sysio_demo_button.c
+ *  @example gpio/sysio_demo_button.c
  *  Utilisation pour gérer des boutons poussoir
- *  @example switch/sysio_demo_switch.c
+ *  @example gpio/sysio_demo_switch.c
  *  Utilisation pour gérer des micro-switches
+ */
+
+/*
  *  @example dinput/poll/sysio_test_dinput_poll.c
  *  Utilisation en scrutation
  *  @example dinput/callback/sysio_test_dinput_callback.c
@@ -40,7 +43,6 @@ __BEGIN_C_DECLS
  *  @example dinput/group/sysio_test_dinput_group.c
  *  Utilisation en "interruption" groupée
  */
-
 /* constants ================================================================ */
 /**
  * @enum eDinEdge

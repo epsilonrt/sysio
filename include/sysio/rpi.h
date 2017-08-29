@@ -1,5 +1,5 @@
 /**
- * @file sysio/rpi.h
+ * @file rpi.h
  * @brief Raspberry Pi
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

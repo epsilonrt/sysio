@@ -1,5 +1,5 @@
 /**
- * @file sysio/dlist.h
+ * @file
  * @brief Liste doublement chaînée
  *
  * Inspiré par la lecture du livre "Maitrise des algorithmes en C" de K. Loudon

@@ -26,7 +26,7 @@ __BEGIN_C_DECLS
  *  Ce module permet la commande d'un capteur de particules fines GP2Y1010AU0F
  *  équipé d'un module gp2-i2c <https://github.com/epsilonrt/gp2-i2c>
  *  @{
- *  @example i2c/gp2/sysio_demo_gp2.c
+ *  @example i2c/sysio_demo_i2c_gp2.c
  *  Affichage de la densité de particules fines
  */
 

@@ -23,7 +23,7 @@ __BEGIN_C_DECLS
  * Bidle (https://skyduino.wordpress.com/2012/07/19/hack-partie-2-reverse-engineering-des-interrupteurs-domotique-blyss) \n
  * @todo Seule la partie emission est implémentée pour l'instant.
  * @{
- * @example blyss/tx/sysio_demo_blyss_tx.c
+ * @example gpio/sysio_demo_blyss_tx.c
  * Demo émission Modules Blyss™
  * 
  * Ce programme permet d'envoyer des commandes sur une liaison LiveEz™ 433.92 MHz

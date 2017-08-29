@@ -1,5 +1,5 @@
 /**
- * @file sysio/i2c.h
+ * @file
  * @brief Bus I²C
  *
  * Copyright © 2015 epsilonRT, All rights reserved.
@@ -16,13 +16,13 @@ __BEGIN_C_DECLS
  *
  *  Ce module fournit les fonctions permettant d'accéder au bus I2C.
  *  @{
- *  @example i2c/iaq/sysio_demo_iaq.c
+ *  @example i2c/sysio_demo_i2c_iaq.c
  *  Accès aux registres d'un capteur IAQ (qualité de l'air)
- *  @example i2c/eeprom/sysio_demo_eeprom.c
+ *  @example i2c/sysio_demo_i2c_eeprom.c
  *  Ecriture dans de tout l'espace d'une mémoire EEPROM I2c, page par page,
  *  avec une séquence d'octets aléatoires, après écriture, la page est lue et
  *  vérifiée.
- *  @example i2c/rtc/sysio_demo_rtc.c
+ *  @example i2c/sysio_demo_i2c_rtc.c
  *  Accès aux registres d'une RTC BQ32000
  */
 

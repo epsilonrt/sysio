@@ -1,5 +1,5 @@
 /**
- * @file sysio/hih6130.h
+ * @file
  * @brief Capteur I2c HIH6130 de Honeywell
  *
  * Copyright © 2016 epsilonRT, All rights reserved.
@@ -22,7 +22,7 @@ __BEGIN_C_DECLS
  *  - ChipCap 2
  *  .
  *  @{
- *  @example i2c/hih6130/sysio_demo_hih6130.c
+ *  @example i2c/sysio_demo_i2c_hih6130.c
  *  Affichage de la température et de l'humidité
  */
 

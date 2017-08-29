@@ -1,5 +1,5 @@
 /**
- * @file sysio++/src/serial-wrapper.cpp
+ * @file src/serial-wrapper.cpp
  * @brief Liaison série (Wrapper C++)
  *
  * Copyright © 2015 epsilonRT, All rights reserved.

@@ -1,5 +1,5 @@
 /*
- * @file sysio/dinput.c
+ * @file dinput.c
  * @brief GPIO Input pin
  * Copyright © 2015 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
