@@ -6,7 +6,7 @@
 
 find_package(Doxygen)
 
-if(NOT DOXYGEN_FOUND OR NOT BUILD_MAINPAGE_EXECUTABLE)
+if(NOT DOXYGEN_FOUND)
   message("Doxygen or build_main_page.sh not found, I will not generate/install the documentation")
 else()
 
@@ -50,7 +50,7 @@ else()
     )
   #add_dependencies(html main_page.dox DoxygenLayout.xml Doxyfile.in)
   
-  add_custom_target(doc ALL)
+  add_custom_target(doc)
   add_dependencies(doc main_page.dox html)
   
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 

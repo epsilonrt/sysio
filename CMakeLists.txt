@@ -135,12 +135,6 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
-message("SYSIO_WITH_GPIO=${SYSIO_WITH_GPIO}")
-message("SYSIO_WITH_I2C=${SYSIO_WITH_I2C}")
-message("SYSIO_WITH_SPI=${SYSIO_WITH_SPI}")
-message("SYSIO_WITH_SERIAL=${SYSIO_WITH_SERIAL}")
-message("SYSIO_WITH_GPS=${SYSIO_WITH_GPS}")
-
 add_subdirectory (dev)
 add_subdirectory (lib)
 add_subdirectory (3rdparty)

@@ -152,6 +152,10 @@ typedef enum {
   eMode3d      = MODE_3D        ///< Fixé en 3 dimensions (latitude/longitude/altitude)
 } eGpsMode;
 
+#ifndef STATUS_DGPS_FIX
+#define STATUS_DGPS_FIX 2
+#endif
+
 /**
  * @enum eGpsStatus
  * @brief Différents états du récepteur GPS

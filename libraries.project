@@ -284,6 +284,16 @@
       <File Name="radio/lib/CMakeLists.txt"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <VirtualDirectory Name="doc">
+    <File Name="doc/DoxygenLayout.xml"/>
+    <File Name="doc/CMakeLists.txt"/>
+    <File Name="doc/build_main_page.sh.in"/>
+    <File Name="doc/Doxyfile.in"/>
+    <File Name="doc/main_page_footer.dox"/>
+    <File Name="doc/main_page_header.dox"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -313,7 +323,7 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="Documentation">make doc</Target>
+        <Target Name="Documentation">make -C build-debug doc</Target>
         <Target Name="Distclean">rm -fr build-debug</Target>
         <Target Name="CMake">mkdir -p build-debug &amp;&amp; cd build-debug &amp;&amp; cmake -G "Unix Makefiles" .. -DCMAKE_BUILD_TYPE=Debug</Target>
         <RebuildCommand>make -C build-debug clean &amp;&amp; make -j4 -C build-debug</RebuildCommand>
@@ -355,7 +365,7 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="Documentation">make doc</Target>
+        <Target Name="Documentation">make -C build-release doc</Target>
         <Target Name="Distclean">rm -fr build-release</Target>
         <Target Name="Debian Packages">make -j4  -C build-release package</Target>
         <Target Name="CMake">mkdir -p build-release &amp;&amp; cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr .. -DCMAKE_BUILD_TYPE=Release</Target>
@@ -380,14 +390,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
-  <VirtualDirectory Name="doc">
-    <File Name="doc/DoxygenLayout.xml"/>
-    <File Name="doc/CMakeLists.txt"/>
-    <File Name="doc/build_main_page.sh.in"/>
-    <File Name="doc/Doxyfile.in"/>
-    <File Name="doc/main_page_footer.dox"/>
-    <File Name="doc/main_page_header.dox"/>
-  </VirtualDirectory>
 </CodeLite_Project>
