@@ -55,11 +55,11 @@ else()
 endif()
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
   "Installation directory for CMake files")
-set(INSTALL_DOC_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
+set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
   "Installation directory for documentation")
 
 # Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE CMAKE)
+foreach(p LIB BIN INCLUDE CMAKE DOC)
   set(var INSTALL_${p}_DIR)
   if(NOT IS_ABSOLUTE "${${var}}")
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")

@@ -7,14 +7,12 @@
 find_package(Doxygen)
 
 if(NOT DOXYGEN_FOUND)
-  message("Doxygen or build_main_page.sh not found, I will not generate/install the documentation")
+  message("Doxygen not found, I will not generate/install the documentation")
 else()
 
   set(DOXYGEN_README ${PROJECT_SOURCE_DIR}/README.md)
   set(DOXYGEN_FILE ${CMAKE_BINARY_DIR}/doc/Doxyfile)
   set(DOXYGEN_MAINPAGE ${CMAKE_BINARY_DIR}/doc/main_page.dox)
-
-  #set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
 
   set(DOXYGEN_INPUT_LIST 
     ${PROJECT_SOURCE_DIR}/include/sysio/*.h
@@ -40,7 +38,6 @@ else()
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     DEPENDS main_page_header.dox main_page_footer.dox ${PROJECT_SOURCE_DIR}/README.md
     )
-  #add_dependencies(main_page.dox main_page_header.dox main_page_footer.dox ${PROJECT_SOURCE_DIR}/README.md)
 
   add_custom_target(html
     COMMAND ${CMAKE_COMMAND} -E echo_append "Building API HTML Documentation..."
@@ -48,12 +45,25 @@ else()
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     DEPENDS main_page.dox DoxygenLayout.xml Doxyfile.in ${DOXYGEN_INPUT_LIST}
     )
-  #add_dependencies(html main_page.dox DoxygenLayout.xml Doxyfile.in)
   
   add_custom_target(doc)
   add_dependencies(doc main_page.dox html)
   
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
-          DESTINATION share/doc/${CMAKE_PROJECT_NAME} COMPONENT doc)
+  #message("SYSIO_INSTALL_DOC_DIR=${SYSIO_INSTALL_DOC_DIR}")
+  
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/api-manual COMPONENT doc)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio COMPONENT doc)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio COMPONENT doc)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv COMPONENT doc)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus COMPONENT doc)
+  if(SYSIO_WITH_I2C)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/chipio/demo/
+            DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio/radio COMPONENT doc)
+  endif(SYSIO_WITH_I2C)
 
 endif()
