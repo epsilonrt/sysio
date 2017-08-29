@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="sysio_demo" InternalType="">
+<CodeLite_Project Name="sysio_demo" InternalType="" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -28,32 +28,6 @@
   </Plugins>
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="demo">
-    <File Name="CMakeLists.txt"/>
-    <File Name="sysio_demo_serial.c"/>
-    <File Name="sysio_demo_rf69_ping.c"/>
-    <File Name="sysio_demo_xbee_node.c"/>
-    <File Name="sysio_demo_i2c_rtc.c"/>
-    <File Name="sysio_demo_tinfo.c"/>
-    <File Name="sysio_demo_led.c"/>
-    <File Name="sysio_demo_xbee_coordinator.c"/>
-    <File Name="sysio_demo_i2c_hih6130.c"/>
-    <File Name="sysio_demo_i2c_gp2.c"/>
-    <File Name="sysio_demo_ledrgb_tlc59116.c"/>
-    <File Name="sysio_demo_button.c"/>
-    <File Name="sysio_demo_i2c_mcp3426.c"/>
-    <File Name="sysio_demo_switch.c"/>
-    <File Name="sysio_demo_rf69_gateway.c"/>
-    <File Name="sysio_demo_blyss_tx.c"/>
-    <File Name="sysio_demo_gps_callback.c"/>
-    <File Name="sysio_demo_i2c_eeprom.c"/>
-    <File Name="sysio_demo_i2c_iaq.c"/>
-    <File Name="sysio_demo_rs485.c"/>
-    <File Name="sysio_demo_gps_monitor.c"/>
-    <File Name="sysio_demo_gps_poll.c"/>
-    <File Name="sysio_demo_i2c.c"/>
-    <File Name="sysio_cpp_demo_serial.cpp"/>
-  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -147,4 +121,40 @@
   </Settings>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <VirtualDirectory Name="demo">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="gpio">
+    <File Name="gpio/sysio_demo_switch.c"/>
+    <File Name="gpio/sysio_demo_blyss_tx.c"/>
+    <File Name="gpio/sysio_demo_button.c"/>
+    <File Name="gpio/sysio_demo_led.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="gps">
+    <File Name="gps/sysio_demo_gps_poll.c"/>
+    <File Name="gps/sysio_demo_gps_monitor.c"/>
+    <File Name="gps/sysio_demo_gps_callback.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="i2c">
+    <File Name="i2c/sysio_demo_i2c_eeprom.c"/>
+    <File Name="i2c/sysio_demo_ledrgb_tlc59116.c"/>
+    <File Name="i2c/sysio_demo_i2c.c"/>
+    <File Name="i2c/sysio_demo_i2c_gp2.c"/>
+    <File Name="i2c/sysio_demo_i2c_mcp3426.c"/>
+    <File Name="i2c/sysio_demo_i2c_rtc.c"/>
+    <File Name="i2c/sysio_demo_i2c_iaq.c"/>
+    <File Name="i2c/sysio_demo_i2c_hih6130.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="serial">
+    <File Name="serial/sysio_demo_serial.c"/>
+    <File Name="serial/sysio_demo_tinfo.c"/>
+    <File Name="serial/sysio_demo_xbee_coordinator.c"/>
+    <File Name="serial/sysio_demo_xbee_node.c"/>
+    <File Name="serial/sysio_demo_serial_cpp.cpp"/>
+    <File Name="serial/sysio_demo_rs485.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="spi">
+    <File Name="spi/sysio_demo_rf69_gateway.c"/>
+    <File Name="spi/sysio_demo_rf69_ping.c"/>
+  </VirtualDirectory>
 </CodeLite_Project>
