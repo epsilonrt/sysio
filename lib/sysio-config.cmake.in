@@ -9,6 +9,10 @@
 #  SYSIO_LIBRARIES    - libraries to link against
 #  SYSIO_CFLAGS       - all required cflags
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 # Compute paths
 get_filename_component(SYSIO_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
@@ -28,7 +32,12 @@ endforeach()
 include("${SYSIO_CMAKE_DIR}/sysio.cmake")
 
 # These are IMPORTED targets created by sysio.cmake
-set(SYSIO_LIBRARIES sysio @LIBGPS_LIBRARIES@)
+set(SYSIO_LIBRARIES sysio Threads::Threads @LIBGPS_LIBRARIES@)
 
-set(SYSIO_CFLAGS @LIBGPS_CFLAGS@ @CMAKE_THREAD_LIBS_INIT@)
+set(SYSIO_CFLAGS @LIBGPS_CFLAGS@ ${CMAKE_THREAD_LIBS_INIT})
 set(CMAKE_MODULE_PATH "${SYSIO_CMAKE_DIR}")
+set(SYSIO_WITH_GPIO @SYSIO_WITH_GPIO@)
+set(SYSIO_WITH_I2C @SYSIO_WITH_I2C@)
+set(SYSIO_WITH_SPI @SYSIO_WITH_SPI@)
+set(SYSIO_WITH_SERIAL @SYSIO_WITH_SERIAL@)
+set(SYSIO_WITH_GPS @SYSIO_WITH_GPS@)

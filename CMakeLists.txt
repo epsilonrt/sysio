@@ -28,6 +28,9 @@ pkg_check_modules (LIBGPS libgps)
 if (LIBGPS_FOUND)
   set (SYSIO_LDFLAGS_OTHER  ${LIBGPS_LDFLAGS})
   list(APPEND SYSIO_CFLAGS_OTHER ${LIBGPS_CFLAGS})
+  set (SYSIO_WITH_GPS 1 CACHE BOOL "Enable GPS")
+else (LIBGPS_FOUND)
+  set (SYSIO_WITH_GPS 0 CACHE BOOL "Enable GPS")
 endif (LIBGPS_FOUND)
 
 include (GitVersion)
@@ -86,30 +89,34 @@ if (NOT PIBOARD_FOUND)
   endif (CMAKE_HOST_UNIX)
 endif (NOT PIBOARD_FOUND)
 
-add_definitions (-D${PIBOARD_ID})
+add_definitions (-DPIBOARD_ID=${PIBOARD_ID})
 
+set (SYSIO_WITH_GPIO 0 CACHE BOOL "Enable GPIO")
+set (SYSIO_WITH_I2C 0 CACHE BOOL "Enable I2C bus")
+set (SYSIO_WITH_SPI 0 CACHE BOOL "Enable SPI bus")
+set (SYSIO_WITH_SERIAL 0 CACHE BOOL "Enable Serial Port")
 
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   # Raspberry Pi ---------------------------------------------------------------
-  set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
-  set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
-  set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
-  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
+  set (SYSIO_WITH_GPIO 1)
+  set (SYSIO_WITH_I2C 1)
+  set (SYSIO_WITH_SPI 1)
+  set (SYSIO_WITH_SERIAL 1)
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/rpi)
 
 elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_AIR") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1"))
   # NanoPi Neo / Neo Air / M1  -------------------------------------------------
-  set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
-  set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
-  set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
-  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
+  set (SYSIO_WITH_GPIO 1)
+  set (SYSIO_WITH_I2C 1)
+  set (SYSIO_WITH_SPI 1)
+  set (SYSIO_WITH_SERIAL 1)
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/nanopi)
 
 elseif ("${PIBOARD_ID}" STREQUAL "BOARD_GENERIC_LINUX")
   # Linux Generic  -------------------------------------------------------------
-  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
+  set (SYSIO_WITH_SERIAL 1)
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/generic)
 endif ()
 
@@ -128,11 +135,19 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
+message("SYSIO_WITH_GPIO=${SYSIO_WITH_GPIO}")
+message("SYSIO_WITH_I2C=${SYSIO_WITH_I2C}")
+message("SYSIO_WITH_SPI=${SYSIO_WITH_SPI}")
+message("SYSIO_WITH_SERIAL=${SYSIO_WITH_SERIAL}")
+message("SYSIO_WITH_GPS=${SYSIO_WITH_GPS}")
+
 add_subdirectory (dev)
 add_subdirectory (lib)
 add_subdirectory (3rdparty)
 add_subdirectory (radio)
-add_subdirectory (chipio)
+if(SYSIO_WITH_I2C)
+  add_subdirectory (chipio)
+endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
 #add_subdirectory (doc)
 
@@ -161,6 +176,8 @@ if (CPACK_GENERATOR STREQUAL "DEB")
       execute_process(COMMAND ${dpkg_cmd} --print-architecture RESULT_VARIABLE ret OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE)
       if (ret EQUAL 0)
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "${arch}")
+      else (ret EQUAL 0)
+        message(WARNING "Unable to get debian architecture !")
       endif (ret EQUAL 0)
     endif (dpkg_cmd)
   endif (NOT CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
@@ -188,6 +205,8 @@ if (CPACK_GENERATOR STREQUAL "DEB")
       unset(package)
     endif (dpkg_query)
   endif(LIBGPS_FOUND)
+
+  message(STATUS "Debian architecture ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
   set(CPACK_DEBIAN_LIB_PACKAGE_NAME "libsysio")
   set(CPACK_COMPONENT_LIB_DESCRIPTION "${PROJECT_DESCRIPTION} (library)")

@@ -108,7 +108,7 @@ function(GetPiBoardInfo)
   endif (hardware_cpu)
 
   if (NOT board_found)
-    message(WARNING "No Pi board found !")
+    message(STATUS "No Pi board found.")
   endif (NOT board_found)
   
   set (PIBOARD_FOUND ${board_found} PARENT_SCOPE)
