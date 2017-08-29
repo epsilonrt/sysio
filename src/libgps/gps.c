@@ -678,7 +678,7 @@ cGpsAngleToStr (eGpsAngleFormat type, double f, char * str, size_t strsize) {
 
   if (f > 360) {
 
-    (void) strlcpy (str, "nan", strsize);
+    (void) strncpy (str, "nan", strsize);
     return str;
   }
 
