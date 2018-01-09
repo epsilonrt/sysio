@@ -1,8 +1,6 @@
 /*
  * template.cpp
- * @brief Description de votre programme
- *
- * This software is governed by the CeCILL license <http://www.cecill.info>
+ * @brief Description of your program
  */
 #include <iostream>
 #include <cstdlib>
@@ -10,7 +8,7 @@
 #include <csignal>
 #include <sysio/delay.h>
 
-using namespace std; 
+using namespace std;
 
 /* constants ================================================================ */
 /* macros =================================================================== */
@@ -25,19 +23,19 @@ static void
 vSigIntHandler (int sig) {
 
   cout << endl << "everything was closed." << endl << "Have a nice day !" << endl;
-  exit(EXIT_SUCCESS);
+  exit (EXIT_SUCCESS);
 }
 
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
 
+  // Replace the lines below with your code.
   // vSigIntHandler() intercepte le CTRL+C
-  signal(SIGINT, vSigIntHandler);
+  signal (SIGINT, vSigIntHandler);
 
   cout << "Press Ctrl+C to abort ..." << endl;
   for (;;) {
-    // Remplacer les lignes ci-dessous par votre code
     cout << '.' << flush;
     delay_ms (1000);
   }

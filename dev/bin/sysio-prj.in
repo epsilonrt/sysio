@@ -1,0 +1,145 @@
+#!/bin/bash
+#----------------------------------------------------------------------------
+
+SYSIO_TEMPLATE_DIR=@SYSIO_INSTALL_DOC_DIR@/template
+
+#----------------------------------------------------------------------------
+
+
+if [ ! -d ${SYSIO_TEMPLATE_DIR} ]; then
+cat << EOF
+<<ERROR>> root directory has not been located.
+You must install SysIO correctly (sudo make install)
+EOF
+exit 1
+fi
+
+usage()
+{
+cat << EOF
+usage: $(basename $0) [Options] [project_name]
+
+This script creates a new project for SysIo. 
+
+ARGUMENT
+  [project_name] name of the project to create. If the project name is not 
+  provided, the name of the current directory is used.
+OPTIONS:
+  -h Show this message
+  -f Forces the overwriting of existing files.
+  -g Add the created files to the git repository of the current directory
+  -s Also create a C (or C ++) source file
+  -p Indicates that the project to create is a C ++ project
+
+Once the project is created, you should:
+   1- Create a folder to build, eg:
+        $ mkdir build-release
+   2- Go to this folder, eg:
+        $ cd build-release
+   3- Run CMake by choosing the project type (Makefile Unix by default,
+      Codelite ... see cmake -G), eg:
+        $ cmake ..
+          - or - 
+        $ cmake -G "CodeLite - Unix Makefiles" ..
+   4- Compile your project with Make or your IDE.
+        $ make
+          - or - 
+        Codelite > Build Menu > Build Project
+EOF
+}
+
+while getopts ":fgsph" opt; do
+  case $opt in
+    f)
+      FORCE="ON"
+      ;;
+    g)
+      GIT="ON"
+      ;;
+    s)
+      SOURCE="ON"
+      ;;
+    p)
+      CPP="ON"
+      ;;
+    h)
+      usage
+      exit 1
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+PROJECT_DIR=$(pwd)
+
+if [ $# -lt 1 ]; then
+  PROJECT_NAME=$(basename ${PROJECT_DIR})
+else
+  PROJECT_NAME=$1
+fi
+
+PROJECT_FILE=${PROJECT_DIR}/CMakeLists.txt
+
+if [ "_$CPP" = "_ON" ]; then
+  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
+else
+  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.c
+fi
+#echo "PROJECT_DIR=$PROJECT_DIR"
+#echo "PROJECT_FILE=$PROJECT_FILE"
+
+if [ -f ${PROJECT_FILE} ]; then
+  echo "$PROJECT_FILE exists !"
+  if [ "_$FORCE" = "_" ]; then
+    echo "Error: you need to put the -f option to overwrite the file !"
+    exit 1
+  fi
+fi
+
+if [ "_$CPP" = "_ON" ]; then
+  cp ${SYSIO_TEMPLATE_DIR}/cpp/CMakeLists.txt ${PROJECT_FILE}
+else
+  cp ${SYSIO_TEMPLATE_DIR}/CMakeLists.txt ${PROJECT_FILE}
+fi
+sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
+if [ "_$GIT" = "_ON" ]; then
+  git add ${PROJECT_FILE}
+fi
+
+
+if [ "_$SOURCE" = "_ON" ]; then
+  if [ "_$CPP" = "_ON" ]; then
+    cp ${SYSIO_TEMPLATE_DIR}/cpp/template.cpp ${SOURCE_FILE}
+  else
+    cp ${SYSIO_TEMPLATE_DIR}/template.c ${SOURCE_FILE}
+  fi
+  sed -i -e "s#template#$PROJECT_NAME#g" ${SOURCE_FILE}
+  if [ "_$GIT" = "_ON" ]; then
+    git add ${SOURCE_FILE}
+  fi
+fi
+
+cat << EOF
+Once the project is created, you should:
+   1- Create a folder to build, eg:
+        $ mkdir build-release
+   2- Go to this folder, eg:
+        $ cd build-release
+   3- Run CMake by choosing the project type (Makefile Unix by default,
+      Codelite ... see cmake -G), eg:
+        $ cmake ..
+          - or - 
+        $ cmake -G "CodeLite - Unix Makefiles" ..
+   4- Compile your project with Make or your IDE.
+        $ make
+          - or - 
+        Codelite > Build Menu > Build Project
+EOF
+
+exit 0

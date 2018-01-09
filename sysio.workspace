@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" Version="10.0.0">
-  <Project Name="sysio_demo" Path="demo/sysio_demo.project" Active="No"/>
+  <Project Name="sysio_demo" Path="demo/sysio_demo.project" Active="Yes"/>
   <Project Name="chipio_demo" Path="chipio/demo/chipio_demo.project" Active="No"/>
   <Project Name="radio_demo" Path="radio/demo/radio_demo.project" Active="No"/>
   <Project Name="ssdv_demo" Path="3rdparty/ssdv/demo/ssdv_demo.project" Active="No"/>
   <Project Name="modbus_demo" Path="3rdparty/modbus/demo/modbus_demo.project" Active="No"/>
-  <Project Name="libraries" Path="libraries.project" Active="Yes"/>
+  <Project Name="libraries" Path="libraries.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>

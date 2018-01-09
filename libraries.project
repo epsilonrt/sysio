@@ -43,10 +43,23 @@
     <File Name="utils/tinfo.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="dev">
+    <VirtualDirectory Name="template">
+      <VirtualDirectory Name="cpp">
+        <File Name="dev/template/cpp/CMakeLists.txt"/>
+        <File Name="dev/template/cpp/template.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="module">
+        <File Name="dev/template/module/module.h"/>
+        <File Name="dev/template/module/module.c"/>
+      </VirtualDirectory>
+      <File Name="dev/template/CMakeLists.txt"/>
+      <File Name="dev/template/template.c"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="bin">
       <File Name="dev/bin/armbian-board"/>
       <File Name="dev/bin/hardware-cpu"/>
       <File Name="dev/bin/git-version"/>
+      <File Name="dev/bin/sysio-prj.in"/>
     </VirtualDirectory>
     <VirtualDirectory Name="cmake">
       <File Name="dev/cmake/FindSDL2.cmake"/>
@@ -234,6 +247,7 @@
     <File Name="LICENCE"/>
     <File Name="INSTALL"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="README.md"/>
   </VirtualDirectory>
   <VirtualDirectory Name="chipio">
     <VirtualDirectory Name="include">

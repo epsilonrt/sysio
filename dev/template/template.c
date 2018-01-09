@@ -1,8 +1,6 @@
 /*
  * template.c
- * @brief Description de votre programme
- *
- * This software is governed by the CeCILL license <http://www.cecill.info>
+ * @brief Description of your program
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,21 +20,22 @@
 static void
 vSigIntHandler (int sig) {
 
-  printf("\neverything was closed.\nHave a nice day !\n");
-  exit(EXIT_SUCCESS);
+  printf ("\neverything was closed.\nHave a nice day !\n");
+  exit (EXIT_SUCCESS);
 }
 
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
 
-  // vSigIntHandler() intercepte le CTRL+C
-  signal(SIGINT, vSigIntHandler);
+  // Replace the lines below with your code.
+  // vSigIntHandler() intercepts the CTRL+C.
+  signal (SIGINT, vSigIntHandler);
 
-  printf("Press Ctrl+C to abort ...\n");
+  printf ("Press Ctrl+C to abort ...\n");
   for (;;) {
-    // Remplacer les lignes ci-dessous par votre code
-    putchar('.'); fflush(stdout);
+    putchar ('.');
+    fflush (stdout);
     delay_ms (1000);
   }
 
