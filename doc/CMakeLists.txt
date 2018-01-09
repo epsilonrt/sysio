@@ -54,16 +54,26 @@ else()
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html/
           DESTINATION ${SYSIO_INSTALL_DOC_DIR}/api-manual COMPONENT doc)
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio COMPONENT doc)
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio 
+          COMPONENT doc
+          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "CMakeLists.txt")
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio COMPONENT doc)
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio
+          COMPONENT doc
+          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "CMakeLists.txt")
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv COMPONENT doc)
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv
+          COMPONENT doc
+          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "CMakeLists.txt")
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus COMPONENT doc)
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus
+          COMPONENT doc
+          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "CMakeLists.txt")
   if(SYSIO_WITH_I2C)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/chipio/demo/
-            DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio/radio COMPONENT doc)
+            DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio
+            COMPONENT doc
+            FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "CMakeLists.txt")
   endif(SYSIO_WITH_I2C)
 
 endif()
