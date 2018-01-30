@@ -30,21 +30,6 @@ OPTIONS:
   -g Add the created files to the git repository of the current directory
   -s Also create a C (or C ++) source file
   -p Indicates that the project to create is a C ++ project
-
-Once the project is created, you should:
-   1- Create a folder to build, eg:
-        $ mkdir build-release
-   2- Go to this folder, eg:
-        $ cd build-release
-   3- Run CMake by choosing the project type (Makefile Unix by default,
-      Codelite ... see cmake -G), eg:
-        $ cmake ..
-          - or - 
-        $ cmake -G "CodeLite - Unix Makefiles" ..
-   4- Compile your project with Make or your IDE.
-        $ make
-          - or - 
-        Codelite > Build Menu > Build Project
 EOF
 }
 
@@ -84,7 +69,8 @@ else
   PROJECT_NAME=$1
 fi
 
-PROJECT_FILE=${PROJECT_DIR}/CMakeLists.txt
+PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
+CMAKELISTS_FILE=${PROJECT_DIR}/CMakeLists.txt
 
 if [ "_$CPP" = "_ON" ]; then
   SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
@@ -103,10 +89,13 @@ if [ -f ${PROJECT_FILE} ]; then
 fi
 
 if [ "_$CPP" = "_ON" ]; then
-  cp ${SYSIO_TEMPLATE_DIR}/cpp/CMakeLists.txt ${PROJECT_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/cpp/CMakeLists.txt ${CMAKELISTS_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/cpp/template.project ${PROJECT_FILE}
 else
-  cp ${SYSIO_TEMPLATE_DIR}/CMakeLists.txt ${PROJECT_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/CMakeLists.txt ${CMAKELISTS_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
 fi
+sed -i -e "s#template#$PROJECT_NAME#g" ${CMAKELISTS_FILE}
 sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
 if [ "_$GIT" = "_ON" ]; then
   git add ${PROJECT_FILE}
@@ -124,22 +113,5 @@ if [ "_$SOURCE" = "_ON" ]; then
     git add ${SOURCE_FILE}
   fi
 fi
-
-cat << EOF
-Once the project is created, you should:
-   1- Create a folder to build, eg:
-        $ mkdir build-release
-   2- Go to this folder, eg:
-        $ cd build-release
-   3- Run CMake by choosing the project type (Makefile Unix by default,
-      Codelite ... see cmake -G), eg:
-        $ cmake ..
-          - or - 
-        $ cmake -G "CodeLite - Unix Makefiles" ..
-   4- Compile your project with Make or your IDE.
-        $ make
-          - or - 
-        Codelite > Build Menu > Build Project
-EOF
 
 exit 0

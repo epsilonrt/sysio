@@ -91,11 +91,33 @@ To create a SysIo project, it is necessary to install the Dev module which
 contains the header files '* .h' and the utilities necessary for the compilation.  
 This is the case if you have installed "manually" with `sudo make install` or 
 if you have installed the` libsysio-dev` package.
+
+To make things easier, you can use the `sysio-prj` utility, for example, to create a C project:
+
+    $ sysio-prj -s myCproject
+
+or to create a C ++ project:
+
+    $ sysio-prj -s -p myCXXproject
+
+For help with the program:
+
+    $ sysio-prj -h
+
+You should open the project file with [Codelite](https://codelite.org/) then:
+
+* right click on the project `Run CMake`, then
+* right click on the project `Build`.
+
+That's all !
+
+### For those who like the difficulty
+
 SysIo uses `cmake`, so you can integrate SysIo into` CMakeLists.txt` files, just add:
 
-    $ find_package(sysio REQUIRED)
+    $ find_package(sysio)
 
-With the line above, the variables below are accessible:
+With the line above, sysio_FOUND was defined and the variables below are accessible:
 
 * `SYSIO_INCLUDE_DIRS`: include directories for sysio  
 * `SYSIO_LIBRARY_DIRS`: where to find libraries  
@@ -111,13 +133,21 @@ Here is an example of a `CMakeLists.txt` file for SysIo:
 
     cmake_minimum_required(VERSION 3.5)
     project(template)
-    find_package(sysio REQUIRED)
-    link_directories(${SYSIO_LIBRARY_DIRS})
-    include (PiBoardInfo)
-    if (NOT PIBOARD_ID)
-      message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-      GetPiBoardInfo()
-    endif (NOT PIBOARD_ID)
+    find_package(sysio QUIET)
+    if (sysio_FOUND)
+      message (STATUS "SysIo found !")
+      link_directories(${SYSIO_LIBRARY_DIRS})
+      add_definitions(${SYSIO_CFLAGS})
+      include_directories(${SYSIO_INCLUDE_DIRS})
+      target_link_libraries(${CMAKE_PROJECT_NAME} ${SYSIO_LIBRARIES})
+      include (PiBoardInfo)
+      if (NOT PIBOARD_ID)
+        message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
+        GetPiBoardInfo()
+      endif (NOT PIBOARD_ID)
+    else (sysio_FOUND)
+      message (STATUS "<WARNING> SysIo not found !")
+    endif (sysio_FOUND)
     file(GLOB SRC *.cpp)
     add_executable(${CMAKE_PROJECT_NAME} ${SRC})
     target_link_libraries(${CMAKE_PROJECT_NAME} ${SYSIO_LIBRARIES})
@@ -125,26 +155,13 @@ Here is an example of a `CMakeLists.txt` file for SysIo:
     target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC ${SYSIO_CFLAGS})
     install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
 
-To make things easier, you can use the `sysio-prj` utility, for example, to create a C project:
+After you can create the make file and compile the project:
 
-    $ sysio-prj -s myCproject
-
-or to create a C ++ project:
-
-    $ sysio-prj -s -p myCXXproject
-
-For help with the program:
-
-    $ sysio-prj -h
-
-Once the project is created, you should:  
-1. Create a folder to build, eg:  
+1. Create a folder to build:  
         $ mkdir build-release  
-2. Go to this folder, eg:  
+2. Go to this folder:  
         $ cd build-release  
-3. Run CMake by choosing the project type (Makefile Unix by default, Codelite... see cmake -G), eg:  
-        $ cmake .. # for Unix Makefiles  
-        $ cmake -G "CodeLite - Unix Makefiles" .. # for Codelite IDE  
-4. Compile your project with Make or your IDE:  
-        $ make # from the command line  
-        Codelite > Build Menu > Build Project  
+3. Run CMake:  
+        $ cmake ..
+4. Compile your project:  
+        $ make
