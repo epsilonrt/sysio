@@ -84,10 +84,10 @@ if (SYSIO_WITH_SPI)
   list(APPEND hdr_public ${hdr_spi})
 endif (SYSIO_WITH_SPI)
 
-if (LIBGPS_FOUND)
+if (SYSIO_WITH_GPS)
   file(GLOB src_gps ${SYSIO_SRC_DIR}/libgps/*.c)
   list(APPEND hdr_public ${hdr_gps})
-endif (LIBGPS_FOUND)
+endif (SYSIO_WITH_GPS)
 
 #message ("hdr_public=${hdr_public}")
 

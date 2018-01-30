@@ -69,7 +69,7 @@ optionally libgps
 
         $ cd sysio
         $ mkdir build-release && cd build-release
-        $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .. 
+        $ cmake .. 
 
 * Compile and install sysio:
 
@@ -80,10 +80,17 @@ We can uninstall with a `sudo make uninstall` in the same directory.
 
 If you prefer, instead of direct compilation, you can create packages and install them:
 
-        $ cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
-        $ make doc
+        $ cmake -DSYSIO_WITH_DOC=1 -DCMAKE_INSTALL_PREFIX=/usr ..
         $ make package
         $ sudo dpkg -i *.deb
+
+### Build the doc
+
+If you want to build the documentation it will be necessary to pass the option 
+-DSYSIO_WITH_DOC=1 to cmake:
+
+        $ cmake -DSYSIO_WITH_DOC=1 ..
+        $ make doc
 
 ## Creating a SysIo project
 

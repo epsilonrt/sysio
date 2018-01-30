@@ -28,8 +28,6 @@ pkg_check_modules (LIBGPS libgps)
 if (LIBGPS_FOUND)
   set (SYSIO_LDFLAGS_OTHER  ${LIBGPS_LDFLAGS})
   list(APPEND SYSIO_CFLAGS_OTHER ${LIBGPS_CFLAGS})
-  set (SYSIO_WITH_GPS 1 CACHE BOOL "Enable GPS")
-else (LIBGPS_FOUND)
   set (SYSIO_WITH_GPS 0 CACHE BOOL "Enable GPS")
 endif (LIBGPS_FOUND)
 
@@ -49,17 +47,21 @@ set(INSTALL_INCLUDE_DIR include CACHE PATH
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INSTALL_CMAKE_DIR CMake)
   set(DEF_INSTALL_DOC_DIR Doc)
+  set(DEF_INSTALL_DATA_DIR Data)
 else()
   set(DEF_INSTALL_CMAKE_DIR lib)
   set(DEF_INSTALL_DOC_DIR share/doc)
+  set(DEF_INSTALL_DATA_DIR share)
 endif()
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
   "Installation directory for CMake files")
 set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
   "Installation directory for documentation")
+set(INSTALL_DATA_DIR ${DEF_INSTALL_DATA_DIR} CACHE PATH
+  "Installation directory for data")
 
 # Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE CMAKE DOC)
+foreach(p LIB BIN INCLUDE CMAKE DATA DOC)
   set(var INSTALL_${p}_DIR)
   if(NOT IS_ABSOLUTE "${${var}}")
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
@@ -71,6 +73,7 @@ set (SYSIO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
 set (SYSIO_LIB_DIR ${PROJECT_BINARY_DIR}/lib)
 set (SYSIO_INSTALL_CMAKE_DIR "${INSTALL_CMAKE_DIR}/sysio/cmake")
 set (SYSIO_INSTALL_DOC_DIR "${INSTALL_DOC_DIR}/sysio")
+set (SYSIO_INSTALL_DATA_DIR "${INSTALL_DATA_DIR}/sysio")
 
 if (NOT PIBOARD_ID)
   message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
@@ -91,33 +94,45 @@ endif (NOT PIBOARD_FOUND)
 
 add_definitions (-DPIBOARD_ID=${PIBOARD_ID})
 
-set (SYSIO_WITH_GPIO 0 CACHE BOOL "Enable GPIO")
-set (SYSIO_WITH_I2C 0 CACHE BOOL "Enable I2C bus")
-set (SYSIO_WITH_SPI 0 CACHE BOOL "Enable SPI bus")
-set (SYSIO_WITH_SERIAL 0 CACHE BOOL "Enable Serial Port")
+# Set a default build type if none was specified
+set(default_build_type "Release")
+ 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
+      STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+set (SYSIO_WITH_DOC 0 CACHE BOOL "Enable build of the documentation")
 
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   # Raspberry Pi ---------------------------------------------------------------
-  set (SYSIO_WITH_GPIO 1)
-  set (SYSIO_WITH_I2C 1)
-  set (SYSIO_WITH_SPI 1)
-  set (SYSIO_WITH_SERIAL 1)
+  set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
+  set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
+  set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
+  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/rpi)
 
 elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_AIR") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1"))
   # NanoPi Neo / Neo Air / M1  -------------------------------------------------
-  set (SYSIO_WITH_GPIO 1)
-  set (SYSIO_WITH_I2C 1)
-  set (SYSIO_WITH_SPI 1)
-  set (SYSIO_WITH_SERIAL 1)
+  set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
+  set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
+  set (SYSIO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
+  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/nanopi)
 
 elseif ("${PIBOARD_ID}" STREQUAL "BOARD_GENERIC_LINUX")
   # Linux Generic  -------------------------------------------------------------
-  set (SYSIO_WITH_SERIAL 1)
+  set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/generic)
+  set (SYSIO_WITH_GPIO 0)
+  set (SYSIO_WITH_I2C 0)
+  set (SYSIO_WITH_SPI 0)
 endif ()
 
 if (CMAKE_HOST_UNIX)
@@ -143,7 +158,9 @@ if(SYSIO_WITH_I2C)
   add_subdirectory (chipio)
 endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
-add_subdirectory (doc)
+if (SYSIO_WITH_DOC)
+  add_subdirectory (doc)
+endif()
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")
@@ -198,7 +215,7 @@ if (CPACK_GENERATOR STREQUAL "DEB")
     #message ("libgcc1_ver=${libgcc1_ver}")
   endif (dpkg_query)
   
-  if (LIBGPS_FOUND)
+  if (SYSIO_WITH_GPS)
   
     if (dpkg_query)
       execute_process(COMMAND ${dpkg_query} --showformat=\${Package} --show libgps2? OUTPUT_VARIABLE package OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -219,7 +236,7 @@ if (CPACK_GENERATOR STREQUAL "DEB")
       endif (package)
       unset(package)
     endif (dpkg_query)
-  endif(LIBGPS_FOUND)
+  endif(SYSIO_WITH_GPS)
 
   message(STATUS "Debian architecture ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
@@ -243,11 +260,13 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_UTILS_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
   set(CPACK_DEBIAN_UTILS_PACKAGE_SECTION "utils")
 
-  set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
-  set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
-  set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
-  set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
-  set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
+  if (SYSIO_WITH_DOC)
+    set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
+    set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
+    set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
+    set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
+    set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
+  endif()
   
 endif (CPACK_GENERATOR STREQUAL "DEB")
 
