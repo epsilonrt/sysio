@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="sysio-demo" Database="" Version="10.0.0">
+  <Project Name="sysio_demo_blyss_tx" Path="gpio/blyss-tx/sysio_demo_blyss_tx.project" Active="No"/>
+  <Project Name="sysio_demo_button" Path="gpio/button/sysio_demo_button.project" Active="No"/>
+  <Project Name="sysio_demo_led" Path="gpio/led/sysio_demo_led.project" Active="No"/>
+  <Project Name="sysio_demo_switch" Path="gpio/switch/sysio_demo_switch.project" Active="No"/>
+  <Project Name="sysio_demo_gps_callback" Path="gps/gps-callback/sysio_demo_gps_callback.project" Active="No"/>
+  <Project Name="sysio_demo_gps_monitor" Path="gps/gps-monitor/sysio_demo_gps_monitor.project" Active="No"/>
+  <Project Name="sysio_demo_gps_poll" Path="gps/gps-poll/sysio_demo_gps_poll.project" Active="No"/>
+  <Project Name="sysio_demo_i2c" Path="i2c/i2c/sysio_demo_i2c.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_eeprom" Path="i2c/i2c-eeprom/sysio_demo_i2c_eeprom.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_gp2" Path="i2c/i2c-gp2/sysio_demo_i2c_gp2.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_hih6130" Path="i2c/i2c-hih6130/sysio_demo_i2c_hih6130.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_iaq" Path="i2c/i2c-iaq/sysio_demo_i2c_iaq.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_mcp3426" Path="i2c/i2c-mcp3426/sysio_demo_i2c_mcp3426.project" Active="No"/>
+  <Project Name="sysio_demo_i2c_rtc" Path="i2c/i2c-rtc/sysio_demo_i2c_rtc.project" Active="No"/>
+  <Project Name="sysio_demo_ledrgb_tlc59116" Path="i2c/ledrgb-tlc59116/sysio_demo_ledrgb_tlc59116.project" Active="No"/>
+  <Project Name="sysio_demo_rs485" Path="serial/rs485/sysio_demo_rs485.project" Active="No"/>
+  <Project Name="sysio_demo_serial" Path="serial/serial/sysio_demo_serial.project" Active="Yes"/>
+  <Project Name="sysio_demo_serial_cpp" Path="serial/serial-cpp/sysio_demo_serial_cpp.project" Active="No"/>
+  <Project Name="sysio_demo_tinfo" Path="serial/tinfo/sysio_demo_tinfo.project" Active="No"/>
+  <Project Name="sysio_demo_xbee_coordinator" Path="serial/xbee-coordinator/sysio_demo_xbee_coordinator.project" Active="No"/>
+  <Project Name="sysio_demo_xbee_node" Path="serial/xbee-node/sysio_demo_xbee_node.project" Active="No"/>
+  <Project Name="sysio_demo_rf69_gateway" Path="spi/rf69-gateway/sysio_demo_rf69_gateway.project" Active="No"/>
+  <Project Name="sysio_demo_rf69_ping" Path="spi/rf69-ping/sysio_demo_rf69_ping.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="sysio_demo_blyss_tx" ConfigName="Debug"/>
+      <Project Name="sysio_demo_button" ConfigName="Debug"/>
+      <Project Name="sysio_demo_led" ConfigName="Debug"/>
+      <Project Name="sysio_demo_switch" ConfigName="Debug"/>
+      <Project Name="sysio_demo_gps_callback" ConfigName="Debug"/>
+      <Project Name="sysio_demo_gps_monitor" ConfigName="Debug"/>
+      <Project Name="sysio_demo_gps_poll" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_eeprom" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_gp2" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_hih6130" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_iaq" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_mcp3426" ConfigName="Debug"/>
+      <Project Name="sysio_demo_i2c_rtc" ConfigName="Debug"/>
+      <Project Name="sysio_demo_ledrgb_tlc59116" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rs485" ConfigName="Debug"/>
+      <Project Name="sysio_demo_serial" ConfigName="Debug"/>
+      <Project Name="sysio_demo_serial_cpp" ConfigName="Debug"/>
+      <Project Name="sysio_demo_tinfo" ConfigName="Debug"/>
+      <Project Name="sysio_demo_xbee_coordinator" ConfigName="Debug"/>
+      <Project Name="sysio_demo_xbee_node" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rf69_gateway" ConfigName="Debug"/>
+      <Project Name="sysio_demo_rf69_ping" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="sysio_demo_blyss_tx" ConfigName="Release"/>
+      <Project Name="sysio_demo_button" ConfigName="Release"/>
+      <Project Name="sysio_demo_led" ConfigName="Release"/>
+      <Project Name="sysio_demo_switch" ConfigName="Release"/>
+      <Project Name="sysio_demo_gps_callback" ConfigName="Release"/>
+      <Project Name="sysio_demo_gps_monitor" ConfigName="Release"/>
+      <Project Name="sysio_demo_gps_poll" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_eeprom" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_gp2" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_hih6130" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_iaq" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_mcp3426" ConfigName="Release"/>
+      <Project Name="sysio_demo_i2c_rtc" ConfigName="Release"/>
+      <Project Name="sysio_demo_ledrgb_tlc59116" ConfigName="Release"/>
+      <Project Name="sysio_demo_rs485" ConfigName="Release"/>
+      <Project Name="sysio_demo_serial" ConfigName="Release"/>
+      <Project Name="sysio_demo_serial_cpp" ConfigName="Release"/>
+      <Project Name="sysio_demo_tinfo" ConfigName="Release"/>
+      <Project Name="sysio_demo_xbee_coordinator" ConfigName="Release"/>
+      <Project Name="sysio_demo_xbee_node" ConfigName="Release"/>
+      <Project Name="sysio_demo_rf69_gateway" ConfigName="Release"/>
+      <Project Name="sysio_demo_rf69_ping" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
