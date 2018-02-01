@@ -29,7 +29,7 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 #{{{{ User Code 1
 # Place your code here
 
-# --- SysIo Begin. Do not edit by hand -----------------------------------------
+# --- Modbus Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
 if (NOT CL_USED)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -105,5 +105,5 @@ target_link_libraries(modbus_demo_rtu_master ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
+install(PROGRAMS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME} DESTINATION bin)
 #}}}}
-
