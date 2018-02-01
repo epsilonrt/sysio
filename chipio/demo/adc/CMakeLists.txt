@@ -29,30 +29,20 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 #{{{{ User Code 1
 # Place your code here
 
-# --- SysIo Begin. Do not edit by hand -----------------------------------------
+# --- ChipIo Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
 if (NOT CL_USED)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif (NOT CL_USED)
-# search for the sysio package, if found, add the options ...
-find_package(sysio QUIET)
-if (sysio_FOUND)
-  message (STATUS "SysIo found !")
-  link_directories(${SYSIO_LIBRARY_DIRS})
-  add_definitions(${SYSIO_CFLAGS})
-  include_directories(${SYSIO_INCLUDE_DIRS})
-  list(APPEND LINK_OPTIONS ${SYSIO_LIBRARIES})
-  include (PiBoardInfo)
-  if (NOT PIBOARD_ID)
-    message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-    GetPiBoardInfo()
-  endif (NOT PIBOARD_ID)
-else (sysio_FOUND)
-  message (STATUS "<WARNING> SysIo not found !")
-endif (sysio_FOUND)
-# --- SysIo End. Do not edit by hand -------------------------------------------
+
+find_package(chipio REQUIRED)
+link_directories(${CHIPIO_LIBRARY_DIRS})
+add_definitions(${CHIPIO_CFLAGS})
+include_directories(${CHIPIO_INCLUDE_DIRS})
+list(APPEND LINK_OPTIONS ${CHIPIO_LIBRARIES})
+# --- ChipIo End. Do not edit by hand -------------------------------------------
 #}}}}
 
 include_directories(

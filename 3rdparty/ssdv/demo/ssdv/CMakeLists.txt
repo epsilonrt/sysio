@@ -29,30 +29,26 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 #{{{{ User Code 1
 # Place your code here
 
-# --- SysIo Begin. Do not edit by hand -----------------------------------------
+# --- Ssdv Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
 if (NOT CL_USED)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif (NOT CL_USED)
-# search for the sysio package, if found, add the options ...
-find_package(sysio QUIET)
-if (sysio_FOUND)
-  message (STATUS "SysIo found !")
-  link_directories(${SYSIO_LIBRARY_DIRS})
-  add_definitions(${SYSIO_CFLAGS})
-  include_directories(${SYSIO_INCLUDE_DIRS})
-  list(APPEND LINK_OPTIONS ${SYSIO_LIBRARIES})
-  include (PiBoardInfo)
-  if (NOT PIBOARD_ID)
-    message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-    GetPiBoardInfo()
-  endif (NOT PIBOARD_ID)
-else (sysio_FOUND)
-  message (STATUS "<WARNING> SysIo not found !")
-endif (sysio_FOUND)
-# --- SysIo End. Do not edit by hand -------------------------------------------
+
+find_package(ssdv REQUIRED)
+find_package(radio REQUIRED)
+find_package(SDL REQUIRED)
+find_package(SDL_image REQUIRED)
+
+link_directories(${SSDV_LIBRARY_DIRS} ${RADIO_LIBRARY_DIRS})
+add_definitions(${SSDV_CFLAGS} ${RADIO_CFLAGS})
+include_directories(${SSDV_INCLUDE_DIRS} ${RADIO_INCLUDE_DIRS} 
+    ${SDL_INCLUDE_DIR} ${SDL_IMAGE_INCLUDE_DIRS})
+list(APPEND LINK_OPTIONS ${SSDV_LIBRARIES} ${RADIO_LIBRARIES} 
+    ${SDL_LIBRARY} ${SDL_IMAGE_LIBRARIES})
+# --- Ssdv End. Do not edit by hand -------------------------------------------
 #}}}}
 
 include_directories(

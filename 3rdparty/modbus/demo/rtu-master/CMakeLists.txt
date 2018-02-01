@@ -36,23 +36,13 @@ if (NOT CL_USED)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif (NOT CL_USED)
-# search for the sysio package, if found, add the options ...
-find_package(sysio QUIET)
-if (sysio_FOUND)
-  message (STATUS "SysIo found !")
-  link_directories(${SYSIO_LIBRARY_DIRS})
-  add_definitions(${SYSIO_CFLAGS})
-  include_directories(${SYSIO_INCLUDE_DIRS})
-  list(APPEND LINK_OPTIONS ${SYSIO_LIBRARIES})
-  include (PiBoardInfo)
-  if (NOT PIBOARD_ID)
-    message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-    GetPiBoardInfo()
-  endif (NOT PIBOARD_ID)
-else (sysio_FOUND)
-  message (STATUS "<WARNING> SysIo not found !")
-endif (sysio_FOUND)
-# --- SysIo End. Do not edit by hand -------------------------------------------
+
+find_package(modbus REQUIRED)
+link_directories(${MODBUS_LIBRARY_DIRS})
+add_definitions(${MODBUS_CFLAGS})
+include_directories(${MODBUS_INCLUDE_DIRS})
+list(APPEND LINK_OPTIONS ${MODBUS_LIBRARIES})
+# --- Modbus End. Do not edit by hand -------------------------------------------
 #}}}}
 
 include_directories(
@@ -107,3 +97,4 @@ target_link_libraries(modbus_demo_rtu_master ${LINK_OPTIONS})
 # Place your code here
 install(PROGRAMS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_PROJECT_NAME} DESTINATION bin)
 #}}}}
+

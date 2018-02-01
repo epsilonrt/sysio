@@ -9,12 +9,12 @@ project(sysio_demo_xbee_node)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Release/output)
+set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Debug/output)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 
-set(CONFIGURATION_NAME "Release")
+set(CONFIGURATION_NAME "Debug")
 
 # Projects
 
@@ -63,12 +63,9 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-O2)
+add_definitions(-g)
+add_definitions(-O0)
 add_definitions(-Wall)
-add_definitions(
-    -DNDEBUG
-)
-
 
 # Linker options
 
@@ -87,7 +84,7 @@ set ( C_SRCS
 
 set_source_files_properties(
     ${C_SRCS} PROPERTIES COMPILE_FLAGS 
-    " -O2 -Wall")
+    " -g -O0 -Wall")
 
 if(WIN32)
     enable_language(RC)

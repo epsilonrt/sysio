@@ -9,7 +9,7 @@ project(sysio_demo_serial_cpp)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../cmake-build-Debug/output)
+set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Debug/output)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
@@ -22,7 +22,7 @@ set(CONFIGURATION_NAME "Debug")
 # Top project
 # Define some variables
 set(PROJECT_sysio_demo_serial_cpp_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 
 
 
