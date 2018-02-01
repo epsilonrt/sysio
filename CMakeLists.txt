@@ -106,7 +106,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-set (SYSIO_WITH_DOC 0 CACHE BOOL "Enable build of the documentation")
+set (SYSIO_WITH_DOXYGEN_DOC 0 CACHE BOOL "Enable build of the documentation")
 
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   # Raspberry Pi ---------------------------------------------------------------
@@ -158,9 +158,7 @@ if(SYSIO_WITH_I2C)
   add_subdirectory (chipio)
 endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
-if (SYSIO_WITH_DOC)
-  add_subdirectory (doc)
-endif()
+add_subdirectory (doc)
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")
@@ -260,13 +258,11 @@ if (CPACK_GENERATOR STREQUAL "DEB")
   set(CPACK_DEBIAN_UTILS_PACKAGE_DEPENDS "${CPACK_DEBIAN_LIB_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
   set(CPACK_DEBIAN_UTILS_PACKAGE_SECTION "utils")
 
-  if (SYSIO_WITH_DOC)
-    set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
-    set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
-    set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
-    set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
-    set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
-  endif()
+  set(CPACK_DEBIAN_DOC_PACKAGE_NAME "libsysio-doc")
+  set(CPACK_COMPONENT_DOC_DESCRIPTION "${PROJECT_DESCRIPTION} (documentation)")
+  set(CPACK_DEBIAN_DOC_FILE_NAME "lib${PROJECT_NAME}-doc_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
+  set(CPACK_DEBIAN_DOC_PACKAGE_DEPENDS "${CPACK_DEBIAN_DEV_PACKAGE_NAME} (= ${CPACK_PACKAGE_VERSION})")
+  set(CPACK_DEBIAN_DOC_PACKAGE_SECTION "libdevel")
   
 endif (CPACK_GENERATOR STREQUAL "DEB")
 

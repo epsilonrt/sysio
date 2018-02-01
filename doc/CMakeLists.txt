@@ -4,12 +4,10 @@
 ###############################################################################
 # sysio doc CMakeLists.txt
 
-find_package(Doxygen)
 
-if(NOT DOXYGEN_FOUND)
-  message("Doxygen not found, I will not generate/install the documentation")
-else()
+if (SYSIO_WITH_DOXYGEN_DOC)
 
+  find_package(Doxygen REQUIRED)
   set(DOXYGEN_README ${PROJECT_SOURCE_DIR}/README.md)
   set(DOXYGEN_FILE ${CMAKE_BINARY_DIR}/doc/Doxyfile)
   set(DOXYGEN_MAINPAGE ${CMAKE_BINARY_DIR}/doc/main_page.dox)
@@ -53,27 +51,36 @@ else()
   
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html/
           DESTINATION ${SYSIO_INSTALL_DOC_DIR}/api-manual COMPONENT doc)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio 
-          COMPONENT doc
-          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio
-          COMPONENT doc
-          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv
-          COMPONENT doc
-          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus
-          COMPONENT doc
-          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-  if(SYSIO_WITH_I2C)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/chipio/demo/
-            DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio
-            COMPONENT doc
-            FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-  endif(SYSIO_WITH_I2C)
+endif(SYSIO_WITH_DOXYGEN_DOC)
 
-endif()
+# SysIO examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
+        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio 
+        COMPONENT doc
+        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+
+# Radio examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
+        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio
+        COMPONENT doc
+        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+
+# Ssdv examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
+        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv
+        COMPONENT doc
+        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+
+# Modbus examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
+        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus
+        COMPONENT doc
+        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+
+# ChipIo examples
+if(SYSIO_WITH_I2C)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/chipio/demo/
+          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio
+          COMPONENT doc
+          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+endif(SYSIO_WITH_I2C)
