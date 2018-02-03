@@ -22,7 +22,7 @@ __BEGIN_C_DECLS
  *  - ChipCap 2
  *  .
  *  @{
- *  @example i2c/sysio_demo_i2c_hih6130.c
+ *  @example i2c/sensor-hih6130/sysio_demo_i2c_hih6130.c
  *  Affichage de la température et de l'humidité
  */
 

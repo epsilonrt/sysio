@@ -20,7 +20,7 @@ __BEGIN_C_DECLS
  *  la mesure de qualité de l'air (CO2 et composés volatiles)
  *  .
  *  @{
- *  @example i2c/sysio_demo_i2c_iaq.c
+ *  @example i2c/sensor-iaq/sysio_demo_i2c_iaq.c
  *  Affichage du taux de CO2 en ppm (partie par million) et du taux de
  *  composés volatiles en ppb (partie par milliard).
  */

@@ -1,8 +1,8 @@
-###############################################################################
+ ###############################################################################
 # Copyright © 2017 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# libsysio++ CMakeLists.txt
+# libchipio CMakeLists.txt
 
 # set packaging dir
 if(NOT CPACK_PACKAGE_DIRECTORY)

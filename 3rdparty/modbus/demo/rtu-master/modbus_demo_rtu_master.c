@@ -2,12 +2,12 @@
  * modbus_demo_rtu_master.c
  * @brief Test modbus RTU en maître
  *
- * Lecture des registres d'entrée 0 et 1 d'une carte Humidité SolarPi 2015.
+ * Lecture des registres d'entrée 0 et 1 d'une carte Pression SolarPi 2015.
  * -------------------------- Input registers ----------------------------------
  * Reg    Size   Description
  * -----------------------------------------------------------------------------
- * 1      16-bit Humidité mesurée en centièmes de %RH, entier non signé
- * 2      16-bit Valeur brute ADC correspondant à la mesure en LSB, entier non signé
+ * 1      16-bit Pression MPX en dixièmes de hPa , entier non signé
+ * 2      16-bit Pression HSC en dixièmes de hPa , entier non signé
  * -----------------------------------------------------------------------------
  *
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -18,8 +18,8 @@
 #include <modbus/modbus.h>
 
 /* constants ================================================================ */
-#define TIMEOUT 0.5
-#define SLAVE_ADDR 32 // Carte Humidité projet SolarPi 2015
+#define TIMEOUT 1
+#define SLAVE_ADDR 33 // Carte Pression projet SolarPi 2015
 #define DEFAULT_BAUDRATE 38400
 
 /* main ===================================================================== */
@@ -58,10 +58,11 @@ main (int argc, char **argv) {
   //modbus_rtu_set_serial_mode (mb, MODBUS_RTU_RS485);
 
   // Connection au bus
-  if (modbus_connect (mb) == -1) {
+  if (modbus_connect (mb) != 0) {
 
     printf ("Connection failed: %s\n", modbus_strerror (errno));
     modbus_free (mb);
+    exit (EXIT_FAILURE);
   }
 
   // Réglage du timeout de réponse (temps laissé à l'esclave pour répondre)
@@ -73,8 +74,8 @@ main (int argc, char **argv) {
   modbus_set_slave (mb, slave);
 
   /* Lecture de 2 registres à partir de 0 (registres 0 et 1 donc ...)
-   * Registre 0: Humidité relative % 
-   * Registre 1: Humidité brute en LSB
+   * Registre 0: Pression MPX en dixièmes de hPa 
+   * Registre 1: Pression HSC en dixièmes de hPa
    * le registre 1 modbus est à l'adresse 0 PDU, regsitre 2 adresse 1 ...
    */
   ret = modbus_read_input_registers (mb, 0, 2, value);
@@ -89,8 +90,8 @@ main (int argc, char **argv) {
     printf ("reg[%d]=%d\n", i, value[i]);
   }
   
-  modbus_close (mb);
-  modbus_free (mb);
+  //modbus_close (mb);
+  //modbus_free (mb);
   return 0;
 }
 /* ========================================================================== */

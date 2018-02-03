@@ -2,6 +2,7 @@
 #----------------------------------------------------------------------------
 
 SYSIO_TEMPLATE_DIR=@SYSIO_INSTALL_DATA_DIR@/template
+SYSIO_EXAMPLES_DIR=@SYSIO_INSTALL_EXAMPLES_DIR@
 
 #----------------------------------------------------------------------------
 
@@ -30,10 +31,11 @@ OPTIONS:
   -g Add the created files to the git repository of the current directory
   -s Also create a C (or C ++) source file
   -p Indicates that the project to create is a C ++ project
+  -e Copy examples in the current directory.
 EOF
 }
 
-while getopts ":fgsph" opt; do
+while getopts ":fgspeh" opt; do
   case $opt in
     f)
       FORCE="ON"
@@ -50,6 +52,11 @@ while getopts ":fgsph" opt; do
     h)
       usage
       exit 1
+      ;;
+    e)
+      cp -a "$SYSIO_EXAMPLES_DIR" ./sysio-examples
+      echo "the examples have been copied $PWD/sysio-examples"
+      exit 0
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2

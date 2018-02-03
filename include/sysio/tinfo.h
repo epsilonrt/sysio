@@ -34,7 +34,7 @@ __BEGIN_C_DECLS
  * un signal conforme au paragraphe 1.5 document ERDF-NOI-CPT_02E et reliée
  * au port série fourni lors de l'ouverture.
  *  @{
- *  @example serial/sysio_demo_tinfo.c
+ *  @example serial/tinfo/sysio_demo_tinfo.c
  *  Affiche les trames reçues.
  */
 

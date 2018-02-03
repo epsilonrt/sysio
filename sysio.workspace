@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="sysio" Database="" Version="10.0.0">
-  <Project Name="libraries" Path="libraries.project" Active="Yes"/>
+  <Project Name="libsysio" Path="libsysio.project" Active="Yes"/>
+  <Project Name="libsysio-doc" Path="doc/libsysio-doc.project" Active="No"/>
+  <Project Name="libsysio-dev" Path="dev/libsysio-dev.project" Active="No"/>
+  <Project Name="libsysio-utils" Path="utils/libsysio-utils.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
-      <Project Name="libraries" ConfigName="Debug"/>
+      <Project Name="libsysio" ConfigName="Debug"/>
+      <Project Name="libsysio-doc" ConfigName="Debug"/>
+      <Project Name="libsysio-dev" ConfigName="Debug"/>
+      <Project Name="libsysio-utils" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
-      <Project Name="libraries" ConfigName="Release"/>
+      <Project Name="libsysio" ConfigName="Release"/>
+      <Project Name="libsysio-doc" ConfigName="Release"/>
+      <Project Name="libsysio-dev" ConfigName="Release"/>
+      <Project Name="libsysio-utils" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

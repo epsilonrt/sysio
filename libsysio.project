@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="libsysio" Version="10.0.0" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="arm">
+        <VirtualDirectory Name="nanopi">
+          <File Name="src/arch/arm/nanopi/gpio.c"/>
+          <File Name="src/arch/arm/nanopi/nanopi.c"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="rpi">
+          <File Name="src/arch/arm/rpi/pwm.c"/>
+          <File Name="src/arch/arm/rpi/rpi.c"/>
+          <File Name="src/arch/arm/rpi/gpio.c"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="spi">
+      <File Name="src/spi/spi.c"/>
+      <File Name="src/spi/rf69.c"/>
+      <File Name="src/spi/rf69_registers.h"/>
+      <File Name="src/spi/rf69_private.h"/>
+      <File Name="src/spi/rf69_sysio.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="unix">
+      <File Name="src/unix/delay.c"/>
+      <File Name="src/unix/log.c"/>
+      <File Name="src/unix/serial.c"/>
+      <File Name="src/unix/iomap.c"/>
+      <File Name="src/unix/term.c"/>
+      <File Name="src/unix/timer.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="libgps">
+      <File Name="src/libgps/gps.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="win32">
+      <File Name="src/win32/delay.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gpio">
+      <File Name="src/gpio/doutput.c"/>
+      <File Name="src/gpio/blyss.c"/>
+      <File Name="src/gpio/dinput.c"/>
+      <File Name="src/gpio/gpio.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="i2c">
+      <File Name="src/i2c/i2c-dev.h"/>
+      <File Name="src/i2c/iaq.c"/>
+      <File Name="src/i2c/tlc59116.c"/>
+      <File Name="src/i2c/gp2.c"/>
+      <File Name="src/i2c/i2c.c"/>
+      <File Name="src/i2c/hih6130.c"/>
+    </VirtualDirectory>
+    <File Name="src/xbee_private.h"/>
+    <File Name="src/vector.c"/>
+    <File Name="src/xbee1.c"/>
+    <File Name="src/xbee2.c"/>
+    <File Name="src/gpio_private.h"/>
+    <File Name="src/serial-wrapper.cpp"/>
+    <File Name="src/serial.c"/>
+    <File Name="src/string.c"/>
+    <File Name="src/ledrgb_private.h"/>
+    <File Name="src/version.c"/>
+    <File Name="src/dlist.c"/>
+    <File Name="src/tinfo.c"/>
+    <File Name="src/ledrgb.c"/>
+    <File Name="src/xbee.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="sysio">
+      <File Name="include/sysio/xbee.h"/>
+      <File Name="include/sysio/dinput.h"/>
+      <File Name="include/sysio/compat.h"/>
+      <File Name="include/sysio/gps.h"/>
+      <File Name="include/sysio/tlc59116.h"/>
+      <File Name="include/sysio/gpio.h"/>
+      <File Name="include/sysio/iaq.h"/>
+      <File Name="include/sysio/serial.hpp"/>
+      <File Name="include/sysio/dlist.h"/>
+      <File Name="include/sysio/ledrgb.h"/>
+      <File Name="include/sysio/pwm.h"/>
+      <File Name="include/sysio/string.h"/>
+      <File Name="include/sysio/i2c.h"/>
+      <File Name="include/sysio/hih6130.h"/>
+      <File Name="include/sysio/timer.h"/>
+      <File Name="include/sysio/rf69.h"/>
+      <File Name="include/sysio/blyss.h"/>
+      <File Name="include/sysio/defs.h"/>
+      <File Name="include/sysio/tinfo.h"/>
+      <File Name="include/sysio/rgb.h"/>
+      <File Name="include/sysio/log.h"/>
+      <File Name="include/sysio/term.h"/>
+      <File Name="include/sysio/rpi.h"/>
+      <File Name="include/sysio/delay.h"/>
+      <File Name="include/sysio/vector.h"/>
+      <File Name="include/sysio/serial.h"/>
+      <File Name="include/sysio/spi.h"/>
+      <File Name="include/sysio/doutput.h"/>
+      <File Name="include/sysio/iomap.h"/>
+      <File Name="include/sysio/gp2.h"/>
+      <File Name="include/sysio/nanopi.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="resources">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CMake">-DCL_USED=1</BuildSystem>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CMake">-DCL_USED=1</BuildSystem>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="sysio">
+    <File Name="LICENSE"/>
+    <File Name="AUTHORS"/>
+    <File Name="TODO"/>
+    <File Name="LICENCE"/>
+    <File Name="INSTALL"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="lib">
+    <File Name="lib/CMakeLists.txt"/>
+    <File Name="lib/config.h.in"/>
+    <File Name="lib/sysio.pc.in"/>
+    <File Name="lib/sysio-config.cmake.in"/>
+    <File Name="lib/sysio-config-version.cmake.in"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+</CodeLite_Project>

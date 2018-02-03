@@ -2,7 +2,7 @@
 # Copyright © 2017 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# Sysio top-level CMakeLists.txt
+# libsysio top-level CMakeLists.txt
 
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
@@ -53,6 +53,7 @@ else()
   set(DEF_INSTALL_DOC_DIR share/doc)
   set(DEF_INSTALL_DATA_DIR share)
 endif()
+
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
   "Installation directory for CMake files")
 set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
@@ -73,6 +74,7 @@ set (SYSIO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
 set (SYSIO_LIB_DIR ${PROJECT_BINARY_DIR}/lib)
 set (SYSIO_INSTALL_CMAKE_DIR "${INSTALL_CMAKE_DIR}/sysio/cmake")
 set (SYSIO_INSTALL_DOC_DIR "${INSTALL_DOC_DIR}/sysio")
+set (SYSIO_INSTALL_EXAMPLES_DIR "${SYSIO_INSTALL_DOC_DIR}/examples")
 set (SYSIO_INSTALL_DATA_DIR "${INSTALL_DATA_DIR}/sysio")
 
 if (NOT PIBOARD_ID)
@@ -105,8 +107,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
-
-set (SYSIO_WITH_DOXYGEN_DOC 0 CACHE BOOL "Enable build of the documentation")
 
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   # Raspberry Pi ---------------------------------------------------------------
@@ -159,6 +159,10 @@ if(SYSIO_WITH_I2C)
 endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
 add_subdirectory (doc)
+
+if (SYSIO_WITH_DOXYGEN_DOC)
+  add_dependencies(sysio-shared doc)
+endif()
 
 ### Packages generation --------------------------------------------------------
 set(CPACK_PACKAGE_VERSION "${SYSIO_VERSION_MAJOR}.${SYSIO_VERSION_MINOR}-${SYSIO_VERSION_PATCH}")

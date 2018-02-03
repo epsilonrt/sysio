@@ -4,6 +4,8 @@
 ###############################################################################
 # libsysio CMakeLists.txt
 
+cmake_minimum_required(VERSION 2.8.11)
+
 # set packaging dir
 if(NOT CPACK_PACKAGE_DIRECTORY)
   set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/packages)

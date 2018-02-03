@@ -36,7 +36,7 @@ __BEGIN_C_DECLS
  *  dans les leds.
  *  .
  *  @{
- * @example i2c/sysio_demo_ledrgb_tlc59116.c
+ * @example i2c/ledrgb-tlc59116/sysio_demo_ledrgb_tlc59116.c
  * Démonstration du module LedRgb avec un contrôleur TLC59116. \n
  * Ce programme allume successivement 4 leds RGB connectées à un TLC59116
  * avec les couleurs de l'arc-en-ciel, puis il modifie la luminosité des

@@ -29,9 +29,9 @@ __BEGIN_C_DECLS
  * Le nombre maximal de broches d'un port logique est de 31 sur une plateforme
  * 32 bits (63 pour 64 bits ...)
  * @{
- *  @example gpio/sysio_demo_button.c
+ *  @example gpio/button/sysio_demo_button.c
  *  Utilisation pour gérer des boutons poussoir
- *  @example gpio/sysio_demo_switch.c
+ *  @example gpio/switch/sysio_demo_switch.c
  *  Utilisation pour gérer des micro-switches
  */
 

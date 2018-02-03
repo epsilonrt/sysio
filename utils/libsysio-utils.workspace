@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="libsysio-utils" Database="" Version="10.0.0">
+  <Project Name="blink" Path="gpio/blink/blink.project" Active="No"/>
+  <Project Name="bsend" Path="gpio/bsend/bsend.project" Active="No"/>
+  <Project Name="i2cping" Path="i2c/i2cping/i2cping.project" Active="No"/>
+  <Project Name="rpi-info" Path="rpi/rpi-info/rpi-info.project" Active="No"/>
+  <Project Name="sping" Path="serial/sping/sping.project" Active="No"/>
+  <Project Name="ssend" Path="serial/ssend/ssend.project" Active="No"/>
+  <Project Name="tinfo" Path="serial/tinfo/tinfo.project" Active="No"/>
+  <Project Name="libsysio-utils" Path="libsysio-utils.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Environment/>
+      <Project Name="blink" ConfigName="Debug"/>
+      <Project Name="bsend" ConfigName="Debug"/>
+      <Project Name="i2cping" ConfigName="Debug"/>
+      <Project Name="rpi-info" ConfigName="Debug"/>
+      <Project Name="sping" ConfigName="Debug"/>
+      <Project Name="ssend" ConfigName="Debug"/>
+      <Project Name="tinfo" ConfigName="Debug"/>
+      <Project Name="libsysio-utils" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="blink" ConfigName="Release"/>
+      <Project Name="bsend" ConfigName="Release"/>
+      <Project Name="i2cping" ConfigName="Release"/>
+      <Project Name="rpi-info" ConfigName="Release"/>
+      <Project Name="sping" ConfigName="Release"/>
+      <Project Name="ssend" ConfigName="Release"/>
+      <Project Name="tinfo" ConfigName="Release"/>
+      <Project Name="libsysio-utils" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

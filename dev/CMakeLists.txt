@@ -2,7 +2,9 @@
 # Copyright © 2017 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# dev CMakeLists.txt
+# libsysio/dev CMakeLists.txt
+
+cmake_minimum_required(VERSION 2.8.11)
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/bin/sysio-prj.in"

@@ -2,15 +2,27 @@
 # Copyright © 2017 epsilonRT, All rights reserved.                            #
 # This software is governed by the CeCILL license <http://www.cecill.info>    #
 ###############################################################################
-# sysio doc CMakeLists.txt
+# libsysio/doc CMakeLists.txt
 
+cmake_minimum_required(VERSION 2.8.11)
+
+set (SYSIO_WITH_DOXYGEN_DOC 0 CACHE BOOL "Enable build of the documentation")
+
+# set packaging dir
+if(NOT CPACK_PACKAGE_DIRECTORY)
+  set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/packages)
+endif()
+
+if("${CMAKE_PROJECT_NAME}" STREQUAL "Project")
+  set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+endif()
 
 if (SYSIO_WITH_DOXYGEN_DOC)
 
   find_package(Doxygen REQUIRED)
   set(DOXYGEN_README ${PROJECT_SOURCE_DIR}/README.md)
-  set(DOXYGEN_FILE ${CMAKE_BINARY_DIR}/doc/Doxyfile)
-  set(DOXYGEN_MAINPAGE ${CMAKE_BINARY_DIR}/doc/main_page.dox)
+  set(DOXYGEN_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
+  set(DOXYGEN_MAINPAGE ${CMAKE_BINARY_DIR}/main_page.dox)
 
   set(DOXYGEN_INPUT_LIST 
     ${PROJECT_SOURCE_DIR}/include/sysio/*.h
@@ -19,7 +31,7 @@ if (SYSIO_WITH_DOXYGEN_DOC)
     ${PROJECT_SOURCE_DIR}/chipio/include/chipio/*.h
     )
 
-  set(DOXYGEN_INPUT "main_page.dox")
+  set(DOXYGEN_INPUT "${CMAKE_BINARY_DIR}/main_page.dox")
   foreach(item ${DOXYGEN_INPUT_LIST})
     get_filename_component(item_dir ${item} DIRECTORY)
     string(APPEND DOXYGEN_INPUT " ${item_dir} ")
@@ -27,12 +39,12 @@ if (SYSIO_WITH_DOXYGEN_DOC)
 
   #message("DOXYGEN_INPUT=${DOXYGEN_INPUT}")
 
-  configure_file(Doxyfile.in Doxyfile @ONLY)
-  configure_file(build_main_page.sh.in build_main_page.sh @ONLY)
+  configure_file(Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+  configure_file(build_main_page.sh.in ${CMAKE_BINARY_DIR}/build_main_page.sh @ONLY)
 
   add_custom_target(main_page.dox
     COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation Main Page..."
-    COMMAND sh ${CMAKE_BINARY_DIR}/doc/build_main_page.sh > /dev/null
+    COMMAND sh ${CMAKE_BINARY_DIR}/build_main_page.sh > /dev/null
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     DEPENDS main_page_header.dox main_page_footer.dox ${PROJECT_SOURCE_DIR}/README.md
     )
@@ -49,31 +61,31 @@ if (SYSIO_WITH_DOXYGEN_DOC)
   
   #message("SYSIO_INSTALL_DOC_DIR=${SYSIO_INSTALL_DOC_DIR}")
   
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html/
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/html/
           DESTINATION ${SYSIO_INSTALL_DOC_DIR}/api-manual COMPONENT doc)
 endif(SYSIO_WITH_DOXYGEN_DOC)
 
 # SysIO examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
-        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/sysio 
+        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/sysio 
         COMPONENT doc
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
 
 # Radio examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
-        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/radio
+        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/radio
         COMPONENT doc
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
 
 # Ssdv examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
-        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/ssdv
+        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/ssdv
         COMPONENT doc
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
 
 # Modbus examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
-        DESTINATION ${SYSIO_INSTALL_DOC_DIR}/examples/modbus
+        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/modbus
         COMPONENT doc
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
 
