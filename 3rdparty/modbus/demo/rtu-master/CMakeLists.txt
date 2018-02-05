@@ -98,6 +98,6 @@ target_link_libraries(modbus_demo_rtu_master ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+#install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 #}}}}
 

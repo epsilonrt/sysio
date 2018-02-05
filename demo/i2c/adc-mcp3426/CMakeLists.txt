@@ -108,6 +108,6 @@ target_link_libraries(sysio_demo_i2c_mcp3426 ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+#install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 #}}}}
 
