@@ -1,4 +1,5 @@
 #!/bin/sh
 if [ -r /etc/armbian-release ]; then
-  awk -F"=" '/^BOARD=/ {print $2}' < /etc/armbian-release | tr '[:upper:]' '[:lower:]'
+  . /etc/armbian-release
+  echo "$BOARD"
 fi
