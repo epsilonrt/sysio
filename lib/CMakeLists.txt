@@ -153,18 +153,18 @@ file(RELATIVE_PATH REL_INCLUDE_DIR "${SYSIO_INSTALL_CMAKE_DIR}"
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${SYSIO_INC_DIR}" "${SYSIO_SRC_DIR}" "${PROJECT_BINARY_DIR}")
 set(CONF_LIB_DIRS "${PROJECT_BINARY_DIR}/lib/sysio")
-if(LIBGPS_LIBRARY_DIRS)
+if(SYSIO_WITH_GPS)
   list(APPEND CONF_LIB_DIRS "${LIBGPS_LIBRARY_DIRS}")
-endif(LIBGPS_LIBRARY_DIRS)
+endif(SYSIO_WITH_GPS)
 configure_file(sysio-config.cmake.in
   "${PROJECT_BINARY_DIR}/sysio-config.cmake" @ONLY)
 
 # ... for the install tree
 set(CONF_INCLUDE_DIRS "\${SYSIO_CMAKE_DIR}/${REL_INCLUDE_DIR}")
 set(CONF_LIB_DIRS "\${SYSIO_CMAKE_DIR}/${REL_LIB_DIR}")
-if(LIBGPS_LIBRARY_DIRS)
+if(SYSIO_WITH_GPS)
   list(APPEND CONF_LIB_DIRS "${LIBGPS_LIBRARY_DIRS}")
-endif(LIBGPS_LIBRARY_DIRS)
+endif(SYSIO_WITH_GPS)
 configure_file(sysio-config.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/sysio-config.cmake" @ONLY)
 
