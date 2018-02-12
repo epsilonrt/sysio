@@ -30,8 +30,10 @@ if (LIBGPS_FOUND)
   list(APPEND SYSIO_CFLAGS_OTHER ${LIBGPS_CFLAGS})
   set (SYSIO_WITH_GPS 0 CACHE BOOL "Enable GPS")
   # libgps-dev 3.16-4 debian stretch armhf bug issue -- begin
-  string(REPLACE "/usr//usr" "/usr" LIBGPS_LIBRARY_DIRS ${LIBGPS_LIBRARY_DIRS})
-  #message("LIBGPS_LIBRARY_DIRS=${LIBGPS_LIBRARY_DIRS}")
+  if(LIBGPS_LIBRARY_DIRS)
+    string(REPLACE "/usr//usr" "/usr" LIBGPS_LIBRARY_DIRS ${LIBGPS_LIBRARY_DIRS})
+    #message("LIBGPS_LIBRARY_DIRS=${LIBGPS_LIBRARY_DIRS}")
+  endif()
   # libgps-dev 3.16-4 debian stretch bug issue -- end
 endif (LIBGPS_FOUND)
 
