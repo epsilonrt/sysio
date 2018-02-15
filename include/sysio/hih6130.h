@@ -9,7 +9,9 @@
 #define _SYSIO_HIH6130_H_
 #include <sysio/defs.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 
@@ -109,5 +111,7 @@ int iHih6130Read (xHih6130 * sensor, xHih6130Data * data);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif  /* _SYSIO_HIH6130_H_ defined */

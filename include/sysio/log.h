@@ -11,7 +11,9 @@
 #include <syslog.h>
 #include <stdarg.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -219,5 +221,7 @@ extern void __vLogAssertPerrorFail (int __errnum, __const char *__file,
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_LOG_H_ defined */

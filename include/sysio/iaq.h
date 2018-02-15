@@ -9,7 +9,9 @@
 #define _SYSIO_IAQ_H_
 #include <sysio/defs.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 
@@ -100,5 +102,7 @@ int iIaqRead (xIaq * sensor, xIaqData * data);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif  /* _SYSIO_IAQ_H_ defined */

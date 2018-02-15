@@ -11,7 +11,9 @@
 #define _RF69_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <limits.h>
 
@@ -477,5 +479,7 @@ int iRf69RcCalibration (xRf69 * rf);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_RF69_H_ defined */

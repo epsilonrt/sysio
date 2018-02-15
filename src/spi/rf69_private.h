@@ -11,7 +11,9 @@
 #define _RF69_PRIVATE_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include "rf69_registers.h"
 
@@ -469,5 +471,7 @@ void vRf69TimerStop (xRf69Timer t);
 bool bRf69TimerTimeout (xRf69Timer t);
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_RF69_PRIVATE_H_ defined */

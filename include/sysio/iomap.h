@@ -8,7 +8,9 @@
 #ifndef _SYSIO_IOMAP_H_
 #define _SYSIO_IOMAP_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -86,5 +88,7 @@ volatile unsigned int * pIo(const xIoMap *p, unsigned int offset);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_IOMAP_H_ defined */

@@ -17,7 +17,9 @@
 #define _SYSIO_GP2_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -106,5 +108,7 @@ int iGp2VoltageToDensity (int iVoltage, const xG2pSetting * xSetting);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_GP2_H_ defined */

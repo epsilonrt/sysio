@@ -9,7 +9,9 @@
 #define _SYSIO_BLYSS_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <stdio.h>
 
@@ -276,5 +278,7 @@ bool bBlyssChannelIsValid (uint8_t channel);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_BLYSS_H_ defined */

@@ -9,7 +9,9 @@
 #define _SYSIO_GPIO_PRIVATE_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <sysio/iomap.h>
 #include <sysio/gpio.h>
@@ -64,5 +66,7 @@ int iArchGpioRead (int g, xGpio * gp);
 int iArchGpioToggle (int g, xGpio * gp);
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* #ifndef _SYSIO_GPIO_PRIVATE_H_ ... */

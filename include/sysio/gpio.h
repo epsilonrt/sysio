@@ -8,7 +8,9 @@
 #ifndef _SYSIO_GPIO_H_
 #define _SYSIO_GPIO_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -367,5 +369,7 @@ const char * sGpioModeToStr (eGpioMode eMode);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_GPIO_H_ defined */

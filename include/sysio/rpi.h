@@ -8,7 +8,9 @@
 #ifndef _SYSIO_RPI_H_
 #define _SYSIO_RPI_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -316,5 +318,7 @@ ulRpiIoBase(void) {
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_RPI_H_ defined */

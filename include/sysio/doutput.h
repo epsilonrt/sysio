@@ -9,7 +9,9 @@
 #define _SYSIO_DOUTPUT_H_
 #include <sysio/gpio.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 /**
  * @defgroup sysio_doutput Port de sortie
@@ -163,5 +165,7 @@ int iDoutReadAll (xDoutPort * port);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_DOUTPUT_H_ defined */

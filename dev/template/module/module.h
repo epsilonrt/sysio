@@ -9,7 +9,9 @@
 #define _SYSIO_MODULE_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 /**
  * @addtogroup dev_group
@@ -47,6 +49,8 @@ __BEGIN_C_DECLS
 #  endif /* __DOXYGEN__ not defined */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_MODULE_H_ defined */
 

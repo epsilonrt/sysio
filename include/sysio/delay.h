@@ -9,7 +9,9 @@
 #ifndef _SYSIO_DELAY_H_
 #define _SYSIO_DELAY_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -50,5 +52,7 @@ int delay_us (long lUs);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_DELAY_H_ defined */

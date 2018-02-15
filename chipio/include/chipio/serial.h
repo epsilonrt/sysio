@@ -13,7 +13,9 @@
 #include <sysio/dinput.h>
 #include <chipio/chipio.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -97,5 +99,7 @@ int iChipIoSerialFlush (xChipIoSerial * port);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _CHIPIO_SERIAL_H_ */

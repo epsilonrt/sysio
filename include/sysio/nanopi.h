@@ -8,7 +8,9 @@
 #ifndef _SYSIO_NANOPI_H_
 #define _SYSIO_NANOPI_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -240,5 +242,7 @@ ulNanoPiIoBase(void) {
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_NANOPI_H_ defined */

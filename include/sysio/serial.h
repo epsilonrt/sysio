@@ -11,7 +11,9 @@
 #include <termios.h>
 #include <sysio/defs.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -426,5 +428,7 @@ double dSerialFrameDuration (int fd, size_t ulSize);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_SERIAL_H_ */

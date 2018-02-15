@@ -41,7 +41,9 @@
 #endif
 
 #ifndef __ASSEMBLER__
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ==========================Partie Langage C============================== */
 
 #if !defined(__DOXYGEN__)
@@ -261,7 +263,9 @@ bool bSysIoLogAssert (void);
  */
 
 /* =========================Fin Partie Langage C============================= */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* __ASSEMBLER__ not defined */
 
 

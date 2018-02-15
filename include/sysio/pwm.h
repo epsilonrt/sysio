@@ -8,7 +8,9 @@
 #ifndef _SYSIO_PWM_H_
 #define _SYSIO_PWM_H_
 #include <sysio/gpio.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -195,5 +197,7 @@ double dPwmClockFreq (void);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_PWM_H_ defined */

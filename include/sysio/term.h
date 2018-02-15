@@ -9,7 +9,9 @@
 #ifndef _SYSIO_TERM_H_
 #define _SYSIO_TERM_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <stdio.h>
 
@@ -56,5 +58,7 @@ int noecho (bool state);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_TERM_H_ defined */

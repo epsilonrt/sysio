@@ -31,7 +31,9 @@
 #define _SYSIO_XBEE_PROTOCOL_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <sysio/xbee.h>
 // mutex
@@ -435,6 +437,8 @@ uint8_t ucXBeeNextFrameId (xXBee *xbee);
 uint8_t ucXBeeCrc (const xXBeePkt *pkt);
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* #ifndef _SYSIO_XBEE_PROTOCOL_H_ ... */
 

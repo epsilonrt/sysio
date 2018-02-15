@@ -10,7 +10,9 @@
 
 #include <sysio/defs.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /* constants ================================================================ */
@@ -176,6 +178,8 @@ typedef union xRgbColor {
   };
 } xRgbColor;
 
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 /* ========================================================================== */
 #endif  /* _SYSIO_RGB_H_ not defined */

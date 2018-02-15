@@ -8,7 +8,9 @@
 #ifndef _SYSIO_I2C_H_
 #define _SYSIO_I2C_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -264,5 +266,7 @@ int iI2cMemRead  (xI2cMem * mem, uint32_t offset, uint8_t * buffer, uint16_t siz
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_I2C_H_ defined */

@@ -10,7 +10,9 @@
 
 #include <sysio/defs.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -115,6 +117,8 @@ typedef struct xTlc59116Config {
  *  @}
  * @}
  */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 /* ========================================================================== */
 #endif  /* _SYSIO_TLC59116_H_ not defined */

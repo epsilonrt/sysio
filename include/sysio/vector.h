@@ -9,7 +9,9 @@
 #define _SYSIO_VECTOR_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -202,5 +204,7 @@ int iVectorFindFirstIndex (const xVector * vector, const void * key);
 
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_VECTOR_H_ defined */

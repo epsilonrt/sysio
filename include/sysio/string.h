@@ -10,7 +10,9 @@
 
 #include <string.h>
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -100,5 +102,7 @@ int iStrToDouble (const char * str, double * n);
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*_SYSIO_STRING_H_ defined */

@@ -10,7 +10,9 @@
 
 #include <chipio/chipio.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -169,5 +171,7 @@ eAdcDiv eChipIoAdcSetDiv (eAdcDiv eDiv, xChipIoAdc * xAdc);
 #endif /* __DOXYGEN__ not defined */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _CHIPIO_ADC_H_ */

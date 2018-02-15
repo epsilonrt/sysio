@@ -9,7 +9,9 @@
 #define _CHIPIO_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -173,5 +175,7 @@ int iChipIoWriteRegBlock (xChipIo * chip, uint8_t reg, const uint8_t * buffer, u
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _CHIPIO_H_ */

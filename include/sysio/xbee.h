@@ -10,7 +10,9 @@
 #define _SYSIO_XBEE_H_
 
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <errno.h>
 #include <stdio.h>
@@ -892,5 +894,7 @@ int iXBeePktSamples (xXBeePkt * pkt);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /*  _SYSIO_XBEE_H_ defined */

@@ -12,7 +12,9 @@
 #include <sysio/rgb.h>
 #include <sysio/tlc59116.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /**
@@ -233,6 +235,8 @@ int iLedRgbCtl (xLedRgbDevice * d, int req, ...);
 /**
  * @}
  */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 /* ========================================================================== */
 #endif  /* _SYSIO_LEDRGB_H_ not defined */

@@ -13,7 +13,9 @@
 #include <sysio/defs.h>
 #include <sysio/ledrgb.h>
 
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 
 /* structures =============================================================== */
@@ -45,6 +47,8 @@ typedef struct xLedRgbDcb {
 // Opérations du contrôleur TLC59116
 extern xLedRgbOps xTlc59116Ops;
 
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 /* ========================================================================== */
 #endif  /* _SYSIO_LEDRGB_PRIVATE_H_ not defined */

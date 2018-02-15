@@ -8,7 +8,9 @@
 #ifndef _SYSIO_GPS_H_
 #define _SYSIO_GPS_H_
 #include <sysio/defs.h>
-__BEGIN_C_DECLS
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /* ========================================================================== */
 #include <gps.h>
 #include <math.h>
@@ -446,5 +448,7 @@ void vGpsClearErrorCallback(struct xGps * gps);
  */
 
 /* ========================================================================== */
-__END_C_DECLS
+#ifdef __cplusplus
+  }
+#endif
 #endif /* _SYSIO_GPS_H_ defined */
