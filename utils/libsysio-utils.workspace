@@ -7,9 +7,10 @@
   <Project Name="sping" Path="serial/sping/sping.project" Active="No"/>
   <Project Name="ssend" Path="serial/ssend/ssend.project" Active="No"/>
   <Project Name="tinfo" Path="serial/tinfo/tinfo.project" Active="No"/>
-  <Project Name="libsysio-utils" Path="libsysio-utils.project" Active="Yes"/>
+  <Project Name="libsysio-utils" Path="libsysio-utils.project" Active="No"/>
+  <Project Name="gpio" Path="gpio/gpio/gpio.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="blink" ConfigName="Debug"/>
       <Project Name="bsend" ConfigName="Debug"/>
@@ -19,8 +20,9 @@
       <Project Name="ssend" ConfigName="Debug"/>
       <Project Name="tinfo" ConfigName="Debug"/>
       <Project Name="libsysio-utils" ConfigName="Debug"/>
+      <Project Name="gpio" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="blink" ConfigName="Release"/>
       <Project Name="bsend" ConfigName="Release"/>
@@ -30,6 +32,7 @@
       <Project Name="ssend" ConfigName="Release"/>
       <Project Name="tinfo" ConfigName="Release"/>
       <Project Name="libsysio-utils" ConfigName="Release"/>
+      <Project Name="gpio" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
