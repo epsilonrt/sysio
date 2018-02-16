@@ -45,6 +45,7 @@
       <File Name="src/gpio/blyss.c"/>
       <File Name="src/gpio/dinput.c"/>
       <File Name="src/gpio/gpio.c"/>
+      <File Name="src/gpio/gpio.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2c-dev.h"/>

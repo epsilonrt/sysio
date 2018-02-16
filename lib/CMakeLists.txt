@@ -72,7 +72,7 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 set(hdr_public ${hdr_sysio} ${hdr_sysio_cpp} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if (SYSIO_WITH_GPIO)
-  file(GLOB src_gpio ${SYSIO_SRC_DIR}/gpio/*.c)
+  file(GLOB src_gpio ${SYSIO_SRC_DIR}/gpio/*.c ${SYSIO_SRC_DIR}/gpio/*.cpp)
   list(APPEND hdr_public ${hdr_gpio})
 endif (SYSIO_WITH_GPIO)
 
