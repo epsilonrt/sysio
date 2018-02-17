@@ -7,8 +7,8 @@
   <Project Name="sping" Path="serial/sping/sping.project" Active="No"/>
   <Project Name="ssend" Path="serial/ssend/ssend.project" Active="No"/>
   <Project Name="tinfo" Path="serial/tinfo/tinfo.project" Active="No"/>
-  <Project Name="libsysio-utils" Path="libsysio-utils.project" Active="Yes"/>
-  <Project Name="gpio" Path="gpio/gpio/gpio.project" Active="No"/>
+  <Project Name="libsysio-utils" Path="libsysio-utils.project" Active="No"/>
+  <Project Name="gpio" Path="gpio/gpio/gpio.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
