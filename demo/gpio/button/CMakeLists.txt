@@ -108,6 +108,16 @@ target_link_libraries(sysio_demo_button ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
-#install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+
+add_custom_command(TARGET sysio_demo_button POST_BUILD
+  COMMAND sudo -v 2> /dev/null && sudo chown root:root  sysio_demo_button
+  COMMAND sudo -v 2> /dev/null && sudo chmod u+s sysio_demo_button
+  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  COMMENT "Setting set-uid root bit for executable")
+set(PROGRAM_PERMISSIONS_DEFAULT
+    OWNER_WRITE OWNER_READ OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE)
+install(TARGETS sysio_demo_button DESTINATION bin PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID)
 #}}}}
 

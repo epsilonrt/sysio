@@ -56,8 +56,8 @@ endif()
 
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-if (NOT SYSIO_WITH_SERIAL)
-  message (FATAL_ERROR "This platform does not have serial port !")
+if (NOT SYSIO_WITH_GPIO)
+  message (FATAL_ERROR "This platform does not have a GPIO !")
 endif ()
 # --- SysIo End. Do not edit by hand -------------------------------------------
 #}}}}
@@ -112,10 +112,18 @@ target_link_libraries(gpio ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND sudo chown root:root  ${PROJECT_NAME}
+  COMMAND sudo chmod u+s ${PROJECT_NAME}
+  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  COMMENT "Setting set-uid root bit for executable")
 set(PROGRAM_PERMISSIONS_DEFAULT
     OWNER_WRITE OWNER_READ OWNER_EXECUTE
     GROUP_READ GROUP_EXECUTE
     WORLD_READ WORLD_EXECUTE)
-install(TARGETS gpio DESTINATION bin PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID)
+if(NOT INSTALL_BIN_DIR)
+  set(INSTALL_BIN_DIR bin)
+endif()
+install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)
 #}}}}
 
