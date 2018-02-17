@@ -2,25 +2,27 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Workspace name
+# Project name
 project(gpio)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Release/output)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 
-set(CONFIGURATION_NAME "Debug")
+set(CONFIGURATION_NAME "Release")
 
 # Projects
 
 
 # Top project
 # Define some variables
-set(PROJECT_PATH "${CMAKE_SOURCE_DIR}/")
+set(PROJECT_gpio_PATH "${CMAKE_CURRENT_LIST_DIR}")
+set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 
 
 
@@ -70,9 +72,12 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-g)
-add_definitions(-O0)
+add_definitions(-O2)
 add_definitions(-Wall)
+add_definitions(
+    -DNDEBUG
+)
+
 
 # Linker options
 
@@ -86,12 +91,12 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
 # Define the CXX sources
 set ( CXX_SRCS
-    ${CMAKE_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/main.cpp
 )
 
 set_source_files_properties(
-    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS 
-    " -g -O0 -Wall")
+    ${C_SRCS} PROPERTIES COMPILE_FLAGS 
+    " -O2 -Wall")
 
 if(WIN32)
     enable_language(RC)
@@ -112,9 +117,9 @@ target_link_libraries(gpio ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo chown root:root  ${PROJECT_NAME}
-  COMMAND sudo chmod u+s ${PROJECT_NAME}
+
+add_custom_target(setuid
+  COMMAND sysio-setuid  ${PROJECT_NAME}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "Setting set-uid root bit for executable")
 set(PROGRAM_PERMISSIONS_DEFAULT
@@ -126,4 +131,3 @@ if(NOT INSTALL_BIN_DIR)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)
 #}}}}
-

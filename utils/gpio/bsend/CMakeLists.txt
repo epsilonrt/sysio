@@ -116,9 +116,8 @@ target_link_libraries(bsend ${LINK_OPTIONS})
 #{{{{ User Code 3
 # Place your code here
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND sudo chown root:root  ${PROJECT_NAME}
-  COMMAND sudo chmod u+s ${PROJECT_NAME}
+add_custom_target(setuid
+  COMMAND sysio-setuid  ${PROJECT_NAME}
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   COMMENT "Setting set-uid root bit for executable")
 set(PROGRAM_PERMISSIONS_DEFAULT
