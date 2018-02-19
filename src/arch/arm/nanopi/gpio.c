@@ -23,47 +23,72 @@ typedef struct xBank {
 } __attribute__ ( (__packed__))  xBank;
 
 /* constants ================================================================ */
-#define PIO_BASE (0x800)
-#define GPIO_SIZE   94
+#define NANOPI_GPIO_DEBUG 0
+
+//  H3_IO1_BASE: 0x01C20000
+#define PIO1_BASE (0x800)
+//  H3_IO2_BASE: 0x01F02000
+#define PIO2_BASE (0xC00)
+#define GPIO_SIZE   106
 
 /* constants ================================================================ */
-static const int iLogicalPinsRev1[] = {
-  0, 6, 2, 3, 88, 89, 1, 91, 12, 11, 25, -1, 22, 23, 24, 86, 87
+static const int iLogToMcuNeo[] = { // 2018-02-18
+  0, 6, 2, 3, 88, 89, 1, 91, 12, 11, 25, 17, 22, 23, 24, 86, 87, 4, 5, 10, 105,
+  20, 21, 19, 18, 104
 };
 
-static const int iLogicalPinsRev2[] = {
-  0, 6, 2, 3, 88, 89, 1, 91, 12, 11, 25, 17, 22, 23, 24, 86, 87,
-  20, 21, 8, 16, 9, 7, 13, 15, 14, 19, 18
+static const int iLogToMcuM1[] = { // TODO
+  0, 6, 2, 3, 88, 89, 1, 91, 12, 11, 25, 17, 22, 23, 24, 86, 87, 20, 21, 8, 16, 9, 7, 13, 15, 14, 19, 18
 };
 
-static const xPinList pxLogicalPins[] = {
-  { .pin = iLogicalPinsRev1, .size = 17, .len = 16, .first = 0, .last = 16 },
-  { .pin = iLogicalPinsRev2, .size = 28, .len = 28, .first = 0, .last = 27 },
+static const int iLogToMcuM1p[] = { // TODO
+  0, 6, 2, 3, 88, 89, 1, 91, 12, 11, 25, 17, 22, 23, 24, 86, 87, 20, 21, 8, 16, 9, 7, 13, 15, 14, 19, 18
 };
 
-static const int iPhysicalPinsRev1[] = {
-  -1, -1, 12, -1, 11, -1, 91, 86, -1, 87, 0, 6, 2, -1, 3, 88, -1, 89, 22, -1, 23, 1, 24, 25
+static const xPinList pxLogToMcu[] = {
+  { .pin = iLogToMcuNeo, .size = 26, .len = 26, .first = 0, .last = 25 }, // 2018-02-18
+  { .pin = iLogToMcuM1,  .size = 28, .len = 28, .first = 0, .last = 27 },
+  { .pin = iLogToMcuM1p, .size = 28, .len = 28, .first = 0, .last = 27 },
 };
 
-static const int iPhysicalPinsRev2[] = {
-  -1, -1, 12, -1, 11, -1, 91, 86, -1, 87, 0, 6, 2, -1, 3, 88, -1, 89, 22, -1, 23,  1, 24, 25,
-  -1, 17, 19, 18, 20, -1, 21, 7, 8, -1, 16, 13, 9, 15, -1, 14
+static const int iPhyToMcuNeo[] = { // 2018-02-18
+  -3, -5, 12, -5, 11, -1, 91, 86, -1, 87, 0, 6, 2, -1, 3, 88, -3, 89, 22, -1,
+  23, 1, 24, 25, -1, -5, 4, 5, 10, 104, -5, -10, -11, -12, -13, 105, 17, 18,
+  19, 20, 21
 };
 
-static const xPinList pxPhysicalPins[] = {
-  { .pin = iPhysicalPinsRev1, .size = 24, .len = 16, .first = 2, .last = 23 },
-  { .pin = iPhysicalPinsRev2, .size = 40, .len = 28, .first = 2, .last = 39 },
+static const int iPhyToMcuM1[] = { // TODO
+  -1, -1, 12, -1, 11, -1, 91, 86, -1, 87, 0, 6, 2, -1, 3, 88, -1, 89, 22, -1, 23,  1, 24, 25, -1, 17, 19, 18, 20, -1, 21, 7, 8, -1, 16, 13, 9, 15, -1, 14
 };
 
-static const int iMcuPinsRev1[] = {
-  0, 1, 2, 3, -1, -1, 6, -1, -1, -1, -1, 11, 12, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, 22, 23, 24, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+static const int iPhyToMcuM1p[] = { // TODO
+  -1, -1, 12, -1, 11, -1, 91, 86, -1, 87, 0, 6, 2, -1, 3, 88, -1, 89, 22, -1, 23,  1, 24, 25, -1, 17, 19, 18, 20, -1, 21, 7, 8, -1, 16, 13, 9, 15, -1, 14
+};
+
+static const xPinList pxPhyToMcu[] = {
+  { .pin = iPhyToMcuNeo, .size = 42, .len = 26, .first = 2, .last = 40 }, // 2018-02-18
+  { .pin = iPhyToMcuM1,  .size = 40, .len = 28, .first = 2, .last = 39 },
+  { .pin = iPhyToMcuM1p,  .size = 40, .len = 28, .first = 2, .last = 39 },
+};
+
+static const int iMcuPinsNeo[] = { // 2018-02-18
+  0, 1, 2, 3, 4, 5, 6, -1, -1, -1, 10, 11, 12, -1, -1, -1, -1, 17, 18, 19, 20,
+  21, 22, 23, 24, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, 86, 87, 88, 89, -1, 91, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, 104, 105
+};
+
+static const int iMcuPinsM1[] = { // TODO
+  0, 1, 2, 3, -1, -1, 6, 7, 8, 9, -1, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  22, 23, 24, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-  -1, -1, -1, -1, -1, 86, 87, 88, 89, -1, 91, -1, -1
+  -1, -1, -1, -1, 86, 87, 88, 89, -1, 91, -1, -1
 };
 
-static const int iMcuPinsRev2[] = {
+static const int iMcuPinsM1p[] = { // TODO
   0, 1, 2, 3, -1, -1, 6, 7, 8, 9, -1, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   22, 23, 24, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -72,9 +97,23 @@ static const int iMcuPinsRev2[] = {
 };
 
 static const xPinList pxMcuPins[] = {
-  { .pin = iMcuPinsRev1, .size = 94, .len = 16, .first = 0, .last = 91 },
-  { .pin = iMcuPinsRev2, .size = 94, .len = 28, .first = 0, .last = 91 },
+  { .pin = iMcuPinsNeo, .size = 106, .len = 26, .first = 0, .last = 105 }, // 2018-02-18
+  { .pin = iMcuPinsM1,  .size = 94,  .len = 28, .first = 0, .last = 91 },
+  { .pin = iMcuPinsM1p, .size = 94,  .len = 28, .first = 0, .last = 91 },
 };
+
+//------------------------------------------------------------------------------
+// 2018-02-18 -->
+static const int iPhyConnNeo[] = { 24, 4, 2, 12 };
+
+static const int iPhyConnM1[] = { 40, 4, 3 }; // 2018-02-18
+
+static const xConnectorList pxPhyConn[] = { // 2018-02-18
+  { .size = iPhyToMcuNeo, .nb = 4 },
+  { .size = iPhyConnM1,   .nb = 3 }
+};
+// <-- 2018-02-18
+//------------------------------------------------------------------------------
 
 /* private variables ======================================================== */
 // Configuration actuelle des broches
@@ -93,7 +132,7 @@ static xGpio gpio = { .numbering = -1,
 
 /* private functions ======================================================== */
 
-#if 0
+#if NANOPI_GPIO_DEBUG
 // -----------------------------------------------------------------------------
 static void
 vPrintBank (const xBank * b) {
@@ -115,21 +154,25 @@ pxGetBank (int bkindex, const xGpio * gp) {
 
   if (bkindex < 7) {
 
-    bank = (xBank *) pIo (gp->map, (PIO_BASE + bkindex * 0x24) >> 2);
+    bank = (xBank *) pIo (gp->map[0], (PIO1_BASE + bkindex * 0x24) >> 2);
+  }
+  else if (bkindex == 7) {
+
+    bank = (xBank *) pIo (gp->map[1], (PIO2_BASE) >> 2);
   }
   return bank;
 }
 
-#if 0
+#if NANOPI_GPIO_DEBUG
 // -----------------------------------------------------------------------------
 static void
 vPrintAllBanks (const xGpio * gp) {
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
 
     if (i != 1) {
       xBank *b = pxGetBank (i, gp);
-      printf ("\n---Port %c---\n", 'A' + i);
+      printf ("\n---Port %c---\n", i < 7 ? 'A' + i : 'L');
       vPrintBank (b);
     }
   }
@@ -141,7 +184,7 @@ vPrintAllBanks (const xGpio * gp) {
 // -----------------------------------------------------------------------------
 static xBank *
 pxGetPinBank (int * mcupin, const xGpio * gp) {
-  const int list[] = { 22, 0, 17, 18, 16, 7, 14, -1 };
+  const int list[] = { 22, 0, 17, 18, 16, 7, 14, 12, -1 };
   const int *p = list;
   int bkindex = 0;
   int ng = *mcupin;
@@ -157,7 +200,7 @@ pxGetPinBank (int * mcupin, const xGpio * gp) {
     while (bkindex == 1);   // saute PortB
   }
 
-  if (bkindex < 7) {
+  if (bkindex < 8) {
 
     *mcupin = ng;
     bank = pxGetBank (bkindex, gp);
@@ -183,7 +226,7 @@ iGpioSetNumbering (eGpioNumbering eNum, xGpio * gp) {
     switch (eNum) {
 
       case eNumberingLogical:
-        gp->list = &pxLogicalPins[pxNanoPiInfo()->iGpioRev - 1];
+        gp->list = &pxLogToMcu[pxNanoPiInfo()->iGpioRev - 1];
         break;
 
       case eNumberingMcu:
@@ -191,7 +234,7 @@ iGpioSetNumbering (eGpioNumbering eNum, xGpio * gp) {
         break;
 
       case eNumberingPhysical:
-        gp->list = &pxPhysicalPins[pxNanoPiInfo()->iGpioRev - 1];
+        gp->list = &pxPhyToMcu[pxNanoPiInfo()->iGpioRev - 1];
         break;
     }
     gp->i = gp->j = ITERATOR_FRONT; // ToFront
@@ -215,24 +258,29 @@ xGpioOpen (UNUSED_VAR (void *, setup)) {
 
     (void) iGpioSetNumbering (eNumberingLogical, gp);
 
-    gp->map = xIoMapOpen (ulNanoPiIoBase(), H3_BLOCK_SIZE);
-    if (gp->map) {
+    gp->map[0] = xIoMapOpen (H3_IO1_BASE, H3_BLOCK_SIZE);
 
-      // Lecture des modes actuels
-      for (int g = 0; g < GPIO_SIZE; g++) {
+    if (gp->map[0]) {
 
-        gp->pinmode_release[g] = -1;
-        gp->pinmode[g] = eArchGpioGetMode (g, gp);
-        gp->pinpull_release[g] = -1;
-        gp->pinpull[g] = eArchGpioGetPull (g, gp);
+      gp->map[1] = xIoMapOpen (H3_IO2_BASE, H3_BLOCK_SIZE);
+      if (gp->map[1]) {
+
+        // Lecture des modes actuels
+        for (int g = 0; g < GPIO_SIZE; g++) {
+
+          gp->pinmode_release[g] = -1;
+          gp->pinmode[g] = eArchGpioGetMode (g, gp);
+          gp->pinpull_release[g] = -1;
+          gp->pinpull[g] = eArchGpioGetPull (g, gp);
+        }
+        gp->link = 1;
+        gp->roc = true;
+
+        vPrintAllBanks (gp);
+        return gp;
       }
-      gp->link = 1;
-      gp->roc = true;
-
-      vPrintAllBanks (gp);
-      return gp;
+      iIoMapClose (gp->map[0]);
     }
-
     // Sortie sur erreur
     return 0;
   }
@@ -260,7 +308,8 @@ iGpioClose (xGpio * gp) {
         }
       }
       vPrintAllBanks (gp);
-      error = iIoMapClose (gp->map);
+      error  = iIoMapClose (gp->map[0]);
+      error += iIoMapClose (gp->map[1]);
       memset (gp, 0, sizeof (xGpio));
       gp->numbering = -1;
       gp->pinmode = pinmode;
@@ -280,7 +329,7 @@ sGpioModeToStr (eGpioMode mode) {
 
   switch (mode) {
     case eModeInput:
-      return "INP";
+      return "IN";
       break;
     case eModeOutput:
       return "OUT";
@@ -300,8 +349,11 @@ sGpioModeToStr (eGpioMode mode) {
     case eModeFunc6:
       return "FC6";
       break;
+    case eModePwm:
+      return "PWM";
+      break;
     case eModeDisabled:
-      return "DIS";
+      return "OFF";
       break;
     default:
       break;
@@ -506,6 +558,13 @@ iArchGpioToggle (int g, xGpio * gp) {
   }
 
   return -1;
+}
+
+// -----------------------------------------------------------------------------
+const xConnectorList *
+pxArchGpioGetConnSize (xGpio * gp) {
+
+  return &pxPhyConn[pxNanoPiInfo()->iGpioRev - 1];
 }
 
 /* ========================================================================== */

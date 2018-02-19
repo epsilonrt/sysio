@@ -27,12 +27,16 @@ static const char sUnknown[] = "Unknown";
 
 static const char * sModelList[] = {
   "NanoPi Neo",
+  "NanoPi Neo2",
+  "NanoPi Neo2 Plus",
   "NanoPi Neo Air",
   "NanoPi M1",
+  "NanoPi M1 Plus",
 };
 
 static const char * sMcuList[] = {
-  "Allwinner H3"
+  "Allwinner H3",
+  "Allwinner H5"
 };
 
 /* private variables ======================================================== */

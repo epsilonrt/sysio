@@ -28,6 +28,21 @@ iGpioMcuPin (int n, xGpio * gp) {
 
     if (gp->numbering == eNumberingPhysical) {
 
+      if (n > 100) { // Connecteur supérieurs
+        int nc = n / 100;
+        const xConnectorList * cl = pxArchGpioGetConnSize (gp);
+
+        if ( (nc + 1) > cl->nb) {
+          
+          // Numéro de connecteur hors-limite
+          return -1;
+        }
+        n %= 100;
+        for (int c = 0; c < cl->nb; c++) {
+
+          n += cl->size[c];
+        }
+      }
       n--;
     }
 
@@ -179,7 +194,7 @@ bGpioGetReleaseOnClose (const xGpio * gp) {
 bool
 bGpioIsOpen (const xGpio * gp) {
 
-  return bIoMapIsOpen (gp->map);
+  return bIoMapIsOpen (gp->map[0]);
 }
 
 // -----------------------------------------------------------------------------

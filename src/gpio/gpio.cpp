@@ -5,6 +5,8 @@
  * Copyright © 2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
+#include <iostream>
+#include <sstream>
 #include <sysio/gpio.h>
 
 /*
@@ -13,8 +15,12 @@
  * @param args pointeur sur une variable de configuration dépendant de
  *        l'architecture
  */
-Gpio::Gpio (void * args) : g (xGpioOpen (args)) {
-  
+Gpio::Gpio (void * args)  {
+
+  g = xGpioOpen (args);
+  if (!g) {
+    
+  }
 }
 
 /*
@@ -30,7 +36,7 @@ Gpio::~Gpio() {
  *
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::setNumbering (eGpioNumbering eNum) {
 
   return iGpioSetNumbering (eNum, g);
@@ -41,7 +47,7 @@ Gpio::setNumbering (eGpioNumbering eNum) {
  *
  * @return 0, -1 si erreur
  */
-eGpioNumbering 
+eGpioNumbering
 Gpio::numbering() {
 
   return eGpioGetNumbering (g);
@@ -52,7 +58,7 @@ Gpio::numbering() {
  * @param eNum numérotation
  * @return Chaîne de caractère correspondant à une numérotation
  */
-const char * 
+const char *
 Gpio::numberingToStr (eGpioNumbering eNum) {
 
   return sGpioNumberingToStr (eNum);
@@ -68,7 +74,7 @@ Gpio::numberingToStr (eGpioNumbering eNum) {
  * @param mode le type de la broche
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::setMode (int pin, eGpioMode mode) {
 
   return iGpioSetMode (pin, mode, g);
@@ -83,7 +89,7 @@ Gpio::setMode (int pin, eGpioMode mode) {
  * @param pin le numéro de la broche
  * @return le type, eModeError si erreur
  */
-eGpioMode 
+eGpioMode
 Gpio::mode (int pin) {
 
   return eGpioGetMode (pin, g);
@@ -96,7 +102,7 @@ Gpio::mode (int pin) {
  * @param ePull le type de la résistance (ePullOff pour désactiver)
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::setPull (int pin, eGpioPull p) {
 
   return iGpioSetPull (pin, p, g);
@@ -108,7 +114,7 @@ Gpio::setPull (int pin, eGpioPull p) {
  * @param pin le numéro de la broche
  * @return le type de la résistance, ePullError si erreur
  */
-eGpioPull 
+eGpioPull
 Gpio::pull (int pin) {
 
   return eGpioGetPull (pin, g);
@@ -120,7 +126,7 @@ Gpio::pull (int pin) {
  * @param pin le numéro de la broche (numérotation sélectionnée)
  * @return true si numéro valide
  */
-bool 
+bool
 Gpio::isValid (int pin) {
 
   return bGpioIsValid (pin, g);
@@ -131,7 +137,7 @@ Gpio::isValid (int pin) {
  *
  * @return nombre de broches, -1 si erreur
  */
-int 
+int
 Gpio::size() {
 
   return iGpioGetSize (g);
@@ -144,7 +150,7 @@ Gpio::size() {
  * @param value valeur binaire à appliquer
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::write (int pin, bool value) {
 
   return iGpioWrite (pin, value, g);
@@ -156,7 +162,7 @@ Gpio::write (int pin, bool value) {
  * @param pin le numéro de la broche
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::toggle (int pin) {
 
   return iGpioToggle (pin, g);
@@ -174,7 +180,7 @@ Gpio::toggle (int pin) {
  * @param value valeur binaire à appliquer aux broches
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::writeAll (int64_t mask, bool value) {
 
   return iGpioWriteAll (mask, value, g);
@@ -191,7 +197,7 @@ Gpio::writeAll (int64_t mask, bool value) {
  *        broches.
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::toggleAll (int64_t mask) {
 
   return iGpioToggleAll (mask, g);
@@ -206,7 +212,7 @@ Gpio::toggleAll (int64_t mask) {
  * @param pin le numéro de la broche
  * @return true à l'état haut, false à l'état bas, -1 si erreur
  */
-int 
+int
 Gpio::read (int pin) {
 
   return iGpioRead (pin, g);
@@ -225,7 +231,7 @@ Gpio::read (int pin) {
  * @return l'état des broches, chaque bit correspond à l'état de la broche
  * correspondante (bit 0 pour la broche 0, bit 1 pour la broche 1 ...)
  */
-int64_t 
+int64_t
 Gpio::readAll (int64_t mask) {
 
   return iGpioReadAll (mask, g);
@@ -240,7 +246,7 @@ Gpio::readAll (int64_t mask) {
  * @param enable true active la libération, false la désactive.
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::setReleaseOnClose (bool enable) {
 
   return iGpioSetReleaseOnClose (enable, g);
@@ -254,7 +260,7 @@ Gpio::setReleaseOnClose (bool enable) {
  *
  * @return true si validé, false sinon
  */
-bool 
+bool
 Gpio::releaseOnClose() {
 
   return bGpioGetReleaseOnClose (g);
@@ -271,7 +277,7 @@ Gpio::releaseOnClose() {
  * @param pin le numéro de la broche
  * @return 0, -1 si erreur
  */
-int 
+int
 Gpio::release (int pin) {
 
   return iGpioRelease (pin, g);
@@ -282,7 +288,7 @@ Gpio::release (int pin) {
  * @brief Teste si l'itérateur interne peut passer à une broche suivante
  * @return true si possible
  */
-bool 
+bool
 Gpio::hasNext() {
 
   return bGpioHasNext (g);
@@ -292,7 +298,7 @@ Gpio::hasNext() {
  * @brief Teste si l'itérateur interne peut passer à une broche précédente
  * @return true si possible
  */
-bool 
+bool
 Gpio::hasPrevious() {
 
 
@@ -303,9 +309,9 @@ Gpio::hasPrevious() {
  * @brief Pointe l'itérateur interne sur la broche suivante
  * @return le numéro de la broche suivante
  */
-int 
+int
 Gpio::next() {
-  
+
   return iGpioNext (g);
 }
 
@@ -313,28 +319,28 @@ Gpio::next() {
  * @brief Pointe l'itérateur interne sur la broche précédente
  * @return le numéro de la broche précédente
  */
-int 
+int
 Gpio::previous() {
-  
+
   return iGpioPrevious (g);
 }
 
 /*
  * @brief Pointe l'itérateur interne après la dernière broche
  */
-void 
+void
 Gpio::toBack() {
-  
+
   (void) iGpioToBack (g);
 }
 
 /*
  * @brief Pointe l'itérateur interne avant la première broche
  */
-void 
+void
 Gpio::toFront() {
 
-    (void) iGpioToFront (g);
+  (void) iGpioToFront (g);
 }
 
 /*
@@ -343,10 +349,58 @@ Gpio::toFront() {
  * @param mode mode
  * @return Chaîne de caractère correspondant à un mode
  */
-const char * 
+const char *
 Gpio::modeToStr (eGpioMode mode) {
-  
+
   return sGpioModeToStr (mode);
+}
+
+// -----------------------------------------------------------------------------
+GpioException::GpioException (GpioException::Code code, int value) :
+  _code (code), _value (value) {
+  std::ostringstream s;
+
+  switch (_code) {
+    case ArgumentExpected:
+      _msg.assign ("Arguments expected");
+      break;
+    case PinNumberExpected:
+      _msg.assign ("Pin number expected");
+      break;
+    case NotBinaryValue:
+      s << _value << " is not a binary value";
+      _msg = s.str();
+      break;
+    case NotPwmValue:
+      s << _value << " is not a pwm value";
+      _msg = s.str();
+      break;
+    case NotOutputPin:
+      s << "Pin #" << value << " is not an output";
+      _msg = s.str();
+    case NotPwmPin:
+      s << "Pin #" << value << " is not an pwm output";
+      _msg = s.str();
+      break;
+    default:
+      break;
+  }
+}
+
+// -----------------------------------------------------------------------------
+GpioException::GpioException (GpioException::Code code, const std::string& param) :
+  _code (code), _param (param) {
+
+  switch (_code) {
+      _msg.assign ("Unknown command: ");
+      break;
+    case IllegalMode:
+      _msg.assign ("Illegal mode: ");
+      break;
+    default:
+      break;
+  }
+  _msg.append (_param);
 }
 
 /* ========================================================================== */

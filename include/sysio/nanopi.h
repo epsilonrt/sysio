@@ -20,8 +20,10 @@
  *  @{
  * La numérotation logique SysIo des broches de GPIO est la suivante: \n
 
-  \n Connecteur CON1 (Modèle Neo, Neo Air) \n  <hr>
-  | H3  | SysIo | Name             | Physical | Name             | SysIo | H3  |
+  \n Modèle Neo, Neo2, Neo2 Plus, Neo Air\n  <hr>
+  
+  \n Connecteur CON1 (2x12) \n 
+  | Mcu | SysIo | Name             | Physical | Name             | SysIo | Mcu |
   | :-: | :---: | :--------------: | :------: | :--------------: | :---: | :-: |
   |     |       |       3V3        |  1 - 2   |       5V         |       |     |
   | 12  |   8   | I2C0_SDA/GPIOA12 |  3 - 4   |       5V         |       |     |
@@ -35,7 +37,44 @@
   | 22  |  12   | SPI0_MOSI/GPIOC0 | 19 - 20  |       GND        |       |     |
   | 23  |  13   | SPI0_MISO/GPIOC1 | 21 - 22  | UART2_RX/GPIOA1  |  6    | 1   |
   | 24  |  14   | SPI0_CLK/GPIOC2  | 23 - 24  | SPI0_CS/GPIOC3   |  10   | 25  |
-  \n Connecteur CON1 (Modèle M1) \n  <hr>
+
+  \n Connecteur Debug UART (1x4) \n 
+
+  | Mcu | SysIo | Name                         | Physical |
+  | :-: | :---: | :--------------------------: | :------: |
+  |     |       | GND                          | 1 (101)  |
+  |     |       | 5V                           | 2 (102)  |
+  | 4   | 17    | UART0_TX/GPIOA4              | 3 (103)  |
+  | 5   | 18    | UART0_RX/GPIOA5              | 4 (104)  |
+
+  \n Composants implantés sur la carte \n
+
+  | Mcu | SysIo | Name                         | Physical |
+  | :-: | :---: | :--------------------------: | :------: |
+  | 10  | 19    | STATUS-LED/GPIOA10 (ACT:H)   | 1 (201)  |
+  | 104 | 32    | POWER-LED/GPIOL10  (ACT:H)   | 2 (202)  |
+
+  \n Connecteur CON2 (1x12) \n
+  
+  | Mcu | SysIo | Name                         | Physical |
+  | :-: | :---: | :--------------------------: | :------: |
+  |     |       | 5V                           | 1 (301)  |
+  |     |       | USB1+                        | 2 (302)  |
+  |     |       | USB1-                        | 3 (303)  |
+  |     |       | USB2+                        | 4 (304)  |
+  |     |       | USB2-                        | 5 (305)  |
+  | 105 | 20    | IR-RX/GPIOL11                | 6 (306)  |
+  | 17  | 11    | SPDIF-OUT/GPIOA17            | 7 (307)  |
+  | 18  | 31    | PCM0_SYNC/I2S0_LRCK/GPIOA18  | 8 (308)  |
+  | 19  | 30    | PCM0_CLK/I2S0_BCK/GPIOA19    | 9 (309)  |
+  | 20  | 21    | PCM0_DOUT/I2S0_SDOUT/GPIOA20 | 10 (310) |
+  | 21  | 22    | PCM0_DIN/I2S0_SDIN/GPIOA21   | 11 (311) |
+  |     |       | GND                          | 12 (312) |
+
+
+  \n Modèle M1, M1 Plus \n  <hr>
+  
+  \n Connecteur CON1 (2x20) \n
   | H3  | SysIo | Name                        | Physical | Name                        | SysIo | H3  |
   | :-: | :---: | :-------------------------: | :------: | :-------------------------: | :---: | :-: |
   |     |       |       3V3                   |  1 - 2   |       5V                    |       |     |
@@ -58,6 +97,24 @@
   | 16  |  24   | UART3_CTS/SPI1_MISO/GPIOA16 | 35 - 36  | UART3_TX/SPI1_CS/GPIOA13    |  27   | 13  |
   | 9   |  25   | GPIOA9                      | 37 - 38  | UART3_RTS/SPI1_MOSI/GPIOA15 |  28   | 15  |
   |     |       |       GND                   | 39 - 40  | UART3_RX/SPI1_CLK/GPIOA14   |  29   | 14  |
+
+  \n Connecteur Debug UART (1x4) \n 
+
+  | Mcu | SysIo | Name                         | Physical |
+  | :-: | :---: | :--------------------------: | :------: |
+  |     |       | GND                          | 1 (101)  |
+  |     |       | 5V                           | 2 (102)  |
+  | 4   | 17    | UART0_TX/GPIOA4              | 3 (103)  |
+  | 5   | 18    | UART0_RX/GPIOA5              | 4 (104)  |
+
+  \n Composants implantés sur la carte \n
+
+  | Mcu | SysIo | Name                         | Physical |
+  | :-: | :---: | :--------------------------: | :------: |
+  | 10  | 19    | STATUS-LED/GPIOA10 (ACT:H)   | 1 (201)  |
+  | 104 | 32    | POWER-LED/GPIOL10  (ACT:H)   | 2 (202)  |
+  | 97  | 33    | K1/GPIOL3          (ACT:L)   | 3 (203)  |
+  | 105 | 20    | IR-RX/GPIOL11      (ACT:L)   | 4 (204)  |
  */
 
 /**
@@ -65,8 +122,11 @@
  */
 typedef enum  {
   eNanoPiModelNeo,
+  eNanoPiModelNeo2,
+  eNanoPiModelNeo2Plus,
   eNanoPiModelNeoAir,
   eNanoPiModelNeoM1,
+  eNanoPiModelNeoM1Plus,
   eNanoPiModelUnknown = -1
 } eNanoPiModel;
 
@@ -75,6 +135,7 @@ typedef enum  {
  */
 typedef enum  {
   eNanoPiMcuH3,
+  eNanoPiMcuH5,
   eNanoPiMcuUnknown = -1
 } eNanoPiMcu;
 
@@ -125,12 +186,13 @@ const char * sNanoPiMcuToStr (eNanoPiMcu eMcu);
 #define GPIO_A1     6
 #define GPIO_A2     2
 #define GPIO_A3     3
-
+#define GPIO_A4     17
+#define GPIO_A5     18
 #define GPIO_A6     1
 #define GPIO_A7     26
 #define GPIO_A8     23
 #define GPIO_A9     25
-
+#define GPIO_A10    19
 #define GPIO_A11    9
 #define GPIO_A12    8
 #define GPIO_A13    27
@@ -154,6 +216,15 @@ const char * sNanoPiMcuToStr (eNanoPiMcu eMcu);
 #define GPIO_G9     5
 
 #define GPIO_G11    7
+
+#define GPIO_L3     33
+
+#define GPIO_L10    32
+#define GPIO_L11    20
+
+#define LED_STATUS  GPIO_A10
+#define LED_POWER   GPIO_L10
+#define IR_RX       GPIO_L11
 
 #define PWM1        1
 
@@ -216,29 +287,13 @@ const char * sNanoPiMcuToStr (eNanoPiMcu eMcu);
  *  @}
  */
 
-#if defined(__DOXYGEN__)
-/**
- * @brief Adresse de base des entrées-sorties
- */
-static inline  unsigned long ulNanoPiIoBase(void);
-
-/**
- * @}
- */
-
-#else /* ! defined(__DOXYGEN__) */
+#if ! defined(__DOXYGEN__)
 // -----------------------------------------------------------------------------
 /* Allwinner H3  internals ================================================== */
-#define H3_IO_BASE    (0x01C20000)
+#define H3_IO1_BASE  (0x01C20000)
+#define H3_IO2_BASE  (0x01F02000)
 #define H3_PAGE_SIZE  (4*1024)
 #define H3_BLOCK_SIZE (4*1024)
-
-// -----------------------------------------------------------------------------
-INLINE unsigned long
-ulNanoPiIoBase(void) {
-  
-  return H3_IO_BASE;
-}
 #endif /* !defined(__DOXYGEN__) */
 
 /* ========================================================================== */

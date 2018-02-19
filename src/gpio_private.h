@@ -34,11 +34,20 @@ typedef struct xPinList {
 } xPinList;
 
 /*
+ * @struct xConnectorList
+ * @brief 
+ */
+typedef struct xConnectorList {
+  const int * size; // Tailles de connecteurs (tableau de nb int)
+  int nb; // Nombre de connecteurs
+} xConnectorList;
+
+/*
  * @struct xGpio
  * @brief 
  */
 typedef struct xGpio {
-  xIoMap * map;
+  xIoMap * map[2];
   const xPinList * list;
   int i; // iterateur utilisateur
   int j; // iterateur interne
@@ -64,6 +73,7 @@ int iArchGpioRelease (int g, xGpio * gp);
 int iArchGpioWrite (int g, bool bValue, xGpio * gp);
 int iArchGpioRead (int g, xGpio * gp);
 int iArchGpioToggle (int g, xGpio * gp);
+const xConnectorList * pxArchGpioGetConnSize (xGpio * gp);
 
 /* ========================================================================== */
 #ifdef __cplusplus

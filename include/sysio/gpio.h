@@ -2,16 +2,12 @@
  * @file
  * @brief GPIO
  *
- * Copyright © 2015 epsilonRT, All rights reserved.
+ * Copyright © 2015-2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #ifndef _SYSIO_GPIO_H_
 #define _SYSIO_GPIO_H_
 #include <sysio/defs.h>
-#ifdef __cplusplus
-  extern "C" {
-#endif
-/* ========================================================================== */
 
 /**
  *  @defgroup sysio_gpio GPIO
@@ -29,6 +25,13 @@
  *  @example gpio/getmode/sysio_test_gpio_getmode.c
  *  Lecture du mode de toutes les broches du GPIO
  */
+
+#ifdef __cplusplus
+extern "C" {
+// -----------------------------------------------------------------------------
+// C part --->
+#endif
+
 /* constants ================================================================ */
 /**
  * Permet d'indiquer qu'une broche est inutilisée
@@ -58,7 +61,8 @@ typedef enum  {
   eModeDisabled = 7,  /**< Broche désactivée (NanoPi) */
   eModePwm      = 0x8002,  /**< sortie PWM */
   eModeError    = -1 /**< Erreur */
-} eGpioMode;
+}
+                eGpioMode;
 
 /**
  * @enum eGpioPull
@@ -119,7 +123,7 @@ bool bGpioIsOpen (const xGpio * gpio);
 
 /**
  * @brief Modifie le type de numérotation
- * 
+ *
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
@@ -127,7 +131,7 @@ int iGpioSetNumbering (eGpioNumbering eNum, xGpio * gpio);
 
 /**
  * @brief Type de numérotation
- * 
+ *
  * @param gpio pointeur sur le GPIO
  * @return 0, -1 si erreur
  */
@@ -320,42 +324,42 @@ int iGpioRelease (int iPin, xGpio * gpio);
  * @param gpio pointeur sur le GPIO
  * @return true si possible
  */
-bool bGpioHasNext(const xGpio * gpio);
+bool bGpioHasNext (const xGpio * gpio);
 
 /**
  * @brief Teste si l'itérateur interne peut passer à une broche précédente
  * @param gpio pointeur sur le GPIO
  * @return true si possible
  */
-bool bGpioHasPrevious(const xGpio * gpio);
+bool bGpioHasPrevious (const xGpio * gpio);
 
 /**
  * @brief Pointe l'itérateur interne sur la broche suivante
  * @param gpio pointeur sur le GPIO
  * @return le numéro de la broche suivante
  */
-int iGpioNext(xGpio * gpio);
+int iGpioNext (xGpio * gpio);
 
 /**
  * @brief Pointe l'itérateur interne sur la broche précédente
  * @param gpio pointeur sur le GPIO
  * @return le numéro de la broche précédente
  */
-int iGpioPrevious(xGpio * gpio);
+int iGpioPrevious (xGpio * gpio);
 
 /**
  * @brief Pointe l'itérateur interne après la dernière broche
  * @param gpio pointeur sur le GPIO
  * @return 0
  */
-int iGpioToBack(xGpio * gpio);
+int iGpioToBack (xGpio * gpio);
 
 /**
  * @brief Pointe l'itérateur interne avant la première broche
  * @param gpio pointeur sur le GPIO
  * @return 0
  */
-int iGpioToFront(xGpio * gpio);
+int iGpioToFront (xGpio * gpio);
 
 /**
  * @brief Chaîne de caractère correspondant à un mode
@@ -364,257 +368,319 @@ int iGpioToFront(xGpio * gpio);
  */
 const char * sGpioModeToStr (eGpioMode eMode);
 
-#if defined(__cplusplus) || defined(DOXYGEN)
-  class Gpio {
-    public:
-      /**
-       * @brief Création d'un GPIO
-       *
-       * @param args pointeur sur une variable de configuration dépendant de
-       *        l'architecture
-       */
-      Gpio (void * args = nullptr);
-
-      /**
-       * @brief Destruction d'un GPIO
-       */
-      virtual ~Gpio();
-
-      /**
-       * @brief Modifie le type de numérotation
-       *
-       * @return 0, -1 si erreur
-       */
-      int setNumbering (eGpioNumbering eNum);
-
-      /**
-       * @brief Type de numérotation
-       *
-       * @return 0, -1 si erreur
-       */
-      eGpioNumbering numbering();
-
-      /**
-       * @brief Chaîne de caractère correspondant à une numérotation
-       * @param eNum numérotation
-       * @return Chaîne de caractère correspondant à une numérotation
-       */
-      static const char * numberingToStr (eGpioNumbering eNum);
-
-      /**
-       * @brief Modifie le type d'une broche
-       *
-       * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
-       * dépend de l'architecture matérielle.
-       *
-       * @param pin le numéro de la broche
-       * @param mode le type de la broche
-       * @return 0, -1 si erreur
-       */
-      int setMode (int pin, eGpioMode mode);
-
-      /**
-       * @brief Lecture du type actuel d'une broche
-       *
-       * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
-       * dépend de l'architecture matérielle.
-       *
-       * @param pin le numéro de la broche
-       * @return le type, eModeError si erreur
-       */
-      eGpioMode mode (int pin);
-
-      /**
-       * @brief Modification de la résistance de tirage d'une broche
-       *
-       * @param pin le numéro de la broche
-       * @param ePull le type de la résistance (ePullOff pour désactiver)
-       * @return 0, -1 si erreur
-       */
-      int setPull (int pin, eGpioPull ePull);
-
-      /**
-       * @brief Lecture du type du type résistance de tirage d'une broche
-       *
-       * @param pin le numéro de la broche
-       * @return le type de la résistance, ePullError si erreur
-       */
-      eGpioPull pull (int pin);
-
-      /**
-       * @brief Teste la validité d'un numéro de broche
-       *
-       * @param pin le numéro de la broche (numérotation sélectionnée)
-       * @return true si numéro valide
-       */
-      bool isValid (int pin);
-
-      /**
-       * @brief Lecture du nombre de broches du port GPIO
-       *
-       * @return nombre de broches, -1 si erreur
-       */
-      int size();
-
-      /**
-       * @brief Modification de l'état binaire d'une sortie
-       *
-       * @param pin le numéro de la broche
-       * @param value valeur binaire à appliquer
-       * @return 0, -1 si erreur
-       */
-      int write (int pin, bool value);
-
-      /**
-       * @brief Bascule de l'état binaire d'une sortie
-       *
-       * @param pin le numéro de la broche
-       * @return 0, -1 si erreur
-       */
-      int toggle (int pin);
-
-      /**
-       * @brief Modification de l'état binaire de plusieurs sorties
-       *
-       * Cette fonction n'a aucune action sur les broches qui ne sont pas en sortie.
-       *
-       * @param mask masque de sélection des broches à modifier, un bit à 1 indique
-       *        que la broche correspondante doit être modifiée (bit 0 pour la
-       *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
-       *        broches.
-       * @param value valeur binaire à appliquer aux broches
-       * @return 0, -1 si erreur
-       */
-      int writeAll (int64_t mask, bool value);
-
-      /**
-       * @brief Bascule de l'état binaire de plusieurs sorties
-       *
-       * Cette fonction n'a aucune action sur les broches qui ne sont pas en sortie.
-       *
-       * @param mask masque de sélection des broches à modifier, un bit à 1 indique
-       *        que la broche correspondante doit être modifiée (bit 0 pour la
-       *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
-       *        broches.
-       * @return 0, -1 si erreur
-       */
-      int toggleAll (int64_t mask);
-
-      /**
-       * @brief Lecture de l'état binaire d'une broche
-       *
-       * En fonction de l'architecture, la lecture est possible sur les entrées ou
-       * sur les entrées et les sorties.
-       *
-       * @param pin le numéro de la broche
-       * @return true à l'état haut, false à l'état bas, -1 si erreur
-       */
-      int read (int pin);
-
-      /**
-       * @brief Lecture de l'état binaire d'un ensemble de broches
-       *
-       * En fonction de l'architecture, la lecture est possible sur les entrées ou
-       * sur les entrées et les sorties.
-       *
-       * @param mask masque de sélection des broches à lire, un bit à 1 indique
-       *        que la broche correspondante doit être lue (bit 0 pour la
-       *        broche 0, bit 1 pour la broche 1 ...). -1 pour lire toutes les
-       *        broches.
-       * @return l'état des broches, chaque bit correspond à l'état de la broche
-       * correspondante (bit 0 pour la broche 0, bit 1 pour la broche 1 ...)
-       */
-      int64_t readAll (int64_t mask);
-
-      /**
-       * @brief Modifie la libération des broches à la fermeture
-       *
-       * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
-       * iGpioClose(). Cette fonction permet de modifier ce comportement.
-       *
-       * @param enable true active la libération, false la désactive.
-       * @return 0, -1 si erreur
-       */
-      int setReleaseOnClose (bool enable);
-
-      /**
-       * @brief Lecture la libération des broches à la fermeture
-       *
-       * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
-       * iGpioClose(). Cette fonction permet de lire l'état de cette directive
-       *
-       * @return true si validé, false sinon
-       */
-      bool releaseOnClose();
-
-      /**
-       * @brief Libère une broche de son utilisation
-       *
-       * La broche correspondante est remise dans son état initial. Seule une broche
-       * dont le type a été modifié depuis l'ouverture du port par iGpioOpen() sera
-       * restaurée. Si le type de broche n'a pas été modifié depuis l'ouverture, cette
-       * fonction ne fait rien et renvoie 0.
-       *
-       * @param pin le numéro de la broche
-       * @return 0, -1 si erreur
-       */
-      int release (int pin);
-
-
-      /**
-       * @brief Teste si l'itérateur interne peut passer à une broche suivante
-       * @return true si possible
-       */
-      bool hasNext();
-
-      /**
-       * @brief Teste si l'itérateur interne peut passer à une broche précédente
-       * @return true si possible
-       */
-      bool hasPrevious();
-
-      /**
-       * @brief Pointe l'itérateur interne sur la broche suivante
-       * @return le numéro de la broche suivante
-       */
-      int next();
-
-      /**
-       * @brief Pointe l'itérateur interne sur la broche précédente
-       * @return le numéro de la broche précédente
-       */
-      int previous();
-
-      /**
-       * @brief Pointe l'itérateur interne après la dernière broche
-       */
-      void toBack();
-
-      /**
-       * @brief Pointe l'itérateur interne avant la première broche
-       */
-      void toFront();
-
-      /**
-       * @brief Chaîne de caractère correspondant à un mode
-       * 
-       * @param mode mode
-       * @return Chaîne de caractère correspondant à un mode
-       */
-      static const char * modeToStr (eGpioMode mode);
-    
-    protected:
-      xGpio * g;
-    private:
-  };
+#ifdef __cplusplus
+// <--- C part
+// -----------------------------------------------------------------------------
+}
 #endif
 
+#if defined(__cplusplus) || defined(DOXYGEN)
+// -----------------------------------------------------------------------------
+// C++ part --->
+#include <exception>
+#include <string>
+
+// -----------------------------------------------------------------------------
+class GpioException : public std::exception {
+  public:
+    enum Code {
+      PermissionDenied = 1,
+      UnknownCommand,
+      ArgumentExpected,
+      IllegalMode,
+      PinNumberExpected,
+      NotBinaryValue,
+      NotPwmValue,
+      NotOutputPin,
+      NotPwmPin
+    };
+
+    explicit GpioException (GpioException::Code code, int value = 0);
+    explicit GpioException (GpioException::Code code, const std::string& param);
+
+    explicit GpioException (GpioException::Code code, const char* param) : GpioException (code, std::string (param)) {}
+    
+    /**
+     * @brief Destructor.
+     * Virtual to allow for subclassing.
+     */
+    virtual ~GpioException() throw () {}
+
+    /**
+     *  @brief Returns a pointer to the (constant) error description.
+     *  @return A pointer to a const char*. The underlying memory
+     *          is in posession of the GpioException object. Callers must
+     *          not attempt to free the memory.
+     */
+    virtual const char * what() const throw () {
+
+      return _msg.c_str();
+    }
+
+    /**
+     *  @brief Returns the (constant) error code.
+     */
+    virtual GpioException::Code code() const throw () {
+
+      return _code;
+    }
+
+  protected:
+    GpioException::Code _code;
+    std::string _param;
+    int _value;
+    std::string _msg;
+};
+
+class Gpio {
+  public:
+    /**
+     * @brief Création d'un GPIO
+     *
+     * @param args pointeur sur une variable de configuration dépendant de
+     *        l'architecture
+     */
+    Gpio (void * args = nullptr);
+
+    /**
+     * @brief Destruction d'un GPIO
+     */
+    virtual ~Gpio();
+
+    /**
+     * @brief Modifie le type de numérotation
+     *
+     * @return 0, -1 si erreur
+     */
+    int setNumbering (eGpioNumbering eNum);
+
+    /**
+     * @brief Type de numérotation
+     *
+     * @return 0, -1 si erreur
+     */
+    eGpioNumbering numbering();
+
+    /**
+     * @brief Chaîne de caractère correspondant à une numérotation
+     * @param eNum numérotation
+     * @return Chaîne de caractère correspondant à une numérotation
+     */
+    static const char * numberingToStr (eGpioNumbering eNum);
+
+    /**
+     * @brief Modifie le type d'une broche
+     *
+     * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
+     * dépend de l'architecture matérielle.
+     *
+     * @param pin le numéro de la broche
+     * @param mode le type de la broche
+     * @return 0, -1 si erreur
+     */
+    int setMode (int pin, eGpioMode mode);
+
+    /**
+     * @brief Lecture du type actuel d'une broche
+     *
+     * Une broche donnée ne fournit pas forcément toutes les possibilités, cela
+     * dépend de l'architecture matérielle.
+     *
+     * @param pin le numéro de la broche
+     * @return le type, eModeError si erreur
+     */
+    eGpioMode mode (int pin);
+
+    /**
+     * @brief Modification de la résistance de tirage d'une broche
+     *
+     * @param pin le numéro de la broche
+     * @param ePull le type de la résistance (ePullOff pour désactiver)
+     * @return 0, -1 si erreur
+     */
+    int setPull (int pin, eGpioPull ePull);
+
+    /**
+     * @brief Lecture du type du type résistance de tirage d'une broche
+     *
+     * @param pin le numéro de la broche
+     * @return le type de la résistance, ePullError si erreur
+     */
+    eGpioPull pull (int pin);
+
+    /**
+     * @brief Teste la validité d'un numéro de broche
+     *
+     * @param pin le numéro de la broche (numérotation sélectionnée)
+     * @return true si numéro valide
+     */
+    bool isValid (int pin);
+
+    /**
+     * @brief Lecture du nombre de broches du port GPIO
+     *
+     * @return nombre de broches, -1 si erreur
+     */
+    int size();
+
+    /**
+     * @brief Modification de l'état binaire d'une sortie
+     *
+     * @param pin le numéro de la broche
+     * @param value valeur binaire à appliquer
+     * @return 0, -1 si erreur
+     */
+    int write (int pin, bool value);
+
+    /**
+     * @brief Bascule de l'état binaire d'une sortie
+     *
+     * @param pin le numéro de la broche
+     * @return 0, -1 si erreur
+     */
+    int toggle (int pin);
+
+    /**
+     * @brief Modification de l'état binaire de plusieurs sorties
+     *
+     * Cette fonction n'a aucune action sur les broches qui ne sont pas en sortie.
+     *
+     * @param mask masque de sélection des broches à modifier, un bit à 1 indique
+     *        que la broche correspondante doit être modifiée (bit 0 pour la
+     *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
+     *        broches.
+     * @param value valeur binaire à appliquer aux broches
+     * @return 0, -1 si erreur
+     */
+    int writeAll (int64_t mask, bool value);
+
+    /**
+     * @brief Bascule de l'état binaire de plusieurs sorties
+     *
+     * Cette fonction n'a aucune action sur les broches qui ne sont pas en sortie.
+     *
+     * @param mask masque de sélection des broches à modifier, un bit à 1 indique
+     *        que la broche correspondante doit être modifiée (bit 0 pour la
+     *        broche 0, bit 1 pour la broche 1 ...). -1 pour modifier toutes les
+     *        broches.
+     * @return 0, -1 si erreur
+     */
+    int toggleAll (int64_t mask);
+
+    /**
+     * @brief Lecture de l'état binaire d'une broche
+     *
+     * En fonction de l'architecture, la lecture est possible sur les entrées ou
+     * sur les entrées et les sorties.
+     *
+     * @param pin le numéro de la broche
+     * @return true à l'état haut, false à l'état bas, -1 si erreur
+     */
+    int read (int pin);
+
+    /**
+     * @brief Lecture de l'état binaire d'un ensemble de broches
+     *
+     * En fonction de l'architecture, la lecture est possible sur les entrées ou
+     * sur les entrées et les sorties.
+     *
+     * @param mask masque de sélection des broches à lire, un bit à 1 indique
+     *        que la broche correspondante doit être lue (bit 0 pour la
+     *        broche 0, bit 1 pour la broche 1 ...). -1 pour lire toutes les
+     *        broches.
+     * @return l'état des broches, chaque bit correspond à l'état de la broche
+     * correspondante (bit 0 pour la broche 0, bit 1 pour la broche 1 ...)
+     */
+    int64_t readAll (int64_t mask);
+
+    /**
+     * @brief Modifie la libération des broches à la fermeture
+     *
+     * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+     * iGpioClose(). Cette fonction permet de modifier ce comportement.
+     *
+     * @param enable true active la libération, false la désactive.
+     * @return 0, -1 si erreur
+     */
+    int setReleaseOnClose (bool enable);
+
+    /**
+     * @brief Lecture la libération des broches à la fermeture
+     *
+     * Par défaut, l'ensemble des broches utilisées sont libérées à l'appel de
+     * iGpioClose(). Cette fonction permet de lire l'état de cette directive
+     *
+     * @return true si validé, false sinon
+     */
+    bool releaseOnClose();
+
+    /**
+     * @brief Libère une broche de son utilisation
+     *
+     * La broche correspondante est remise dans son état initial. Seule une broche
+     * dont le type a été modifié depuis l'ouverture du port par iGpioOpen() sera
+     * restaurée. Si le type de broche n'a pas été modifié depuis l'ouverture, cette
+     * fonction ne fait rien et renvoie 0.
+     *
+     * @param pin le numéro de la broche
+     * @return 0, -1 si erreur
+     */
+    int release (int pin);
+
+
+    /**
+     * @brief Teste si l'itérateur interne peut passer à une broche suivante
+     * @return true si possible
+     */
+    bool hasNext();
+
+    /**
+     * @brief Teste si l'itérateur interne peut passer à une broche précédente
+     * @return true si possible
+     */
+    bool hasPrevious();
+
+    /**
+     * @brief Pointe l'itérateur interne sur la broche suivante
+     * @return le numéro de la broche suivante
+     */
+    int next();
+
+    /**
+     * @brief Pointe l'itérateur interne sur la broche précédente
+     * @return le numéro de la broche précédente
+     */
+    int previous();
+
+    /**
+     * @brief Pointe l'itérateur interne après la dernière broche
+     */
+    void toBack();
+
+    /**
+     * @brief Pointe l'itérateur interne avant la première broche
+     */
+    void toFront();
+
+    /**
+     * @brief Chaîne de caractère correspondant à un mode
+     *
+     * @param mode mode
+     * @return Chaîne de caractère correspondant à un mode
+     */
+    static const char * modeToStr (eGpioMode mode);
+
+  protected:
+    xGpio * g;
+  private:
+};
+
+// <--- C++ part
+// -----------------------------------------------------------------------------
+#endif /* defined(__cplusplus) || defined(DOXYGEN) */
 /**
  * @}
  */
 
 /* ========================================================================== */
-#ifdef __cplusplus
-  }
-#endif
 #endif /*_SYSIO_GPIO_H_ defined */
