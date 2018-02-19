@@ -5,19 +5,19 @@
  * Copyright © 2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
-#include <sysio/log.h>
-#include <sysio/delay.h>
-#include <sysio/gpio.h>
-#include <sysio/pwm.h>
-#include "version.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <map>
-#include <exception>
 #include <cstdlib>
 #include <csignal>
 #include <unistd.h>
+#include <sysio/log.h>
+#include <sysio/delay.h>
+#include <sysio/gpio.h>
+#include <sysio/pwm.h>
+#include "exception.h"
+#include "version.h"
 
 using namespace std;
 
@@ -25,17 +25,17 @@ using namespace std;
 const string authors = "epsilonRT";
 const string website = "http://www.epsilonrt.fr/sysio";
 enum {
-  InputMode = 1 << (sizeof (int) * 8 - 1), // Set MSB
-  PullMode = InputMode >> 1,
-  PwmMode = PullMode >> 1
+  PinMode =   1 << 16,
+  PullMode =  2 << 16,
+  PwmMode =   4 << 16
 };
 
 /* types ==================================================================== */
 typedef void (*func) (int argc, char * argv[]);
 
 /* private variables ======================================================== */
-eGpioNumbering numbering = eNumberingLogical;
 Gpio * g;
+eGpioNumbering numbering = eNumberingLogical;
 int pin = -1;
 
 /* private functions ======================================================== */
@@ -104,32 +104,28 @@ main (int argc, char **argv) {
 
     if (optind >= argc)    {
 
-      throw string ("Command expected");
+      throw Exception (Exception::CommandExpected);
     }
 
     f = cmd_map [argv[optind]];
     if (!f) {
 
-      throw string ("Unknown command: ") + argv[optind];
+      throw Exception (Exception::UnknownCommand, argv[optind]);
     }
     optind++;
 
     /* Execute command */
     f (argc, argv);
   }
-  catch (int code) {
+  catch (Exception& e) {
 
-    cerr << __progname << ": Exception " << code << " !" << endl;
-    ret = code;
-  }
-  catch (string& w) {
-
-    cerr << __progname << ": " << w << " !" << endl;
+    cerr << __progname << ": " << e.what() << " !" << endl;
+    cerr << __progname << " -h for help." << endl;
     ret = -1;
   }
-  catch (exception& e) {
+  catch (std::exception& e) {
 
-    cerr << "ERROR: could not allocate storage\n";
+    cerr << __progname << ": " << e.what() << " !" << endl;
     terminate();
   }
   catch (...) {
@@ -150,58 +146,72 @@ main (int argc, char **argv) {
  */
 void
 mode (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind) <= 1)    {
+  if (paramc < 1)    {
 
-    throw string ("Arguments expected");
+    throw Exception (Exception::ArgumentExpected);
   }
   else {
-    int m;
-    string smode (argv[optind + 1]);
-    std::map<string, int> mmode = {
-      {"in",    eModeInput  | InputMode},
-      {"out",   eModeOutput | InputMode},
-      {"alt0",  eModeAlt0   | InputMode},
-      {"alt1",  eModeAlt1   | InputMode},
-      {"alt2",  eModeAlt2   | InputMode},
-      {"alt3",  eModeAlt3   | InputMode},
-      {"alt4",  eModeAlt4   | InputMode},
-      {"alt5",  eModeAlt5   | InputMode},
-      {"up",    ePullUp     | PullMode},
-      {"down",  ePullDown   | PullMode},
-      {"tri",   ePullOff    | PullMode},
-      {"pwm",   PwmMode}
-    };
-
+    int m = 0;
 
     pin = toint (argv[optind]);
-    m = mmode[smode];
-    if (!m) {
 
-      throw string ("Illegal mode: ") + smode;
+    if (paramc > 1) {
+      string smode (argv[optind + 1]);
+      std::map<string, int> mmode = {
+        {"in",    eModeInput  | PinMode},
+        {"out",   eModeOutput | PinMode},
+        {"alt0",  eModeAlt0   | PinMode},
+        {"alt1",  eModeAlt1   | PinMode},
+        {"alt2",  eModeAlt2   | PinMode},
+        {"alt3",  eModeAlt3   | PinMode},
+        {"alt4",  eModeAlt4   | PinMode},
+        {"alt5",  eModeAlt5   | PinMode},
+        {"off",   eModeDisabled | PinMode},
+        {"up",    ePullUp     | PullMode},
+        {"down",  ePullDown   | PullMode},
+        {"tri",   ePullOff    | PullMode},
+        {"pwm",   PwmMode}
+      };
+
+      m = mmode[smode];
+      if (!m) {
+
+        throw Exception (Exception::IllegalMode, smode);
+      }
     }
 
     g = new Gpio;
     g->setNumbering (numbering);
-    g->setReleaseOnClose (false);
 
-    if (m & InputMode) {
+    if (paramc > 1) {
 
-      eGpioMode mode = (eGpioMode) (m & ~InputMode);
-      g->setMode (pin, mode);
+      // Modification du mode
+      g->setReleaseOnClose (false);
+
+      if (m & PinMode) {
+
+        eGpioMode mode = (eGpioMode) (m & ~PinMode);
+        g->setMode (pin, mode);
+      }
+
+      if (m & PullMode) {
+
+        eGpioPull pull = (eGpioPull) (m & ~PullMode);
+        g->setPull (pin, pull);
+      }
+
+      if (m & PwmMode) {
+
+        cerr << "Pwm in " << __FUNCTION__ << "() not yet implemented !" << endl;
+      }
+
     }
-
-    if (m & PullMode) {
-
-      eGpioPull pull = (eGpioPull) (m & ~PullMode);
-      g->setPull (pin, pull);
+    else {
+      // Lecture du mode
+      cout << Gpio::modeToStr(g->mode(pin)) << endl;
     }
-
-    if (m & PwmMode) {
-
-      cerr << "Pwm in " << __FUNCTION__ << "() not yet implemented !" << endl;
-    }
-
     delete g;
   }
 }
@@ -214,9 +224,9 @@ mode (int argc, char * argv[]) {
 void
 read (int argc, char * argv[]) {
 
-  if ( (argc - optind) <= 0)    {
+  if ( (argc - optind + 1) < 1)    {
 
-    throw string ("Pin number expected");
+    throw Exception (Exception::PinNumberExpected);
   }
   else {
 
@@ -237,9 +247,9 @@ read (int argc, char * argv[]) {
 void
 write (int argc, char * argv[]) {
 
-  if ( (argc - optind) <= 1)    {
+  if ( (argc - optind + 1) < 2)    {
 
-    throw string ("Arguments expected");
+    throw Exception (Exception::ArgumentExpected);
   }
   else {
     int value;
@@ -247,20 +257,16 @@ write (int argc, char * argv[]) {
     pin = toint (argv[optind]);
     value = toint (argv[optind + 1]);
     if ( (value < 0) || (value > 1)) {
-      ostringstream s;
 
-      s << value << " is not a binary value.";
-      throw s.str();
+      throw Exception (Exception::NotBinaryValue, value);
     }
 
     g = new Gpio;
     g->setNumbering (numbering);
     if (g->mode (pin) != eModeOutput) {
-      ostringstream s;
 
       delete g;
-      s << "Pin #" << pin << " is not an output";
-      throw s.str();
+      throw Exception (Exception::NotOutputPin, pin);
     }
     g->write (pin, value);
 
@@ -277,9 +283,9 @@ write (int argc, char * argv[]) {
 void
 toggle (int argc, char * argv[]) {
 
-  if ( (argc - optind) <= 0)    {
+  if ( (argc - optind + 1) < 1)    {
 
-    throw string ("Pin number expected");
+    throw Exception (Exception::PinNumberExpected);
   }
   else {
 
@@ -289,9 +295,7 @@ toggle (int argc, char * argv[]) {
     if (g->mode (pin) != eModeOutput) {
 
       delete g;
-      ostringstream s;
-      s << "Pin #" << pin << " is not an output";
-      throw s.str();
+      throw Exception (Exception::NotOutputPin, pin);
     }
     g->toggle (pin);
 
@@ -308,9 +312,9 @@ toggle (int argc, char * argv[]) {
 void
 blink (int argc, char * argv[]) {
 
-  if ( (argc - optind) <= 0)    {
+  if ( (argc - optind + 1) < 1)    {
 
-    throw string ("Pin number expected");
+    throw Exception (Exception::PinNumberExpected);
   }
   else {
     int period = 1000;
@@ -347,9 +351,9 @@ blink (int argc, char * argv[]) {
 void
 wfi (int argc, char * argv[]) {
 
-  if ( (argc - optind) <= 1)    {
+  if ( (argc - optind + 1) < 2)    {
 
-    throw string ("Arguments expected");
+    throw Exception (Exception::ArgumentExpected);
   }
   else {
     string edge (argv[optind + 1]);
@@ -381,10 +385,10 @@ readall (int argc, char * argv[]) {
  */
 void
 pwm (int argc, char * argv[]) {
-  
-  if ( (argc - optind) <= 1)    {
 
-    throw string ("Arguments expected");
+  if ( (argc - optind + 1) < 2)    {
+
+    throw Exception (Exception::ArgumentExpected);
   }
   else {
     int value;
@@ -392,20 +396,16 @@ pwm (int argc, char * argv[]) {
     pin = toint (argv[optind]);
     value = toint (argv[optind + 1]);
     if ( (value < 0) || (value > 1023)) {
-      ostringstream s;
 
-      s << value << " is not a correct value";
-      throw s.str();
+      throw Exception (Exception::NotPwmValue, value);
     }
 
     g = new Gpio;
     g->setNumbering (numbering);
     if (g->mode (pin) != eModePwm) {
-      ostringstream s;
 
       delete g;
-      s << "Pin #" << pin << " is not an pwm output";
-      throw s.str();
+      throw Exception (Exception::NotPwmPin, pin);
     }
 
     cerr << __FUNCTION__ << "() not yet implemented !" << endl;
@@ -470,7 +470,7 @@ usage () {
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "valid commands are :" << endl;
-  cout << "  mode <pin> <in/out/up/down/tri/pwm/alt{0..5}>" << endl;
+  cout << "  mode <pin> <in/out/up/down/tri/pwm/alt{0..5}/off>" << endl;
   cout << "  read <pin>" << endl;
   cout << "  write <pin> <value>" << endl;
   cout << "  toggle <pin>" << endl;

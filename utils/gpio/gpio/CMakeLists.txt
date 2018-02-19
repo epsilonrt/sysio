@@ -92,6 +92,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 # Define the CXX sources
 set ( CXX_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/exception.cpp
 )
 
 set_source_files_properties(
