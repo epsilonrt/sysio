@@ -5,14 +5,14 @@
   <Project Name="libsysio-dev" Path="dev/libsysio-dev.project" Active="No"/>
   <Project Name="libsysio-utils" Path="utils/libsysio-utils.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="libsysio" ConfigName="Debug"/>
       <Project Name="libsysio-doc" ConfigName="Debug"/>
       <Project Name="libsysio-dev" ConfigName="Debug"/>
       <Project Name="libsysio-utils" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="libsysio" ConfigName="Release"/>
       <Project Name="libsysio-doc" ConfigName="Release"/>

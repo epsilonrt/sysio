@@ -28,6 +28,9 @@ struct xLog {
   int iMask;
 };
 
+/* public variables ========================================================= */
+int iSysIoError;
+
 /* private variables ======================================================== */
 static struct xLog xMyLog = {
   .bIsDaemon = false,

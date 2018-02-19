@@ -119,6 +119,9 @@
 /* htonll not defined ------------------------------------------------------- */
 #endif
 
+/* public variables ========================================================= */
+extern int iSysIoError;
+
 /* internal public functions ================================================ */
 /*
  * Modifie le message de la dernière erreur
