@@ -105,12 +105,13 @@ static const xPinList pxMcuPins[] = {
 //------------------------------------------------------------------------------
 // 2018-02-18 -->
 static const int iPhyConnNeo[] = { 24, 4, 2, 12 };
-
 static const int iPhyConnM1[] = { 40, 4, 3 }; // 2018-02-18
+static const int iPhyConnM1p[] = { 40, 4, 3 }; // 2018-02-18
 
 static const xConnectorList pxPhyConn[] = { // 2018-02-18
   { .size = iPhyToMcuNeo, .nb = 4 },
-  { .size = iPhyConnM1,   .nb = 3 }
+  { .size = iPhyConnM1,   .nb = 3 },
+  { .size = iPhyConnM1p,   .nb = 3 }
 };
 // <-- 2018-02-18
 //------------------------------------------------------------------------------

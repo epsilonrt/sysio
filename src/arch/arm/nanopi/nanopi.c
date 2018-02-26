@@ -17,6 +17,12 @@
 #define NANOPI_MODEL eNanoPiModelNeoAir
 #elif defined(BOARD_NANOPI_M1)
 #define NANOPI_MODEL eNanoPiModelNeoM1
+#elif defined(BOARD_NANOPI_M1PLUS)
+#define NANOPI_MODEL eNanoPiModelNeoM1Plus
+#elif defined(BOARD_NANOPI_NEO2)
+#define NANOPI_MODEL eNanoPiModelNeo2
+#elif defined(BOARD_NANOPI_NEOPLUS2)
+#define NANOPI_MODEL eNanoPiModelNeoPlus2
 #else
 #error Unsupported or undefined nanopi card model
 #endif
@@ -28,7 +34,7 @@ static const char sUnknown[] = "Unknown";
 static const char * sModelList[] = {
   "NanoPi Neo",
   "NanoPi Neo2",
-  "NanoPi Neo2 Plus",
+  "NanoPi Neo Plus2",
   "NanoPi Neo Air",
   "NanoPi M1",
   "NanoPi M1 Plus",
@@ -44,9 +50,12 @@ static eNanoPiModel eNpiBoard = eNanoPiModelUnknown;
 static xNanoPi * pxNpi;
 static xNanoPi xNpiDb[] = {
 
-  { .eModel = eNanoPiModelNeo,    .iGpioRev = 1,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
-  { .eModel = eNanoPiModelNeoAir, .iGpioRev = 1,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
-  { .eModel = eNanoPiModelNeoM1,  .iGpioRev = 2,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeo,      .iGpioRev = 1,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeo2,     .iGpioRev = 1,  .eMcu = eNanoPiMcuH5,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeoPlus2, .iGpioRev = 1,  .eMcu = eNanoPiMcuH5,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeoAir,   .iGpioRev = 1,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeoM1,    .iGpioRev = 2,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
+  { .eModel = eNanoPiModelNeoM1Plus,.iGpioRev = 3,  .eMcu = eNanoPiMcuH3,     .iMemMB = -1, .sManufacturer = sManFriendlyARM },
   /* Last element */
   { .eModel = eNanoPiModelUnknown, .iGpioRev = -1, .eMcu = eNanoPiMcuUnknown, .iMemMB = -1, .sManufacturer = sUnknown}
 };
@@ -96,12 +105,24 @@ eNanoPiBoard (void) {
             eNpiBoard = eNanoPiModelNeo;
             break;
           }
-          else if (strcasecmp (value, "nanopiair") == 0) {
+          if (strcasecmp (value, "nanopineo2") == 0) {
+            eNpiBoard = eNanoPiModelNeo2;
+            break;
+          }
+          if (strcasecmp (value, "nanopineoplus2") == 0) {
+            eNpiBoard = eNanoPiModelNeoPlus2;
+            break;
+          }
+          else if (strcasecmp (value, "nanopineoair") == 0) {
             eNpiBoard = eNanoPiModelNeoAir;
             break;
           }
           else if (strcasecmp (value, "nanopim1") == 0) {
-            eNpiBoard = eNanoPiModelNeo;
+            eNpiBoard = eNanoPiModelNeoM1;
+            break;
+          }
+          else if (strcasecmp (value, "nanopim1plus") == 0) {
+            eNpiBoard = eNanoPiModelNeoM1Plus;
             break;
           }
         }

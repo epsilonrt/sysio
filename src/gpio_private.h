@@ -14,7 +14,7 @@
 #endif
 /* ========================================================================== */
 #include <sysio/iomap.h>
-#include <sysio/gpio.h>
+#include <sysio/gpio_c.h>
 
 /* constants ================================================================ */
 #define ITERATOR_FRONT -1

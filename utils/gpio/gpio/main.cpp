@@ -35,7 +35,7 @@ typedef void (*func) (int argc, char * argv[]);
 
 /* private variables ======================================================== */
 Gpio * g;
-eGpioNumbering numbering = eNumberingLogical;
+GpioPinNumbering numbering = NumberingLogical;
 int pin = -1;
 
 /* private functions ======================================================== */
@@ -70,6 +70,12 @@ main (int argc, char **argv) {
     {"readall", readall},
     {"pwm", pwm} // TODO
   };
+  
+  if (getuid() != 0) {
+    
+    cerr << "You is not a root user !" << endl;
+    exit(EXIT_FAILURE);
+  }
 
   try {
     /* Traitement options ligne de commande */
@@ -78,11 +84,11 @@ main (int argc, char **argv) {
       switch (opt) {
 
         case 'g':
-          numbering = eNumberingMcu;
+          numbering = NumberingMcu;
           break;
 
         case '1':
-          numbering = eNumberingMcu;
+          numbering = NumberingMcu;
           break;
 
         case 'h':
@@ -160,15 +166,19 @@ mode (int argc, char * argv[]) {
     if (paramc > 1) {
       string smode (argv[optind + 1]);
       std::map<string, int> mmode = {
-        {"in",    eModeInput  | PinMode},
-        {"out",   eModeOutput | PinMode},
-        {"alt0",  eModeAlt0   | PinMode},
-        {"alt1",  eModeAlt1   | PinMode},
-        {"alt2",  eModeAlt2   | PinMode},
-        {"alt3",  eModeAlt3   | PinMode},
-        {"alt4",  eModeAlt4   | PinMode},
-        {"alt5",  eModeAlt5   | PinMode},
-        {"off",   eModeDisabled | PinMode},
+        {"in",    ModeInput  | PinMode},
+        {"out",   ModeOutput | PinMode},
+        {"alt0",  ModeAlt0   | PinMode},
+        {"alt1",  ModeAlt1   | PinMode},
+        {"alt2",  ModeAlt2   | PinMode},
+        {"alt3",  ModeAlt3   | PinMode},
+        {"alt4",  ModeAlt4   | PinMode},
+        {"alt5",  ModeAlt5   | PinMode},
+        {"alt6",  ModeAlt6   | PinMode},
+        {"alt7",  ModeAlt7   | PinMode},
+        {"alt8",  ModeAlt8   | PinMode},
+        {"alt9",  ModeAlt9   | PinMode},
+        {"off",   ModeDisabled | PinMode},
         {"up",    ePullUp     | PullMode},
         {"down",  ePullDown   | PullMode},
         {"tri",   ePullOff    | PullMode},
@@ -192,13 +202,13 @@ mode (int argc, char * argv[]) {
 
       if (m & PinMode) {
 
-        eGpioMode mode = (eGpioMode) (m & ~PinMode);
+        GpioPinMode mode = (GpioPinMode) (m & ~PinMode);
         g->setMode (pin, mode);
       }
 
       if (m & PullMode) {
 
-        eGpioPull pull = (eGpioPull) (m & ~PullMode);
+        GpioPinPull pull = (GpioPinPull) (m & ~PullMode);
         g->setPull (pin, pull);
       }
 
@@ -210,7 +220,7 @@ mode (int argc, char * argv[]) {
     }
     else {
       // Lecture du mode
-      cout << Gpio::modeToStr(g->mode(pin)) << endl;
+      cout << g->pin(pin)->modeName() << endl;
     }
     delete g;
   }
@@ -263,7 +273,7 @@ write (int argc, char * argv[]) {
 
     g = new Gpio;
     g->setNumbering (numbering);
-    if (g->mode (pin) != eModeOutput) {
+    if (g->mode (pin) != ModeOutput) {
 
       delete g;
       throw Exception (Exception::NotOutputPin, pin);
@@ -292,7 +302,7 @@ toggle (int argc, char * argv[]) {
     pin = toint (argv[optind]);
     g = new Gpio;
     g->setNumbering (numbering);
-    if (g->mode (pin) != eModeOutput) {
+    if (g->mode (pin) != ModeOutput) {
 
       delete g;
       throw Exception (Exception::NotOutputPin, pin);
@@ -327,7 +337,7 @@ blink (int argc, char * argv[]) {
     g = new Gpio;
     g->setNumbering (numbering);
     g->setReleaseOnClose (true);
-    g->setMode (pin, eModeOutput);
+    g->setMode (pin, ModeOutput);
 
     // inthandler() intercepte le CTRL+C
     signal (SIGINT, inthandler);
@@ -402,7 +412,7 @@ pwm (int argc, char * argv[]) {
 
     g = new Gpio;
     g->setNumbering (numbering);
-    if (g->mode (pin) != eModePwm) {
+    if (g->mode (pin) != ModePwm) {
 
       delete g;
       throw Exception (Exception::NotPwmPin, pin);
@@ -436,7 +446,7 @@ inthandler (int sig) {
 
   if (pin > 0) {
 
-    if (g->mode (pin) == eModeOutput) {
+    if (g->mode (pin) == ModeOutput) {
 
       g->write (pin, 0);
     }

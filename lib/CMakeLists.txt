@@ -16,7 +16,7 @@ WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
 file(GLOB src_sysio ${SYSIO_SRC_DIR}/*.c)
 file(GLOB src_sysio_cpp ${SYSIO_SRC_DIR}/*.cpp)
 file(GLOB src_sys   ${SYSIO_SRC_SYS_DIR}/*.c)
-file(GLOB src_arch  ${SYSIO_SRC_ARCH_DIR}/*.c)
+file(GLOB src_arch  ${SYSIO_SRC_ARCH_DIR}/*.c ${SYSIO_SRC_ARCH_DIR}/*.cpp)
 
 set (hdr_sysio 
   ${SYSIO_INC_DIR}/sysio/defs.h
@@ -45,6 +45,9 @@ set (hdr_gpio
   ${SYSIO_INC_DIR}/sysio/dinput.h
   ${SYSIO_INC_DIR}/sysio/doutput.h
   ${SYSIO_INC_DIR}/sysio/gpio.h
+  ${SYSIO_INC_DIR}/sysio/gpio_c.h
+  ${SYSIO_INC_DIR}/sysio/gpiopin.h
+  ${SYSIO_INC_DIR}/sysio/gpioconnector.h
   ${SYSIO_INC_DIR}/sysio/pwm.h
   ${SYSIO_INC_DIR}/sysio/blyss.h
 )
@@ -98,7 +101,7 @@ set (libsrc ${src_sysio} ${src_sys} ${src_arch}
   ${src_sysio_cpp}
   )
 
-include_directories(
+include_directories(BEFORE
   ${SYSIO_INC_DIR} 
   ${SYSIO_SRC_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

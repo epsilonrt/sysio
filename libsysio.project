@@ -11,6 +11,10 @@
         <VirtualDirectory Name="nanopi">
           <File Name="src/arch/arm/nanopi/gpio.c"/>
           <File Name="src/arch/arm/nanopi/nanopi.c"/>
+          <File Name="src/arch/arm/nanopi/gpio.cpp"/>
+          <File Name="src/arch/arm/nanopi/gpiodevice_nanopi.cpp"/>
+          <File Name="src/arch/arm/nanopi/gpiodevice_nanopi.h"/>
+          <File Name="src/arch/arm/nanopi/gpiodevice_nanopi_descriptor.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="rpi">
           <File Name="src/arch/arm/rpi/pwm.c"/>
@@ -46,6 +50,9 @@
       <File Name="src/gpio/dinput.c"/>
       <File Name="src/gpio/gpio.c"/>
       <File Name="src/gpio/gpio.cpp"/>
+      <File Name="src/gpio/gpiodevice.cpp"/>
+      <File Name="src/gpio/gpiopin.cpp"/>
+      <File Name="src/gpio/gpioconnector.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2c-dev.h"/>
@@ -103,6 +110,10 @@
       <File Name="include/sysio/iomap.h"/>
       <File Name="include/sysio/gp2.h"/>
       <File Name="include/sysio/nanopi.h"/>
+      <File Name="include/sysio/gpiodevice.h"/>
+      <File Name="include/sysio/gpiopin.h"/>
+      <File Name="include/sysio/gpio_c.h"/>
+      <File Name="include/sysio/gpioconnector.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

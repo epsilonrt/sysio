@@ -1,214 +1,154 @@
 /**
  * @file
- * @brief GPIO
+ * @brief Connecteurs GPIO
  *
  * Copyright © 2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <sysio/gpio.h>
 #include <sysio/gpiodevice.h>
+#include <exception>
 
 // -----------------------------------------------------------------------------
 //
-//                           Gpio Class
+//                          GpioConnector Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio (GpioDevice * dev) :
-  _roc (true), _device (dev) {
-
-  const std::vector<GpioConnectorDescriptor> & v = device()->descriptor()->connector;
+GpioConnector::GpioConnector (Gpio * parent, const GpioConnectorDescriptor * desc) :
+  _parent (parent), _descriptor (desc) {
+  int num;
+  const std::vector<GpioPinDescriptor> & v = _descriptor->pin;
 
   for (int i = 0; i < v.size(); i++) {
 
-    _connector.push_back (std::make_shared<GpioConnector> (this, & v[i]));
+    num = pinNumber (v[i].num.row, v[i].num.column);
+    _pin[num] = std::make_shared<GpioPin> (this, & v[i]);
   }
-  setNumbering (NumberingLogical);
 }
 
 // -----------------------------------------------------------------------------
-Gpio::~Gpio() {
+GpioConnector::~GpioConnector() {
 
-  close();
-  delete _device;
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::open() {
-
-  return device()->open();
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::close() {
-
-  if (releaseOnClose()) {
-    for (auto p = _pin.begin(); p != _pin.end(); ++p) {
-      p->second->release();
-    }
-  }
-  device()->close();
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::isOpen() const {
-
-  return device()->isOpen();
-}
-
-// -----------------------------------------------------------------------------
-GpioPinNumbering
-Gpio::numbering() const {
-
-  return _numbering;
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setNumbering (GpioPinNumbering nb) {
-
-  if (nb != numbering()) {
-
-    _pin.clear();
-
-    for (int i = 0; i < connectors(); i++) {
-      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = connector(i)->pin();
-      
-      for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
-        
-        std::shared_ptr<GpioPin> p = pair->second;
-        if (p->type() == TypeGpio) {
-
-          int num = p->number (nb);
-          _pin[num] = p;
-        }
-      }
-    }
-    _numbering = nb;
-  }
 }
 
 // -----------------------------------------------------------------------------
 const std::string &
-Gpio::numberingName () const {
+GpioConnector::name() const {
 
-  return GpioPin::numberingName (numbering());
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::releaseOnClose() const {
-
-  return _roc;
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setReleaseOnClose (bool enable) {
-
-  _roc = enable;
+  return _descriptor->name;
 }
 
 // -----------------------------------------------------------------------------
 int
-Gpio::size() const {
+GpioConnector::rows() const {
+
+  return _descriptor->rows;
+}
+
+// -----------------------------------------------------------------------------
+int
+GpioConnector::columns() const {
+
+  return _descriptor->columns;
+}
+
+// -----------------------------------------------------------------------------
+int
+GpioConnector::size() const {
 
   return _pin.size();
 }
 
 // -----------------------------------------------------------------------------
+int
+GpioConnector::pinNumber (int row, int column) const {
+
+  return _descriptor->pinNumber (row, column, columns());
+}
+
+// -----------------------------------------------------------------------------
 const std::map<int, std::shared_ptr<GpioPin>> &
-Gpio::pin() {
+GpioConnector::pin()  {
 
   return _pin;
 }
 
 // -----------------------------------------------------------------------------
-GpioPin *
-Gpio::pin (int number) const {
+std::shared_ptr<GpioPin>
+GpioConnector::pin (int number) const {
 
-  return _pin.at (number).get();
-};
+  return _pin.at (number); // throw out_of_range if not exist
+}
 
 // -----------------------------------------------------------------------------
 GpioPinMode
-Gpio::mode (int number) const {
+GpioConnector::mode (int number) const {
 
   return pin (number)->mode();
 }
 
 // -----------------------------------------------------------------------------
 void
-Gpio::setMode (int number, GpioPinMode mode) {
+GpioConnector::setMode (int number, GpioPinMode mode) {
 
   pin (number)->setMode (mode);
 }
 
 // -----------------------------------------------------------------------------
 GpioPinPull
-Gpio::pull (int number) const {
+GpioConnector::pull (int number) const {
 
   return pin (number)->pull();
 }
 
 // -----------------------------------------------------------------------------
 void
-Gpio::setPull (int number, GpioPinPull pull) {
+GpioConnector::setPull (int number, GpioPinPull pull) {
 
   pin (number)->setPull (pull);
 }
 
 // -----------------------------------------------------------------------------
 void
-Gpio::write (int number, bool value) {
+GpioConnector::write (int number, bool value) {
 
   pin (number)->write (value);
 }
 
 // -----------------------------------------------------------------------------
 void
-Gpio::toggle (int number) {
+GpioConnector::toggle (int number) {
 
   pin (number)->toggle();
 }
 
 // -----------------------------------------------------------------------------
 bool
-Gpio::read (int number) {
+GpioConnector::read (int number) {
 
   return pin (number)->read();
 }
 
 // -----------------------------------------------------------------------------
 void
-Gpio::release (int number) {
+GpioConnector::release (int number) {
 
   pin (number)->release();
 }
 
 // -----------------------------------------------------------------------------
-int
-Gpio::connectors() const {
+Gpio *
+GpioConnector::gpio() const {
 
-  return _connector.size();
-}
-
-// -----------------------------------------------------------------------------
-GpioConnector *
-Gpio::connector (int num) const {
-
-  return _connector.at (num).get();
+  return _parent;
 }
 
 // -----------------------------------------------------------------------------
 GpioDevice *
-Gpio::device() const {
+GpioConnector::device() const {
 
-  return _device;
+  return gpio()->device();
 }
-
 /* ========================================================================== */
