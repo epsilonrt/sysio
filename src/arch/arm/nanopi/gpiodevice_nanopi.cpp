@@ -79,7 +79,7 @@ GpioDeviceNanoPi::open() {
 
 
         setOpen (true);
-        debugPrintAllBanks ();
+        // debugPrintAllBanks ();
       }
       else {
 
@@ -157,6 +157,7 @@ GpioDeviceNanoPi::setMode (const GpioPin * pin, GpioPinMode m) {
   v = _mode2int.at (m);
   b->CFG[r] &= ~ (0b1111 << i);  // clear config
   b->CFG[r] |= (v << i);
+  debugPrintBank (b);
 }
 
 // -----------------------------------------------------------------------------
@@ -227,6 +228,7 @@ GpioDeviceNanoPi::setPull (const GpioPin * pin, GpioPinPull p) {
     delay_us (10);
     b->PUL[r] |= (v << i);
     delay_us (10);
+    debugPrintBank (b);
   }
 }
 
@@ -245,6 +247,7 @@ GpioDeviceNanoPi::write (const GpioPin * pin, bool v) {
 
     b->DAT &= ~ (1 << g);
   }
+  debugPrintBank (b);
 }
 
 // -----------------------------------------------------------------------------
@@ -255,6 +258,7 @@ GpioDeviceNanoPi::toggle (const GpioPin * pin) {
 
   b = pinBank (&g);
   b->DAT ^= 1 << g;;
+  debugPrintBank (b);
 }
 
 // -----------------------------------------------------------------------------
@@ -278,11 +282,11 @@ GpioDeviceNanoPi::modes() const {
 const std::map<GpioPinMode, std::string> GpioDeviceNanoPi::_modes = {
   {ModeInput, "in"},
   {ModeOutput, "out"},
-  {ModeAlt2, "fc2"},
-  {ModeAlt3, "fc3"},
-  {ModeAlt4, "fc4"},
-  {ModeAlt5, "fc5"},
-  {ModeAlt6, "fc6"},
+  {ModeAlt2, "alt2"},
+  {ModeAlt3, "alt3"},
+  {ModeAlt4, "alt4"},
+  {ModeAlt5, "alt5"},
+  {ModeAlt6, "alt6"},
   {ModeDisabled, "off"},
   {ModePwm, "pwm"},
 };
@@ -371,6 +375,12 @@ GpioDeviceNanoPi::pinBank (int * mcupin) const {
 
     *mcupin = ng;
     bk = bank (bkindex);
+    if (isDebug()) {
+
+      char c = (bkindex < 7 ? 'A' + bkindex : 'L');
+      std::cout << "---Port " << c << "---" << std::endl;
+      debugPrintBank (bk);
+    }
   }
   else {
 
@@ -381,6 +391,7 @@ GpioDeviceNanoPi::pinBank (int * mcupin) const {
 }
 
 // -----------------------------------------------------------------------------
+
 void
 GpioDeviceNanoPi::debugPrintAllBanks () const {
 
@@ -391,10 +402,12 @@ GpioDeviceNanoPi::debugPrintAllBanks () const {
       if (i != 1) {
 
         PioBank * b = bank (i);
-        std::cout << std::endl << "---Port " << (i < 7 ? 'A' + i : 'L') << "---" << std::endl;
+        char c = (i < 7 ? 'A' + i : 'L');
+        std::cout << "---Port " << c << "---" << std::endl;
         debugPrintBank (b);
       }
     }
+    std::cout << "---------------------------------" << std::endl << std::endl;
   }
 }
 
@@ -404,12 +417,14 @@ GpioDeviceNanoPi::debugPrintAllBanks () const {
 void
 GpioDeviceNanoPi::debugPrintBank (const PioBank * b) const {
 
-  std::cout << std::endl;
-  std::cout << "CFG0=0x" << HEX (8, b->CFG[0]) << " - CFG1=0x" << HEX (8, b->CFG[1]) << std::endl;
-  std::cout << "CFG2=0x" << HEX (8, b->CFG[2]) << " - CFG3=0x" << HEX (8, b->CFG[3]) << std::endl;
-  std::cout << "DAT =0x" << HEX (8, b->DAT) << std::endl;
-  std::cout << "DRV0=0x" << HEX (8, b->DRV[0]) << " - DRV1=0x" << HEX (8, b->DRV[1]) << std::endl;
-  std::cout << "PUL0=0x" << HEX (8, b->PUL[0]) << " - PUL1=0x" << HEX (8, b->PUL[1]) << std::endl;
+  if (isDebug()) {
+
+    std::cout << "CFG0=0x" << HEX (8, b->CFG[0]) << " - CFG1=0x" << HEX (8, b->CFG[1]) << std::endl;
+    std::cout << "CFG2=0x" << HEX (8, b->CFG[2]) << " - CFG3=0x" << HEX (8, b->CFG[3]) << std::endl;
+    std::cout << "DAT =0x" << HEX (8, b->DAT) << std::endl;
+    std::cout << "DRV0=0x" << HEX (8, b->DRV[0]) << " - DRV1=0x" << HEX (8, b->DRV[1]) << std::endl;
+    std::cout << "PUL0=0x" << HEX (8, b->PUL[0]) << " - PUL1=0x" << HEX (8, b->PUL[1]) << std::endl;
+  }
 }
 
 /* ========================================================================== */
