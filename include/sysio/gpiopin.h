@@ -300,17 +300,19 @@ class GpioPin {
     const std::string & modeName (GpioPinMode mode) const;
 
     /**
-     * @brief Nom correspondant au type
+     * @brief Nom de la résistance de tirage actuelle
      */
-    const std::string & typeName() const;
-
+    const std::string & pullName () const;
 
     /**
-     * @brief Listes des modes avec leurs noms
-     *
-     * Permet de parcourir les modes à l'aide des itérateurs de la STL
+     * @brief Nom d'une résistance de tirage
      */
-    const std::map<GpioPinMode, std::string> & modes () const;
+    static const std::string & pullName (GpioPinPull n);
+
+    /**
+     * @brief Nom du type de la broche
+     */
+    const std::string & typeName() const;
 
     /**
      * @brief Nom d'un type
@@ -321,6 +323,20 @@ class GpioPin {
      * @brief Nom d'une numérotation
      */
     static const std::string & numberingName (GpioPinNumbering n);
+
+    /**
+     * @brief Listes des modes avec leurs noms
+     *
+     * Permet de parcourir les modes à l'aide des itérateurs de la STL
+     */
+    const std::map<GpioPinMode, std::string> & modes () const;
+
+    /**
+     * @brief Listes des résistances de tirage avec leurs noms
+     *
+     * Permet de parcourir les numérotations à l'aide des itérateurs de la STL.
+     */
+    static const std::map<GpioPinPull, std::string> & pulls ();
 
     /**
      * @brief Listes des types avec leurs noms
@@ -336,7 +352,6 @@ class GpioPin {
      */
     static const std::map<GpioPinNumbering, std::string> & numberings ();
 
-  protected:
     /**
     * @brief Accès au connecteur parent
     */
@@ -348,6 +363,17 @@ class GpioPin {
     Gpio * gpio() const;
 
     /**
+     * @brief Indique si le mode mise au point est actif
+     */
+    bool isDebug() const;
+    
+    /**
+     * @brief Active le mode mise au point
+     */
+    void setDebug (bool enable);
+
+  protected:
+    /**
      * @brief Accès à la couche matérielle
      */
     GpioDevice * device() const;
@@ -358,6 +384,7 @@ class GpioPin {
     GpioPinMode _holdMode;
     GpioPinPull _holdPull;
     bool _holdState;
+    static std::map<GpioPinPull, std::string> _pulls;
     static std::map<GpioPinType, std::string> _types;
     static std::map<GpioPinNumbering, std::string> _numberings;
 };

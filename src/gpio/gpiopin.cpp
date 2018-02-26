@@ -33,6 +33,13 @@ std::map<GpioPinNumbering, std::string> GpioPin::_numberings = {
 };
 
 // -----------------------------------------------------------------------------
+std::map<GpioPinPull, std::string> GpioPin::_pulls = {
+  {PullOff, "off"},
+  {PullDown, "down"},
+  {PullUp, "up"}
+};
+
+// -----------------------------------------------------------------------------
 GpioPin::GpioPin (GpioConnector * parent, const GpioPinDescriptor * desc) :
   _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
   _holdPull (PullUnknown), _holdState (false) {
@@ -74,7 +81,7 @@ GpioPin::systemNumber () const {
 // -----------------------------------------------------------------------------
 int
 GpioPin::number (GpioPinNumbering n) const {
-  
+
   switch (n) {
     case NumberingLogical:
       return logicalNumber();
@@ -85,8 +92,8 @@ GpioPin::number (GpioPinNumbering n) const {
     default:
       break;
   }
-  
-  throw std::invalid_argument("Bad pin numbering requested");
+
+  throw std::invalid_argument ("Bad pin numbering requested");
 }
 
 // -----------------------------------------------------------------------------
@@ -261,14 +268,14 @@ GpioPin::release () {
 const std::string &
 GpioPin::modeName() const {
 
-  return modes().at (mode ());
+  return modeName (mode ());
 }
 
 // -----------------------------------------------------------------------------
 const std::string &
 GpioPin::typeName() const {
 
-  return types().at (type());
+  return typeName (type());
 }
 
 // -----------------------------------------------------------------------------
@@ -293,6 +300,20 @@ GpioPin::typeName (GpioPinType t) {
 }
 
 // -----------------------------------------------------------------------------
+const std::string &
+GpioPin::pullName () const {
+  
+  return pullName(pull());
+}
+
+// -----------------------------------------------------------------------------
+const std::string &
+GpioPin::pullName (GpioPinPull p) {
+
+  return _pulls.at (p);
+}
+
+// -----------------------------------------------------------------------------
 const std::map<GpioPinType, std::string> &
 GpioPin::types () {
 
@@ -311,6 +332,27 @@ const std::map<GpioPinNumbering, std::string> &
 GpioPin::numberings () {
 
   return _numberings;
+}
+
+// -----------------------------------------------------------------------------
+const std::map<GpioPinPull, std::string> & 
+GpioPin::pulls () {
+  
+  return _pulls;
+}
+
+// -----------------------------------------------------------------------------
+bool
+GpioPin::isDebug() const {
+
+  return device()->isDebug();
+}
+
+// -----------------------------------------------------------------------------
+void
+GpioPin::setDebug (bool enable) {
+
+  device()->setDebug (enable);
 }
 
 /* ========================================================================== */
