@@ -30,11 +30,14 @@
 // -----------------------------------------------------------------------------
 #endif /* !defined(__DOXYGEN__) */
 
-#define BOARD_GENERIC_LINUX 0
-#define BOARD_RASPBERRYPI   1
-#define BOARD_NANOPI_NEO    2
-#define BOARD_NANOPI_AIR    3
-#define BOARD_NANOPI_M1     4
+#define BOARD_GENERIC_LINUX   0
+#define BOARD_RASPBERRYPI     1
+#define BOARD_NANOPI_NEO      2
+#define BOARD_NANOPI_AIR      3
+#define BOARD_NANOPI_M1       4
+#define BOARD_NANOPI_M1PLUS   5
+#define BOARD_NANOPI_NEO2     6
+#define BOARD_NANOPI_NEOPLUS2 7
 
 #ifdef SYSIO_WITH_CONFIG_H
 #include "config.h"

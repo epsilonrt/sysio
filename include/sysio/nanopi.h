@@ -121,12 +121,15 @@
  * @brief Modèle de NanoPi
  */
 typedef enum  {
+  // H3
   eNanoPiModelNeo,
-  eNanoPiModelNeo2,
-  eNanoPiModelNeo2Plus,
   eNanoPiModelNeoAir,
   eNanoPiModelNeoM1,
   eNanoPiModelNeoM1Plus,
+  // H5
+  eNanoPiModelNeo2,
+  eNanoPiModelNeoPlus2,
+  //---
   eNanoPiModelUnknown = -1
 } eNanoPiModel;
 
