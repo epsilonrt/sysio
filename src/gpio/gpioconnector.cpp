@@ -151,4 +151,19 @@ GpioConnector::device() const {
 
   return gpio()->device();
 }
+
+// -----------------------------------------------------------------------------
+bool 
+GpioConnector::isDebug() const {
+  
+  return device()->isDebug();
+}
+
+// -----------------------------------------------------------------------------
+void 
+GpioConnector::setDebug (bool enable) {
+  
+  device()->setDebug (enable);
+}
+
 /* ========================================================================== */

@@ -244,7 +244,17 @@ class Gpio {
      * \c numbering().
      */
     const std::map<int, std::shared_ptr<GpioPin>> & pin();
+
+    /**
+     * @brief Indique si le mode mise au point est actif
+     */
+    bool isDebug() const;
     
+    /**
+     * @brief Active le mode mise au point
+     */
+    void setDebug (bool enable);
+
   protected:
     /**
      * @brief Accès à la couche matérielle

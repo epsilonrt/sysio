@@ -233,12 +233,22 @@ class GpioConnector {
      */
     const std::map<int, std::shared_ptr<GpioPin>> & pin ();
 
-  protected:
     /**
      * @brief Accès au GPIO parent
      */
     Gpio * gpio() const;
 
+    /**
+     * @brief Indique si le mode mise au point est actif
+     */
+    bool isDebug() const;
+    
+    /**
+     * @brief Active le mode mise au point
+     */
+    void setDebug (bool enable);
+
+  protected:
     /**
      * @brief Accès à la couche matérielle
      */

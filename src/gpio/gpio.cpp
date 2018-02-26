@@ -76,10 +76,10 @@ Gpio::setNumbering (GpioPinNumbering nb) {
     _pin.clear();
 
     for (int i = 0; i < connectors(); i++) {
-      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = connector(i)->pin();
-      
+      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = connector (i)->pin();
+
       for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
-        
+
         std::shared_ptr<GpioPin> p = pair->second;
         if (p->type() == TypeGpio) {
 
@@ -209,6 +209,20 @@ GpioDevice *
 Gpio::device() const {
 
   return _device;
+}
+
+// -----------------------------------------------------------------------------
+bool 
+Gpio::isDebug() const {
+  
+  return device()->isDebug();
+}
+
+// -----------------------------------------------------------------------------
+void 
+Gpio::setDebug (bool enable) {
+  
+  device()->setDebug (enable);
 }
 
 /* ========================================================================== */
