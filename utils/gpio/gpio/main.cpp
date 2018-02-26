@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <vector>
 #include <cstdlib>
 #include <csignal>
 #include <unistd.h>
@@ -24,22 +25,22 @@ using namespace std;
 /* constants ================================================================ */
 const string authors = "epsilonRT";
 const string website = "http://www.epsilonrt.fr/sysio";
-enum {
-  PinMode =   1 << 16,
-  PullMode =  2 << 16,
-  PwmMode =   4 << 16
-};
 
 /* types ==================================================================== */
 typedef void (*func) (int argc, char * argv[]);
 
 /* private variables ======================================================== */
-Gpio * g;
+Gpio * gpio = 0;
 GpioPinNumbering numbering = NumberingLogical;
-int pin = -1;
+int pinnumber = -1;
+int connector = -1;
+bool physicalNumbering = false;
+GpioPin * pin = 0;
+bool debug = false;
 
 /* private functions ======================================================== */
 void mode (int argc, char * argv[]);
+void pull (int argc, char * argv[]);
 void read (int argc, char * argv[]);
 void write (int argc, char * argv[]);
 void toggle (int argc, char * argv[]);
@@ -48,20 +49,24 @@ void wfi (int argc, char * argv[]); // TODO
 void readall (int argc, char * argv[]); // TODO
 void pwm (int argc, char * argv[]); // TODO
 
-int toint (char * c_str);
+GpioPin * getPin (char * c_str);
 void usage ();
 void version ();
-void inthandler (int sig);
+void sig_handler (int sig);
+std::vector<std::string> split (const std::string& s, char seperator);
+
+void printConnector (GpioConnector * c, std::ostream & s);
 
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
   int opt;
   int ret = 0;
-  func f;
+  func do_it;
 
   std::map<string, func> cmd_map = {
     {"mode", mode},
+    {"pull", pull},
     {"read", read},
     {"write", write},
     {"toggle", toggle},
@@ -70,16 +75,10 @@ main (int argc, char **argv) {
     {"readall", readall},
     {"pwm", pwm} // TODO
   };
-  
-  if (getuid() != 0) {
-    
-    cerr << "You is not a root user !" << endl;
-    exit(EXIT_FAILURE);
-  }
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "g1phv")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1dhv")) != -1) {
 
       switch (opt) {
 
@@ -87,8 +86,16 @@ main (int argc, char **argv) {
           numbering = NumberingMcu;
           break;
 
+        case 's':
+          numbering = NumberingSystem;
+          break;
+
         case '1':
-          numbering = NumberingMcu;
+          physicalNumbering = true;
+          break;
+
+        case 'd':
+          debug = true;
           break;
 
         case 'h':
@@ -113,15 +120,26 @@ main (int argc, char **argv) {
       throw Exception (Exception::CommandExpected);
     }
 
-    f = cmd_map [argv[optind]];
-    if (!f) {
+    do_it = cmd_map [argv[optind]];
+    if (!do_it) {
 
       throw Exception (Exception::UnknownCommand, argv[optind]);
     }
     optind++;
 
+    if (getuid() != 0) {
+
+      cerr << "Permission denied, you must be root !" << endl;
+      exit (EXIT_FAILURE);
+    }
+
+    gpio = new Gpio;
+    gpio->setNumbering (numbering);
+    gpio->setDebug (debug);
+    gpio->open();
+
     /* Execute command */
-    f (argc, argv);
+    do_it (argc, argv);
   }
   catch (Exception& e) {
 
@@ -129,10 +147,30 @@ main (int argc, char **argv) {
     cerr << __progname << " -h for help." << endl;
     ret = -1;
   }
+  catch (std::out_of_range& e) {
+
+    cerr << __progname << ": pin number " << pinnumber;
+    if (physicalNumbering) {
+      cerr  << " or connector " << connector + 1;
+    }
+    cerr   << " out of range !" << endl;
+    cerr   << e.what() << endl;
+    ret = -1;
+  }
+  catch (std::invalid_argument& e) {
+
+    cerr << __progname << ": invalid argument (" << e.what() << ") !" << endl;
+    ret = -1;
+  }
+  catch (std::domain_error& e) {
+
+    cerr << __progname << ": bad pin type (" << e.what() << ") !" << endl;
+    ret = -1;
+  }
   catch (std::exception& e) {
 
     cerr << __progname << ": " << e.what() << " !" << endl;
-    terminate();
+    ret = -1;
   }
   catch (...) {
 
@@ -140,7 +178,18 @@ main (int argc, char **argv) {
     ret = -1;
   }
 
+  if (gpio) {
+
+    delete gpio;
+  }
+
   return ret;
+}
+
+// -----------------------------------------------------------------------------
+void 
+printConnector (GpioConnector * c, std::ostream & s) {
+  
 }
 
 /* -----------------------------------------------------------------------------
@@ -159,70 +208,78 @@ mode (int argc, char * argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    int m = 0;
 
-    pin = toint (argv[optind]);
+    pin = getPin (argv[optind]);
 
     if (paramc > 1) {
+      GpioPinMode m;
       string smode (argv[optind + 1]);
-      std::map<string, int> mmode = {
-        {"in",    ModeInput  | PinMode},
-        {"out",   ModeOutput | PinMode},
-        {"alt0",  ModeAlt0   | PinMode},
-        {"alt1",  ModeAlt1   | PinMode},
-        {"alt2",  ModeAlt2   | PinMode},
-        {"alt3",  ModeAlt3   | PinMode},
-        {"alt4",  ModeAlt4   | PinMode},
-        {"alt5",  ModeAlt5   | PinMode},
-        {"alt6",  ModeAlt6   | PinMode},
-        {"alt7",  ModeAlt7   | PinMode},
-        {"alt8",  ModeAlt8   | PinMode},
-        {"alt9",  ModeAlt9   | PinMode},
-        {"off",   ModeDisabled | PinMode},
-        {"up",    ePullUp     | PullMode},
-        {"down",  ePullDown   | PullMode},
-        {"tri",   ePullOff    | PullMode},
-        {"pwm",   PwmMode}
+      std::map<string, GpioPinMode> str2mode = {
+        {"in",    ModeInput   },
+        {"out",   ModeOutput  },
+        {"alt0",  ModeAlt0    },
+        {"alt1",  ModeAlt1    },
+        {"alt2",  ModeAlt2    },
+        {"alt3",  ModeAlt3    },
+        {"alt4",  ModeAlt4    },
+        {"alt5",  ModeAlt5    },
+        {"alt6",  ModeAlt6    },
+        {"alt7",  ModeAlt7    },
+        {"alt8",  ModeAlt8    },
+        {"alt9",  ModeAlt9    },
+        {"off",   ModeDisabled},
+        {"pwm",   ModePwm     }
       };
 
-      m = mmode[smode];
-      if (!m) {
+      m = str2mode.at (smode);
 
-        throw Exception (Exception::IllegalMode, smode);
-      }
-    }
+      // Modification à garder après fermeture !
+      gpio->setReleaseOnClose (false);
 
-    g = new Gpio;
-    g->setNumbering (numbering);
-
-    if (paramc > 1) {
-
-      // Modification du mode
-      g->setReleaseOnClose (false);
-
-      if (m & PinMode) {
-
-        GpioPinMode mode = (GpioPinMode) (m & ~PinMode);
-        g->setMode (pin, mode);
-      }
-
-      if (m & PullMode) {
-
-        GpioPinPull pull = (GpioPinPull) (m & ~PullMode);
-        g->setPull (pin, pull);
-      }
-
-      if (m & PwmMode) {
-
-        cerr << "Pwm in " << __FUNCTION__ << "() not yet implemented !" << endl;
-      }
-
+      pin->setMode (m);
     }
     else {
       // Lecture du mode
-      cout << g->pin(pin)->modeName() << endl;
+      cout << pin->modeName() << endl;
     }
-    delete g;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  pull <pin> <up/down/off>
+    Set the internal pull-up, pull-down or off controls.
+ */
+void
+pull (int argc, char * argv[]) {
+  int paramc = (argc - optind);
+
+  if (paramc < 1)    {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+  else {
+    pin = getPin (argv[optind]);
+
+    if (paramc > 1) {
+      GpioPinPull p;
+      string pmode (argv[optind + 1]);
+      std::map<string, GpioPinPull> str2pull = {
+        {"off",   PullOff},
+        {"up",    PullUp},
+        {"down",  PullDown}
+      };
+
+      p = str2pull.at (pmode);
+
+      // Modification à garder après fermeture !
+      gpio->setReleaseOnClose (false);
+
+      pin->setPull (p);
+    }
+    else {
+      // Lecture de la résistance
+      cout << pin->pullName() << endl;
+    }
   }
 }
 
@@ -240,12 +297,8 @@ read (int argc, char * argv[]) {
   }
   else {
 
-    pin = toint (argv[optind]);
-    g = new Gpio;
-    g->setNumbering (numbering);
-
-    cout << g->read (pin) << endl;
-    delete g;
+    pin = getPin (argv[optind]);
+    cout << pin->read () << endl;
   }
 }
 
@@ -264,23 +317,20 @@ write (int argc, char * argv[]) {
   else {
     int value;
 
-    pin = toint (argv[optind]);
-    value = toint (argv[optind + 1]);
+    pin = getPin (argv[optind]);
+
+    value = stoi (std::string (argv[optind + 1]));
     if ( (value < 0) || (value > 1)) {
 
       throw Exception (Exception::NotBinaryValue, value);
     }
 
-    g = new Gpio;
-    g->setNumbering (numbering);
-    if (g->mode (pin) != ModeOutput) {
+    if (pin->mode () != ModeOutput) {
 
-      delete g;
-      throw Exception (Exception::NotOutputPin, pin);
+      delete gpio;
+      throw Exception (Exception::NotOutputPin, pinnumber);
     }
-    g->write (pin, value);
-
-    delete g;
+    pin->write (value);
   }
 }
 
@@ -299,17 +349,13 @@ toggle (int argc, char * argv[]) {
   }
   else {
 
-    pin = toint (argv[optind]);
-    g = new Gpio;
-    g->setNumbering (numbering);
-    if (g->mode (pin) != ModeOutput) {
+    pin = getPin (argv[optind]);
+    if (pin->mode () != ModeOutput) {
 
-      delete g;
-      throw Exception (Exception::NotOutputPin, pin);
+      delete gpio;
+      throw Exception (Exception::NotOutputPin, pinnumber);
     }
-    g->toggle (pin);
-
-    delete g;
+    pin->toggle ();
   }
 }
 
@@ -329,24 +375,24 @@ blink (int argc, char * argv[]) {
   else {
     int period = 1000;
 
-    pin = toint (argv[optind]);
+    gpio->setReleaseOnClose (true);
+
+    pin = getPin (argv[optind]);
     if ( (argc - optind) > 1)    {
 
-      period = toint (argv[optind + 1]);
+      period = stoi (std::string (argv[optind + 1]));
     }
-    g = new Gpio;
-    g->setNumbering (numbering);
-    g->setReleaseOnClose (true);
-    g->setMode (pin, ModeOutput);
 
-    // inthandler() intercepte le CTRL+C
-    signal (SIGINT, inthandler);
-    signal (SIGTERM, inthandler);
+    pin->setMode (ModeOutput);
+
+    // sig_handler() intercepte le CTRL+C
+    signal (SIGINT, sig_handler);
+    signal (SIGTERM, sig_handler);
     cout << "Press Ctrl+C to abort ..." << endl;
 
     for (;;) {
 
-      g->toggle (pin);
+      pin->toggle ();
       delay_ms (period);
     }
   }
@@ -368,7 +414,7 @@ wfi (int argc, char * argv[]) {
   else {
     string edge (argv[optind + 1]);
 
-    pin = toint (argv[optind]);
+    pin = getPin (argv[optind]);
     cerr << __FUNCTION__ << "() not yet implemented !" << endl;
   }
 }
@@ -403,56 +449,94 @@ pwm (int argc, char * argv[]) {
   else {
     int value;
 
-    pin = toint (argv[optind]);
-    value = toint (argv[optind + 1]);
+    pin = getPin (argv[optind]);
+    value = stoi (std::string (argv[optind + 1]));
     if ( (value < 0) || (value > 1023)) {
 
       throw Exception (Exception::NotPwmValue, value);
     }
 
-    g = new Gpio;
-    g->setNumbering (numbering);
-    if (g->mode (pin) != ModePwm) {
+    if (pin->mode () != ModePwm) {
 
-      delete g;
-      throw Exception (Exception::NotPwmPin, pin);
+      delete gpio;
+      throw Exception (Exception::NotPwmPin, pinnumber);
     }
 
     cerr << __FUNCTION__ << "() not yet implemented !" << endl;
-    delete g;
   }
 
 }
 
 // -----------------------------------------------------------------------------
-int
-toint (char * c_str) {
-  int i;
-  string str (c_str);
-  istringstream is (str);
+std::vector<std::string>
+split (const std::string& s, char seperator) {
+  std::vector<std::string> output;
+  std::string::size_type prev_pos = 0, pos = 0;
 
-  if (! (is >> i)) {
+  while ( (pos = s.find (seperator, pos)) != std::string::npos) {
 
-    ostringstream s;
-    s << str << " is not an integer";
-    throw s.str();
+    std::string substring (s.substr (prev_pos, pos - prev_pos));
+    output.push_back (substring);
+    prev_pos = ++pos;
   }
-  return i;
+
+  output.push_back (s.substr (prev_pos, pos - prev_pos)); // Last word
+  return output;
+}
+
+// -----------------------------------------------------------------------------
+GpioPin *
+getPin (char * c_str) {
+  GpioPin * p;
+  string s (c_str);
+
+  string::size_type n = s.find ('.');
+  if (n != std::string::npos) {
+
+    physicalNumbering = true;
+  }
+
+  if (!physicalNumbering) {
+
+    pinnumber = stoi (s);
+    p = gpio->pin (pinnumber);
+  }
+  else {
+    vector<std::string> v = split (s, '.');
+
+    if (v.size() > 1) {
+
+      connector = stoi (v[0]) - 1;
+      pinnumber = stoi (v[1]);
+    }
+    else {
+
+      connector = 0;
+      pinnumber = stoi (v[0]);
+    }
+    p = gpio->connector (connector)->pin (pinnumber).get();
+  }
+  return p;
 }
 
 // -----------------------------------------------------------------------------
 void
-inthandler (int sig) {
+sig_handler (int sig) {
 
-  if (pin > 0) {
+  if (pin) {
 
-    if (g->mode (pin) == ModeOutput) {
+    if (pin->mode () == ModeOutput) {
 
-      g->write (pin, 0);
+      pin->write (0);
     }
   }
-  delete g;
-  cout << endl << "everything was closed." << endl << "Have a nice day !" << endl;
+
+  if (gpio) {
+
+    delete gpio;
+    cout << endl << "everything was closed.";
+  }
+  cout << endl << "Have a nice day !" << endl;
   exit (EXIT_SUCCESS);
 }
 
@@ -474,13 +558,15 @@ usage () {
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "valid options are :" << endl;
   cout << "  -g\tUse the SOC pins numbers rather than SysIo pin numbers." << endl;
-  cout << "  -1\tUse the physical pin numbers rather than SysIo pin numbers." << endl;
+  cout << "  -s\tUse the System pin numbers rather than SysIo pin numbers." << endl;
+  cout << "  -1\tUse the connector pin numbers rather than SysIo pin numbers." << endl;
   cout << "  -v\tOutput the current version including the board informations." << endl;
   cout << "  -h\tPrint this message and exit" << endl << endl;
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "valid commands are :" << endl;
-  cout << "  mode <pin> <in/out/up/down/tri/pwm/alt{0..5}/off>" << endl;
+  cout << "  mode <pin> <in/out/off/pwm/alt{0..9}>" << endl;
+  cout << "  pull <pin> <up/down/off>" << endl;
   cout << "  read <pin>" << endl;
   cout << "  write <pin> <value>" << endl;
   cout << "  toggle <pin>" << endl;
