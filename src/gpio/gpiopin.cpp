@@ -111,6 +111,13 @@ GpioPin::column() const {
 }
 
 // -----------------------------------------------------------------------------
+int
+GpioPin::physicalNumber () const {
+
+  return connector()->pinNumber (row(), column());
+}
+
+// -----------------------------------------------------------------------------
 const std::string &
 GpioPin::name (GpioPinMode m) const {
 
@@ -121,7 +128,17 @@ GpioPin::name (GpioPinMode m) const {
 const std::string &
 GpioPin::name() const {
 
-  return name (mode());
+  if (type() == TypeGpio) {
+    try {
+
+      return name (mode());
+    }
+    catch (...) {
+      // Pas de nom pour le mode concerné
+    }
+  }
+
+  return name (ModeInput);
 }
 
 // -----------------------------------------------------------------------------
@@ -229,7 +246,7 @@ GpioPin::toggle () {
 
 // -----------------------------------------------------------------------------
 bool
-GpioPin::read () {
+GpioPin::read () const {
 
   if (type() != TypeGpio) {
 
@@ -302,8 +319,8 @@ GpioPin::typeName (GpioPinType t) {
 // -----------------------------------------------------------------------------
 const std::string &
 GpioPin::pullName () const {
-  
-  return pullName(pull());
+
+  return pullName (pull());
 }
 
 // -----------------------------------------------------------------------------
@@ -335,9 +352,9 @@ GpioPin::numberings () {
 }
 
 // -----------------------------------------------------------------------------
-const std::map<GpioPinPull, std::string> & 
+const std::map<GpioPinPull, std::string> &
 GpioPin::pulls () {
-  
+
   return _pulls;
 }
 

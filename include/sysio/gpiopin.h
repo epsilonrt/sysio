@@ -164,6 +164,15 @@ class GpioPin {
      * @return Numéro de broche système, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
      */
     int systemNumber () const;
+    
+    /**
+     * @brief Numéro de la broche dans son connecteur
+     * 
+     * Cette numérotation commence à 1.
+     *
+     * @return Numéro de broche connecteur
+     */
+    int physicalNumber () const;
 
     /**
     * @brief Numéro de la broche dans la numérotation demandé.
@@ -193,7 +202,9 @@ class GpioPin {
     /**
      * @brief Nom de la broche
      *
-     * @return nom qui dépend du mode sélectionné 
+     * @return nom qui correspond au mode renvoyé par \c mode() ou le nom
+     * générique si le mode actuel n'est pas associé à un nom ou si la broche 
+     * n'est pas de type TypeGpio.
      */
     const std::string & name() const;
 
@@ -267,7 +278,7 @@ class GpioPin {
      *
      * @return true pour un état logique haut (VccIo).
      */
-    bool read();
+    bool read() const;
 
     /**
      * @brief Restaure le mode et la résistance de pull-up d'une broche
@@ -369,6 +380,9 @@ class GpioPin {
     
     /**
      * @brief Active le mode mise au point
+     * 
+     * Cela active l'affichage d'informations de mise au point de la couche
+     * matérielle (GpioDevice).
      */
     void setDebug (bool enable);
 
