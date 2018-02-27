@@ -38,8 +38,8 @@ class GpioDevice {
     virtual void setPull (const GpioPin * pin, GpioPinPull p) = 0;
     virtual void write (const GpioPin * pin, bool v) = 0;
     virtual void toggle (const GpioPin * pin) = 0;
-    virtual bool read (const GpioPin * pin) = 0;
     
+    virtual bool read (const GpioPin * pin) const = 0;
     virtual GpioPinMode mode (const GpioPin * pin) const = 0;
     virtual GpioPinPull pull (const GpioPin * pin) const = 0;
     

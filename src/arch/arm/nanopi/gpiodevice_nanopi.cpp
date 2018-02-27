@@ -263,7 +263,7 @@ GpioDeviceNanoPi::toggle (const GpioPin * pin) {
 
 // -----------------------------------------------------------------------------
 bool
-GpioDeviceNanoPi::read (const GpioPin * pin) {
+GpioDeviceNanoPi::read (const GpioPin * pin) const {
   PioBank * b;
   int g = pin->mcuNumber();
 

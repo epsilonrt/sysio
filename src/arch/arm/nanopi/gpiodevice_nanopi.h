@@ -34,8 +34,8 @@ class GpioDeviceNanoPi : public GpioDevice {
     void setPull (const GpioPin * pin, GpioPinPull p);
     void write (const GpioPin * pin, bool v);
     void toggle (const GpioPin * pin);
-    bool read (const GpioPin * pin);
-
+    
+    bool read (const GpioPin * pin) const;
     GpioPinMode mode (const GpioPin * pin) const;
     GpioPinPull pull (const GpioPin * pin) const;
     
