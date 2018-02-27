@@ -40,7 +40,7 @@ endif (NOT CL_USED)
 find_package(chipio REQUIRED)
 link_directories(${CHIPIO_LIBRARY_DIRS})
 add_definitions(${CHIPIO_CFLAGS})
-include_directories(${CHIPIO_INCLUDE_DIRS})
+include_directories(BEFORE ${CHIPIO_INCLUDE_DIRS})
 list(APPEND LINK_OPTIONS ${CHIPIO_LIBRARIES})
 # --- ChipIo End. Do not edit by hand -------------------------------------------
 #}}}}

@@ -40,7 +40,7 @@ endif (NOT CL_USED)
 find_package(modbus REQUIRED)
 link_directories(${MODBUS_LIBRARY_DIRS})
 add_definitions(${MODBUS_CFLAGS})
-include_directories(${MODBUS_INCLUDE_DIRS})
+include_directories(BEFORE ${MODBUS_INCLUDE_DIRS})
 list(APPEND LINK_OPTIONS ${MODBUS_LIBRARIES})
 # --- Modbus End. Do not edit by hand -------------------------------------------
 #}}}}
