@@ -89,11 +89,11 @@ class Gpio {
     /**
      * @brief Broche GPIO
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @return pointeur sur la broche
      */
-    GpioPin * pin (int number) const;
+    GpioPin * pin (int pin) const;
 
     /**
      * @brief Nombre de connecteurs
@@ -103,67 +103,67 @@ class Gpio {
     /**
      * @brief Connecteur
      *
-     * @param number numéro du connecteur entre 0 et \c connectors()-1. Déclenche
+     * @param conn numéro du connecteur entre 1 et \c connectors(). Déclenche
      * une exception std::out_of_range si en dehors des clous.
      * @return pointeur sur le connecteur
      */
-    GpioConnector * connector (int number) const;
+    GpioConnector * connector (int conn) const;
 
     /**
      * @brief Mode actuel d'une broche
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    GpioPinMode mode (int number) const;
+    GpioPinMode mode (int pin) const;
 
     /**
      * @brief Modification du mode d'une broche
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param mode nouveau mode, une exception std::invalid_argument est
      * déclenchée si le mode demandé n'est pas supporté.
      */
-    void setMode (int number, GpioPinMode mode);
+    void setMode (int pin, GpioPinMode mode);
 
     /**
      * @brief Résistance de tirage d'une broche
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    GpioPinPull pull (int number) const;
+    GpioPinPull pull (int pin) const;
 
     /**
      * @brief Modification de la résistance de tirage d'une broche
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param pull nouvelle résistance, PullOff pour désactiver, une exception
      * std::invalid_argument est déclenchée si la résistance demandée n'est pas
      * supportée.
      */
-    void setPull (int number, GpioPinPull pull);
+    void setPull (int pin, GpioPinPull pull);
 
     /**
      * @brief Modification de l'état binaire d'une sortie
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param value true pour un état logique haut (VccIo).
      */
-    void write (int number, bool value);
+    void write (int pin, bool value);
 
     /**
      * @brief Bascule de l'état binaire d'une sortie
      *
      * Si la sortie est à l'état bas, elle passe à l'état haut et inversement.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    void toggle (int number);
+    void toggle (int pin);
 
     /**
      * @brief Lecture de l'état binaire d'une broche
@@ -171,11 +171,11 @@ class Gpio {
      * Déclenche une exeception std::system_error si la lecture est
      * impossible sur le système.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @return true pour un état logique haut (VccIo).
      */
-    bool read (int number);
+    bool read (int pin) const;
 
     /**
      * @brief Libère une broche de son utilisation
@@ -183,10 +183,10 @@ class Gpio {
      * La broche correspondante est remise dans son état initial (avant
      * l'ouverture du port GPIO parent.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    void release (int number);
+    void release (int pin);
 
     /**
      * @brief Modifie la libération des broches à la fermeture
@@ -252,6 +252,9 @@ class Gpio {
     
     /**
      * @brief Active le mode mise au point
+     * 
+     * Cela active l'affichage d'informations de mise au point de la couche
+     * matérielle (GpioDevice).
      */
     void setDebug (bool enable);
 
@@ -274,7 +277,7 @@ class Gpio {
     GpioDevice * _device; // Accès à la couche matérielle
     GpioPinNumbering _numbering; // Numérotation en cours
     std::map<int, std::shared_ptr<GpioPin>> _pin; // Broches uniquement GPIO
-    std::vector<std::shared_ptr<GpioConnector>> _connector; // Connecteurs avec toutes les broches physiques
+    std::map<int, std::shared_ptr<GpioConnector>> _connector; // Connecteurs avec toutes les broches physiques
 };
 // <--- C++ part
 // -----------------------------------------------------------------------------

@@ -22,7 +22,7 @@ Gpio::Gpio (GpioDevice * dev) :
 
   for (int i = 0; i < v.size(); i++) {
 
-    _connector.push_back (std::make_shared<GpioConnector> (this, & v[i]));
+    _connector[v[i].number] = std::make_shared<GpioConnector> (this, & v[i]);
   }
   setNumbering (NumberingLogical);
 }
@@ -75,8 +75,9 @@ Gpio::setNumbering (GpioPinNumbering nb) {
 
     _pin.clear();
 
-    for (int i = 0; i < connectors(); i++) {
-      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = connector (i)->pin();
+    for (auto cpair = _connector.cbegin(); cpair != _connector.cend(); ++cpair) {
+      std::shared_ptr<GpioConnector> conn = cpair->second;
+      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = conn->pin();
 
       for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
 
@@ -178,7 +179,7 @@ Gpio::toggle (int number) {
 
 // -----------------------------------------------------------------------------
 bool
-Gpio::read (int number) {
+Gpio::read (int number) const {
 
   return pin (number)->read();
 }
@@ -212,16 +213,16 @@ Gpio::device() const {
 }
 
 // -----------------------------------------------------------------------------
-bool 
+bool
 Gpio::isDebug() const {
-  
+
   return device()->isDebug();
 }
 
 // -----------------------------------------------------------------------------
-void 
+void
 Gpio::setDebug (bool enable) {
-  
+
   device()->setDebug (enable);
 }
 
