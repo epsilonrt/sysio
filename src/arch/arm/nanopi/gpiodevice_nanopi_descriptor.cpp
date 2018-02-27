@@ -37,7 +37,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
       {
         // Connecteurs
         {
-          "con1", 12, 2, dilConnector,
+          "con1", 1, 12, 2, dilConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "3.3V"}}},
             {TypePower, { -1, -1, -1, 1, 2}, {{ModeInput, "5V"}}},
@@ -66,7 +66,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "dbg_uart", 4, 1, silConnector,
+          "dbg_uart", 2, 4, 1, silConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "GND"}}},
             {TypePower, { -1, -1, -1, 2, 1}, {{ModeInput, "5V"}}},
@@ -75,14 +75,14 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "inner", 2, 1, silConnector,
+          "inner", 3, 2, 1, silConnector,
           {
             {TypeGpio, {19, 10, 10, 1, 1}, {{ModeInput, "GPIO_A10"}, {ModeOutput, "GPIO_A10"}, {ModeAlt2, "SIM_DET"}, {ModeAlt6, "PA_EINT10"}}},
             {TypeGpio, {32, 104, 362, 2, 1}, {{ModeInput, "GPIO_L10"}, {ModeOutput, "GPIO_L10"}, {ModeAlt2, "S_PWM"}, {ModeAlt6, "S_PL_EINT10"}}},
           }
         },
         {
-          "con2", 12, 1, silConnector,
+          "con2", 4, 12, 1, silConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "5V"}}},
             {TypeUsb, { -1, -1, -1, 2, 1}, {{ModeInput, "USB-DP1"}}},
@@ -112,7 +112,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
       {
         // Connecteurs
         {
-          "con1", 20, 2, dilConnector,
+          "con1", 1, 20, 2, dilConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "3.3V"}}},
             {TypePower, { -1, -1, -1, 1, 2}, {{ModeInput, "5V"}}},
@@ -157,7 +157,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "dbg_uart", 4, 1, silConnector,
+          "dbg_uart", 2, 4, 1, silConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "GND"}}},
             {TypePower, { -1, -1, -1, 2, 1}, {{ModeInput, "5V"}}},
@@ -166,7 +166,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "inner", 2, 1, silConnector,
+          "inner", 3, 2, 1, silConnector,
           {
             {TypeGpio, {19, 10, 10, 1, 1}, {{ModeInput, "GPIO_A10"}, {ModeOutput, "GPIO_A10"}, {ModeAlt2, "SIM_DET"}, {ModeAlt6, "PA_EINT10"}}},
             {TypeGpio, {32, 104, 362, 2, 1}, {{ModeInput, "GPIO_L10"}, {ModeOutput, "GPIO_L10"}, {ModeAlt2, "S_PWM"}, {ModeAlt6, "S_PL_EINT10"}}},
@@ -188,7 +188,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
       {
         // Connecteurs
         {
-          "con1", 20, 2, dilConnector,
+          "con1", 1, 20, 2, dilConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "3.3V"}}},
             {TypePower, { -1, -1, -1, 1, 2}, {{ModeInput, "5V"}}},
@@ -233,7 +233,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "dbg_uart", 4, 1, silConnector,
+          "dbg_uart", 2, 4, 1, silConnector,
           {
             {TypePower, { -1, -1, -1, 1, 1}, {{ModeInput, "GND"}}},
             {TypePower, { -1, -1, -1, 2, 1}, {{ModeInput, "5V"}}},
@@ -242,7 +242,7 @@ GpioDeviceNanoPi::_gpioDescriptors = {
           }
         },
         {
-          "inner", 2, 1, silConnector,
+          "inner", 3, 2, 1, silConnector,
           {
             {TypeGpio, {19, 10, 10, 1, 1}, {{ModeInput, "GPIO_A10"}, {ModeOutput, "GPIO_A10"}, {ModeAlt2, "SIM_DET"}, {ModeAlt6, "PA_EINT10"}}},
             {TypeGpio, {32, 104, 362, 2, 1}, {{ModeInput, "GPIO_L10"}, {ModeOutput, "GPIO_L10"}, {ModeAlt2, "S_PWM"}, {ModeAlt6, "S_PL_EINT10"}}},

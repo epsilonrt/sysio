@@ -6,6 +6,7 @@
  * This software is governed by the CeCILL license <http://www.cecill.info>
  */
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <map>
@@ -45,8 +46,8 @@ void read (int argc, char * argv[]);
 void write (int argc, char * argv[]);
 void toggle (int argc, char * argv[]);
 void blink (int argc, char * argv[]);
+void readall (int argc, char * argv[]);
 void wfi (int argc, char * argv[]); // TODO
-void readall (int argc, char * argv[]); // TODO
 void pwm (int argc, char * argv[]); // TODO
 
 GpioPin * getPin (char * c_str);
@@ -54,8 +55,6 @@ void usage ();
 void version ();
 void sig_handler (int sig);
 std::vector<std::string> split (const std::string& s, char seperator);
-
-void printConnector (GpioConnector * c, std::ostream & s);
 
 /* main ===================================================================== */
 int
@@ -127,12 +126,6 @@ main (int argc, char **argv) {
     }
     optind++;
 
-    if (getuid() != 0) {
-
-      cerr << "Permission denied, you must be root !" << endl;
-      exit (EXIT_FAILURE);
-    }
-
     gpio = new Gpio;
     gpio->setNumbering (numbering);
     gpio->setDebug (debug);
@@ -151,7 +144,7 @@ main (int argc, char **argv) {
 
     cerr << __progname << ": pin number " << pinnumber;
     if (physicalNumbering) {
-      cerr  << " or connector " << connector + 1;
+      cerr  << " or connector " << connector;
     }
     cerr   << " out of range !" << endl;
     cerr   << e.what() << endl;
@@ -186,18 +179,24 @@ main (int argc, char **argv) {
   return ret;
 }
 
-// -----------------------------------------------------------------------------
-void 
-printConnector (GpioConnector * c, std::ostream & s) {
-  
+/* -----------------------------------------------------------------------------
+  readall
+    Output a table of all GPIO pins values. 
+    The values represent the actual values read if the pin is in input mode, 
+    or the last value written if the pin is in output mode.
+ */
+void
+readall (int argc, char * argv[]) {
+
+  for (int i = 1; i <= gpio->connectors(); i++) {
+
+     cout << gpio->connector (i) << endl;
+  }
 }
 
 /* -----------------------------------------------------------------------------
-  mode <pin> <in/out/pwm/up/down/tri>
-    Set a pin into input, output or pwm mode.
-    Can also use the literals up, down or  tri  to et the internal pull-up,
-    pull-down or tristate (off) controls.
-    The ALT modes can also be set using alt0, alt1,  ... alt5.
+  mode <pin> <in/out/pwm/off/alt{0..9}>
+    Get/Set a pin mode into input, output, off, alt0..9 or pwm mode.
  */
 void
 mode (int argc, char * argv[]) {
@@ -247,7 +246,7 @@ mode (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   pull <pin> <up/down/off>
-    Set the internal pull-up, pull-down or off controls.
+    Get/Set the internal pull-up, pull-down or off controls.
  */
 void
 pull (int argc, char * argv[]) {
@@ -285,8 +284,7 @@ pull (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   read <pin>
-    Read  the  digital  value  of the given pin and print 0 or 1 to represent
-    the respective logic levels.
+    Read  the  digital value of the given pin (0 or 1)
  */
 void
 read (int argc, char * argv[]) {
@@ -304,8 +302,7 @@ read (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   write <pin> <value>
-    Write the given value (0 or 1) to the pin.
-    You need to set the pin to output mode first.
+    Write the given value (0 or 1) to the given pin (output).
  */
 void
 write (int argc, char * argv[]) {
@@ -336,9 +333,7 @@ write (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   toggle <pin>
-    Changes the state of a GPIO pin; 0 to 1, or 1 to 0.
-
-    Note unlike the blink command, the pin must be in output mode first.
+    Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output).
  */
 void
 toggle (int argc, char * argv[]) {
@@ -361,9 +356,7 @@ toggle (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   blink <pin> [period]
-    Blinks the given pin on/off. Press Control-C to exit.
-
-    Note: This command explicitly sets the pin to output mode.
+    Blinks the given pin on/off (explicitly sets the pin to output)
  */
 void
 blink (int argc, char * argv[]) {
@@ -415,29 +408,12 @@ wfi (int argc, char * argv[]) {
     string edge (argv[optind + 1]);
 
     pin = getPin (argv[optind]);
-    cerr << __FUNCTION__ << "() not yet implemented !" << endl;
+    cerr << __FUNCTION__ << "() not yet implemented (TODO) !" << endl;
   }
 }
 
 /* -----------------------------------------------------------------------------
-  readall
-    Output  a  table of all GPIO pins values. The values represent the actual values read if
-    the pin is in input mode, or the last value written if the pin is in output mode.
-
-    The readall command is usable with an extension module (via the -x parameter), but  it's
-    unable  to determine pin modes or states, so will perform both a digital and analog read
-    on each pin in-turn.
- */
-void
-readall (int argc, char * argv[]) {
-
-  cerr << __FUNCTION__ << "() not yet implemented !" << endl;
-}
-
-/* -----------------------------------------------------------------------------
   pwm <pin> <value>
-    Write a PWM value (0-1023) to the given pin.
-    The pin needs  to  be  put  into  PWM  mode first.
  */
 void
 pwm (int argc, char * argv[]) {
@@ -462,7 +438,7 @@ pwm (int argc, char * argv[]) {
       throw Exception (Exception::NotPwmPin, pinnumber);
     }
 
-    cerr << __FUNCTION__ << "() not yet implemented !" << endl;
+    cerr << __FUNCTION__ << "() not yet implemented (TODO) !" << endl;
   }
 
 }
@@ -506,12 +482,12 @@ getPin (char * c_str) {
 
     if (v.size() > 1) {
 
-      connector = stoi (v[0]) - 1;
+      connector = stoi (v[0]);
       pinnumber = stoi (v[1]);
     }
     else {
 
-      connector = 0;
+      connector = 1;
       pinnumber = stoi (v[0]);
     }
     p = gpio->connector (connector)->pin (pinnumber).get();
@@ -522,14 +498,6 @@ getPin (char * c_str) {
 // -----------------------------------------------------------------------------
 void
 sig_handler (int sig) {
-
-  if (pin) {
-
-    if (pin->mode () == ModeOutput) {
-
-      pin->write (0);
-    }
-  }
 
   if (gpio) {
 
@@ -560,19 +528,29 @@ usage () {
   cout << "  -g\tUse the SOC pins numbers rather than SysIo pin numbers." << endl;
   cout << "  -s\tUse the System pin numbers rather than SysIo pin numbers." << endl;
   cout << "  -1\tUse the connector pin numbers rather than SysIo pin numbers." << endl;
+  cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
   cout << "  -v\tOutput the current version including the board informations." << endl;
   cout << "  -h\tPrint this message and exit" << endl << endl;
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "valid commands are :" << endl;
   cout << "  mode <pin> <in/out/off/pwm/alt{0..9}>" << endl;
+  cout << "    Get/Set a pin mode into input, output, off, alt0..9 or pwm mode." << endl;
   cout << "  pull <pin> <up/down/off>" << endl;
+  cout << "    Get/Set the internal pull-up, pull-down or off controls." << endl;
   cout << "  read <pin>" << endl;
-  cout << "  write <pin> <value>" << endl;
-  cout << "  toggle <pin>" << endl;
-  cout << "  blink <pin> [period]" << endl;
-  cout << "  wfi <pin> <rising/falling/both>" << endl;
+  cout << "    Read the digital value of the given pin (0 or 1)" << endl;
   cout << "  readall" << endl;
+  cout << "    Output a table of all connectors with pins informations." << endl;
+  cout << "  write <pin> <value>" << endl;
+  cout << "    Write the given value (0 or 1) to the given pin (output)." << endl;
+  cout << "  toggle <pin>" << endl;
+  cout << "    Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
+  cout << "  blink <pin> [period]" << endl;
+  cout << "    Blinks the given pin on/off (explicitly sets the pin to output)." << endl;
+  cout << "  wfi <pin> <rising/falling/both>" << endl;
+  cout << "    Waits  for  the  interrupt  to happen. It's a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
+  cout << "    Write a PWM value (0-1023) to the given pin (pwm pin only)." << endl;
 }
 /* ========================================================================== */
