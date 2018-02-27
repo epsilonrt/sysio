@@ -8,6 +8,7 @@
 #ifndef _SYSIO_GPIO_CONNECTOR_H_
 #define _SYSIO_GPIO_CONNECTOR_H_
 
+#include <iostream>
 #include <sysio/gpiopin.h>
 
 /**
@@ -37,6 +38,7 @@ typedef int (* GpioConnectorPinNumberFunc) (int row, int column, int columns);
 class GpioConnectorDescriptor {
   public:
     std::string name;
+    int number;
     int rows;
     int columns;
     GpioConnectorPinNumberFunc pinNumber;
@@ -74,7 +76,12 @@ class GpioConnector {
      * @brief Nom
      */
     const std::string & name() const;
-
+    
+    /**
+     * @brief Numéro du connecteur sur la carte (commence à 1)
+     */
+    int number() const;
+    
     /**
      * @brief Nombre de broches
      */
@@ -93,11 +100,11 @@ class GpioConnector {
     /**
      * @brief Broche du connecteur
      *
-     * @param number numéro de broche dans la numérotation du connecteur. Déclenche
+     * @param pin numéro de broche dans la numérotation du connecteur. Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @return pointeur sur la broche
      */
-    std::shared_ptr<GpioPin> pin (int number) const;
+    std::shared_ptr<GpioPin> pin (int pin) const;
 
     /**
      * @brief Mode actuel
@@ -105,10 +112,10 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    GpioPinMode mode (int number) const;
+    GpioPinMode mode (int pin) const;
 
     /**
      * @brief Modification du mode
@@ -116,12 +123,12 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param mode nouveau mode, une exception std::invalid_argument est
      * déclenchée si le mode demandé n'est pas supporté.
      */
-    void setMode (int number, GpioPinMode mode);
+    void setMode (int pin, GpioPinMode mode);
 
     /**
      * @brief Résistance de tirage d'une broche
@@ -129,10 +136,10 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    GpioPinPull pull (int number) const;
+    GpioPinPull pull (int pin) const;
 
     /**
      * @brief Modification de la résistance de tirage
@@ -140,13 +147,13 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param pull nouvelle résistance, PullOff pour désactiver, une exception
      * std::invalid_argument est déclenchée si la résistance demandée n'est pas
      * supportée.
      */
-    void setPull (int number, GpioPinPull pull);
+    void setPull (int pin, GpioPinPull pull);
 
     /**
      * @brief Modification de l'état binaire d'une sortie
@@ -154,11 +161,11 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @param value true pour un état logique haut (VccIo).
      */
-    void write (int number, bool value);
+    void write (int pin, bool value);
 
     /**
      * @brief Bascule de l'état binaire d'une sortie
@@ -168,10 +175,10 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    void toggle (int number);
+    void toggle (int pin);
 
     /**
      * @brief Lecture de l'état binaire d'une broche
@@ -183,11 +190,11 @@ class GpioConnector {
      * type \c TypeGpio et une exeception std::system_error si la lecture est
      * impossible sur le système.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      * @return true pour un état logique haut (VccIo).
      */
-    bool read (int number);
+    bool read (int pin) const;
 
     /**
      * @brief Libère une broche de son utilisation
@@ -198,19 +205,10 @@ class GpioConnector {
      * Déclenche une exception std::domain_error si la broche n'est pas de
      * type \c TypeGpio.
      *
-     * @param number numéro de broche dans la numérotation \c numbering(). Déclenche
+     * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
      * une exception std::out_of_range si la broche n'existe pas
      */
-    void release (int number);
-
-    /**
-     * @brief Calcul du numéro de broche
-     *
-     * @param row ligne de la broche
-     * @param column colonne de la broche
-     * @return Numéro de la broche dans le connecteur
-     */
-    int pinNumber (int row, int column) const;
+    void release (int pin);
 
     /**
      * @brief Liste des broches du connecteur
@@ -220,7 +218,7 @@ class GpioConnector {
      * @code
      *    Gpio * g = new Gpio;
      *    // ....
-     *    GpioConnector * c = g->connector(0);
+     *    GpioConnector * c = g->connector(1);
      *    // ....
      *    for (auto p = c->pin().begin(); p != c->pin().end(); ++p) {
      *      // p est une std::pair: first = numéro et second = broche
@@ -239,20 +237,77 @@ class GpioConnector {
     Gpio * gpio() const;
 
     /**
+     * @brief Active le mode mise au point
+     * 
+     * Cela active l'affichage d'informations de mise au point de la couche
+     * matérielle (GpioDevice).
+     */
+    void setDebug (bool enable);
+
+    /**
      * @brief Indique si le mode mise au point est actif
      */
     bool isDebug() const;
+
     
     /**
-     * @brief Active le mode mise au point
-     */
-    void setDebug (bool enable);
+     * @brief Affiche toutes les informations sur le connecteur et ses broches
+     * 
+     * Voici un exemple d'affichage pour le connecteur DBG_UART d'un NanoPi à
+     * partir du code suivant:
+     * 
+     * @code
+        Gpio * gpio = new Gpio;
+        ...
+        cout << gpio->connector(4);
+        ....
+     * @endcode
+     * 
+     * Cela donne à l'affichage :
+     * 
+     * @verbatim
+                           CON2 (#4)
+        +-----+-----+----------+------+------+---+----+
+        | sOc | sIo |   Name   | Mode | Pull | V | Ph |
+        +-----+-----+----------+------+------+---+----+
+        |     |     |       5V |      |      |   |  1 |
+        |     |     |  USB-DP1 |      |      |   |  2 |
+        |     |     |  USB-DM1 |      |      |   |  3 |
+        |     |     |  USB-DP2 |      |      |   |  4 |
+        |     |     |  USB-DM2 |      |      |   |  5 |
+        | 105 |  20 | GPIO_L11 |  OUT |  OFF | 1 |  6 |
+        |  17 |  11 | GPIO_A17 |  OUT |  OFF | 0 |  7 |
+        |  18 |  31 | GPIO_A18 |  OUT |  OFF | 1 |  8 |
+        |  19 |  30 | GPIO_A19 |   IN |   UP | 0 |  9 |
+        |  20 |  21 | GPIO_A20 |   IN |   UP | 1 | 10 |
+        |  21 |  22 | GPIO_A21 |   IN |   UP | 0 | 11 |
+        |     |     |      GND |      |      |   | 12 |
+        +-----+-----+----------+------+------+---+----+
+        | sOc | sIo |   Name   | Mode | Pull | V | Ph |
+        +-----+-----+----------+------+------+---+----+
+     * @endverbatim
+     *
+      * @param os os flux de sortie
+      * @param c pointeur sur un connecteur
+      */
+    friend std::ostream& operator<<(std::ostream& os, const GpioConnector * c);  
 
   protected:
     /**
      * @brief Accès à la couche matérielle
      */
     GpioDevice * device() const;
+
+    /**
+     * @brief Calcul du numéro de broche
+     * 
+     * Permet à une broche de récupérer son numéro dans le connecteur
+     *
+     * @param row ligne de la broche
+     * @param column colonne de la broche
+     * @return Numéro de la broche dans le connecteur
+     */
+    int pinNumber (int row, int column) const;
 
   private:
     Gpio * _parent;
