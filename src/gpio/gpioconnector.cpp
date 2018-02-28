@@ -303,7 +303,7 @@ printRow (const GpioConnector * connector, int number, std::ostream & os) {
     s[1] = std::to_string (pin->logicalNumber());
     s[2] = toUpper (pin->modeName());
     s[3] = toUpper (pin->pullName());
-    if (pin->mode() != ModeDisabled) {
+    if ( (pin->mode() == ModeInput) || (pin->mode() == ModeOutput)) {
       s[4] = std::to_string (pin->read());
     }
   }
@@ -325,7 +325,7 @@ printRow (const GpioConnector * connector, int number, std::ostream & os) {
       s[1] = std::to_string (pin->logicalNumber());
       s[2] = toUpper (pin->modeName());
       s[3] = toUpper (pin->pullName());
-      if (pin->mode() != ModeDisabled) {
+      if ( (pin->mode() == ModeInput) || (pin->mode() == ModeOutput)) {
         s[4] = std::to_string (pin->read());
       }
       else {

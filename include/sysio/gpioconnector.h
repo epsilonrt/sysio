@@ -275,12 +275,12 @@ class GpioConnector {
         |     |     |  USB-DM1 |      |      |   |  3 |
         |     |     |  USB-DP2 |      |      |   |  4 |
         |     |     |  USB-DM2 |      |      |   |  5 |
-        | 105 |  20 | GPIO_L11 |  OUT |  OFF | 1 |  6 |
-        |  17 |  11 | GPIO_A17 |  OUT |  OFF | 0 |  7 |
-        |  18 |  31 | GPIO_A18 |  OUT |  OFF | 1 |  8 |
-        |  19 |  30 | GPIO_A19 |   IN |   UP | 0 |  9 |
-        |  20 |  21 | GPIO_A20 |   IN |   UP | 1 | 10 |
-        |  21 |  22 | GPIO_A21 |   IN |   UP | 0 | 11 |
+        | 105 |  20 |  GPIOL11 |  OUT |  OFF | 0 |  6 |
+        |  17 |  11 |  GPIOA17 |  OUT |  OFF | 0 |  7 |
+        |  18 |  31 |  GPIOA18 |  OUT |  OFF | 0 |  8 |
+        |  19 |  30 |  GPIOA19 |   IN |   UP | 1 |  9 |
+        |  20 |  21 |  GPIOA20 |   IN |   UP | 1 | 10 |
+        |  21 |  22 |  GPIOA21 |   IN |   UP | 1 | 11 |
         |     |     |      GND |      |      |   | 12 |
         +-----+-----+----------+------+------+---+----+
         | sOc | sIo |   Name   | Mode | Pull | V | Ph |
