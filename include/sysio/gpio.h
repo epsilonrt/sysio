@@ -96,6 +96,25 @@ class Gpio {
     GpioPin * pin (int pin) const;
 
     /**
+     * @brief Liste des broches de type GPIO
+     *
+     * Permet de parcourir les broches GPIO à l'aide des itérateurs de la STL,
+     * par exemple pour mettre en entrée toutes les broches:
+     * @code
+     *    Gpio * g = new Gpio;
+     *    // ....
+     *    for (auto p = g->pin().cbegin(); p != g->pin().cend(); ++p) {
+     *      // p est une std::pair: first = numéro et second = broche
+     *      p->second->setMode(ModeInput);
+     *    }
+     * @endcode
+     *
+     * @return Container std::map des broches indexé avec la numérotation
+     * \c numbering().
+     */
+    const std::map<int, std::shared_ptr<GpioPin>> & pin();
+
+    /**
      * @brief Nombre de connecteurs
      */
     int connectors() const;
@@ -103,11 +122,31 @@ class Gpio {
     /**
      * @brief Connecteur
      *
-     * @param conn numéro du connecteur entre 1 et \c connectors(). Déclenche
-     * une exception std::out_of_range si en dehors des clous.
+     * @param conn numéro du connecteur, les numéros ne sont pas forcément 
+     * contiguës, pour parcourir les connecteurs on utilisera les itérateurs 
+     * de la STL associés à \c connector(). Déclenche une exception 
+     * std::out_of_range si en dehors des clous.
      * @return pointeur sur le connecteur
      */
     GpioConnector * connector (int conn) const;
+
+    /**
+     * @brief Liste des connecteurs de la carte
+     *
+     * Permet de parcourir les connecteurs à l'aide des itérateurs de la STL,
+     * par exemple pour imprimer tous les connecteurs
+     * @code
+     *    Gpio * g = new Gpio;
+     *    // ....
+     *    for (auto p = g->connector().cbegin(); p != g->connector().cend(); ++p) {
+     *      // p est une std::pair: first = numéro et second = connecteur
+     *      cout << p->second;
+     *    }
+     * @endcode
+     *
+     * @return Container std::map des connecteurs indexé sur leur numéro
+     */
+    const std::map<int, std::shared_ptr<GpioConnector>> & connector();
 
     /**
      * @brief Mode actuel d'une broche
@@ -225,25 +264,6 @@ class Gpio {
      * @brief Nom de la numérotation en cours
      */
     const std::string & numberingName () const;
-
-    /**
-     * @brief Liste des broches de type GPIO
-     *
-     * Permet de parcourir les broches GPIO à l'aide des itérateurs de la STL,
-     * par exemple pour mettre en entrée toutes les broches:
-     * @code
-     *    Gpio * g = new Gpio;
-     *    // ....
-     *    for (auto p = g->pin().begin(); p != _pin.end(); ++p) {
-     *      // p est une std::pair: first = numéro et second = broche
-     *      p->second->setMode(ModeInput);
-     *    }
-     * @endcode
-     *
-     * @return Container std::map des broches indexé avec la numérotation
-     * \c numbering().
-     */
-    const std::map<int, std::shared_ptr<GpioPin>> & pin();
 
     /**
      * @brief Indique si le mode mise au point est actif

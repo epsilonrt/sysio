@@ -76,7 +76,7 @@ Gpio::setNumbering (GpioPinNumbering nb) {
     _pin.clear();
 
     for (auto cpair = _connector.cbegin(); cpair != _connector.cend(); ++cpair) {
-      std::shared_ptr<GpioConnector> conn = cpair->second;
+      const std::shared_ptr<GpioConnector> & conn = cpair->second;
       const std::map<int, std::shared_ptr<GpioPin>> & pinmap = conn->pin();
 
       for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
@@ -203,6 +203,12 @@ GpioConnector *
 Gpio::connector (int num) const {
 
   return _connector.at (num).get();
+}
+
+// -----------------------------------------------------------------------------
+const std::map<int, std::shared_ptr<GpioConnector>> & 
+Gpio::connector() {
+  return _connector;
 }
 
 // -----------------------------------------------------------------------------
