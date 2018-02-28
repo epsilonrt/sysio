@@ -181,16 +181,16 @@ main (int argc, char **argv) {
 
 /* -----------------------------------------------------------------------------
   readall
-    Output a table of all GPIO pins values. 
-    The values represent the actual values read if the pin is in input mode, 
+    Output a table of all GPIO pins values.
+    The values represent the actual values read if the pin is in input mode,
     or the last value written if the pin is in output mode.
  */
 void
 readall (int argc, char * argv[]) {
 
-  for (int i = 1; i <= gpio->connectors(); i++) {
-
-     cout << gpio->connector (i) << endl;
+  for (auto p = gpio->connector().cbegin(); p != gpio->connector().cend(); ++p) {
+    // p est une std::pair: first = numéro et second = connecteur
+    cout << p->second << endl;
   }
 }
 
@@ -234,7 +234,6 @@ mode (int argc, char * argv[]) {
 
       // Modification à garder après fermeture !
       gpio->setReleaseOnClose (false);
-
       pin->setMode (m);
     }
     else {
@@ -272,7 +271,6 @@ pull (int argc, char * argv[]) {
 
       // Modification à garder après fermeture !
       gpio->setReleaseOnClose (false);
-
       pin->setPull (p);
     }
     else {
@@ -327,6 +325,8 @@ write (int argc, char * argv[]) {
       delete gpio;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
+    // Modification à garder après fermeture !
+    gpio->setReleaseOnClose (false);
     pin->write (value);
   }
 }
@@ -350,6 +350,8 @@ toggle (int argc, char * argv[]) {
       delete gpio;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
+    // Modification à garder après fermeture !
+    gpio->setReleaseOnClose (false);
     pin->toggle ();
   }
 }
