@@ -7,43 +7,45 @@
  */
 #include <sysio/gpiodevice.h>
 
+namespace Gpio {
+
 // -----------------------------------------------------------------------------
 //
-//                        GpioDevice Class
+//                        Device Class
 //
 // -----------------------------------------------------------------------------
-GpioDevice::GpioDevice() : _isopen (false), _isdebug (false) {
+  Device::Device() : _isopen (false), _isdebug (false) {
 
-}
-
-// -----------------------------------------------------------------------------
-GpioDevice::~GpioDevice() {
-
-}
+  }
 
 // -----------------------------------------------------------------------------
-bool
-GpioDevice::isOpen() const {
+  Device::~Device() {
 
-  return _isopen;
-}
+  }
 
 // -----------------------------------------------------------------------------
-void
-GpioDevice::setOpen (bool open) {
-  _isopen = open;
-}
+  bool
+  Device::isOpen() const {
+
+    return _isopen;
+  }
 
 // -----------------------------------------------------------------------------
-bool
-GpioDevice::isDebug() const {
-  return _isdebug;
-}
+  void
+  Device::setOpen (bool open) {
+    _isopen = open;
+  }
 
 // -----------------------------------------------------------------------------
-void
-GpioDevice::setDebug (bool enable) {
-  _isdebug = enable;
-}
+  bool
+  Device::isDebug() const {
+    return _isdebug;
+  }
 
+// -----------------------------------------------------------------------------
+  void
+  Device::setDebug (bool enable) {
+    _isdebug = enable;
+  }
+}
 /* ========================================================================== */

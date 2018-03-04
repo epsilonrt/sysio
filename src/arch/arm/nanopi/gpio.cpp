@@ -7,15 +7,17 @@
 #include <sysio/gpio.h>
 #include "gpiodevice_nanopi.h"
 
+namespace Gpio {
+
 // -----------------------------------------------------------------------------
 //
-//                           Gpio Class
+//                           Board Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio (GpioAccessLayer layer) : Gpio(new GpioDeviceNanoPi(), layer) {
+  Board::Board (AccessLayer layer) : Board (new DeviceNanoPi(), layer) {
 
+  }
 }
-
 /* ========================================================================== */

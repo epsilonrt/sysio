@@ -8,264 +8,218 @@
 #include <sysio/gpio.h>
 #include <sysio/gpiodevice.h>
 
+namespace Gpio {
+
 // -----------------------------------------------------------------------------
 //
-//                           Gpio Class
+//                           Board Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio (GpioDevice * dev, GpioAccessLayer layer) :
-  _roc (true), _isopen (false), _accesslayer (layer), _device (dev) {
+  Board::Board (Device * dev, AccessLayer layer) :
+    _roc (true), _isopen (false), _accesslayer (layer), _device (dev) {
 
-  const std::vector<GpioConnectorDescriptor> & v = device()->descriptor()->connector;
+    const std::vector<Connector::Descriptor> & v = device()->descriptor()->connector;
 
-  if (layer == AccessLayerAuto) {
+    if (layer == AccessLayerAuto) {
 
-    _accesslayer = dev->preferedAccessLayer();
-  }
-
-  // Création des connecteurs à partir des descripteurs
-  for (int i = 0; i < v.size(); i++) {
-
-    _connector[v[i].number] = std::make_shared<GpioConnector> (this, & v[i]);
-  }
-  setNumbering (NumberingLogical);
-}
-
-// -----------------------------------------------------------------------------
-Gpio::~Gpio() {
-
-  close();
-  delete _device;
-}
-
-// -----------------------------------------------------------------------------
-GpioAccessLayer
-Gpio::accessLayer() const {
-  return _accesslayer;
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::open () {
-
-  if (!isOpen()) {
-
-    if (_accesslayer & AccessLayerIoMap) {
-
-      if (! device()->open()) {
-        
-        return false;
-      }
+      _accesslayer = dev->preferedAccessLayer();
     }
 
-    for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+    // Création des connecteurs à partir des descripteurs
+    for (int i = 0; i < v.size(); i++) {
 
-      if (!c->second->open()) {
-
-        return false;
-      }
+      _connector[v[i].number] = std::make_shared<Connector> (this, & v[i]);
     }
-    
-    _isopen = true;
+    setNumbering (Pin::NumberingLogical);
   }
 
-  return isOpen();
-}
-
 // -----------------------------------------------------------------------------
-void
-Gpio::close() {
+  Board::~Board() {
 
-  if (isOpen()) {
-    
-    for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
-
-      c->second->close();
-    }
-    device()->close();
-    _isopen = false;
+    close();
+    delete _device;
   }
-}
 
 // -----------------------------------------------------------------------------
-bool
-Gpio::isOpen() const {
+  AccessLayer
+  Board::accessLayer() const {
 
-  return _isopen;
-}
-
-// -----------------------------------------------------------------------------
-GpioPinNumbering
-Gpio::numbering() const {
-
-  return _numbering;
-}
+    return _accesslayer;
+  }
 
 // -----------------------------------------------------------------------------
-void
-Gpio::setNumbering (GpioPinNumbering nb) {
+  bool
+  Board::open () {
 
-  if (nb != numbering()) {
+    if (!isOpen()) {
 
-    _pin.clear();
+      if (_accesslayer & AccessLayerIoMap) {
 
-    for (auto cpair = _connector.cbegin(); cpair != _connector.cend(); ++cpair) {
-      const std::shared_ptr<GpioConnector> & conn = cpair->second;
-      const std::map<int, std::shared_ptr<GpioPin>> & pinmap = conn->pin();
+        if (! device()->open()) {
 
-      for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
-
-        std::shared_ptr<GpioPin> p = pair->second;
-        if (p->type() == TypeGpio) {
-
-          int num = p->number (nb);
-          _pin[num] = p;
+          return false;
         }
       }
+
+      for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+
+        if (!c->second->open()) {
+
+          return false;
+        }
+      }
+
+      _isopen = true;
     }
-    _numbering = nb;
+
+    return isOpen();
+  }
+
+// -----------------------------------------------------------------------------
+  void
+  Board::close() {
+
+    if (isOpen()) {
+
+      for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+
+        c->second->close();
+      }
+      device()->close();
+      _isopen = false;
+    }
+  }
+
+// -----------------------------------------------------------------------------
+  bool
+  Board::isOpen() const {
+
+    return _isopen;
+  }
+
+// -----------------------------------------------------------------------------
+  Pin::Numbering
+  Board::numbering() const {
+
+    return _numbering;
+  }
+
+// -----------------------------------------------------------------------------
+  void
+  Board::setNumbering (Pin::Numbering nb) {
+
+    if (nb != numbering()) {
+
+      _pin.clear();
+
+      for (auto cpair = _connector.cbegin(); cpair != _connector.cend(); ++cpair) {
+        const std::shared_ptr<Connector> & conn = cpair->second;
+        const std::map<int, std::shared_ptr<Pin>> & pinmap = conn->pin();
+
+        for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
+
+          std::shared_ptr<Pin> p = pair->second;
+          if (p->type() == Pin::TypeGpio) {
+
+            int num = p->number (nb);
+            _pin[num] = p;
+          }
+        }
+      }
+      _numbering = nb;
+    }
+  }
+
+// -----------------------------------------------------------------------------
+  const std::string &
+  Board::numberingName () const {
+
+    return Pin::numberingName (numbering());
+  }
+
+// -----------------------------------------------------------------------------
+  bool
+  Board::releaseOnClose() const {
+
+    return _roc;
+  }
+
+// -----------------------------------------------------------------------------
+  void
+  Board::setReleaseOnClose (bool enable) {
+
+    _roc = enable;
+  }
+
+// -----------------------------------------------------------------------------
+  const std::string & 
+  Board::name() const {
+    
+    return device()->descriptor()->name;
+  }
+
+// -----------------------------------------------------------------------------
+  int
+  Board::size() const {
+
+    return _pin.size();
+  }
+
+// -----------------------------------------------------------------------------
+  const std::map<int, std::shared_ptr<Pin>> &
+  Board::pin() {
+
+    return _pin;
+  }
+
+// -----------------------------------------------------------------------------
+  Pin *
+  Board::pin (int number) const {
+
+    return _pin.at (number).get();
+  };
+
+// -----------------------------------------------------------------------------
+  int
+  Board::connectors() const {
+
+    return _connector.size();
+  }
+
+// -----------------------------------------------------------------------------
+  Connector *
+  Board::connector (int num) const {
+
+    return _connector.at (num).get();
+  }
+
+// -----------------------------------------------------------------------------
+  const std::map<int, std::shared_ptr<Connector>> &
+  Board::connector() {
+    return _connector;
+  }
+
+// -----------------------------------------------------------------------------
+  Device *
+  Board::device() const {
+
+    return _device;
+  }
+
+// -----------------------------------------------------------------------------
+  bool
+  Board::isDebug() const {
+
+    return device()->isDebug();
+  }
+
+// -----------------------------------------------------------------------------
+  void
+  Board::setDebug (bool enable) {
+
+    device()->setDebug (enable);
   }
 }
-
-// -----------------------------------------------------------------------------
-const std::string &
-Gpio::numberingName () const {
-
-  return GpioPin::numberingName (numbering());
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::releaseOnClose() const {
-
-  return _roc;
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setReleaseOnClose (bool enable) {
-
-  _roc = enable;
-}
-
-// -----------------------------------------------------------------------------
-int
-Gpio::size() const {
-
-  return _pin.size();
-}
-
-// -----------------------------------------------------------------------------
-const std::map<int, std::shared_ptr<GpioPin>> &
-Gpio::pin() {
-
-  return _pin;
-}
-
-// -----------------------------------------------------------------------------
-GpioPin *
-Gpio::pin (int number) const {
-
-  return _pin.at (number).get();
-};
-
-// -----------------------------------------------------------------------------
-GpioPinMode
-Gpio::mode (int number) const {
-
-  return pin (number)->mode();
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setMode (int number, GpioPinMode mode) {
-
-  pin (number)->setMode (mode);
-}
-
-// -----------------------------------------------------------------------------
-GpioPinPull
-Gpio::pull (int number) const {
-
-  return pin (number)->pull();
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setPull (int number, GpioPinPull pull) {
-
-  pin (number)->setPull (pull);
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::write (int number, bool value) {
-
-  pin (number)->write (value);
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::toggle (int number) {
-
-  pin (number)->toggle();
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::read (int number) const {
-
-  return pin (number)->read();
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::release (int number) {
-
-  pin (number)->release();
-}
-
-// -----------------------------------------------------------------------------
-int
-Gpio::connectors() const {
-
-  return _connector.size();
-}
-
-// -----------------------------------------------------------------------------
-GpioConnector *
-Gpio::connector (int num) const {
-
-  return _connector.at (num).get();
-}
-
-// -----------------------------------------------------------------------------
-const std::map<int, std::shared_ptr<GpioConnector>> &
-Gpio::connector() {
-  return _connector;
-}
-
-// -----------------------------------------------------------------------------
-GpioDevice *
-Gpio::device() const {
-
-  return _device;
-}
-
-// -----------------------------------------------------------------------------
-bool
-Gpio::isDebug() const {
-
-  return device()->isDebug();
-}
-
-// -----------------------------------------------------------------------------
-void
-Gpio::setDebug (bool enable) {
-
-  device()->setDebug (enable);
-}
-
 /* ========================================================================== */

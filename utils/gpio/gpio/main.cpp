@@ -22,6 +22,7 @@
 #include "version.h"
 
 using namespace std;
+using namespace Gpio;
 
 /* constants ================================================================ */
 const string authors = "epsilonRT";
@@ -31,12 +32,12 @@ const string website = "http://www.epsilonrt.fr/sysio";
 typedef void (*func) (int argc, char * argv[]);
 
 /* private variables ======================================================== */
-Gpio * gpio = 0;
-GpioPinNumbering numbering = NumberingLogical;
+Board * board = 0;
+Pin::Numbering numbering = Pin::NumberingLogical;
 int pinnumber = -1;
 int connector = -1;
 bool physicalNumbering = false;
-GpioPin * pin = 0;
+Pin * pin = 0;
 bool debug = false;
 bool forceSysFs = false;
 int useSysFsBeforeWfi = -1;
@@ -52,11 +53,11 @@ void readall (int argc, char * argv[]);
 void wfi (int argc, char * argv[]);
 void pwm (int argc, char * argv[]); // TODO
 
-GpioPin * getPin (char * c_str);
+Pin * getPin (char * c_str);
 void usage ();
 void version ();
 void sig_handler (int sig);
-std::vector<std::string> split (const std::string& s, char seperator);
+vector<string> split (const string& s, char seperator);
 
 /* main ===================================================================== */
 int
@@ -65,7 +66,7 @@ main (int argc, char **argv) {
   int ret = 0;
   func do_it;
 
-  const std::map<string, func> str2func = {
+  const map<string, func> str2func = {
     {"mode", mode},
     {"pull", pull},
     {"read", read},
@@ -84,11 +85,11 @@ main (int argc, char **argv) {
       switch (opt) {
 
         case 'g':
-          numbering = NumberingMcu;
+          numbering = Pin::NumberingMcu;
           break;
 
         case 's':
-          numbering = NumberingSystem;
+          numbering = Pin::NumberingSystem;
           break;
 
         case '1':
@@ -128,10 +129,11 @@ main (int argc, char **argv) {
     do_it = str2func. at (argv[optind]);
     optind++;
 
-    gpio = new Gpio ();
-    gpio->setNumbering (numbering);
-    gpio->setDebug (debug);
-    gpio->open();
+    board = new Board ();
+    board->setNumbering (numbering);
+    board->setDebug (debug);
+    board->open();
+    board->pin(0)->read();
 
     /* Execute command */
     do_it (argc, argv);
@@ -142,22 +144,22 @@ main (int argc, char **argv) {
     cerr << __progname << " -h for help." << endl;
     ret = -1;
   }
-  catch (std::out_of_range& e) {
+  catch (out_of_range& e) {
 
     cerr << __progname << ": out of range value (" << e.what() << ")"<< endl;
     ret = -1;
   }
-  catch (std::invalid_argument& e) {
+  catch (invalid_argument& e) {
 
     cerr << __progname << ": invalid argument (" << e.what() << ") !" << endl;
     ret = -1;
   }
-  catch (std::domain_error& e) {
+  catch (domain_error& e) {
 
     cerr << __progname << ": bad pin type (" << e.what() << ") !" << endl;
     ret = -1;
   }
-  catch (std::exception& e) {
+  catch (exception& e) {
 
     cerr << __progname << ": " << e.what() << " !" << endl;
     ret = -1;
@@ -168,16 +170,16 @@ main (int argc, char **argv) {
     ret = -1;
   }
 
-  if (gpio) {
+  if (board) {
 
-    delete gpio;
+    delete board;
   }
 
   return ret;
 }
 
 /* -----------------------------------------------------------------------------
-  readall
+  readall [#connector]
     Output a table of all GPIO pins values.
     The values represent the actual values read if the pin is in input mode,
     or the last value written if the pin is in output mode.
@@ -188,12 +190,12 @@ readall (int argc, char * argv[]) {
 
   if (paramc >= 1) {
     
-    int connector = stoi (std::string (argv[optind]));
-    cout << gpio->connector (connector);
+    int connector = stoi (string (argv[optind]));
+    cout << board->connector (connector);
   }
   else {
-    for (auto p = gpio->connector().cbegin(); p != gpio->connector().cend(); ++p) {
-      // p est une std::pair: first = numéro et second = connecteur
+    for (auto p = board->connector().cbegin(); p != board->connector().cend(); ++p) {
+      // p est une pair: first = numéro et second = connecteur
       cout << p->second << endl;
     }
   }
@@ -216,29 +218,29 @@ mode (int argc, char * argv[]) {
     pin = getPin (argv[optind]);
 
     if (paramc > 1) {
-      GpioPinMode m;
+      Pin::Mode m;
       string smode (argv[optind + 1]);
-      const std::map<string, GpioPinMode> str2mode = {
-        {"in",    ModeInput   },
-        {"out",   ModeOutput  },
-        {"alt0",  ModeAlt0    },
-        {"alt1",  ModeAlt1    },
-        {"alt2",  ModeAlt2    },
-        {"alt3",  ModeAlt3    },
-        {"alt4",  ModeAlt4    },
-        {"alt5",  ModeAlt5    },
-        {"alt6",  ModeAlt6    },
-        {"alt7",  ModeAlt7    },
-        {"alt8",  ModeAlt8    },
-        {"alt9",  ModeAlt9    },
-        {"off",   ModeDisabled},
-        {"pwm",   ModePwm     }
+      const map<string, Pin::Mode> str2mode = {
+        {"in",    Pin::ModeInput   },
+        {"out",   Pin::ModeOutput  },
+        {"alt0",  Pin::ModeAlt0    },
+        {"alt1",  Pin::ModeAlt1    },
+        {"alt2",  Pin::ModeAlt2    },
+        {"alt3",  Pin::ModeAlt3    },
+        {"alt4",  Pin::ModeAlt4    },
+        {"alt5",  Pin::ModeAlt5    },
+        {"alt6",  Pin::ModeAlt6    },
+        {"alt7",  Pin::ModeAlt7    },
+        {"alt8",  Pin::ModeAlt8    },
+        {"alt9",  Pin::ModeAlt9    },
+        {"off",   Pin::ModeDisabled},
+        {"pwm",   Pin::ModePwm     }
       };
 
       m = str2mode.at (smode);
 
       // Modification à garder après fermeture !
-      gpio->setReleaseOnClose (false);
+      board->setReleaseOnClose (false);
       pin->setMode (m);
     }
     else {
@@ -265,18 +267,18 @@ pull (int argc, char * argv[]) {
     pin = getPin (argv[optind]);
 
     if (paramc > 1) {
-      GpioPinPull p;
+      Pin::Pull p;
       string pmode (argv[optind + 1]);
-      const std::map<string, GpioPinPull> str2pull = {
-        {"off",   PullOff},
-        {"up",    PullUp},
-        {"down",  PullDown}
+      const map<string, Pin::Pull> str2pull = {
+        {"off",   Pin::PullOff},
+        {"up",    Pin::PullUp},
+        {"down",  Pin::PullDown}
       };
 
       p = str2pull.at (pmode);
 
       // Modification à garder après fermeture !
-      gpio->setReleaseOnClose (false);
+      board->setReleaseOnClose (false);
       pin->setPull (p);
     }
     else {
@@ -322,19 +324,19 @@ write (int argc, char * argv[]) {
 
     pin = getPin (argv[optind]);
 
-    value = stoi (std::string (argv[optind + 1]));
+    value = stoi (string (argv[optind + 1]));
     if ( (value < 0) || (value > 1)) {
 
       throw Exception (Exception::NotBinaryValue, value);
     }
 
-    if (pin->mode () != ModeOutput) {
+    if (pin->mode () != Pin::ModeOutput) {
 
-      delete gpio;
+      delete board;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
     // Modification à garder après fermeture !
-    gpio->setReleaseOnClose (false);
+    board->setReleaseOnClose (false);
     pin->write (value);
   }
 }
@@ -354,13 +356,13 @@ toggle (int argc, char * argv[]) {
   else {
 
     pin = getPin (argv[optind]);
-    if (pin->mode () != ModeOutput) {
+    if (pin->mode () != Pin::ModeOutput) {
 
-      delete gpio;
+      delete board;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
     // Modification à garder après fermeture !
-    gpio->setReleaseOnClose (false);
+    board->setReleaseOnClose (false);
     pin->toggle ();
   }
 }
@@ -380,19 +382,19 @@ blink (int argc, char * argv[]) {
   else {
     int period = 1000;
 
-    gpio->setReleaseOnClose (true);
+    board->setReleaseOnClose (true);
 
     pin = getPin (argv[optind]);
     if (paramc > 1)    {
 
-      period = stoi (std::string (argv[optind + 1]));
+      period = stoi (string (argv[optind + 1]));
       if (pin->useSysFs() && period < 1) {
         period = 1;
         cout << "Warning: Pin " << pin->name() << " uses SYSFS, the delay has been set to " << period << " ms (min.) !" << endl;
       }
     }
 
-    pin->setMode (ModeOutput);
+    pin->setMode (Pin::ModeOutput);
 
     // sig_handler() intercepte le CTRL+C
     signal (SIGINT, sig_handler);
@@ -409,9 +411,9 @@ blink (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   wfi <pin> <rising/falling/both> [timeout_ms]
-    This set the given pin to the supplied interrupt mode:  rising,  falling  or  both  then
-    waits  for  the  interrupt  to happen. It's a non-busy wait, so does not consume and CPU
-    while it's waiting.
+    This set the given pin to the supplied interrupt mode:  rising,  falling  or
+    both  then waits  for  the  interrupt  to happen. 
+    It's a non-busy wait, so does not consume and CPU while it's waiting.
  */
 void
 wfi (int argc, char * argv[]) {
@@ -422,14 +424,14 @@ wfi (int argc, char * argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    const std::map<std::string, GpioPinEdge>  str2edge = {
-      { "none", EdgeNone },
-      { "rising", EdgeRising },
-      { "falling", EdgeFalling },
-      { "both", EdgeBoth }
+    const map<string, Pin::Edge>  str2edge = {
+      { "none", Pin::EdgeNone },
+      { "rising", Pin::EdgeRising },
+      { "falling", Pin::EdgeFalling },
+      { "both", Pin::EdgeBoth }
     };
     long timeout = -1;
-    GpioPinEdge e;
+    Pin::Edge e;
     string edge (argv[optind + 1]);
 
     //useSysFsBeforeWfi = pin->useSysFs();
@@ -439,7 +441,7 @@ wfi (int argc, char * argv[]) {
     e = str2edge.at (edge);
     if (paramc > 2) {
 
-      timeout = stol (std::string (argv[optind + 2]));
+      timeout = stol (string (argv[optind + 2]));
     }
 
     // sig_handler() intercepte le CTRL+C
@@ -465,15 +467,15 @@ pwm (int argc, char * argv[]) {
     int value;
 
     pin = getPin (argv[optind]);
-    value = stoi (std::string (argv[optind + 1]));
+    value = stoi (string (argv[optind + 1]));
     if ( (value < 0) || (value > 1023)) {
 
       throw Exception (Exception::NotPwmValue, value);
     }
 
-    if (pin->mode () != ModePwm) {
+    if (pin->mode () != Pin::ModePwm) {
 
-      delete gpio;
+      delete board;
       throw Exception (Exception::NotPwmPin, pinnumber);
     }
 
@@ -483,14 +485,14 @@ pwm (int argc, char * argv[]) {
 }
 
 // -----------------------------------------------------------------------------
-std::vector<std::string>
-split (const std::string& s, char seperator) {
-  std::vector<std::string> output;
-  std::string::size_type prev_pos = 0, pos = 0;
+vector<string>
+split (const string& s, char seperator) {
+  vector<string> output;
+  string::size_type prev_pos = 0, pos = 0;
 
-  while ( (pos = s.find (seperator, pos)) != std::string::npos) {
+  while ( (pos = s.find (seperator, pos)) != string::npos) {
 
-    std::string substring (s.substr (prev_pos, pos - prev_pos));
+    string substring (s.substr (prev_pos, pos - prev_pos));
     output.push_back (substring);
     prev_pos = ++pos;
   }
@@ -500,13 +502,13 @@ split (const std::string& s, char seperator) {
 }
 
 // -----------------------------------------------------------------------------
-GpioPin *
+Pin *
 getPin (char * c_str) {
-  GpioPin * p;
+  Pin * p;
   string s (c_str);
 
   string::size_type n = s.find ('.');
-  if (n != std::string::npos) {
+  if (n != string::npos) {
 
     physicalNumbering = true;
   }
@@ -514,10 +516,10 @@ getPin (char * c_str) {
   if (!physicalNumbering) {
 
     pinnumber = stoi (s);
-    p = gpio->pin (pinnumber);
+    p = board->pin (pinnumber);
   }
   else {
-    vector<std::string> v = split (s, '.');
+    vector<string> v = split (s, '.');
 
     if (v.size() > 1) {
 
@@ -529,7 +531,7 @@ getPin (char * c_str) {
       connector = 1;
       pinnumber = stoi (v[0]);
     }
-    p = gpio->connector (connector)->pin (pinnumber).get();
+    p = board->connector (connector)->pin (pinnumber);
   }
   p->forceUseSysFs (forceSysFs);
   return p;
@@ -539,14 +541,14 @@ getPin (char * c_str) {
 void
 sig_handler (int sig) {
 
-  if (gpio) {
+  if (board) {
 
     if (useSysFsBeforeWfi >= 0) {
 
       pin->forceUseSysFs (useSysFsBeforeWfi != 0);
     }
 
-    delete gpio;
+    delete board;
     cout << endl << "everything was closed.";
   }
   cout << endl << "Have a nice day !" << endl;
