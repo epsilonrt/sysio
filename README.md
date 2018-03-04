@@ -1,8 +1,8 @@
 # SysIo
-*Librairie et outils pour l'embarqué*
+*Library and tools for embedded boards*
 
 ---
-Copyright 2015-2017 (c), epsilonRT
+Copyright 2015-2018 (c), epsilonRT
 
 <a href="http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html">
   <img src="https://raw.githubusercontent.com/epsilonrt/gxPL/master/doc/images/osi.png" alt="osi.png" align="right" valign="top">
@@ -75,6 +75,7 @@ optionally libgps
 
         $ make
         $ sudo make install
+        $ sudo ldconfig
 
 We can uninstall with a `sudo make uninstall` in the same directory.
 
@@ -92,12 +93,16 @@ If you want to build the documentation it will be necessary to pass the option
         $ cmake -DSYSIO_WITH_DOXYGEN_DOC=1 ..
         $ make doc
 
-## Creating a SysIo project
+## Creating a SysIo application
 
 To create a SysIo project, it is necessary to install the Dev module which 
 contains the header files '* .h' and the utilities necessary for the compilation.  
 This is the case if you have installed "manually" with `sudo make install` or 
 if you have installed the` libsysio-dev` package.
+
+Sysio provides a pkg-config file that allows you to simply compile a program that uses it:
+
+    $ gcc -o myapp main.c $ (pkg-config --cflags --libs)
 
 To make things easier, you can use the `sysio-prj` utility, for example, to create a C project:
 

@@ -13,6 +13,7 @@
     <File Name="DoxygenLayout.xml"/>
     <File Name="main_page_footer.dox"/>
     <File Name="main_page_header.dox"/>
+    <File Name="../README.md"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="CMakeLists.txt"/>
