@@ -122,6 +122,8 @@ if(NOT INSTALL_BIN_DIR)
   set(INSTALL_BIN_DIR bin)
 else()
   add_dependencies(${PROJECT_NAME} sysio-shared)
+else()
+  add_dependencies (sping sysio-shared)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" COMPONENT utils)
 #}}}}

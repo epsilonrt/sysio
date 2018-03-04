@@ -118,6 +118,8 @@ target_link_libraries(tinfo ${LINK_OPTIONS})
 
 if(NOT INSTALL_BIN_DIR)
   set(INSTALL_BIN_DIR bin)
+else()
+  add_dependencies (tinfo sysio-shared)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" COMPONENT utils)
 #}}}}
