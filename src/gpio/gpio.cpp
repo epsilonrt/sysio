@@ -15,11 +15,17 @@
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio (GpioDevice * dev) :
-  _roc (true), _device (dev) {
+Gpio::Gpio (GpioDevice * dev, GpioAccessLayer layer) :
+  _roc (true), _isopen (false), _accesslayer (layer), _device (dev) {
 
   const std::vector<GpioConnectorDescriptor> & v = device()->descriptor()->connector;
 
+  if (layer == AccessLayerAuto) {
+
+    _accesslayer = dev->preferedAccessLayer();
+  }
+
+  // Création des connecteurs à partir des descripteurs
   for (int i = 0; i < v.size(); i++) {
 
     _connector[v[i].number] = std::make_shared<GpioConnector> (this, & v[i]);
@@ -35,29 +41,59 @@ Gpio::~Gpio() {
 }
 
 // -----------------------------------------------------------------------------
-bool
-Gpio::open() {
+GpioAccessLayer
+Gpio::accessLayer() const {
+  return _accesslayer;
+}
 
-  return device()->open();
+// -----------------------------------------------------------------------------
+bool
+Gpio::open () {
+
+  if (!isOpen()) {
+
+    if (_accesslayer & AccessLayerIoMap) {
+
+      if (! device()->open()) {
+        
+        return false;
+      }
+    }
+
+    for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+
+      if (!c->second->open()) {
+
+        return false;
+      }
+    }
+    
+    _isopen = true;
+  }
+
+  return isOpen();
 }
 
 // -----------------------------------------------------------------------------
 void
 Gpio::close() {
 
-  if (releaseOnClose()) {
-    for (auto p = _pin.begin(); p != _pin.end(); ++p) {
-      p->second->release();
+  if (isOpen()) {
+    
+    for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+
+      c->second->close();
     }
+    device()->close();
+    _isopen = false;
   }
-  device()->close();
 }
 
 // -----------------------------------------------------------------------------
 bool
 Gpio::isOpen() const {
 
-  return device()->isOpen();
+  return _isopen;
 }
 
 // -----------------------------------------------------------------------------
@@ -206,7 +242,7 @@ Gpio::connector (int num) const {
 }
 
 // -----------------------------------------------------------------------------
-const std::map<int, std::shared_ptr<GpioConnector>> & 
+const std::map<int, std::shared_ptr<GpioConnector>> &
 Gpio::connector() {
   return _connector;
 }

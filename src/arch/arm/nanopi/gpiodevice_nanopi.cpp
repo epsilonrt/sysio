@@ -7,7 +7,7 @@
 #include <iostream>
 #include <iomanip>
 #include <exception>
-#include <sysio/gpiopin.h>
+#include <sysio/gpio.h>
 #include <sysio/delay.h>
 #include "gpiodevice_nanopi.h"
 
@@ -43,12 +43,12 @@ typedef struct PioBank PioBank;
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-GpioDeviceNanoPi::GpioDeviceNanoPi() : GpioDevice() {
+GpioDeviceNanoPi::GpioDeviceNanoPi() : GpioDevice () {
   const xNanoPi * info = pxNanoPiInfo();
 
   if (!info) {
 
-    throw std::system_error (ENOTSUP, std::generic_category(),
+    throw std::system_error (ENOTSUP, std::system_category(),
                              "It seems that this system is not a NanoPi board !");
   }
   _gpioDescriptor = &_gpioDescriptors.at (info->iGpioRev);
@@ -56,6 +56,12 @@ GpioDeviceNanoPi::GpioDeviceNanoPi() : GpioDevice() {
 
 // -----------------------------------------------------------------------------
 GpioDeviceNanoPi::~GpioDeviceNanoPi() {
+}
+
+// -----------------------------------------------------------------------------
+GpioAccessLayer
+GpioDeviceNanoPi::preferedAccessLayer() const {
+  return AccessLayerAll;
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +94,7 @@ GpioDeviceNanoPi::open() {
     }
     if (!isOpen()) {
 
-      throw std::system_error (EACCES, std::generic_category());
+      throw std::system_error (EACCES, std::system_category());
     }
   }
   return isOpen();
@@ -347,7 +353,7 @@ GpioDeviceNanoPi::bank (unsigned int bkindex) const {
   }
   else {
 
-    throw std::system_error (ENODEV, std::generic_category(), "Device closed");
+    throw std::system_error (ENODEV, std::system_category());
   }
 
   return bk;

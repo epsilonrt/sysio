@@ -20,7 +20,7 @@
 
 // -----------------------------------------------------------------------------
 GpioConnector::GpioConnector (Gpio * parent, const GpioConnectorDescriptor * desc) :
-  _parent (parent), _descriptor (desc) {
+  _isopen (false), _parent (parent), _descriptor (desc) {
   int num;
   const std::vector<GpioPinDescriptor> & v = _descriptor->pin;
 
@@ -34,6 +34,43 @@ GpioConnector::GpioConnector (Gpio * parent, const GpioConnectorDescriptor * des
 // -----------------------------------------------------------------------------
 GpioConnector::~GpioConnector() {
 
+  close();
+}
+
+// -----------------------------------------------------------------------------
+bool GpioConnector::open() {
+
+  if (!isOpen()) {
+    
+    for (auto p = _pin.begin(); p != _pin.end(); ++p) {
+      
+      if (!p->second->open()) {
+
+        return false;
+      }
+    }
+    _isopen = true;
+  }
+  return isOpen();
+}
+
+// -----------------------------------------------------------------------------
+void GpioConnector::close() {
+
+  if (isOpen()) {
+
+    for (auto p = _pin.begin(); p != _pin.end(); ++p) {
+
+      p->second->close();
+    }
+    _isopen = false;
+  }
+}
+
+// -----------------------------------------------------------------------------
+bool GpioConnector::isOpen() const {
+
+  return _isopen;
 }
 
 // -----------------------------------------------------------------------------

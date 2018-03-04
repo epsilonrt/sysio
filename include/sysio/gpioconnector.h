@@ -58,6 +58,7 @@ class GpioConnector {
 
   public:
     friend class GpioPin;
+    friend class Gpio;
 
     /**
      * @brief Constructeur
@@ -71,6 +72,11 @@ class GpioConnector {
      * @brief Destructeur
      */
     virtual ~GpioConnector();
+
+    /**
+     * @brief Indique si ouvert
+     */
+    bool isOpen() const;
 
     /**
      * @brief Nom
@@ -299,6 +305,16 @@ class GpioConnector {
     GpioDevice * device() const;
 
     /**
+     * @brief Ouverture
+     */
+    bool open();
+    
+    /**
+     * @brief Fermeture du GPIO
+     */
+    void close();
+
+    /**
      * @brief Calcul du numéro de broche
      * 
      * Permet à une broche de récupérer son numéro dans le connecteur
@@ -310,6 +326,7 @@ class GpioConnector {
     int pinNumber (int row, int column) const;
 
   private:
+    bool _isopen;
     Gpio * _parent;
     const GpioConnectorDescriptor * _descriptor; // descripteur
     std::map<int, std::shared_ptr<GpioPin>> _pin; // toutes les broches

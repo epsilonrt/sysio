@@ -14,7 +14,7 @@
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-Gpio::Gpio () : Gpio(new GpioDeviceNanoPi()) {
+Gpio::Gpio (GpioAccessLayer layer) : Gpio(new GpioDeviceNanoPi(), layer) {
 
 }
 

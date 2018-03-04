@@ -38,6 +38,8 @@ int connector = -1;
 bool physicalNumbering = false;
 GpioPin * pin = 0;
 bool debug = false;
+bool forceSysFs = false;
+int useSysFsBeforeWfi = -1;
 
 /* private functions ======================================================== */
 void mode (int argc, char * argv[]);
@@ -47,7 +49,7 @@ void write (int argc, char * argv[]);
 void toggle (int argc, char * argv[]);
 void blink (int argc, char * argv[]);
 void readall (int argc, char * argv[]);
-void wfi (int argc, char * argv[]); // TODO
+void wfi (int argc, char * argv[]);
 void pwm (int argc, char * argv[]); // TODO
 
 GpioPin * getPin (char * c_str);
@@ -63,7 +65,7 @@ main (int argc, char **argv) {
   int ret = 0;
   func do_it;
 
-  std::map<string, func> cmd_map = {
+  const std::map<string, func> str2func = {
     {"mode", mode},
     {"pull", pull},
     {"read", read},
@@ -77,7 +79,7 @@ main (int argc, char **argv) {
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "gs1dhv")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1dhfv")) != -1) {
 
       switch (opt) {
 
@@ -95,6 +97,10 @@ main (int argc, char **argv) {
 
         case 'd':
           debug = true;
+          break;
+
+        case 'f':
+          forceSysFs = true;
           break;
 
         case 'h':
@@ -119,14 +125,10 @@ main (int argc, char **argv) {
       throw Exception (Exception::CommandExpected);
     }
 
-    do_it = cmd_map [argv[optind]];
-    if (!do_it) {
-
-      throw Exception (Exception::UnknownCommand, argv[optind]);
-    }
+    do_it = str2func. at (argv[optind]);
     optind++;
 
-    gpio = new Gpio;
+    gpio = new Gpio ();
     gpio->setNumbering (numbering);
     gpio->setDebug (debug);
     gpio->open();
@@ -142,12 +144,7 @@ main (int argc, char **argv) {
   }
   catch (std::out_of_range& e) {
 
-    cerr << __progname << ": pin number " << pinnumber;
-    if (physicalNumbering) {
-      cerr  << " or connector " << connector;
-    }
-    cerr   << " out of range !" << endl;
-    cerr   << e.what() << endl;
+    cerr << __progname << ": out of range value (" << e.what() << ")"<< endl;
     ret = -1;
   }
   catch (std::invalid_argument& e) {
@@ -187,10 +184,18 @@ main (int argc, char **argv) {
  */
 void
 readall (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  for (auto p = gpio->connector().cbegin(); p != gpio->connector().cend(); ++p) {
-    // p est une std::pair: first = numéro et second = connecteur
-    cout << p->second << endl;
+  if (paramc >= 1) {
+    
+    int connector = stoi (std::string (argv[optind]));
+    cout << gpio->connector (connector);
+  }
+  else {
+    for (auto p = gpio->connector().cbegin(); p != gpio->connector().cend(); ++p) {
+      // p est une std::pair: first = numéro et second = connecteur
+      cout << p->second << endl;
+    }
   }
 }
 
@@ -213,7 +218,7 @@ mode (int argc, char * argv[]) {
     if (paramc > 1) {
       GpioPinMode m;
       string smode (argv[optind + 1]);
-      std::map<string, GpioPinMode> str2mode = {
+      const std::map<string, GpioPinMode> str2mode = {
         {"in",    ModeInput   },
         {"out",   ModeOutput  },
         {"alt0",  ModeAlt0    },
@@ -256,12 +261,13 @@ pull (int argc, char * argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
+    forceSysFs = false;
     pin = getPin (argv[optind]);
 
     if (paramc > 1) {
       GpioPinPull p;
       string pmode (argv[optind + 1]);
-      std::map<string, GpioPinPull> str2pull = {
+      const std::map<string, GpioPinPull> str2pull = {
         {"off",   PullOff},
         {"up",    PullUp},
         {"down",  PullDown}
@@ -286,8 +292,9 @@ pull (int argc, char * argv[]) {
  */
 void
 read (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 1)    {
+  if (paramc < 1)    {
 
     throw Exception (Exception::PinNumberExpected);
   }
@@ -304,8 +311,9 @@ read (int argc, char * argv[]) {
  */
 void
 write (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 2)    {
+  if (paramc < 2)    {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -337,8 +345,9 @@ write (int argc, char * argv[]) {
  */
 void
 toggle (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 1)    {
+  if (paramc < 1)    {
 
     throw Exception (Exception::PinNumberExpected);
   }
@@ -362,8 +371,9 @@ toggle (int argc, char * argv[]) {
  */
 void
 blink (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 1)    {
+  if (paramc < 1)    {
 
     throw Exception (Exception::PinNumberExpected);
   }
@@ -373,9 +383,13 @@ blink (int argc, char * argv[]) {
     gpio->setReleaseOnClose (true);
 
     pin = getPin (argv[optind]);
-    if ( (argc - optind) > 1)    {
+    if (paramc > 1)    {
 
       period = stoi (std::string (argv[optind + 1]));
+      if (pin->useSysFs() && period < 1) {
+        period = 1;
+        cout << "Warning: Pin " << pin->name() << " uses SYSFS, the delay has been set to " << period << " ms (min.) !" << endl;
+      }
     }
 
     pin->setMode (ModeOutput);
@@ -394,23 +408,45 @@ blink (int argc, char * argv[]) {
 }
 
 /* -----------------------------------------------------------------------------
-  wfi <pin> <rising/falling/both>
+  wfi <pin> <rising/falling/both> [timeout_ms]
     This set the given pin to the supplied interrupt mode:  rising,  falling  or  both  then
     waits  for  the  interrupt  to happen. It's a non-busy wait, so does not consume and CPU
     while it's waiting.
  */
 void
 wfi (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 2)    {
+  if (paramc < 2)    {
 
     throw Exception (Exception::ArgumentExpected);
   }
   else {
+    const std::map<std::string, GpioPinEdge>  str2edge = {
+      { "none", EdgeNone },
+      { "rising", EdgeRising },
+      { "falling", EdgeFalling },
+      { "both", EdgeBoth }
+    };
+    long timeout = -1;
+    GpioPinEdge e;
     string edge (argv[optind + 1]);
 
+    //useSysFsBeforeWfi = pin->useSysFs();
+
+    forceSysFs = true;
     pin = getPin (argv[optind]);
-    cerr << __FUNCTION__ << "() not yet implemented (TODO) !" << endl;
+    e = str2edge.at (edge);
+    if (paramc > 2) {
+
+      timeout = stol (std::string (argv[optind + 2]));
+    }
+
+    // sig_handler() intercepte le CTRL+C
+    signal (SIGINT, sig_handler);
+    signal (SIGTERM, sig_handler);
+
+    cout << pin->waitForInt (e, timeout) << endl;
   }
 }
 
@@ -419,8 +455,9 @@ wfi (int argc, char * argv[]) {
  */
 void
 pwm (int argc, char * argv[]) {
+  int paramc = (argc - optind);
 
-  if ( (argc - optind + 1) < 2)    {
+  if (paramc < 2) {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -494,6 +531,7 @@ getPin (char * c_str) {
     }
     p = gpio->connector (connector)->pin (pinnumber).get();
   }
+  p->forceUseSysFs (forceSysFs);
   return p;
 }
 
@@ -502,6 +540,11 @@ void
 sig_handler (int sig) {
 
   if (gpio) {
+
+    if (useSysFsBeforeWfi >= 0) {
+
+      pin->forceUseSysFs (useSysFsBeforeWfi != 0);
+    }
 
     delete gpio;
     cout << endl << "everything was closed.";
@@ -529,6 +572,7 @@ usage () {
   cout << "valid options are :" << endl;
   cout << "  -g\tUse the SOC pins numbers rather than SysIo pin numbers." << endl;
   cout << "  -s\tUse the System pin numbers rather than SysIo pin numbers." << endl;
+  cout << "  -f\tForce to use SysFS interface (/sys/class/gpio)." << endl;
   cout << "  -1\tUse the connector pin numbers rather than SysIo pin numbers." << endl;
   cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
   cout << "  -v\tOutput the current version including the board informations." << endl;
@@ -542,7 +586,7 @@ usage () {
   cout << "    Get/Set the internal pull-up, pull-down or off controls." << endl;
   cout << "  read <pin>" << endl;
   cout << "    Read the digital value of the given pin (0 or 1)" << endl;
-  cout << "  readall" << endl;
+  cout << "  readall [#connector]" << endl;
   cout << "    Output a table of all connectors with pins informations." << endl;
   cout << "  write <pin> <value>" << endl;
   cout << "    Write the given value (0 or 1) to the given pin (output)." << endl;
@@ -550,7 +594,7 @@ usage () {
   cout << "    Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
   cout << "  blink <pin> [period]" << endl;
   cout << "    Blinks the given pin on/off (explicitly sets the pin to output)." << endl;
-  cout << "  wfi <pin> <rising/falling/both>" << endl;
+  cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
   cout << "    Waits  for  the  interrupt  to happen. It's a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
   cout << "    Write a PWM value (0-1023) to the given pin (pwm pin only)." << endl;

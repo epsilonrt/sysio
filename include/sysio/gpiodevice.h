@@ -33,7 +33,8 @@ class GpioDevice {
     
     virtual bool open() = 0;
     virtual void close() = 0;
-    
+    virtual GpioAccessLayer preferedAccessLayer() const = 0;
+
     virtual void setMode (const GpioPin * pin, GpioPinMode m) = 0;
     virtual void setPull (const GpioPin * pin, GpioPinPull p) = 0;
     virtual void write (const GpioPin * pin, bool v) = 0;

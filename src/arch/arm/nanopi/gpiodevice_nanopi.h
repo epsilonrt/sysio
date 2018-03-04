@@ -29,6 +29,7 @@ class GpioDeviceNanoPi : public GpioDevice {
 
     bool open();
     void close();
+    GpioAccessLayer preferedAccessLayer() const;
     
     void setMode (const GpioPin * pin, GpioPinMode m);
     void setPull (const GpioPin * pin, GpioPinPull p);

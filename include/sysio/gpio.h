@@ -11,7 +11,7 @@
 /**
  *  @defgroup sysio_gpio GPIO
  *
- *  Ce module fournit les fonctions permettant de contrôler les broches
+ *  Ce module fournit les classes permettant de contrôler les broches
  *  d'entrées-sorties à usage général.
  *  @{
  */
@@ -28,6 +28,21 @@
 #include <map>
 #include <memory>
 #include <exception>
+
+/**
+ * @enum GpioAccessLayer
+ * @brief Choix de la façon d'accéder aux broches du GPIO
+ * 
+ * En fonction de la plateforme, le module GPIO peut utiliser différentes façon
+ * pour accéder aux broches. 
+ */
+enum GpioAccessLayer {
+  AccessLayerAuto  = 0, //< Choix automatique (à utiliser la plupart du temps), c'est la plateforme qui choisit par le GpioDevice
+  AccessLayerIoMap = 0x0001, ///< Accès par les registres du SOC, la plus performante mais il faut être sûr que cela est disponible sur la plateforme
+  AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique
+  AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs ///< Le mieux, toutes les fonctions sont disponibles
+};
+
 #include <sysio/gpioconnector.h>
 
 /* internal public classes ================================================== */
@@ -57,8 +72,10 @@ class Gpio {
 
     /**
      * @brief Constructeur par défaut
+     * @param layer choix de la couche d'accès, AccessLayerAuto par défaut, dans
+     * ce cas, le choix est laissé à la couche GpioDevice (conseillé).
      */
-    Gpio ();
+    Gpio (GpioAccessLayer layer = AccessLayerAuto);
 
     /**
      * @brief Destructeur
@@ -66,18 +83,23 @@ class Gpio {
     virtual ~Gpio();
 
     /**
-     * @brief Ouverture GPIO
+     * @brief Lecture de la couche d'accès utilisée
+     */
+    GpioAccessLayer accessLayer() const;
+
+    /**
+     * @brief Ouverture
      * @return true si ouvert
      */
     bool open();
-
+    
     /**
      * @brief Fermeture du GPIO
      */
     void close();
 
     /**
-     * @brief Indique si le GPIO est ouvert
+     * @brief Indique si ouvert
      */
     bool isOpen() const;
 
@@ -289,11 +311,15 @@ class Gpio {
      *
      * Doit être appelé par le constucteur par défaut défini dans la partie
      * spécifique à la plateforme.
+     * @param device pointeur sur le driver de la plateforme
+     * @param layer choix de la couche d'accès
      */
-    explicit Gpio (GpioDevice * device);
+    explicit Gpio (GpioDevice * device, GpioAccessLayer layer);
 
   private:
     bool _roc; // Release On Close
+    bool _isopen;
+    GpioAccessLayer _accesslayer;
     GpioDevice * _device; // Accès à la couche matérielle
     GpioPinNumbering _numbering; // Numérotation en cours
     std::map<int, std::shared_ptr<GpioPin>> _pin; // Broches uniquement GPIO

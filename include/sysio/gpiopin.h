@@ -21,7 +21,7 @@
 
 /**
  * @enum GpioPinMode
- * @brief Mode d'une broche
+ * @brief Mode de fonctionnement d'une broche
  */
 enum GpioPinMode {
   ModeInput = 0, ///< Entrée
@@ -50,6 +50,18 @@ enum GpioPinPull {
   PullDown, ///< Résistance de tirage à l'état bas
   PullUp, ///< Résistance de tirage à l'état haut
   PullUnknown = -1
+};
+
+/**
+ * @enum GpioPinEdge
+ * @brief Front de déclenchement d'une broche
+ */
+enum GpioPinEdge {
+  EdgeNone = 0, ///< Pas de détection
+  EdgeRising,   ///< Front montant
+  EdgeFalling,  ///< Front Descendant
+  EdgeBoth,     ///< Front montant et descendant
+  EdgeUnknown = -1
 };
 
 /**
@@ -120,6 +132,8 @@ class GpioConnector;
 class GpioPin {
 
   public:
+    friend class GpioConnector;
+
     /**
      * @brief Constructeur
      *
@@ -134,13 +148,18 @@ class GpioPin {
     virtual ~GpioPin();
 
     /**
+     * @brief Indique si ouvert
+     */
+    bool isOpen() const;
+
+    /**
      * @brief Type de broche
      */
     GpioPinType type() const;
 
     /**
      * @brief Numéro de la broche dans la numérotation logique \c NumberingLogical
-     * 
+     *
      * Cette numérotation commence à 0.
      *
      * @return Numéro de broche logique, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
@@ -149,7 +168,7 @@ class GpioPin {
 
     /**
      * @brief Numéro de la broche dans la numérotation microcontrôleur \c NumberingMcu
-     * 
+     *
      * Cette numérotation commence à 0.
      *
      * @return Numéro de broche microcontrôleur, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
@@ -158,16 +177,16 @@ class GpioPin {
 
     /**
      * @brief Numéro de la broche dans la numérotation système \c NumberingSystem
-     * 
+     *
      * Cette numérotation commence à 0.
      *
      * @return Numéro de broche système, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
      */
     int systemNumber () const;
-    
+
     /**
      * @brief Numéro de la broche dans son connecteur
-     * 
+     *
      * Cette numérotation commence à 1.
      *
      * @return Numéro de broche connecteur
@@ -176,9 +195,9 @@ class GpioPin {
 
     /**
     * @brief Numéro de la broche dans la numérotation demandé.
-     * 
+     *
      * La numérotation commence à 0.
-    * 
+    *
     * @param numbering numérotation demandée, déclenche
     * une exception std::invalid_argument si incorrecte
     * @return Numéro de broche, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
@@ -203,7 +222,7 @@ class GpioPin {
      * @brief Nom de la broche
      *
      * @return nom qui correspond au mode renvoyé par \c mode() ou le nom
-     * générique si le mode actuel n'est pas associé à un nom ou si la broche 
+     * générique si le mode actuel n'est pas associé à un nom ou si la broche
      * n'est pas de type TypeGpio.
      */
     const std::string & name() const;
@@ -290,10 +309,72 @@ class GpioPin {
      * type \c TypeGpio.
      */
     void release();
+    
+    /**
+     * @brief Force ou non l'utilisation de SysFs
+     * 
+     * Si le Gpio parent n'autorise que la couche d'accès SysFs (AccessLayerSysFs), 
+     * cette fonction ne fait rien.
+     */
+    bool forceUseSysFs (bool enable);
+    
+    /**
+     * @brief Indique si la broche utilise SysFs
+     */
+    bool useSysFs() const;
+    
+    /**
+     * @brief Couches d'accès autorisées
+     */
+    GpioAccessLayer accessLayer() const;
+
+    /**
+     * @brief Attente passive d'un front
+     *
+     * L'implémentation utilise les interruptions matérielles gérées par SysFs. \n
+     * Toutes les broches du GPIO ne disposent pas ce cette fonctionnalité (cela
+     * dépend de la plateforme). Généralement, on pourra identifier une telle 
+     * broche du GPIO ou du SOC par un INT se trouvant dans le nom.
+     * Par exemple, la broche PA0 sur un SOC AllWinner H3 a cette fonctionnalité
+     * car sa fonction ALT6 est PA_EINT0. Si les interruptions ne sont pas 
+     * supportées par la broche, un appel à \c waitForInt() déclenchera une
+     * exeception std::system_error avec le code ENOSYS (function_not_supported). \n
+     * L'accès par SysFs doit donc être autorisée dans le Gpio parent 
+     * (AccessLayerSysFs ou AccessLayerAll) ou par l'appel à forceUseSysFs(true). \n
+     * Si la broche n'est pas en mode SysFs et que cet accès est autorisé, la 
+     * broche est passée automatiquement en mode SysFs. 
+     * 
+     * @param edge front de déclenchement
+     * @param timeout temps maximal d'attente en millisecondes. -1 pour l'infini.
+     * Si une autre valeur est fournie et que le délai est atteint avant que le 
+     * front survienne, une exception std::system_error avec le code ETIME est 
+     * déclenchée.
+     * @return la valeur binaire après le front
+     */
+    bool waitForInt (GpioPinEdge edge, int timeout_ms = -1);
+
+    /**
+     * @brief Modification du front de déclenchement
+     * 
+     * L'accès par SysFs doit donc être autorisée dans le Gpio parent 
+     * (AccessLayerSysFs ou AccessLayerAll) ou par l'appel à forceUseSysFs(true). \n
+     * Si la broche n'est pas en mode SysFs et que cet accès est autorisé, la 
+     * broche est passée automatiquement en mode SysFs. 
+     * @param edge choix du front
+     */
+    void setEdge (GpioPinEdge edge);
+
+    /**
+     * @brief Front de déclenchement
+     * 
+     * @return le front actuel, si la broche n'est pas en mode SysFs, 
+     * EdgeUnknown est retourné.
+     */
+    GpioPinEdge edge() const;
 
     /**
      * @brief Nom correspondant à un mode
-     * 
+     *
      * @param mode mode demandée, déclenche une exception std::out_of_range il
      * n'est pas supporté par cette broche.
      * @return le nom de la broche correspondant au mode
@@ -304,7 +385,7 @@ class GpioPin {
      * @brief Nom du mode actuel
      */
     const std::string & modeName() const;
-    
+
     /**
      * @brief Nom d'un mode
      */
@@ -336,6 +417,11 @@ class GpioPin {
     static const std::string & numberingName (GpioPinNumbering n);
 
     /**
+     * @brief Nom d'un front
+     */
+    static const std::string & edgeName (GpioPinEdge e);
+
+    /**
      * @brief Listes des modes avec leurs noms
      *
      * Permet de parcourir les modes à l'aide des itérateurs de la STL
@@ -364,6 +450,13 @@ class GpioPin {
     static const std::map<GpioPinNumbering, std::string> & numberings ();
 
     /**
+     * @brief Listes des fronts posibles avec leurs noms
+     *
+     * Permet de parcourir les fronts à l'aide des itérateurs de la STL.
+     */
+    static const std::map<GpioPinEdge, std::string> & edges ();
+
+    /**
     * @brief Accès au connecteur parent
     */
     GpioConnector * connector() const;
@@ -377,10 +470,10 @@ class GpioPin {
      * @brief Indique si le mode mise au point est actif
      */
     bool isDebug() const;
-    
+
     /**
      * @brief Active le mode mise au point
-     * 
+     *
      * Cela active l'affichage d'informations de mise au point de la couche
      * matérielle (GpioDevice).
      */
@@ -392,15 +485,48 @@ class GpioPin {
      */
     GpioDevice * device() const;
 
+    /**
+     * @brief Ouverture
+     * @return true si ouvert
+     */
+    bool open();
+    
+    /**
+     * @brief Fermeture du GPIO
+     */
+    void close();
+
   private:
+    bool _isopen;
     GpioConnector * _parent;
     const GpioPinDescriptor * _descriptor;
     GpioPinMode _holdMode;
     GpioPinPull _holdPull;
     bool _holdState;
-    static std::map<GpioPinPull, std::string> _pulls;
-    static std::map<GpioPinType, std::string> _types;
-    static std::map<GpioPinNumbering, std::string> _numberings;
+    bool _useSysFs;
+    int _holdExported;
+    int _valueFd;
+    static const std::map<GpioPinPull, std::string> _pulls;
+    static const std::map<GpioPinType, std::string> _types;
+    static const std::map<GpioPinNumbering, std::string> _numberings;
+    static const std::map<GpioPinMode, std::string> _sysfsmodes;
+    static const std::map<GpioPinEdge, std::string> _edges;
+    static const std::map<std::string, GpioPinEdge> _str2edge;
+    static const std::map<std::string, GpioPinMode> _str2mode;
+    static std::string _syspath;
+
+    static bool directoryExist (const std::string & dname);
+
+    void holdMode();
+    void holdPull();
+    bool sysFsEnable (bool enable);
+    void sysFsExport (bool enable);
+    bool sysFsOpen();
+    void sysFsClose();
+    bool sysFsIsExport () const;
+    void sysFsWriteFile (const char * n, const std::string & v);
+    std::string sysFsReadFile (const char * n) const;
+    bool sysFsFileExist (const char * n) const;
 };
 
 /**
