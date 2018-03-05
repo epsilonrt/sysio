@@ -15,15 +15,15 @@
 
 namespace Sysio {
 
-  /**
-   *  @addtogroup sysio_gpio
-   *
-   *  @{
-   */
-
   class Gpio;
   class Device;
   class Connector;
+
+  /**
+   *  @addtogroup sysio_gpio
+   *  @{
+   */
+
 
   /**
    * @enum AccessLayer
@@ -38,6 +38,14 @@ namespace Sysio {
     AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique
     AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs ///< Le mieux, toutes les fonctions sont disponibles
   };
+  /**
+   * @}
+   */
+
+  /**
+   *  @addtogroup sysio_gpio_pin
+   *  @{
+   */
 
   /**
    * @class Pin
@@ -156,7 +164,7 @@ namespace Sysio {
       /**
        * @brief Mode actuel d'une broche de type GPIO
        *
-       * @return le mode actuel, si la broche n'est pas 
+       * @return le mode actuel, si la broche n'est pas
        * de type GPIO, ModeUnknown est retourné.
        */
       Mode mode() const;
@@ -175,7 +183,7 @@ namespace Sysio {
       /**
        * @brief Résistance de tirage d'une broche de type GPIO
        *
-       * @return la résistance actuellement appliquée, si la broche n'est pas 
+       * @return la résistance actuellement appliquée, si la broche n'est pas
        * de type GPIO, PullUnknown est retourné.
        */
       Pull pull() const;
@@ -489,7 +497,7 @@ namespace Sysio {
 
       /**
        * @brief Constructeur
-       * 
+       *
        * Une broche ne peut être instanciée que par une classe Connector.
        *
        * @param parent pointeur sur le GPIO parent

@@ -10,12 +10,8 @@
 #include <sysio/defs.h>
 
 /**
- *  @addtogroup sysio_gpio
- *  @{
- *
- *  @defgroup sysio_gpio_c Interface C
- *  Interface C pour le GPIO.
- *  @warning Cette interface est obsolète et disparaitra dans la prochaine 
+ *  @addtogroup sysio_gpio_c
+ *  @deprecated Cette interface est obsolète et disparaitra dans la prochaine 
  *  version.
  *  @{
  */
@@ -377,7 +373,6 @@ const char * sGpioModeToStr (eGpioMode eMode);
 #endif
 
 /**
- *  @}
  * @}
  */
 

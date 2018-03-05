@@ -9,17 +9,23 @@
 #define _SYSIO_GPIO_H_
 
 /**
- *  @defgroup sysio_gpio GPIO
+ *  @defgroup sysio_gpio Port Gpio
  *
  *  Ce module fournit les classes permettant de contrôler les broches
  *  d'entrées-sorties à usage général.
  *  @{
+ *  @defgroup sysio_gpio_class Gpio
+ *  @defgroup sysio_gpio_pin Broches
+ *  @defgroup sysio_gpio_connector Connecteurs
+ *  @defgroup sysio_gpio_c Interface C
+ *  @}
  */
 
 // Ancienne interface, sera supprimée en version 2.0
 #include <sysio/gpio_c.h>
 
-#if defined(__cplusplus) || defined(DOXYGEN)
+
+#if defined(__cplusplus) || defined(__DOXYGEN__)
 // -----------------------------------------------------------------------------
 // C++ part --->
 
@@ -34,11 +40,16 @@ namespace Sysio {
 
   class Device;
 
+/**
+ *  @addtogroup sysio_gpio_class
+ *  @{
+ */
+
   /**
    * @class Gpio
    * @author epsilonrt
    * @date 02/22/18
-   * @brief GPIO
+   * @brief Classe Gpio
    */
   class Gpio {
     public:
@@ -83,7 +94,7 @@ namespace Sysio {
        * @brief Indique si ouvert
        */
       bool isOpen() const;
-      
+
       /**
        * @brief Nom de la carte
        */
@@ -148,7 +159,7 @@ namespace Sysio {
       //------------------------------------------------------------------------
       //                          Accès aux connecteurs
       //------------------------------------------------------------------------
-      
+
       /**
        * @brief Nombre de connecteurs
        */
@@ -182,8 +193,8 @@ namespace Sysio {
        * @return Container std::map des connecteurs indexé sur leur numéro
        */
       const std::map<int, std::shared_ptr<Connector>> & connector();
-      
-      
+
+
       //------------------------------------------------------------------------
       //                          Accès aux broches
       //------------------------------------------------------------------------
@@ -247,13 +258,14 @@ namespace Sysio {
       std::map<int, std::shared_ptr<Connector>> _connector; // Connecteurs avec toutes les broches physiques
   };
 }
+/**
+ * @}
+ */
+
 // <--- C++ part
 // -----------------------------------------------------------------------------
 #endif /* defined(__cplusplus) || defined(DOXYGEN) */
 
-/**
- * @}
- */
 
 /* ========================================================================== */
 #endif /*_SYSIO_GPIO_H_ defined */

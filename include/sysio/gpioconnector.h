@@ -13,14 +13,13 @@
 
 namespace Sysio {
 
-  /**
-   *  @addtogroup sysio_gpio
-   *
-   *  @{
-   */
-
   class Gpio;
   class Device;
+
+  /**
+   *  @addtogroup sysio_gpio_connector
+   *  @{
+   */
 
   /**
    * @class Connector
