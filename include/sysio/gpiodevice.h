@@ -10,7 +10,7 @@
 
 #include <sysio/gpio.h>
 
-#ifndef DOXYGEN
+#ifndef __DOXYGEN__
 
 namespace Sysio {
 

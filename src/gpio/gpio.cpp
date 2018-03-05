@@ -18,7 +18,8 @@ namespace Sysio {
 
 // -----------------------------------------------------------------------------
   Gpio::Gpio (Device * dev, AccessLayer layer) :
-    _roc (true), _isopen (false), _accesslayer (layer), _device (dev) {
+    _roc (true), _isopen (false), _accesslayer (layer), _device (dev), 
+    _numbering(Pin::NumberingUnknown) {
 
     const std::vector<Connector::Descriptor> & v = device()->descriptor()->connector;
 
