@@ -158,9 +158,9 @@ namespace Sysio {
        *
        * @param num numéro de broche dans la numérotation du connecteur. Déclenche
        * une exception std::out_of_range si la broche n'existe pas
-       * @return pointeur sur la broche
+       * @return référence sur la broche
        */
-      Pin * pin (int num) const;
+      Pin & pin (int num) const;
 
       /**
        * @brief Liste des broches du connecteur

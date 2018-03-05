@@ -124,10 +124,10 @@ namespace Sysio {
   }
 
 // -----------------------------------------------------------------------------
-  Pin *
+  Pin &
   Connector::pin (int number) const {
 
-    return _pin.at (number).get(); // throw out_of_range if not exist
+    return *_pin.at (number).get(); // throw out_of_range if not exist
   }
 
 // -----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ namespace Sysio {
     std::array<std::string, 5> s;
     unsigned int i = 0;
 
-    Pin * pin = connector->pin (number++);
+    Pin * pin = &connector->pin (number++);
     os << '|';
     if (pin->type() == Pin::TypeGpio) {
       s[0] = std::to_string (pin->mcuNumber());
@@ -300,7 +300,7 @@ namespace Sysio {
 
     if (connector->columns() > 1) {
 
-      pin = connector->pin (number);
+      pin = &connector->pin (number);
 
       os << '|';
       if (pin->type() == Pin::TypeGpio) {

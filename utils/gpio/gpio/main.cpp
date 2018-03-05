@@ -515,7 +515,7 @@ getPin (char * c_str) {
   if (!physicalNumbering) {
 
     pinnumber = stoi (s);
-    p = gpio->pin (pinnumber);
+    p = &gpio->pin (pinnumber);
   }
   else {
     vector<string> v = split (s, '.');
@@ -530,7 +530,7 @@ getPin (char * c_str) {
       connector = 1;
       pinnumber = stoi (v[0]);
     }
-    p = gpio->connector (connector)->pin (pinnumber);
+    p = &gpio->connector (connector)->pin (pinnumber);
   }
   p->forceUseSysFs (forceSysFs);
   return p;
