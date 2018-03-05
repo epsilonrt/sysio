@@ -12,7 +12,7 @@
 
 #ifndef DOXYGEN
 
-namespace Gpio {
+namespace Sysio {
 
   /*
    * @class Device
@@ -32,7 +32,7 @@ namespace Gpio {
       virtual void setDebug (bool enable);
 
       // Méthodes purement virtuelles
-      virtual const Board::Descriptor * descriptor() const = 0;
+      virtual const Gpio::Descriptor * descriptor() const = 0;
 
       virtual bool open() = 0;
       virtual void close() = 0;

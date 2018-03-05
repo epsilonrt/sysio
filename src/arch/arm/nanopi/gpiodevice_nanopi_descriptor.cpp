@@ -6,11 +6,11 @@
  */
 #include "gpiodevice_nanopi.h"
 
-namespace Gpio {
+namespace Sysio {
 
 // -----------------------------------------------------------------------------
 //
-//                     DeviceNanoPi Board Descriptor
+//                     DeviceNanoPi Gpio Descriptor
 //
 // -----------------------------------------------------------------------------
 
@@ -27,8 +27,8 @@ namespace Gpio {
   }
 
 // -----------------------------------------------------------------------------
-  const std::map<int, Board::Descriptor>
-  DeviceNanoPi::_boardDescriptors = {
+  const std::map<int, Gpio::Descriptor>
+  DeviceNanoPi::_gpioDescriptors = {
     //----------------------------------------------------------------------------
     // GPIO Rev. 1
     // NanoPi Neo, Neo2, Neo Plus2, Neo Air --->

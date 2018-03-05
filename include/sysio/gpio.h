@@ -28,37 +28,19 @@
 #include <map>
 #include <memory>
 #include <exception>
-
-namespace Gpio {
-
-  /**
-   * @enum AccessLayer
-   * @brief Choix de la façon d'accéder aux broches du GPIO
-   *
-   * En fonction de la plateforme, le module GPIO peut utiliser différentes façon
-   * pour accéder aux broches.
-   */
-  enum AccessLayer {
-    AccessLayerAuto  = 0, //< Choix automatique (à utiliser la plupart du temps), c'est la plateforme qui choisit par le GpioDevice
-    AccessLayerIoMap = 0x0001, ///< Accès par les registres du SOC, la plus performante mais il faut être sûr que cela est disponible sur la plateforme
-    AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique
-    AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs ///< Le mieux, toutes les fonctions sont disponibles
-  };
-}
-
 #include <sysio/gpioconnector.h>
 
-namespace Gpio {
+namespace Sysio {
 
   class Device;
 
   /**
-   * @class Board
+   * @class Gpio
    * @author epsilonrt
    * @date 02/22/18
    * @brief GPIO
    */
-  class Board {
+  class Gpio {
     public:
       friend class Connector;
 
@@ -66,7 +48,7 @@ namespace Gpio {
        * @class Descriptor
        * @author epsilonrt
        * @date 02/23/18
-       * @brief Descripteur d'une carte équipée d'un GPIO
+       * @brief Descripteur d'un GPIO
        */
       class Descriptor {
         public:
@@ -79,12 +61,12 @@ namespace Gpio {
        * @param layer choix de la couche d'accès, AccessLayerAuto par défaut, dans
        * ce cas, le choix est laissé à la couche GpioDevice (conseillé).
        */
-      Board (AccessLayer layer = AccessLayerAuto);
+      Gpio (AccessLayer layer = AccessLayerAuto);
 
       /**
        * @brief Destructeur
        */
-      virtual ~Board();
+      virtual ~Gpio();
 
       /**
        * @brief Ouverture
@@ -189,7 +171,7 @@ namespace Gpio {
        * Permet de parcourir les connecteurs à l'aide des itérateurs de la STL,
        * par exemple pour imprimer tous les connecteurs
        * @code
-       *    Board * g = new Board;
+       *    Gpio * g = new Gpio;
        *    // ....
        *    for (auto p = g->connector().cbegin(); p != g->connector().cend(); ++p) {
        *      // p est une std::pair: first = numéro et second = connecteur
@@ -214,11 +196,11 @@ namespace Gpio {
       /**
        * @brief Broche GPIO
        *
-       * @param pin numéro de broche dans la numérotation \c numbering(). Déclenche
+       * @param num numéro de broche dans la numérotation \c numbering(). Déclenche
        * une exception std::out_of_range si la broche n'existe pas
        * @return pointeur sur la broche
        */
-      Pin * pin (int pin) const;
+      Pin * pin (int num) const;
 
       /**
        * @brief Liste des broches de type GPIO
@@ -226,7 +208,7 @@ namespace Gpio {
        * Permet de parcourir les broches GPIO à l'aide des itérateurs de la STL,
        * par exemple pour mettre en entrée toutes les broches:
        * @code
-       *    Gpio::Board * g = new Gpio::Board;
+       *    Sysio::Gpio * g = new Sysio::Gpio;
        *    // ....
        *    for (auto p = g->pin().cbegin(); p != g->pin().cend(); ++p) {
        *      // p est une std::pair: first = numéro et second = broche
@@ -253,7 +235,7 @@ namespace Gpio {
        * @param device pointeur sur le driver de la plateforme
        * @param layer choix de la couche d'accès
        */
-      explicit Board (Device * device, AccessLayer layer);
+      explicit Gpio (Device * device, AccessLayer layer);
 
     private:
       bool _roc; // Release On Close

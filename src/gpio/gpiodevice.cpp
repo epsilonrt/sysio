@@ -7,7 +7,7 @@
  */
 #include <sysio/gpiodevice.h>
 
-namespace Gpio {
+namespace Sysio {
 
 // -----------------------------------------------------------------------------
 //

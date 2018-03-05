@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <sstream>
 
-namespace Gpio {
+namespace Sysio {
 
 // -----------------------------------------------------------------------------
 //
@@ -21,7 +21,7 @@ namespace Gpio {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  Connector::Connector (Board * parent, const Descriptor * desc) :
+  Connector::Connector (Gpio * parent, const Descriptor * desc) :
     _isopen (false), _parent (parent), _descriptor (desc) {
     int num;
     const std::vector<Pin::Descriptor> & v = _descriptor->pin;
@@ -131,8 +131,8 @@ namespace Gpio {
   }
 
 // -----------------------------------------------------------------------------
-  Board *
-  Connector::board() const {
+  Gpio *
+  Connector::gpio() const {
 
     return _parent;
   }
@@ -141,7 +141,7 @@ namespace Gpio {
   Device *
   Connector::device() const {
 
-    return board()->device();
+    return gpio()->device();
   }
 
 // -----------------------------------------------------------------------------

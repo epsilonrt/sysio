@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
-namespace Gpio {
+namespace Sysio {
 
 // -----------------------------------------------------------------------------
 //
@@ -91,7 +91,7 @@ namespace Gpio {
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _holdExported (-1), _valueFd (-1) {
 
-    AccessLayer layer = parent->board()->accessLayer();
+    AccessLayer layer = parent->gpio()->accessLayer();
 
     if (layer == AccessLayerSysFs) {
 
@@ -144,7 +144,7 @@ namespace Gpio {
 
         sysFsClose();
 
-        if (board()->releaseOnClose()) {
+        if (gpio()->releaseOnClose()) {
 
           release();
         }
@@ -165,7 +165,7 @@ namespace Gpio {
   AccessLayer
   Pin::accessLayer() const {
 
-    board()->accessLayer();
+    gpio()->accessLayer();
   }
 
 // -----------------------------------------------------------------------------
@@ -250,10 +250,10 @@ namespace Gpio {
   }
 
 // -----------------------------------------------------------------------------
-  Board *
-  Pin::board() const {
+  Gpio *
+  Pin::gpio() const {
 
-    return connector()->board();
+    return connector()->gpio();
   }
 
 // -----------------------------------------------------------------------------

@@ -13,7 +13,7 @@
 #include <map>
 #include <memory>
 
-namespace Gpio {
+namespace Sysio {
 
   /**
    *  @addtogroup sysio_gpio
@@ -21,9 +21,23 @@ namespace Gpio {
    *  @{
    */
 
-  class Board;
+  class Gpio;
   class Device;
   class Connector;
+
+  /**
+   * @enum AccessLayer
+   * @brief Choix de la façon d'accéder aux broches du GPIO
+   *
+   * En fonction de la plateforme, le module GPIO peut utiliser différentes façon
+   * pour accéder aux broches.
+   */
+  enum AccessLayer {
+    AccessLayerAuto  = 0, //< Choix automatique (à utiliser la plupart du temps), c'est la plateforme qui choisit par le GpioDevice
+    AccessLayerIoMap = 0x0001, ///< Accès par les registres du SOC, la plus performante mais il faut être sûr que cela est disponible sur la plateforme
+    AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique
+    AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs ///< Le mieux, toutes les fonctions sont disponibles
+  };
 
   /**
    * @class Pin
@@ -351,7 +365,7 @@ namespace Gpio {
       /**
        * @brief Force ou non l'utilisation de SysFs
        *
-       * Si le Board parent n'autorise que la couche d'accès SysFs (AccessLayerSysFs),
+       * Si le Gpio parent n'autorise que la couche d'accès SysFs (AccessLayerSysFs),
        * cette fonction ne fait rien.
        */
       bool forceUseSysFs (bool enable);
@@ -362,9 +376,9 @@ namespace Gpio {
       Connector * connector() const;
 
       /**
-       * @brief Accès à la carte mère
+       * @brief Accès au GPIO parent
        */
-      Board * board() const;
+      Gpio * gpio() const;
 
       /**
        * @brief Couches d'accès autorisées

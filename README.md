@@ -102,7 +102,7 @@ if you have installed the` libsysio-dev` package.
 
 Sysio provides a pkg-config file that allows you to simply compile a program that uses it:
 
-    $ gcc -o myapp main.c $ (pkg-config --cflags --libs)
+    $ gcc -o myapp main.c $(pkg-config --cflags --libs)
 
 To make things easier, you can use the `sysio-prj` utility, for example, to create a C project:
 

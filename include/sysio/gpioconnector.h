@@ -11,7 +11,7 @@
 #include <iostream>
 #include <sysio/gpiopin.h>
 
-namespace Gpio {
+namespace Sysio {
 
   /**
    *  @addtogroup sysio_gpio
@@ -19,7 +19,7 @@ namespace Gpio {
    *  @{
    */
 
-  class Board;
+  class Gpio;
   class Device;
 
   /**
@@ -32,7 +32,7 @@ namespace Gpio {
 
     public:
       friend class Pin;
-      friend class Board;
+      friend class Gpio;
 
       /**
        * @brief Fonction de calcul du numéro d'une broche de connecteur
@@ -110,7 +110,7 @@ namespace Gpio {
        * partir du code suivant:
        *
        * @code
-          Gpio::Board * board = new Gpio::Board;
+          Sysio::Gpio * board = new Sysio::Gpio;
           ...
           cout << board->connector(4);
           ....
@@ -146,9 +146,9 @@ namespace Gpio {
       friend std::ostream& operator<< (std::ostream& os, const Connector * c);
 
       /**
-       * @brief Accès à la carte mère
+       * @brief Accès au GPIO parent
        */
-      Board * board() const;
+      Gpio * gpio() const;
 
       //------------------------------------------------------------------------
       //                          Accès aux broches
@@ -157,11 +157,11 @@ namespace Gpio {
       /**
        * @brief Broche du connecteur
        *
-       * @param pin numéro de broche dans la numérotation du connecteur. Déclenche
+       * @param num numéro de broche dans la numérotation du connecteur. Déclenche
        * une exception std::out_of_range si la broche n'existe pas
        * @return pointeur sur la broche
        */
-      Pin * pin (int pin) const;
+      Pin * pin (int num) const;
 
       /**
        * @brief Liste des broches du connecteur
@@ -169,7 +169,7 @@ namespace Gpio {
        * Permet de parcourir les broches à l'aide des itérateurs de la STL
        * par exemple pour mettre en entrée toutes les broches:
        * @code
-       *    Board * g = new Board;
+       *    Gpio * g = new Gpio;
        *    // ....
        *    Connector * c = g->connector(1);
        *    // ....
@@ -189,10 +189,10 @@ namespace Gpio {
        * 
        * Un connecteur ne peut être instancié que par une classe Board.
        *
-       * @param parent pointeur sur le Board parent
+       * @param parent pointeur sur le Gpio parent
        * @param desc pointeur sur la description du connecteur
        */
-      Connector (Board * parent, const Descriptor * desc);
+      Connector (Gpio * parent, const Descriptor * desc);
 
       /**
        * @brief Destructeur
@@ -228,7 +228,7 @@ namespace Gpio {
 
     private:
       bool _isopen;
-      Board * _parent;
+      Gpio * _parent;
       const Descriptor * _descriptor; // descripteur
       std::map<int, std::shared_ptr<Pin>> _pin; // toutes les broches
   };

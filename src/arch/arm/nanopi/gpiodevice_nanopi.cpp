@@ -11,7 +11,7 @@
 #include <sysio/delay.h>
 #include "gpiodevice_nanopi.h"
 
-namespace Gpio {
+namespace Sysio {
 
   /*
     H3/H5 PIO Registers:
@@ -53,7 +53,7 @@ namespace Gpio {
       throw std::system_error (ENOTSUP, std::system_category(),
                                "It seems that this system is not a NanoPi board !");
     }
-    _boardDescriptor = &_boardDescriptors.at (info->iGpioRev);
+    _gpioDescriptor = &_gpioDescriptors.at (info->iGpioRev);
   }
 
 // -----------------------------------------------------------------------------
@@ -67,9 +67,9 @@ namespace Gpio {
   }
 
 // -----------------------------------------------------------------------------
-  const Board::Descriptor *
+  const Gpio::Descriptor *
   DeviceNanoPi::descriptor() const {
-    return _boardDescriptor;
+    return _gpioDescriptor;
   }
 
 // -----------------------------------------------------------------------------

@@ -12,7 +12,7 @@
 #include <sysio/gpiodevice.h>
 #include <sysio/iomap.h>
 #include <sysio/nanopi.h>
-namespace Gpio {
+namespace Sysio {
 
   struct PioBank;
 // -----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ namespace Gpio {
       DeviceNanoPi();
       virtual ~DeviceNanoPi();
 
-      const Board::Descriptor * descriptor() const;
+      const Gpio::Descriptor * descriptor() const;
 
       bool open();
       void close();
@@ -45,12 +45,12 @@ namespace Gpio {
 
     private:
       xIoMap * iomap[2];
-      const Board::Descriptor * _boardDescriptor;
+      const Gpio::Descriptor * _gpioDescriptor;
 
       static const int _portSize[];
       static const std::map<int, Pin::Mode> _int2mode;
       static const std::map<Pin::Mode, int> _mode2int;
-      static const std::map<int, Board::Descriptor> _boardDescriptors;
+      static const std::map<int, Gpio::Descriptor> _gpioDescriptors;
       static const std::map<Pin::Mode, std::string> _modes;
 
       const unsigned long Io1Base = H3_IO1_BASE;

@@ -8,16 +8,16 @@
 #include <sysio/gpio.h>
 #include <sysio/gpiodevice.h>
 
-namespace Gpio {
+namespace Sysio {
 
 // -----------------------------------------------------------------------------
 //
-//                           Board Class
+//                           Gpio Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  Board::Board (Device * dev, AccessLayer layer) :
+  Gpio::Gpio (Device * dev, AccessLayer layer) :
     _roc (true), _isopen (false), _accesslayer (layer), _device (dev) {
 
     const std::vector<Connector::Descriptor> & v = device()->descriptor()->connector;
@@ -36,7 +36,7 @@ namespace Gpio {
   }
 
 // -----------------------------------------------------------------------------
-  Board::~Board() {
+  Gpio::~Gpio() {
 
     close();
     delete _device;
@@ -44,14 +44,14 @@ namespace Gpio {
 
 // -----------------------------------------------------------------------------
   AccessLayer
-  Board::accessLayer() const {
+  Gpio::accessLayer() const {
 
     return _accesslayer;
   }
 
 // -----------------------------------------------------------------------------
   bool
-  Board::open () {
+  Gpio::open () {
 
     if (!isOpen()) {
 
@@ -79,7 +79,7 @@ namespace Gpio {
 
 // -----------------------------------------------------------------------------
   void
-  Board::close() {
+  Gpio::close() {
 
     if (isOpen()) {
 
@@ -94,21 +94,21 @@ namespace Gpio {
 
 // -----------------------------------------------------------------------------
   bool
-  Board::isOpen() const {
+  Gpio::isOpen() const {
 
     return _isopen;
   }
 
 // -----------------------------------------------------------------------------
   Pin::Numbering
-  Board::numbering() const {
+  Gpio::numbering() const {
 
     return _numbering;
   }
 
 // -----------------------------------------------------------------------------
   void
-  Board::setNumbering (Pin::Numbering nb) {
+  Gpio::setNumbering (Pin::Numbering nb) {
 
     if (nb != numbering()) {
 
@@ -134,90 +134,90 @@ namespace Gpio {
 
 // -----------------------------------------------------------------------------
   const std::string &
-  Board::numberingName () const {
+  Gpio::numberingName () const {
 
     return Pin::numberingName (numbering());
   }
 
 // -----------------------------------------------------------------------------
   bool
-  Board::releaseOnClose() const {
+  Gpio::releaseOnClose() const {
 
     return _roc;
   }
 
 // -----------------------------------------------------------------------------
   void
-  Board::setReleaseOnClose (bool enable) {
+  Gpio::setReleaseOnClose (bool enable) {
 
     _roc = enable;
   }
 
 // -----------------------------------------------------------------------------
   const std::string & 
-  Board::name() const {
+  Gpio::name() const {
     
     return device()->descriptor()->name;
   }
 
 // -----------------------------------------------------------------------------
   int
-  Board::size() const {
+  Gpio::size() const {
 
     return _pin.size();
   }
 
 // -----------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Pin>> &
-  Board::pin() {
+  Gpio::pin() {
 
     return _pin;
   }
 
 // -----------------------------------------------------------------------------
   Pin *
-  Board::pin (int number) const {
+  Gpio::pin (int number) const {
 
     return _pin.at (number).get();
   };
 
 // -----------------------------------------------------------------------------
   int
-  Board::connectors() const {
+  Gpio::connectors() const {
 
     return _connector.size();
   }
 
 // -----------------------------------------------------------------------------
   Connector *
-  Board::connector (int num) const {
+  Gpio::connector (int num) const {
 
     return _connector.at (num).get();
   }
 
 // -----------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Connector>> &
-  Board::connector() {
+  Gpio::connector() {
     return _connector;
   }
 
 // -----------------------------------------------------------------------------
   Device *
-  Board::device() const {
+  Gpio::device() const {
 
     return _device;
   }
 
 // -----------------------------------------------------------------------------
   bool
-  Board::isDebug() const {
+  Gpio::isDebug() const {
 
     return device()->isDebug();
   }
 
 // -----------------------------------------------------------------------------
   void
-  Board::setDebug (bool enable) {
+  Gpio::setDebug (bool enable) {
 
     device()->setDebug (enable);
   }
