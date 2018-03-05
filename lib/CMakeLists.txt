@@ -13,12 +13,12 @@ endif()
 
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
-file(GLOB src_sysio ${SYSIO_SRC_DIR}/*.c)
-file(GLOB src_sysio_cpp ${SYSIO_SRC_DIR}/*.cpp)
-file(GLOB src_sys   ${SYSIO_SRC_SYS_DIR}/*.c)
+file(GLOB src_sysio ${SYSIO_SRC_DIR}/*.c ${SYSIO_SRC_DIR}/*.cpp)
+file(GLOB src_sys   ${SYSIO_SRC_SYS_DIR}/*.c ${SYSIO_SRC_SYS_DIR}/*.cpp)
 file(GLOB src_arch  ${SYSIO_SRC_ARCH_DIR}/*.c ${SYSIO_SRC_ARCH_DIR}/*.cpp)
 
 set (hdr_sysio 
+  ${SYSIO_INC_DIR}/sysio/clock.h
   ${SYSIO_INC_DIR}/sysio/defs.h
   ${SYSIO_INC_DIR}/sysio/delay.h
   ${SYSIO_INC_DIR}/sysio/iomap.h
@@ -42,14 +42,14 @@ set (hdr_sysio_cpp
 )
 
 set (hdr_gpio 
-  ${SYSIO_INC_DIR}/sysio/dinput.h
-  ${SYSIO_INC_DIR}/sysio/doutput.h
   ${SYSIO_INC_DIR}/sysio/gpio.h
-  ${SYSIO_INC_DIR}/sysio/gpio_c.h
   ${SYSIO_INC_DIR}/sysio/gpiopin.h
   ${SYSIO_INC_DIR}/sysio/gpioconnector.h
   ${SYSIO_INC_DIR}/sysio/pwm.h
   ${SYSIO_INC_DIR}/sysio/blyss.h
+  ${SYSIO_INC_DIR}/sysio/dinput.h
+  ${SYSIO_INC_DIR}/sysio/doutput.h
+  ${SYSIO_INC_DIR}/sysio/gpio_c.h
 )
 
 set (hdr_i2c
@@ -80,12 +80,12 @@ if (SYSIO_WITH_GPIO)
 endif (SYSIO_WITH_GPIO)
 
 if (SYSIO_WITH_I2C)
-  file(GLOB src_i2c ${SYSIO_SRC_DIR}/i2c/*.c)
+  file(GLOB src_i2c ${SYSIO_SRC_DIR}/i2c/*.c ${SYSIO_SRC_DIR}/i2c/*.cpp)
   list(APPEND hdr_public ${hdr_i2c})
 endif (SYSIO_WITH_I2C)
 
 if (SYSIO_WITH_SPI)
-  file(GLOB src_spi ${SYSIO_SRC_DIR}/spi/*.c)
+  file(GLOB src_spi ${SYSIO_SRC_DIR}/spi/*.c ${SYSIO_SRC_DIR}/spi/*.cpp)
   list(APPEND hdr_public ${hdr_spi})
 endif (SYSIO_WITH_SPI)
 
@@ -98,7 +98,6 @@ endif (SYSIO_WITH_GPS)
 
 set (libsrc ${src_sysio} ${src_sys} ${src_arch} 
   ${src_gpio} ${src_i2c} ${src_spi} ${src_gps} 
-  ${src_sysio_cpp}
   )
 
 include_directories(BEFORE
