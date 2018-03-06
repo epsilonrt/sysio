@@ -2,27 +2,25 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Project name
-project(blink)
+# Workspace name
+project(waitforint)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Release/output)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-set(CONFIGURATION_NAME "Release")
+set(CONFIGURATION_NAME "Debug")
 
 # Projects
 
 
 # Top project
 # Define some variables
-set(PROJECT_blink_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+set(PROJECT_PATH "${CMAKE_SOURCE_DIR}/")
 
 
 
@@ -36,29 +34,22 @@ if (NOT CL_USED)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif (NOT CL_USED)
-
-if(SYSIO_LIB_DIR)
-  link_directories(${SYSIO_LIB_DIR})
-  add_definitions(${SYSIO_CFLAGS_OTHER})
-  include_directories(BEFORE ${SYSIO_INC_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-  list(APPEND LINK_OPTIONS sysio Threads::Threads ${LIBGPS_LIBRARIES})
-else()
-  find_package(sysio REQUIRED)
+# search for the sysio package, if found, add the options ...
+find_package(sysio QUIET)
+if (sysio_FOUND)
+  message (STATUS "SysIo found !")
   link_directories(${SYSIO_LIBRARY_DIRS})
   add_definitions(${SYSIO_CFLAGS})
-  include_directories(BEFORE ${SYSIO_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(BEFORE ${SYSIO_INCLUDE_DIRS})
   list(APPEND LINK_OPTIONS ${SYSIO_LIBRARIES})
   include (PiBoardInfo)
   if (NOT PIBOARD_ID)
     message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
     GetPiBoardInfo()
   endif (NOT PIBOARD_ID)
-  include (GitVersion)
-endif()
-
-if (NOT SYSIO_WITH_GPIO)
-  message (FATAL_ERROR "This platform does not have a GPIO !")
-endif ()
+else (sysio_FOUND)
+  message (STATUS "<WARNING> SysIo not found !")
+endif (sysio_FOUND)
 # --- SysIo End. Do not edit by hand -------------------------------------------
 #}}}}
 
@@ -70,12 +61,9 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-O2)
+add_definitions(-g)
+add_definitions(-O0)
 add_definitions(-Wall)
-add_definitions(
-    -DNDEBUG
-)
-
 
 # Linker options
 
@@ -87,14 +75,14 @@ endif(WIN32)
 # Library path
 set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
-# Define the C sources
-set ( C_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/blink.c
+# Define the CXX sources
+set ( CXX_SRCS
+    ${CMAKE_SOURCE_DIR}/waitforint.cpp
 )
 
 set_source_files_properties(
-    ${C_SRCS} PROPERTIES COMPILE_FLAGS 
-    " -O2 -Wall")
+    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS 
+    " -g -O0 -Wall")
 
 if(WIN32)
     enable_language(RC)
@@ -108,20 +96,13 @@ endif(WIN32)
 # Place your code here
 #}}}}
 
-add_executable(blink ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
-target_link_libraries(blink ${LINK_OPTIONS})
+add_executable(waitforint ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
+target_link_libraries(waitforint ${LINK_OPTIONS})
 
 
 
 #{{{{ User Code 3
 # Place your code here
-
-if(NOT INSTALL_BIN_DIR)
-  set(INSTALL_BIN_DIR bin)
-else()
-  add_dependencies (blink sysio-shared)
-endif()
-install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" 
-        PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 #}}}}
 

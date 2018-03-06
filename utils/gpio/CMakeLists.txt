@@ -17,7 +17,6 @@ set(PROGRAM_PERMISSIONS_DEFAULT
     WORLD_READ WORLD_EXECUTE)
 
 if (SYSIO_WITH_GPIO)
-  add_subdirectory (blink)
   add_subdirectory (bsend)
   add_subdirectory (gpio)
 endif()
