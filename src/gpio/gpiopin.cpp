@@ -91,17 +91,9 @@ namespace Sysio {
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _holdExported (-1), _valueFd (-1) {
 
-    AccessLayer layer = parent->gpio()->accessLayer();
+    if ((parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
 
-    if (layer == AccessLayerSysFs) {
-
-      // Seul accès possible SysFs: on exporte la broche
       _useSysFs = true;
-    }
-    else if (sysFsIsExport()) {
-
-      // Export existant, on laisse si autorisé sinon on dévalide l'export
-      _useSysFs = ( (layer & AccessLayerSysFs) != 0);
     }
   }
 
@@ -702,7 +694,8 @@ namespace Sysio {
 
       if (_holdExported < 0) {
 
-        _holdExported = sysFsIsExport();
+        // _holdExported = sysFsIsExport();
+        _holdExported = false; // force la suppression de l'export à la fin
       }
 
       if (enable) {
