@@ -77,6 +77,7 @@ else
 fi
 
 PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
+WORKSPACE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.workspace
 CMAKELISTS_FILE=${PROJECT_DIR}/CMakeLists.txt
 
 if [ "_$CPP" = "_ON" ]; then
@@ -98,14 +99,17 @@ fi
 if [ "_$CPP" = "_ON" ]; then
   cp ${SYSIO_TEMPLATE_DIR}/cpp/CMakeLists.txt ${CMAKELISTS_FILE}
   cp ${SYSIO_TEMPLATE_DIR}/cpp/template.project ${PROJECT_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/cpp/template.workspace ${WORKSPACE_FILE}
 else
   cp ${SYSIO_TEMPLATE_DIR}/CMakeLists.txt ${CMAKELISTS_FILE}
   cp ${SYSIO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
+  cp ${SYSIO_TEMPLATE_DIR}/template.workspace ${WORKSPACE_FILE}
 fi
 sed -i -e "s#template#$PROJECT_NAME#g" ${CMAKELISTS_FILE}
 sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
+sed -i -e "s#template#$PROJECT_NAME#g" ${WORKSPACE_FILE}
 if [ "_$GIT" = "_ON" ]; then
-  git add ${PROJECT_FILE}
+  git add ${PROJECT_FILE} ${WORKSPACE_FILE} ${CMAKELISTS_FILE}
 fi
 
 
