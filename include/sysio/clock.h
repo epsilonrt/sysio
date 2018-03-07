@@ -45,6 +45,23 @@ namespace Sysio {
       virtual ~Clock();
 
       /**
+       * @brief Pauses for the amount of seconds
+       *
+       * Pauses the thread for the amount of time (in seconds) specified
+       * as parameter.
+       *
+       * @param ms the number of seconds to pause, -1 deaden the thread
+       * until it is woken up by a signal
+       */
+#ifdef __DOXYGEN__
+      inline void sleep (unsigned long s);
+#else
+      inline void sleep (unsigned long s) {
+        delay (s * 1000UL);
+      }
+#endif
+
+      /**
        * @brief Pauses for the amount of milliseconds
        *
        * Pauses the thread for the amount of time (in milliseconds) specified
