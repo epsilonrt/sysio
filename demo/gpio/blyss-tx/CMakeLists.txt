@@ -2,17 +2,16 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Project name
+# Workspace name
 project(sysio_demo_blyss_tx)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Debug/output)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CONFIGURATION_NAME "Debug")
 
@@ -21,8 +20,7 @@ set(CONFIGURATION_NAME "Debug")
 
 # Top project
 # Define some variables
-set(PROJECT_sysio_demo_blyss_tx_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+set(PROJECT_PATH "${CMAKE_SOURCE_DIR}/")
 
 
 
@@ -79,7 +77,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
 # Define the C sources
 set ( C_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/sysio_demo_blyss_tx.c
+    ${CMAKE_SOURCE_DIR}/sysio_demo_blyss_tx.c
 )
 
 set_source_files_properties(
@@ -105,16 +103,6 @@ target_link_libraries(sysio_demo_blyss_tx ${LINK_OPTIONS})
 
 #{{{{ User Code 3
 # Place your code here
-
-add_custom_target(setuid
-  COMMAND sysio-setuid  ${PROJECT_NAME}
-  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-  COMMENT "Setting set-uid root bit for executable")
-
-set(PROGRAM_PERMISSIONS_DEFAULT
-    OWNER_WRITE OWNER_READ OWNER_EXECUTE
-    GROUP_READ GROUP_EXECUTE
-    WORLD_READ WORLD_EXECUTE)
-install(TARGETS ${PROJECT_NAME} DESTINATION bin PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 #}}}}
 
