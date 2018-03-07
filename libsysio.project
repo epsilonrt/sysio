@@ -37,6 +37,7 @@
       <File Name="src/unix/iomap.c"/>
       <File Name="src/unix/term.c"/>
       <File Name="src/unix/timer.c"/>
+      <File Name="src/unix/clock.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="libgps">
       <File Name="src/libgps/gps.c"/>
@@ -114,6 +115,7 @@
       <File Name="include/sysio/gpiopin.h"/>
       <File Name="include/sysio/gpio_c.h"/>
       <File Name="include/sysio/gpioconnector.h"/>
+      <File Name="include/sysio/clock.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

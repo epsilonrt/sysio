@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Connecteurs GPIO
+ * @brief GPIO connector
  *
  * Copyright © 2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>

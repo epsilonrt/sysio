@@ -145,7 +145,7 @@ main (int argc, char **argv) {
   }
   catch (out_of_range& e) {
 
-    cerr << __progname << ": out of range value (" << e.what() << ")"<< endl;
+    cerr << __progname << ": out of range value (" << e.what() << ")" << endl;
     ret = -1;
   }
   catch (invalid_argument& e) {
@@ -188,7 +188,7 @@ readall (int argc, char * argv[]) {
   int paramc = (argc - optind);
 
   if (paramc >= 1) {
-    
+
     int connector = stoi (string (argv[optind]));
     cout << gpio->connector (connector);
   }
@@ -411,7 +411,7 @@ blink (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   wfi <pin> <rising/falling/both> [timeout_ms]
     This set the given pin to the supplied interrupt mode:  rising,  falling  or
-    both  then waits  for  the  interrupt  to happen. 
+    both  then waits  for  the  interrupt  to happen.
     It's a non-busy wait, so does not consume and CPU while it's waiting.
  */
 void
@@ -433,8 +433,6 @@ wfi (int argc, char * argv[]) {
     Pin::Edge e;
     string edge (argv[optind + 1]);
 
-    //useSysFsBeforeWfi = pin->useSysFs();
-
     forceSysFs = true;
     pin = getPin (argv[optind]);
     e = str2edge.at (edge);
@@ -447,7 +445,8 @@ wfi (int argc, char * argv[]) {
     signal (SIGINT, sig_handler);
     signal (SIGTERM, sig_handler);
 
-    cout << pin->waitForInt (e, timeout) << endl;
+    pin->waitForInterrupt (e, timeout);
+    cout << pin->read() << endl;
   }
 }
 

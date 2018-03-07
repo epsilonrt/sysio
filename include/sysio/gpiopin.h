@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Broche et connecteurs GPIO
+ * @brief GPIO Pin
  *
  * Copyright © 2018 epsilonRT, All rights reserved.
  * This software is governed by the CeCILL license <http://www.cecill.info>
@@ -12,6 +12,9 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <atomic>
+#include <thread>
+#include <mutex>
 
 namespace Sysio {
 
@@ -167,7 +170,7 @@ namespace Sysio {
        * @return le mode actuel, si la broche n'est pas
        * de type GPIO, ModeUnknown est retourné.
        */
-      Mode mode() const;
+      Mode mode();
 
       /**
        * @brief Modification du mode d'une broche de type GPIO
@@ -186,7 +189,7 @@ namespace Sysio {
        * @return la résistance actuellement appliquée, si la broche n'est pas
        * de type GPIO, PullUnknown est retourné.
        */
-      Pull pull() const;
+      Pull pull();
 
       /**
        * @brief Modification de la résistance de tirage d'une broche de type GPIO
@@ -206,7 +209,7 @@ namespace Sysio {
        * @return le front actuel, si la broche n'est pas en mode SysFs,
        * EdgeUnknown est retourné.
        */
-      Edge edge() const;
+      Edge edge();
 
       /**
        * @brief Modification du front de déclenchement
@@ -270,7 +273,7 @@ namespace Sysio {
        * broche du GPIO ou du SOC par un INT se trouvant dans le nom.
        * Par exemple, la broche PA0 sur un SOC AllWinner H3 a cette fonctionnalité
        * car sa fonction ALT6 est PA_EINT0. Si les interruptions ne sont pas
-       * supportées par la broche, un appel à \c waitForInt() déclenchera une
+       * supportées par la broche, un appel à \c waitForInterrupt() déclenchera une
        * exeception std::system_error avec le code ENOSYS (function_not_supported). \n
        * L'accès par SysFs doit donc être autorisée dans le Gpio parent
        * (AccessLayerSysFs ou AccessLayerAll) ou par l'appel à forceUseSysFs(true). \n
@@ -282,9 +285,33 @@ namespace Sysio {
        * Si une autre valeur est fournie et que le délai est atteint avant que le
        * front survienne, une exception std::system_error avec le code ETIME est
        * déclenchée.
-       * @return la valeur binaire après le front
        */
-      bool waitForInt (Edge edge, int timeout_ms = -1);
+      void waitForInterrupt (Edge edge, int timeout_ms = -1);
+
+      /**
+       * @brief Routine d'interruption
+       * 
+       * Une routine d'interruption ne prend et ne renvoie aucun paramètre.
+       */
+      typedef void (* Isr) (void);
+
+      /**
+       * @brief Installe une routine d'interruption (Isr)
+       * 
+       * Cette fonction créée un thread qui attend l'arrivée d'une interruption
+       * déclenchée par chaque front edge et exécute la fonction isr.
+       * 
+       * @param isr fonction exécuté à chaque interruption
+       * @param edge front déclenchant l'interruption
+       */
+      void attachInterrupt (Isr isr, Edge edge);
+
+      /**
+       * @brief Désinstalle la routine d'interruption
+       * 
+       * Le thread est détruit.
+       */
+      void detachInterrupt();
 
       //------------------------------------------------------------------------
       //                          Propriétés
@@ -363,7 +390,7 @@ namespace Sysio {
        * générique si le mode actuel n'est pas associé à un nom ou si la broche
        * n'est pas de type TypeGpio.
        */
-      const std::string & name() const;
+      const std::string & name();
 
       /**
        * @brief Indique si la broche utilise SysFs
@@ -423,7 +450,7 @@ namespace Sysio {
       /**
        * @brief Nom du mode actuel
        */
-      const std::string & modeName() const;
+      const std::string & modeName();
 
       /**
        * @brief Nom d'un mode
@@ -433,7 +460,7 @@ namespace Sysio {
       /**
        * @brief Nom de la résistance de tirage actuelle
        */
-      const std::string & pullName () const;
+      const std::string & pullName ();
 
       /**
        * @brief Nom d'une résistance de tirage
@@ -537,6 +564,14 @@ namespace Sysio {
       bool _useSysFs;
       int _holdExported;
       int _valueFd;
+
+      Edge _edge;
+      Mode _mode;
+      Pull _pull;
+
+      std::atomic<int> _run;  // indique au thread de continuer
+      std::thread _thread;
+
       static const std::map<Pull, std::string> _pulls;
       static const std::map<Type, std::string> _types;
       static const std::map<Numbering, std::string> _numberings;
@@ -547,14 +582,32 @@ namespace Sysio {
       static std::string _syspath;
 
       static bool directoryExist (const std::string & dname);
+      static void * irqThread (std::atomic<int> & run, int fd, Isr isr);
 
       void holdMode();
       void holdPull();
+      void readPull ();
+      void writePull();
+      void readMode();
+      void writeMode ();
+      void readEdge();
+      void writeEdge ();
+
       bool sysFsEnable (bool enable);
       void sysFsExport (bool enable);
+      bool sysFsIsExport () const;
       bool sysFsOpen();
       void sysFsClose();
-      bool sysFsIsExport () const;
+
+      void sysFsGetEdge();
+      void sysFsSetEdge ();
+      void sysFsGetMode();
+      void sysFsSetMode ();
+
+      static int sysFsPoll (int fd, int timeout_ms = -1);
+      static int sysFsRead (int fd);
+      static int sysFsWrite (int fd, bool value);
+
       void sysFsWriteFile (const char * n, const std::string & v);
       std::string sysFsReadFile (const char * n) const;
       bool sysFsFileExist (const char * n) const;
