@@ -2,16 +2,17 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Workspace name
-project(isr)
+# Project name
+project(interrupt)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../cmake-build-Debug/output)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 
 set(CONFIGURATION_NAME "Debug")
 
@@ -20,7 +21,8 @@ set(CONFIGURATION_NAME "Debug")
 
 # Top project
 # Define some variables
-set(PROJECT_PATH "${CMAKE_SOURCE_DIR}/")
+set(PROJECT_interrupt_PATH "${CMAKE_CURRENT_LIST_DIR}")
+set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 
 
 
@@ -77,7 +79,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
 # Define the CXX sources
 set ( CXX_SRCS
-    ${CMAKE_SOURCE_DIR}/isr.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/interrupt.cpp
 )
 
 set_source_files_properties(
@@ -96,8 +98,8 @@ endif(WIN32)
 # Place your code here
 #}}}}
 
-add_executable(isr ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
-target_link_libraries(isr ${LINK_OPTIONS})
+add_executable(interrupt ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
+target_link_libraries(interrupt ${LINK_OPTIONS})
 
 
 

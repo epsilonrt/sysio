@@ -57,6 +57,7 @@
       <File Name="src/gpio/gpiodevice.cpp"/>
       <File Name="src/gpio/gpiopin.cpp"/>
       <File Name="src/gpio/gpioconnector.cpp"/>
+      <File Name="src/gpio/arduino.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2c-dev.h"/>
@@ -119,6 +120,7 @@
       <File Name="include/sysio/gpio_c.h"/>
       <File Name="include/sysio/gpioconnector.h"/>
       <File Name="include/sysio/clock.h"/>
+      <File Name="include/sysio/arduino.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

@@ -771,8 +771,10 @@ namespace Sysio {
   void Pin::holdPull() {
 
     if (_holdPull == PullUnknown) {
-
+      Pull p = _pull;
+      
       _holdPull = pull();
+      _pull = p;
     }
   }
 
@@ -781,12 +783,14 @@ namespace Sysio {
   Pin::holdMode() {
 
     if (_holdMode == ModeUnknown) {
-
+      Mode m = _mode;
+      
       _holdMode = mode();
       if (_holdMode == ModeOutput) {
 
         _holdState = read();
       }
+      _mode = m;
     }
   }
 
