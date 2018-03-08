@@ -20,6 +20,9 @@
           <File Name="src/arch/arm/rpi/pwm.c"/>
           <File Name="src/arch/arm/rpi/rpi.c"/>
           <File Name="src/arch/arm/rpi/gpio.c"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_rpi.cpp"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_rpi.h"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_rpi_descriptor.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
