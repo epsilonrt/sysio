@@ -45,6 +45,7 @@ set (hdr_gpio
   ${SYSIO_INC_DIR}/sysio/gpio.h
   ${SYSIO_INC_DIR}/sysio/gpiopin.h
   ${SYSIO_INC_DIR}/sysio/gpioconnector.h
+  ${SYSIO_INC_DIR}/sysio/arduino.h
   ${SYSIO_INC_DIR}/sysio/pwm.h
   ${SYSIO_INC_DIR}/sysio/blyss.h
   ${SYSIO_INC_DIR}/sysio/dinput.h

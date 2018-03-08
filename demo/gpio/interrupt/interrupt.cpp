@@ -1,12 +1,32 @@
-// attachInterrupt() Isr example
-// by epsilonrt <https://github.com/epsilonrt>
+// interrupt
 
-// This program toggles the state of a led at each rising or falling edge sent 
-// to an input used as an interrupt request.
-// The time difference between 2 successive edges is displayed.
+// This program captures the rising and falling edges sent on a digital pin. 
+// A led copies the state of the input signal and the console displays the 
+// time differences between edges.
+
+// How to make this program work ?
+
+// 1- Connect the irqPin to another pin of the GPIO connector with a wire 
+// (eg Pin 10: Pin Header 24, GPIOC3 for NanoPi, GPIO8 for RaspberryPi).
+
+// 2- Configure pin 10 as output with the gpio utility:
+// $ gpio mode 10 out
+
+// 3- Run this program:
+// $ sudo ./interrupt
+// You must be root to run this program (use sudo) !
+
+// 4- Generate a clock signal on pin 10 with the gpio utility:
+// $ gpio blink 10 100
+
+// 5- The console should display the time differences between edges (100ms):
+//  Press Ctrl+C to abort ...
+//  27047:	0
+//  100:	  1
+//  100:	  0
+//  100:	  1
 
 // Created 6 March 2018
-
 // This example code is in the public domain.
 #include <iostream>
 #include <csignal>
@@ -46,7 +66,7 @@ static void
 sighandler (int sig) {
 
   g.close();
-  printf ("\neverything was closed.\nHave a nice day !\n");
+  cout << endl << "everything was closed."<< endl << "Have a nice day !" << endl;
   exit (EXIT_SUCCESS);
 }
 

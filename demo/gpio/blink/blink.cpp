@@ -29,7 +29,7 @@ static void
 sighandler (int sig) {
 
   g.close();
-  printf ("\neverything was closed.\nHave a nice day !\n");
+  cout << endl << "everything was closed."<< endl << "Have a nice day !" << endl;
   exit (EXIT_SUCCESS);
 }
 

@@ -1,5 +1,4 @@
-// waitFroInt() example
-// by epsilonrt <https://github.com/epsilonrt>
+// waitForInt() example
 
 // This program toggles the state of a led at each rising or falling edge sent 
 // to an input used as an interrupt request.
@@ -34,7 +33,7 @@ static void
 sighandler (int sig) {
 
   g.close();
-  printf ("\neverything was closed.\nHave a nice day !\n");
+  cout << endl << "everything was closed."<< endl << "Have a nice day !\n" << endl;
   exit (EXIT_SUCCESS);
 }
 
