@@ -562,8 +562,8 @@ namespace Sysio {
       Pull _holdPull;
       bool _holdState;
       bool _useSysFs;
-      int _holdExported;
       int _valueFd;
+      bool _firstPolling;
 
       Edge _edge;
       Mode _mode;

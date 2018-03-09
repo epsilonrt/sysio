@@ -89,7 +89,7 @@ namespace Sysio {
   Pin::Pin (Connector * parent, const Descriptor * desc) :
     _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
-    _holdExported (-1), _valueFd (-1), _edge (EdgeUnknown), _mode (ModeUnknown),
+    _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
     _pull (PullUnknown), _run (false) {
 
     if ( (parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
@@ -483,12 +483,6 @@ namespace Sysio {
 
     if (isOpen() && (type() == TypeGpio)) {
 
-      if (_holdExported >= 0) {
-
-        forceUseSysFs (_holdExported);
-        _holdExported = -1;
-      }
-
       if (_holdMode != ModeUnknown) {
 
         setMode (_holdMode);
@@ -526,20 +520,36 @@ namespace Sysio {
   void
   Pin::waitForInterrupt (Pin::Edge e, int timeout_ms) {
 
-    int ret;
+    if (isOpen()) {
+      int ret;
 
-    setEdge (e);
-    forceUseSysFs (true);
-    (void) read();
+      if (_firstPolling) {
 
-    ret = sysFsPoll (_valueFd, timeout_ms);
-    if (ret < 0) {
+        setEdge (EdgeNone);
+        forceUseSysFs (true);
+        setEdge (e);
+        // clear pending irq
+        if (sysFsPoll (_valueFd, 1) > 0) {
 
-      throw std::system_error (errno, std::system_category(), "poll");
-    }
-    else if (ret == 0) {
+          sysFsRead (_valueFd);
+        }
+        _firstPolling = false;
+      }
 
-      throw std::system_error (ETIME, std::generic_category());
+      if (e != _edge) {
+
+        setEdge (e);
+      }
+
+      ret = sysFsPoll (_valueFd, timeout_ms);
+      if (ret < 0) {
+
+        throw std::system_error (errno, std::system_category(), "poll");
+      }
+      else if (ret == 0) {
+
+        throw std::system_error (ETIME, std::generic_category());
+      }
     }
   }
 
@@ -549,8 +559,14 @@ namespace Sysio {
 
     if (!_thread.joinable()) {
 
-      setEdge (e);
+      setEdge (EdgeNone);
       forceUseSysFs (true);
+      setEdge (e);
+      // clear pending irq
+      if (sysFsPoll (_valueFd, 1) > 0) {
+
+        sysFsRead (_valueFd);
+      }
       _run = true;
       _thread = std::thread (irqThread, std::ref (_run), _valueFd, isr);
     }
@@ -579,18 +595,6 @@ namespace Sysio {
 
       if (type() == TypeGpio) {
 
-        if (device()) {
-
-          if (_pull != PullUnknown) {
-
-            writePull();
-          }
-          else {
-
-            readPull();
-          }
-        }
-
         if (_useSysFs) {
 
           _isopen = sysFsEnable (true);
@@ -609,6 +613,18 @@ namespace Sysio {
           else {
 
             readMode();
+          }
+
+          if (device()) {
+
+            if (_pull != PullUnknown) {
+
+              writePull();
+            }
+            else {
+
+              readPull();
+            }
           }
 
           if (_edge != EdgeUnknown) {
@@ -637,13 +653,11 @@ namespace Sysio {
 
       if (type() == TypeGpio) {
 
-        sysFsClose();
-
+        forceUseSysFs (false); // close & unexport
         if (gpio()->releaseOnClose()) {
 
           release();
         }
-
       }
       _isopen = false;
     }
@@ -737,8 +751,6 @@ namespace Sysio {
   Pin::irqThread (std::atomic<int> & run, int fd, Isr isr) {
     int ret;
 
-    (void) sysFsRead (fd);
-
     try {
       while (run) {
 
@@ -770,11 +782,9 @@ namespace Sysio {
 // -----------------------------------------------------------------------------
   void Pin::holdPull() {
 
-    if (_holdPull == PullUnknown) {
-      Pull p = _pull;
-      
-      _holdPull = pull();
-      _pull = p;
+    if ( (_holdPull == PullUnknown) && device()) {
+
+      _holdPull = device()->pull (this);
     }
   }
 
@@ -782,15 +792,13 @@ namespace Sysio {
   void
   Pin::holdMode() {
 
-    if (_holdMode == ModeUnknown) {
-      Mode m = _mode;
-      
-      _holdMode = mode();
+    if ( (_holdMode == ModeUnknown) && device()) {
+
+      _holdMode = device()->mode (this);
       if (_holdMode == ModeOutput) {
 
-        _holdState = read();
+        _holdState = device()->read (this);
       }
-      _mode = m;
     }
   }
 
@@ -826,12 +834,6 @@ namespace Sysio {
         throw std::invalid_argument (msg.str());
       }
 
-      if (_holdExported < 0) {
-
-        // _holdExported = sysFsIsExport();
-        _holdExported = false; // force la suppression de l'export à la fin
-      }
-
       if (enable) {
 
         // Export
@@ -841,6 +843,10 @@ namespace Sysio {
       else {
 
         // Unexport
+        if (sysFsFileExist ("edge")) {
+
+          setEdge (EdgeNone);
+        }
         fn << _syspath << "/unexport";
       }
 
@@ -862,6 +868,7 @@ namespace Sysio {
 
       // Construction du nom du fichier
       fn << _syspath << "/gpio" << systemNumber() << "/value";
+      // std::cout << "Open: " << fn.str() << std::endl;
 
       // Ouvrir le fichier
       if ( (_valueFd = ::open (fn.str().c_str(), O_RDWR)) < 0) { //
@@ -939,7 +946,6 @@ namespace Sysio {
     if (sysFsFileExist ("edge")) {
 
       sysFsWriteFile ("edge", edgeName (_edge));
-      read(); // clear irq
     }
     else {
       std::ostringstream msg;

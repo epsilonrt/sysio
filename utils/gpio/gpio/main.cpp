@@ -433,7 +433,7 @@ wfi (int argc, char * argv[]) {
     Pin::Edge e;
     string edge (argv[optind + 1]);
 
-    forceSysFs = true;
+    forceSysFs = false;
     pin = getPin (argv[optind]);
     e = str2edge.at (edge);
     if (paramc > 2) {
