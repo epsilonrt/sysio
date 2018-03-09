@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 # Project name
-project(sysio_demo_serial_cpp)
+project(button)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
@@ -21,7 +21,7 @@ set(CONFIGURATION_NAME "Debug")
 
 # Top project
 # Define some variables
-set(PROJECT_sysio_demo_serial_cpp_PATH "${CMAKE_CURRENT_LIST_DIR}")
+set(PROJECT_button_PATH "${CMAKE_CURRENT_LIST_DIR}")
 set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 
 
@@ -79,7 +79,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
 # Define the CXX sources
 set ( CXX_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/sysio_demo_serial_cpp.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/button.cpp
 )
 
 set_source_files_properties(
@@ -98,8 +98,8 @@ endif(WIN32)
 # Place your code here
 #}}}}
 
-add_executable(sysio_demo_serial_cpp ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
-target_link_libraries(sysio_demo_serial_cpp ${LINK_OPTIONS})
+add_executable(button ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
+target_link_libraries(button ${LINK_OPTIONS})
 
 
 
