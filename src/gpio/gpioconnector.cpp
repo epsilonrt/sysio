@@ -162,7 +162,7 @@ namespace Sysio {
 //                      Opérateur << vers ostream
 // -----------------------------------------------------------------------------
   namespace ConnectorOstream {
-    
+
 // -----------------------------------------------------------------------------
     enum Alignment {
       Left,
@@ -230,7 +230,7 @@ namespace Sysio {
       return out;
     }
   }
-  
+
   using namespace ConnectorOstream;
 // -----------------------------------------------------------------------------
   void
@@ -297,8 +297,11 @@ namespace Sysio {
       if (device()->flags() & Device::hasPullRead) {
         s[3] = toUpper (p->pullName());
       }
-      if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
-        s[4] = std::to_string (p->read());
+      if (p->mode() != Pin::ModeDisabled)  {
+        if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput) ||
+             (device()->flags() & Device::hasAltRead)) {
+          s[4] = std::to_string (p->read());
+        }
       }
     }
     os << format (s[0], _field[i++].size, Right) << '|';
@@ -324,11 +327,13 @@ namespace Sysio {
         if (device()->flags() & Device::hasPullRead) {
           s[3] = toUpper (p->pullName());
         }
-        if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
-          s[4] = std::to_string (p->read());
-        }
-        else {
-          s[4].clear();
+        s[4].clear();
+        if (p->mode() != Pin::ModeDisabled)  {
+          if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput) ||
+               (device()->flags() & Device::hasAltRead)) {
+                 
+            s[4] = std::to_string (p->read());
+          }
         }
       }
       else {
