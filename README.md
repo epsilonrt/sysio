@@ -36,8 +36,6 @@ it also provides the modules
 * Raspberry Pi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__rpi.html)
 * NanoPi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__nanopi.html)
 * GPIO [**gpio**](http://www.epsilonrt.fr/sysio/group__sysio__gpio.html)
-* Digital input ports [**dinput**](http://www.epsilonrt.fr/sysio/group__sysio__dinput.html)
-* Digital output ports [**douput**](http://www.epsilonrt.fr/sysio/group__sysio__doutput.html)
 * PWM pins [**pwm**](http://www.epsilonrt.fr/sysio/group__sysio__pwm.html)
 * I2C Bus [**i2c**](http://www.epsilonrt.fr/sysio/group__sysio__i2c.html)
 * SPI Bus [**spi**](http://www.epsilonrt.fr/sysio/group__sysio__spi.html)

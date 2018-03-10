@@ -9,6 +9,8 @@
 #define _SYSIO_DINPUT_H_
 #include <sysio/gpio.h>
 
+#ifndef __DOXYGEN__
+
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -257,8 +259,9 @@ void * pDinCallbackData (unsigned input, xDinPort *port);
 /**
  * @}
  */
-/* ========================================================================== */
 #ifdef __cplusplus
   }
 #endif
+#endif // __DOXYGEN__
+/* ========================================================================== */
 #endif /*_SYSIO_DINPUT_H_ defined */

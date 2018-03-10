@@ -9,6 +9,7 @@
 #define _SYSIO_GPIO_C_H_
 #include <sysio/defs.h>
 
+#ifndef __DOXYGEN__
 /**
  *  @addtogroup sysio_gpio_c
  *  @deprecated Cette interface est obsolète et disparaitra dans la prochaine 
@@ -368,13 +369,12 @@ int iGpioToFront (xGpio * gpio);
  */
 const char * sGpioModeToStr (eGpioMode eMode);
 
-#ifdef __cplusplus
-}
-#endif
-
 /**
  * @}
  */
-
+#ifdef __cplusplus
+}
+#endif
+#endif // __DOXYGEN__
 /* ========================================================================== */
 #endif /*_SYSIO_GPIO_C_H_ defined */
