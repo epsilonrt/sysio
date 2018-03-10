@@ -13,7 +13,6 @@
 
 namespace Sysio {
 
-  /* constants ================================================================ */
 // -----------------------------------------------------------------------------
 //
 //                        DeviceBcm2835 Class
@@ -60,11 +59,10 @@ namespace Sysio {
       if (_iomap) {
 
         setOpen (true);
-        // debugPrintAllBanks ();
       }
       else {
 
-        throw std::system_error (errno, std::system_category());
+        throw std::system_error (errno, std::system_category(), __FUNCTION__);
       }
     }
     return isOpen();

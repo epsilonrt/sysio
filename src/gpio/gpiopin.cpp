@@ -7,6 +7,7 @@
  */
 #include <sysio/gpio.h>
 #include <sysio/gpiodevice.h>
+#include <sysio/scheduler.h>
 #include <exception>
 #include <fstream>
 #include <sstream>
@@ -430,7 +431,7 @@ namespace Sysio {
 
         if (sysFsWrite (_valueFd, value) < 0) {
 
-          throw std::system_error (errno, std::system_category(), "write");
+          throw std::system_error (errno, std::system_category(), __FUNCTION__);
         }
       }
       else {
@@ -470,7 +471,7 @@ namespace Sysio {
 
         if (ret < 0) {
 
-          throw std::system_error (errno, std::system_category(), "read");
+          throw std::system_error (errno, std::system_category(), __FUNCTION__);
         }
         return ret > 0;
       }
@@ -546,7 +547,7 @@ namespace Sysio {
       ret = sysFsPoll (_valueFd, timeout_ms);
       if (ret < 0) {
 
-        throw std::system_error (errno, std::system_category(), "poll");
+        throw std::system_error (errno, std::system_category(), __FUNCTION__);
       }
       else if (ret == 0) {
 
@@ -682,7 +683,7 @@ namespace Sysio {
 
     if (device()) {
       if (device()->flags() & Device::hasPullRead) {
-        
+
         _pull = device()->pull (this);
         return;
       }
@@ -752,6 +753,8 @@ namespace Sysio {
   void *
   Pin::irqThread (std::atomic<int> & run, int fd, Isr isr) {
     int ret;
+
+    Scheduler::setRtPriority (50);
 
     try {
       while (run) {
@@ -875,7 +878,7 @@ namespace Sysio {
       // Ouvrir le fichier
       if ( (_valueFd = ::open (fn.str().c_str(), O_RDWR)) < 0) { //
 
-        throw std::system_error (errno, std::system_category(), "open");
+        throw std::system_error (errno, std::system_category(), __FUNCTION__);
       }
 
       if (_mode != ModeUnknown) {
@@ -909,7 +912,7 @@ namespace Sysio {
       // fermeture fichier value sysFs
       if (::close (_valueFd) < 0) {
 
-        throw std::system_error (errno, std::system_category(), "close");
+        throw std::system_error (errno, std::system_category(), __FUNCTION__);
       }
       _valueFd = -1;
     }
