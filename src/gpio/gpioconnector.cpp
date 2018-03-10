@@ -238,7 +238,7 @@ namespace Sysio {
 
     os << '+';
     for (unsigned int i = 0; i < _field.size(); i++) {
-      if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+      if ( (_field[i].name != "Pull") || (device()->flags() & Device::hasPullRead)) {
         os << std::string (_field[i].size, '-') << '+';
       }
     }
@@ -246,7 +246,7 @@ namespace Sysio {
 
       os << '+';
       for (int i = _field.size() - 1; i >= 0 ; --i) {
-        if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+        if ( (_field[i].name != "Pull") || (device()->flags() & Device::hasPullRead)) {
           os << std::string (_field[i].size, '-') << '+';
         }
       }
@@ -262,7 +262,7 @@ namespace Sysio {
     os << '|';
     for (unsigned int i = 0; i < _field.size(); i++) {
 
-      if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+      if ( (_field[i].name != "Pull") || (device()->flags() & Device::hasPullRead)) {
         os << format (_field[i].name, _field[i].size, Center) << '|';
       }
     }
@@ -271,7 +271,7 @@ namespace Sysio {
       os << '|';
       for (int i = _field.size() - 1; i >= 0 ; --i) {
 
-        if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+        if ( (_field[i].name != "Pull") || (device()->flags() & Device::hasPullRead)) {
           os << format (_field[i].name, _field[i].size, Center) << '|';
         }
       }
@@ -294,7 +294,7 @@ namespace Sysio {
       s[0] = std::to_string (p->mcuNumber());
       s[1] = std::to_string (p->logicalNumber());
       s[2] = toUpper (p->modeName());
-      if (device()->hasPullRead) {
+      if (device()->flags() & Device::hasPullRead) {
         s[3] = toUpper (p->pullName());
       }
       if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
@@ -305,9 +305,10 @@ namespace Sysio {
     os << format (s[1], _field[i++].size, Right) << '|';
     os << format (p->name(), _field[i++].size, Right) << '|';
     os << format (s[2], _field[i++].size, Right) << '|';
-    if (device()->hasPullRead) {
-      os << format (s[3], _field[i++].size, Right) << '|';
+    if (device()->flags() & Device::hasPullRead) {
+      os << format (s[3], _field[i].size, Right) << '|';
     }
+    i++;
     os << format (s[4], _field[i++].size, Right) << '|';
     os << format (std::to_string (p->physicalNumber()), _field[i++].size, Right) << '|';
 
@@ -320,7 +321,7 @@ namespace Sysio {
         s[0] = std::to_string (p->mcuNumber());
         s[1] = std::to_string (p->logicalNumber());
         s[2] = toUpper (p->modeName());
-        if (device()->hasPullRead) {
+        if (device()->flags() & Device::hasPullRead) {
           s[3] = toUpper (p->pullName());
         }
         if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
@@ -338,8 +339,9 @@ namespace Sysio {
       }
       os << format (std::to_string (p->physicalNumber()), _field[--i].size, Left) << '|';
       os << format (s[4], _field[--i].size, Left) << '|';
-      if (device()->hasPullRead) {
-        os << format (s[3], _field[--i].size, Left) << '|';
+      --i;
+      if (device()->flags() & Device::hasPullRead) {
+        os << format (s[3], _field[i].size, Left) << '|';
       }
       os << format (s[2], _field[--i].size, Left) << '|';
       os << format (p->name(), _field[--i].size, Left) << '|';
@@ -361,11 +363,11 @@ namespace Sysio {
 
     for (unsigned int i = 0; i < _field.size(); i++) {
 
-      if ( (_field[i].name != "Pull") || (c->device()->hasPullRead)) {
+      if ( (_field[i].name != "Pull") || (c->device()->flags() & Device::hasPullRead)) {
         width += _field[i].size;
       }
     }
-    width = (width + _field.size() - (c->device()->hasPullRead ? 0 : 1)) * c->columns();
+    width = (width + _field.size() - (c->device()->flags() & Device::hasPullRead ? 0 : 1)) * c->columns();
 
     // entête
     os.width (width);
