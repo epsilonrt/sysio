@@ -30,7 +30,7 @@ typedef Sysio::Pin::Isr Isr;
 #else
 
 /**
- *  @defgroup sysio_arduino Emulation Arduino
+ *  @defgroup sysio_arduino Arduino
  *
  *  Ce module permet de programmer avec Sysio en utilisant une syntaxe proche d'Arduino.
  */
@@ -157,6 +157,7 @@ unsigned long millis();
  * @brief Nombre de microsecondes depuis le lancement du programme
  */
 unsigned long micros();
+
 /**
 * @}
 */

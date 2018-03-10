@@ -17,7 +17,6 @@
  *  @defgroup sysio_gpio_class Gpio
  *  @defgroup sysio_gpio_pin Broches
  *  @defgroup sysio_gpio_connector Connecteurs
- *  @defgroup sysio_gpio_c Interface C
  *  @}
  */
 
