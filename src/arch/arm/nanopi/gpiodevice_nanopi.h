@@ -31,6 +31,7 @@ namespace Sysio {
       bool open();
       void close();
       AccessLayer preferedAccessLayer() const;
+      unsigned int flags() const;
 
       void setMode (const Pin * pin, Pin::Mode m);
       void setPull (const Pin * pin, Pin::Pull p);

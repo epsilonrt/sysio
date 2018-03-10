@@ -185,7 +185,7 @@ namespace Sysio {
 
       /**
        * @brief Constructeur
-       * 
+       *
        * Un connecteur ne peut être instancié que par une classe Board.
        *
        * @param parent pointeur sur le Gpio parent
@@ -224,6 +224,27 @@ namespace Sysio {
        * @return Numéro de la broche dans le connecteur
        */
       int pinNumber (int row, int column) const;
+      
+      /**
+       * @brief Affiche une ligne horizontale d'un tableau de broches
+       * @param os flux d'affichage
+       */
+      void printHline (std::ostream & os) const;
+      
+      /**
+       * @brief Affiche l'entête d'un tableau de broches
+       * @param os flux d'affichage
+       */
+      void printTitle (std::ostream & os) const;
+      
+      /**
+       * @brief Affiche une ligne d'un tableau de broches
+       * Si le connecteur à 2 colonnes, les broches num et num+1 sont affichées
+       * @param os flux d'affichage
+       * @param num numéro de broche dans la numérotation du connecteur. Déclenche
+       * une exception std::out_of_range si la broche n'existe pas
+       */
+      void printRow (std::ostream & os, int num) const;
 
     private:
       bool _isopen;

@@ -446,14 +446,16 @@ namespace Sysio {
 
     if (isOpen() && (type() == TypeGpio)) {
 
-      if (_useSysFs) {
+      if (!_useSysFs) {
 
-        write (!read());
-      }
-      else {
+        if (device()->flags() & Device::hasToggle) {
 
-        device()->toggle (this);
+          device()->toggle (this);
+          return;
+        }
       }
+
+      write (!read());
     }
   }
 
@@ -679,13 +681,13 @@ namespace Sysio {
   Pin::readPull ()  {
 
     if (device()) {
-
-      _pull = device()->pull (this);
+      if (device()->flags() & Device::hasPullRead) {
+        
+        _pull = device()->pull (this);
+        return;
+      }
     }
-    else {
-
-      _pull = PullUnknown;
-    }
+    _pull = PullUnknown;
   }
 
 // -----------------------------------------------------------------------------

@@ -161,89 +161,94 @@ namespace Sysio {
 // -----------------------------------------------------------------------------
 //                      Opérateur << vers ostream
 // -----------------------------------------------------------------------------
+  namespace ConnectorOstream {
+    
+// -----------------------------------------------------------------------------
+    enum Alignment {
+      Left,
+      Right,
+      Center
+    };
 
 // -----------------------------------------------------------------------------
-  enum Alignment {
-    Left,
-    Right,
-    Center
-  };
+    class Field {
+      public:
+        std::string::size_type size;
+        std::string name;
+    };
 
 // -----------------------------------------------------------------------------
-  class Field {
-    public:
-      std::string::size_type size;
-      std::string name;
-  };
+    const std::array<Field, 7> _field = {{
+        {5, "sOc"},
+        {5, "sIo"},
+        {10, "Name"},
+        {6, "Mode"},
+        {6, "Pull"},
+        {3, "V"},
+        {4, "Ph"}
+      }
+    };
 
 // -----------------------------------------------------------------------------
-  const std::array<Field, 7> _field = {{
-      {5, "sOc"},
-      {5, "sIo"},
-      {10, "Name"},
-      {6, "Mode"},
-      {6, "Pull"},
-      {3, "V"},
-      {4, "Ph"}
+    std::string
+    toUpper (const std::string & s) {
+      std::string out (s);
+
+      std::transform (out.begin(), out.end(), out.begin(),
+                      std::ptr_fun<int, int> (std::toupper));
+      return out;
     }
-  };
 
 // -----------------------------------------------------------------------------
-  std::string
-  toUpper (const std::string & s) {
-    std::string out (s);
+    std::string
+    format (const std::string & s, std::string::size_type w, Alignment a) {
+      std::string in (s);
+      std::string out (w, ' ');
+      std::string::size_type pos;
 
-    std::transform (out.begin(), out.end(), out.begin(),
-                    std::ptr_fun<int, int> (std::toupper));
-    return out;
+      if (w < 3) {
+        w = 3;
+      }
+      if (in.size() > (w - 2)) {
+
+        in.resize (w - 2);
+      }
+
+      switch (a) {
+        case Left:
+          pos = 1;
+          break;
+        case Right:
+          pos = out.size() - in.size() - 1;
+          break;
+        case Center:
+          pos = (out.size() - in.size()) / 2;
+          break;
+      }
+
+      out.replace (pos, in.size(), s);
+      return out;
+    }
   }
-
-// -----------------------------------------------------------------------------
-  std::string
-  format (const std::string & s, std::string::size_type w, Alignment a) {
-    std::string in (s);
-    std::string out (w, ' ');
-    std::string::size_type pos;
-
-    if (w < 3) {
-      w = 3;
-    }
-    if (in.size() > (w - 2)) {
-
-      in.resize (w - 2);
-    }
-
-    switch (a) {
-      case Left:
-        pos = 1;
-        break;
-      case Right:
-        pos = out.size() - in.size() - 1;
-        break;
-      case Center:
-        pos = (out.size() - in.size()) / 2;
-        break;
-    }
-
-    out.replace (pos, in.size(), s);
-    return out;
-  }
-
+  
+  using namespace ConnectorOstream;
 // -----------------------------------------------------------------------------
   void
-  printHline (int columns, std::ostream & os) {
+  Connector::printHline (std::ostream & os) const {
 
     os << '+';
     for (unsigned int i = 0; i < _field.size(); i++) {
-
-      os << std::string (_field[i].size, '-') << '+';
+      if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+        os << std::string (_field[i].size, '-') << '+';
+      }
     }
-    if (columns > 1) {
+    if (columns() > 1) {
 
       os << '+';
       for (int i = _field.size() - 1; i >= 0 ; --i) {
-        size_t s = _field[i].size;
-        os << std::string (s, '-') << '+';
+        if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+          os << std::string (_field[i].size, '-') << '+';
+        }
       }
     }
     os << std::endl;
@@ -251,65 +256,75 @@ namespace Sysio {
 
 // -----------------------------------------------------------------------------
   void
-  printTitle (int columns, std::ostream & os) {
-    printHline (columns, os);
+  Connector::printTitle (std::ostream & os) const {
+    printHline (os);
 
     os << '|';
     for (unsigned int i = 0; i < _field.size(); i++) {
 
-      os << format (_field[i].name, _field[i].size, Center) << '|';
+      if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+        os << format (_field[i].name, _field[i].size, Center) << '|';
+      }
     }
-    if (columns > 1) {
+    if (columns() > 1) {
 
       os << '|';
       for (int i = _field.size() - 1; i >= 0 ; --i) {
 
-        os << format (_field[i].name, _field[i].size, Center) << '|';
+        if ( (_field[i].name != "Pull") || (device()->hasPullRead)) {
+          os << format (_field[i].name, _field[i].size, Center) << '|';
+        }
       }
     }
     os << std::endl;
 
-    printHline (columns, os);
+    printHline (os);
   }
 
 
 // -----------------------------------------------------------------------------
   void
-  printRow (const Connector * connector, int number, std::ostream & os) {
+  Connector::printRow (std::ostream & os, int number) const {
     std::array<std::string, 5> s;
     unsigned int i = 0;
 
-    Pin * pin = &connector->pin (number++);
+    Pin * p = &pin (number++);
     os << '|';
-    if (pin->type() == Pin::TypeGpio) {
-      s[0] = std::to_string (pin->mcuNumber());
-      s[1] = std::to_string (pin->logicalNumber());
-      s[2] = toUpper (pin->modeName());
-      s[3] = toUpper (pin->pullName());
-      if ( (pin->mode() == Pin::ModeInput) || (pin->mode() == Pin::ModeOutput)) {
-        s[4] = std::to_string (pin->read());
+    if (p->type() == Pin::TypeGpio) {
+      s[0] = std::to_string (p->mcuNumber());
+      s[1] = std::to_string (p->logicalNumber());
+      s[2] = toUpper (p->modeName());
+      if (device()->hasPullRead) {
+        s[3] = toUpper (p->pullName());
+      }
+      if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
+        s[4] = std::to_string (p->read());
       }
     }
     os << format (s[0], _field[i++].size, Right) << '|';
     os << format (s[1], _field[i++].size, Right) << '|';
-    os << format (pin->name(), _field[i++].size, Right) << '|';
+    os << format (p->name(), _field[i++].size, Right) << '|';
     os << format (s[2], _field[i++].size, Right) << '|';
-    os << format (s[3], _field[i++].size, Right) << '|';
+    if (device()->hasPullRead) {
+      os << format (s[3], _field[i++].size, Right) << '|';
+    }
     os << format (s[4], _field[i++].size, Right) << '|';
-    os << format (std::to_string (pin->physicalNumber()), _field[i++].size, Right) << '|';
+    os << format (std::to_string (p->physicalNumber()), _field[i++].size, Right) << '|';
 
-    if (connector->columns() > 1) {
+    if (columns() > 1) {
 
-      pin = &connector->pin (number);
+      p = &pin (number);
 
       os << '|';
-      if (pin->type() == Pin::TypeGpio) {
-        s[0] = std::to_string (pin->mcuNumber());
-        s[1] = std::to_string (pin->logicalNumber());
-        s[2] = toUpper (pin->modeName());
-        s[3] = toUpper (pin->pullName());
-        if ( (pin->mode() == Pin::ModeInput) || (pin->mode() == Pin::ModeOutput)) {
-          s[4] = std::to_string (pin->read());
+      if (p->type() == Pin::TypeGpio) {
+        s[0] = std::to_string (p->mcuNumber());
+        s[1] = std::to_string (p->logicalNumber());
+        s[2] = toUpper (p->modeName());
+        if (device()->hasPullRead) {
+          s[3] = toUpper (p->pullName());
+        }
+        if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput)) {
+          s[4] = std::to_string (p->read());
         }
         else {
           s[4].clear();
@@ -321,11 +336,13 @@ namespace Sysio {
           n.clear();
         }
       }
-      os << format (std::to_string (pin->physicalNumber()), _field[--i].size, Left) << '|';
+      os << format (std::to_string (p->physicalNumber()), _field[--i].size, Left) << '|';
       os << format (s[4], _field[--i].size, Left) << '|';
-      os << format (s[3], _field[--i].size, Left) << '|';
+      if (device()->hasPullRead) {
+        os << format (s[3], _field[--i].size, Left) << '|';
+      }
       os << format (s[2], _field[--i].size, Left) << '|';
-      os << format (pin->name(), _field[--i].size, Left) << '|';
+      os << format (p->name(), _field[--i].size, Left) << '|';
       os << format (s[1], _field[--i].size, Left) << '|';
       os << format (s[0], _field[--i].size, Left) << '|';
     }
@@ -342,30 +359,33 @@ namespace Sysio {
       throw std::out_of_range ("the number of columns must not exceed 2.");
     }
 
-    for (auto & n : _field) {
-      width += n.size;
+    for (unsigned int i = 0; i < _field.size(); i++) {
+
+      if ( (_field[i].name != "Pull") || (c->device()->hasPullRead)) {
+        width += _field[i].size;
+      }
     }
-    width = (width + _field.size()) * c->columns();
+    width = (width + _field.size() - (c->device()->hasPullRead ? 0 : 1)) * c->columns();
 
     // entête
     os.width (width);
 
     buf << c->name() << " (#" << c->number() << ")";
     os << std::setw ( (width + buf.str().size()) / 2 + 1)  << toUpper (buf.str()) << std::endl;
-    printTitle (c->columns(), os);
+    c->printTitle (os);
     // broches
     for (int i = 1; i <= c->size(); i += c->columns()) {
 
-      printRow (c, i, os);
+      c->printRow (os, i);
     }
     // pied de page
     if (c->rows() > 6) {
 
-      printTitle (c->columns(), os);
+      c->printTitle (os);
     }
     else {
 
-      printHline (c->columns(), os);
+      c->printHline (os);
     }
     return os;
   }

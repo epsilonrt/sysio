@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <exception>
 #include <sysio/gpio.h>
-#include <sysio/delay.h>
+#include <sysio/clock.h>
 #include "gpiodevice_nanopi.h"
 
 namespace Sysio {
@@ -60,6 +60,12 @@ namespace Sysio {
   DeviceNanoPi::~DeviceNanoPi() {
   }
 
+// -----------------------------------------------------------------------------
+  unsigned int 
+  DeviceNanoPi::flags() const {
+    return  hasPullRead | hasToggle;
+  }
+  
 // -----------------------------------------------------------------------------
   AccessLayer
   DeviceNanoPi::preferedAccessLayer() const {
@@ -129,7 +135,7 @@ namespace Sysio {
     ret = _int2mode.at (m);
 
     // PA5: PWM0 FUNC3-> UART0 !,  PA6: PWM1 FUNC3, PL10: S_PWM FUNC2
-    if ( ( (ret == Pin::ModeAlt3) && ( (g == 5) && (g == 6))) ||
+    if ( ( (ret == Pin::ModeAlt3) && ( (g == 5) || (g == 6))) ||
          ( (ret == Pin::ModeAlt2) && (g == 104))) {
       ret = Pin::ModePwm;
     }
@@ -150,7 +156,7 @@ namespace Sysio {
 
     if (m == Pin::ModePwm) {
       // PA5: PWM0 FUNC3-> UART0 !,  PA6: PWM1 FUNC3, PL10: S_PWM FUNC2
-      if ( (g == 5) && (g == 6)) {
+      if ( (g == 5) || (g == 6)) {
         m = Pin::ModeAlt3;
       }
       else if (g == 104) {
@@ -233,9 +239,9 @@ namespace Sysio {
       r = f >> 4;
       i = (f - (r * 16)) * 2;
       b->PUL[r] &= ~ (0b11 << i); // clear config -> disable
-      delay_us (10);
+      Clock::delayMicroseconds (10);
       b->PUL[r] |= (v << i);
-      delay_us (10);
+      Clock::delayMicroseconds (10);
       debugPrintBank (b);
     }
   }

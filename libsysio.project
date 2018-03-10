@@ -9,20 +9,21 @@
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
         <VirtualDirectory Name="nanopi">
-          <File Name="src/arch/arm/nanopi/gpio.c"/>
           <File Name="src/arch/arm/nanopi/nanopi.c"/>
           <File Name="src/arch/arm/nanopi/gpio.cpp"/>
           <File Name="src/arch/arm/nanopi/gpiodevice_nanopi.cpp"/>
           <File Name="src/arch/arm/nanopi/gpiodevice_nanopi.h"/>
           <File Name="src/arch/arm/nanopi/gpiodevice_nanopi_descriptor.cpp"/>
+          <File Name="src/arch/arm/nanopi/gpio.c"/>
         </VirtualDirectory>
         <VirtualDirectory Name="rpi">
-          <File Name="src/arch/arm/rpi/pwm.c"/>
           <File Name="src/arch/arm/rpi/rpi.c"/>
+          <File Name="src/arch/arm/rpi/pwm.c"/>
           <File Name="src/arch/arm/rpi/gpio.c"/>
-          <File Name="src/arch/arm/rpi/gpiodevice_rpi.cpp"/>
-          <File Name="src/arch/arm/rpi/gpiodevice_rpi.h"/>
-          <File Name="src/arch/arm/rpi/gpiodevice_rpi_descriptor.cpp"/>
+          <File Name="src/arch/arm/rpi/gpio.cpp"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_bcm2835.cpp"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_bcm2835.h"/>
+          <File Name="src/arch/arm/rpi/gpiodevice_bcm2835_descriptor.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>

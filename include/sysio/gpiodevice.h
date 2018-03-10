@@ -24,12 +24,18 @@ namespace Sysio {
    */
   class Device {
 
-    public:
+  public:
+      enum {
+        hasToggle   = 0x0001,
+        hasPullRead = 0x0002
+      };
+      
       Device();
       virtual ~Device();
       virtual bool isOpen() const;
       virtual bool isDebug() const;
       virtual void setDebug (bool enable);
+      virtual unsigned int flags() const;
 
       // Méthodes purement virtuelles
       virtual const Gpio::Descriptor * descriptor() const = 0;
@@ -41,11 +47,11 @@ namespace Sysio {
       virtual void setMode (const Pin * pin, Pin::Mode m) = 0;
       virtual void setPull (const Pin * pin, Pin::Pull p) = 0;
       virtual void write (const Pin * pin, bool v) = 0;
-      virtual void toggle (const Pin * pin) = 0;
+      virtual void toggle (const Pin * pin);
 
       virtual bool read (const Pin * pin) const = 0;
       virtual Pin::Mode mode (const Pin * pin) const = 0;
-      virtual Pin::Pull pull (const Pin * pin) const = 0;
+      virtual Pin::Pull pull (const Pin * pin) const;
 
       virtual const std::map<Pin::Mode, std::string> & modes() const = 0;
 

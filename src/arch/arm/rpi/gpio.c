@@ -110,12 +110,26 @@ static const xPinList pxMcuPins[] = {
   { .pin = iMcuPinsRev3, .size = 32, .len = 28, .first = 0, .last = 27 }
 };
 
+//------------------------------------------------------------------------------
+// 2018-02-18 -->
+static const int iPhyConnRev1[] = { 26 };
+static const int iPhyConnRev2[] = { 26, 8 }; // 2018-02-18
+static const int iPhyConnRev3[] = { 40 }; // 2018-02-18
+
+static const xConnectorList pxPhyConn[] = { // 2018-02-18
+  { .size = iPhyConnRev1, .nb = 1 },
+  { .size = iPhyConnRev2, .nb = 2 },
+  { .size = iPhyConnRev3, .nb = 1 }
+};
+// <-- 2018-02-18
+//------------------------------------------------------------------------------
+
 /* macros =================================================================== */
 #define GPIO_BASE(_iobase)  ((unsigned long)(_iobase) + 0x200000)
-#define GPIO_INP(g,gp)   *(pIo(gp->map, (g)/10)) &= ~(7<<(((g)%10)*3))
-#define GPIO_OUT(g,gp)   *(pIo(gp->map, (g)/10)) |=  (1<<(((g)%10)*3))
-#define GPIO_ALT(g,a,gp) *(pIo(gp->map, (g)/10)) |=  ((a)<<(((g)%10)*3))
-#define GPIO_MODE(g,gp)  (((*(pIo(gp->map, (g)/10))) >> (((g)%10)*3)) & 7)
+#define GPIO_INP(g,gp)   *(pIo(gp->map[0], (g)/10)) &= ~(7<<(((g)%10)*3))
+#define GPIO_OUT(g,gp)   *(pIo(gp->map[0], (g)/10)) |=  (1<<(((g)%10)*3))
+#define GPIO_ALT(g,a,gp) *(pIo(gp->map[0], (g)/10)) |=  ((a)<<(((g)%10)*3))
+#define GPIO_MODE(g,gp)  (((*(pIo(gp->map[0], (g)/10))) >> (((g)%10)*3)) & 7)
 
 /* private variables ======================================================== */
 // Configuration actuelle des broches
@@ -137,7 +151,7 @@ vDumpSel (const xGpio * gp) {
 
   for (int i = GFPSEL0; i <= GFPSEL5; i++) {
 
-    printf ("GFPSEL%d=%08X\n", i, * (pIo (gp->map,  i)));
+    printf ("GFPSEL%d=%08X\n", i, * (pIo (gp->map[0],  i)));
   }
   putchar ('\n');
 }
@@ -206,8 +220,8 @@ xGpioOpen (UNUSED_VAR (void *, setup)) {
 
     (void) iGpioSetNumbering (eNumberingLogical, gp);
 
-    gp->map = xIoMapOpen (GPIO_BASE (ulRpiIoBase()), BCM270X_BLOCK_SIZE);
-    if (gp->map) {
+    gp->map[0] = xIoMapOpen (GPIO_BASE (ulRpiIoBase()), BCM270X_BLOCK_SIZE);
+    if (gp->map[0]) {
 
       // Lecture des modes actuels
       for (int g = 0; g < GPIO_SIZE; g++) {
@@ -246,7 +260,7 @@ iGpioClose (xGpio * gp) {
           (void) iArchGpioRelease (g, gp);
         }
       }
-      error = iIoMapClose (gp->map);
+      error = iIoMapClose (gp->map[0]);
       memset (gp, 0, sizeof (xGpio));
       gp->numbering = -1;
       gp->pinmode = pinmode;
@@ -359,18 +373,18 @@ iArchGpioSetMode (int g, eGpioMode eMode, xGpio * gp) {
 // -----------------------------------------------------------------------------
 int
 iArchGpioSetPull (int g, eGpioPull ePull, xGpio * gp) {
-  volatile unsigned int * puPudClk = pIo (gp->map, GPPUDCLK0);
+  volatile unsigned int * puPudClk = pIo (gp->map[0], GPPUDCLK0);
   if (g > 31) {
 
     puPudClk++;
     g -= 32;
   }
 
-  * (pIo (gp->map, GPPUD)) = ePull & 3;
+  * (pIo (gp->map[0], GPPUD)) = ePull & 3;
   delay_us (10);
   *puPudClk = 1 << g;
   delay_us (10);
-  * (pIo (gp->map, GPPUD)) = ePullOff;
+  * (pIo (gp->map[0], GPPUD)) = ePullOff;
   *puPudClk = 0;
   return 0;
 }
@@ -395,7 +409,7 @@ iArchGpioRelease (int g, xGpio * gp) {
 // -----------------------------------------------------------------------------
 int
 iArchGpioWrite (int g, bool bValue, xGpio * gp) {
-  volatile unsigned int * puReg = pIo (gp->map, 0);
+  volatile unsigned int * puReg = pIo (gp->map[0], 0);
 
   if (bValue) {
 
@@ -418,7 +432,7 @@ iArchGpioWrite (int g, bool bValue, xGpio * gp) {
 // -----------------------------------------------------------------------------
 int
 iArchGpioRead (int g, xGpio * gp) {
-  volatile unsigned int * puReg = pIo (gp->map, GPLEV0);
+  volatile unsigned int * puReg = pIo (gp->map[0], GPLEV0);
   if (g > 31) {
 
     puReg++;
@@ -444,6 +458,13 @@ iArchGpioToggle (int g, xGpio * gp) {
     return iArchGpioWrite (g, false, gp);
   }
   return iArchGpioWrite (g, true, gp);
+}
+
+// -----------------------------------------------------------------------------
+const xConnectorList *
+pxArchGpioGetConnSize (xGpio * gp) {
+
+  return &pxPhyConn[pxRpiInfo()->iGpioRev - 1];
 }
 
 /* ========================================================================== */
