@@ -54,9 +54,9 @@ namespace Sysio {
        * until it is woken up by a signal
        */
 #ifdef __DOXYGEN__
-      inline void sleep (unsigned long s);
+      static inline void sleep (unsigned long s);
 #else
-      inline void sleep (unsigned long s) {
+      static inline void sleep (unsigned long s) {
         delay (s * 1000UL);
       }
 #endif
@@ -70,7 +70,7 @@ namespace Sysio {
        * @param ms the number of milliseconds to pause, -1 deaden the thread
        * until it is woken up by a signal
        */
-      void delay (unsigned long ms);
+      static void delay (unsigned long ms);
 
       /**
        * @brief Pauses for the amount of microseconds
@@ -84,7 +84,7 @@ namespace Sysio {
        * @param us the number of milliseconds to pause, -1 deaden the thread
        * until it is woken up by a signal
        */
-      void delayMicroseconds (unsigned long us);
+      static void delayMicroseconds (unsigned long us);
 
       /**
        * @brief Number of milliseconds
