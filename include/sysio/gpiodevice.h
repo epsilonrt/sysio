@@ -27,7 +27,8 @@ namespace Sysio {
   public:
       enum {
         hasToggle   = 0x0001,
-        hasPullRead = 0x0002
+        hasPullRead = 0x0002,
+        hasAltRead  = 0x0004
       };
       
       Device();
