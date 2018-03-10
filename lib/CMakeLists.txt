@@ -19,6 +19,7 @@ file(GLOB src_arch  ${SYSIO_SRC_ARCH_DIR}/*.c ${SYSIO_SRC_ARCH_DIR}/*.cpp)
 
 set (hdr_sysio 
   ${SYSIO_INC_DIR}/sysio/clock.h
+  ${SYSIO_INC_DIR}/sysio/scheduler.h
   ${SYSIO_INC_DIR}/sysio/defs.h
   ${SYSIO_INC_DIR}/sysio/delay.h
   ${SYSIO_INC_DIR}/sysio/iomap.h

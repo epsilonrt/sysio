@@ -42,6 +42,7 @@
       <File Name="src/unix/term.c"/>
       <File Name="src/unix/timer.c"/>
       <File Name="src/unix/clock.cpp"/>
+      <File Name="src/unix/scheduler.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="libgps">
       <File Name="src/libgps/gps.c"/>
@@ -122,6 +123,7 @@
       <File Name="include/sysio/gpioconnector.h"/>
       <File Name="include/sysio/clock.h"/>
       <File Name="include/sysio/arduino.h"/>
+      <File Name="include/sysio/scheduler.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
