@@ -124,7 +124,10 @@ if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
 
 elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR 
         ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_AIR") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1"))
+        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO2") OR 
+        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEOPLUS2") OR 
+        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1") OR 
+        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1PLUS"))
   # NanoPi Neo / Neo Air / M1  -------------------------------------------------
   set (SYSIO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
   set (SYSIO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
@@ -132,8 +135,9 @@ elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR
   set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/arm/nanopi)
 
-elseif ("${PIBOARD_ID}" STREQUAL "BOARD_GENERIC_LINUX")
+else ()
   # Linux Generic  -------------------------------------------------------------
+  # BOARD_GENERIC_LINUX
   set (SYSIO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
   set (SYSIO_SRC_ARCH_DIR ${SYSIO_SRC_DIR}/arch/generic)
   set (SYSIO_WITH_GPIO 0)
