@@ -26,9 +26,16 @@ function(GetPiBoardInfo)
     execute_process(COMMAND ${hardware_cpu} OUTPUT_VARIABLE cpu OUTPUT_STRIP_TRAILING_WHITESPACE)
     message (STATUS "Detecting host CPU - ${cpu} found")
 
-    if (${cpu} MATCHES ".*sun8i.*")
+    if ((${cpu} MATCHES ".*sun8i.*") OR (${cpu} MATCHES ".*sun50i.*"))
     
       # Allwinner sunxi  -------------------------------------------------------
+      # board               Gpio Rev. SoC     Arch      SoC ID
+      # nanopineo           1         H3      sun8i     sun8iw7
+      # nanopineoair        1         H3      sun8i     sun8iw7
+      # nanopineo2          1         H5      sun50i    sun50iw2
+      # nanopineoplus2      1         H5      sun50i    sun50iw2
+      # nanopim1            2         H3      sun8i     sun8iw7
+      # nanopim1plus        3         H3      sun8i     sun8iw7
       find_program(armbian_board NAMES armbian-board PATHS ${PROJECT_TOOLS_PATHS})
       if (armbian_board)
       
@@ -114,7 +121,7 @@ function(GetPiBoardInfo)
         message(FATAL_ERROR "rpi-info utility not found")
       endif (rpi_info)
 
-    endif (${cpu} MATCHES ".*sun8i.*")
+    endif ((${cpu} MATCHES ".*sun8i.*") OR (${cpu} MATCHES ".*sun50i.*"))
   else (hardware_cpu)
     message(FATAL_ERROR "hardware-cpu not found")
   endif (hardware_cpu)
