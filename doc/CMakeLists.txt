@@ -26,9 +26,6 @@ if (SYSIO_WITH_DOXYGEN_DOC)
 
   set(DOXYGEN_INPUT_LIST 
     ${PROJECT_SOURCE_DIR}/include/sysio/*.h
-    ${PROJECT_SOURCE_DIR}/radio/include/radio/*.h
-    ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/include/ssdv/*.h
-    ${PROJECT_SOURCE_DIR}/chipio/include/chipio/*.h
     )
 
   set(DOXYGEN_INPUT "${CMAKE_BINARY_DIR}/main_page.dox")

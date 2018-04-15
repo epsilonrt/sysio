@@ -162,11 +162,6 @@ add_custom_target(uninstall
 
 add_subdirectory (dev)
 add_subdirectory (lib)
-add_subdirectory (3rdparty)
-add_subdirectory (radio)
-if(SYSIO_WITH_I2C)
-  add_subdirectory (chipio)
-endif(SYSIO_WITH_I2C)
 add_subdirectory (utils)
 add_subdirectory (doc)
 

@@ -53,32 +53,6 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
         COMPONENT dev
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
 
-# Radio examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/radio/demo/
-        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/radio
-        COMPONENT dev
-        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-
-# Ssdv examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/ssdv/demo/
-        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/ssdv
-        COMPONENT dev
-        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-
-# Modbus examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/3rdparty/modbus/demo/
-        DESTINATION ${SYSIO_INSTALL_EXAMPLES_DIR}/modbus
-        COMPONENT dev
-        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-
-# ChipIo examples
-if(SYSIO_WITH_I2C)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/chipio/demo/
-          DESTINATION ${SYSIO_INSTALL_DOC_DIR}/chipio
-          COMPONENT dev
-          FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
-endif(SYSIO_WITH_I2C)
-
 if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
   install (FILES ${dev_bin_rpi} 
     DESTINATION "${INSTALL_BIN_DIR}" 

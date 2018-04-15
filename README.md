@@ -17,33 +17,15 @@ porting to different platforms.
 
 This project is in development, for the moment on Linux/Unix platform, it provides the modules:
 * Delay [**delay**](http://www.epsilonrt.fr/sysio/group__sysio__delay.html)
-* Timers [**timer**](http://www.epsilonrt.fr/sysio/group__sysio__timer.html)
 * Serial link [**serial**](http://www.epsilonrt.fr/sysio/group__sysio__serial.html)
-* XBee [**xbee**](http://www.epsilonrt.fr/sysio/group__sysio__xbee.html)
-* ERDF customer information [**tinfo**](http://www.epsilonrt.fr/sysio/group__sysio__tinfo.html)
-* IO memory access [**iomap**](http://www.epsilonrt.fr/sysio/group__sysio__iomap.html)
-* Ax25 links [**ax25**](http://www.epsilonrt.fr/sysio/group__radio__ax25.html)
-* Log management [**log**](http://www.epsilonrt.fr/sysio/group__sysio__log.html)
-* Doubly linked list [**dlist**](http://www.epsilonrt.fr/sysio/group__sysio__dlist.html)
-* Vector [**vector**](http://www.epsilonrt.fr/sysio/group__sysio__vector.html)
-* String [**string**](http://www.epsilonrt.fr/sysio/group__sysio__string.html)
-* Terminals [**term**](http://www.epsilonrt.fr/sysio/group__sysio__term.html)
-* Gps with gpsd [**gps**](http://www.epsilonrt.fr/sysio/group__sysio__gps.html)
 
 on Raspberry Pi platforms (A/B/B+/Pi2/Pi3/Zero) and NanoPi (Neo/NeoAir/M1), 
 it also provides the modules
 
-* Raspberry Pi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__rpi.html)
-* NanoPi [**rpi**](http://www.epsilonrt.fr/sysio/group__sysio__nanopi.html)
 * GPIO [**gpio**](http://www.epsilonrt.fr/sysio/group__sysio__gpio.html)
 * PWM pins [**pwm**](http://www.epsilonrt.fr/sysio/group__sysio__pwm.html)
 * I2C Bus [**i2c**](http://www.epsilonrt.fr/sysio/group__sysio__i2c.html)
 * SPI Bus [**spi**](http://www.epsilonrt.fr/sysio/group__sysio__spi.html)
-* IAQ I2C sensor [**iaq**](http://www.epsilonrt.fr/sysio/group__sysio__iaq.html)
-* HIH6130/ChipCap2 I2C sensor [**hih6130**](http://www.epsilonrt.fr/sysio/group__sysio__hih6130.html)
-* Blyss™ modules [**blyss**](http://www.epsilonrt.fr/sysio/group__sysio__blyss.html)
-* UHF RFM69 modules [**rf69**](http://www.epsilonrt.fr/sysio/group__sysio__rf69.html)
-* RGB Leds [**ledrgb**](http://www.epsilonrt.fr/sysio/group__sysio__ledrgb.html)
 
 For each module, one or more [examples](http://www.epsilonrt.fr/sysio/examples.html) are provided.
 
@@ -137,7 +119,6 @@ With the line above, sysio_FOUND was defined and the variables below are accessi
 * `SYSIO_WITH_I2C`: Boolean that indicates that SysIo has been compiled with I2C bus support  
 * `SYSIO_WITH_SPI`: Boolean that indicates that SysIo has been compiled with SPI bus support  
 * `SYSIO_WITH_SERIAL`: Boolean that indicates that SysIo has been compiled with serial link support  
-* `SYSIO_WITH_GPS`: Boolean that indicates that SysIo has been compiled with GPS support  
 
 Here is an example of a `CMakeLists.txt` file for SysIo:  
 
